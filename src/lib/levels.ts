@@ -49,7 +49,7 @@ export const levels: Level[] = [
     emoji: "🚀",
     color: "sky",
     gradient: "gradient-sky",
-    starsToUnlock: 10,
+    starsToUnlock: 0,
     stages: [
       { id: "2-1", title: "אותיות J-R", titleEn: "Letters J-R", description: "למד עוד 9 אותיות", emoji: "🔤", type: "alphabet", letterRange: [9, 17], starsToComplete: 5 },
       { id: "2-2", title: "מספרים", titleEn: "Numbers", description: "למד מספרים באנגלית", emoji: "🔢", type: "words", categoryIndices: [2], starsToComplete: 4 },
@@ -65,7 +65,7 @@ export const levels: Level[] = [
     emoji: "🔍",
     color: "sunshine",
     gradient: "gradient-primary",
-    starsToUnlock: 22,
+    starsToUnlock: 0,
     stages: [
       { id: "3-1", title: "אותיות S-Z", titleEn: "Letters S-Z", description: "השלם את כל האלפבית!", emoji: "🔤", type: "alphabet", letterRange: [18, 25], starsToComplete: 5 },
       { id: "3-2", title: "חלקי גוף", titleEn: "Body Parts", description: "למד חלקי גוף באנגלית", emoji: "🦵", type: "words", categoryIndices: [4], starsToComplete: 4 },
@@ -82,7 +82,7 @@ export const levels: Level[] = [
     emoji: "🏆",
     color: "candy",
     gradient: "gradient-candy",
-    starsToUnlock: 40,
+    starsToUnlock: 0,
     stages: [
       { id: "4-1", title: "בית ספר", titleEn: "School", description: "למד מילים על בית הספר", emoji: "🏫", type: "words", categoryIndices: [6], starsToComplete: 4 },
       { id: "4-2", title: "אוכל", titleEn: "Food", description: "למד שמות של מאכלים", emoji: "🍕", type: "words", categoryIndices: [7], starsToComplete: 4 },
@@ -134,12 +134,8 @@ export const isLevelUnlocked = (level: Level): boolean => {
   return getTotalEarnedStars() >= level.starsToUnlock;
 };
 
-export const isStageUnlocked = (level: Level, stageIndex: number): boolean => {
-  if (!isLevelUnlocked(level)) return false;
-  if (stageIndex === 0) return true;
-  // Previous stage must be completed
-  const prevStage = level.stages[stageIndex - 1];
-  return getStageProgress(prevStage.id).completed;
+export const isStageUnlocked = (_level: Level, _stageIndex: number): boolean => {
+  return true;
 };
 
 export const getLevelProgress = (level: Level): { completed: number; total: number; stars: number } => {
