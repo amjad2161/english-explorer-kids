@@ -1,9 +1,12 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 import { useLanguage } from "@/lib/i18n";
 import {
-  achievements, achievementNames, achievementDescs,
+  achievements, Achievement, achievementNames, achievementDescs,
   getUnlockedAchievements, tierColors, tierBorder,
 } from "@/lib/achievements";
+import { playClickSound } from "@/lib/sounds";
+import { Lock, X } from "lucide-react";
 
 const isRareTier = (tier: string) => tier === "gold" || tier === "diamond";
 
@@ -11,6 +14,7 @@ const AchievementsPage = () => {
   const { lang, dir } = useLanguage();
   const unlocked = getUnlockedAchievements();
   const unlockedIds = new Set(unlocked.map(u => u.id));
+  const [selectedLocked, setSelectedLocked] = useState<Achievement | null>(null);
 
   const tiers = ["bronze", "silver", "gold", "diamond"] as const;
   const tierLabels = {
@@ -25,18 +29,143 @@ const AchievementsPage = () => {
     diamond: "0 0 20px hsl(195, 85%, 55%, 0.25), 0 4px 15px hsl(195, 85%, 55%, 0.1)",
   };
 
+  const handleLockedClick = (achievement: Achievement) => {
+    playClickSound();
+    setSelectedLocked(achievement);
+  };
+
   return (
     <div className="min-h-screen relative" dir={dir}>
       <div className="bg-particles" />
+
+      {/* Locked achievement modal */}
+      <AnimatePresence>
+        {selectedLocked && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4"
+            onClick={() => setSelectedLocked(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0, y: 30 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.5, opacity: 0, y: 30 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="card-kid max-w-xs w-full text-center relative overflow-hidden"
+            >
+              {/* Decorative background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-muted/30 to-muted/10 pointer-events-none" />
+
+              {/* Close button */}
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setSelectedLocked(null)}
+                className="absolute top-3 end-3 w-7 h-7 rounded-full bg-muted/80 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors z-10"
+              >
+                <X className="w-4 h-4" />
+              </motion.button>
+
+              {/* Lock animation */}
+              <div className="relative z-10">
+                <motion.div
+                  className="w-24 h-24 rounded-3xl mx-auto mb-4 bg-muted/60 flex items-center justify-center relative"
+                  animate={{ rotate: [0, -8, 8, -5, 5, 0] }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                >
+                  {/* Shaking lock */}
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                  >
+                    <Lock className="w-10 h-10 text-muted-foreground" />
+                  </motion.div>
+
+                  {/* Sparkle hints around the lock */}
+                  {[0, 1, 2, 3].map((i) => (
+                    <motion.div
+                      key={i}
+                      className="absolute w-2 h-2 rounded-full bg-primary/40"
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{
+                        opacity: [0, 1, 0],
+                        scale: [0, 1, 0],
+                        x: Math.cos((i / 4) * Math.PI * 2) * 40,
+                        y: Math.sin((i / 4) * Math.PI * 2) * 40,
+                      }}
+                      transition={{ duration: 1.5, delay: 0.5 + i * 0.15, repeat: Infinity, repeatDelay: 1 }}
+                    />
+                  ))}
+                </motion.div>
+
+                {/* Hidden emoji peek */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="text-4xl mb-3 grayscale opacity-30"
+                >
+                  {selectedLocked.emoji}
+                </motion.div>
+
+                {/* Achievement name */}
+                <motion.h3
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="font-display text-lg font-bold text-foreground mb-1"
+                >
+                  {achievementNames[selectedLocked.id]?.[lang] || selectedLocked.id}
+                </motion.h3>
+
+                {/* Tier badge */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.6 }}
+                  className="inline-block mb-3"
+                >
+                  <span className={`text-xs font-display font-bold px-3 py-1 rounded-full bg-gradient-to-r ${tierColors[selectedLocked.tier]} text-white`}>
+                    {tierLabels[selectedLocked.tier][lang]}
+                  </span>
+                </motion.div>
+
+                {/* Requirement description */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.7 }}
+                  className="bg-muted/50 rounded-xl px-4 py-3 mb-4"
+                >
+                  <p className="text-xs text-muted-foreground font-display font-semibold mb-1">
+                    {lang === "he" ? "🎯 מה צריך:" : lang === "ar" ? "🎯 المطلوب:" : "🎯 Requirement:"}
+                  </p>
+                  <p className="text-sm font-body text-foreground font-medium">
+                    {achievementDescs[selectedLocked.id]?.[lang] || ""}
+                  </p>
+                </motion.div>
+
+                {/* Encouragement */}
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.9 }}
+                  className="text-xs text-muted-foreground font-body"
+                >
+                  {lang === "he" ? "🌟 המשך ללמוד ותפתח את זה!" : lang === "ar" ? "🌟 استمر بالتعلم وستفتحه!" : "🌟 Keep learning and you'll unlock it!"}
+                </motion.p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="max-w-3xl mx-auto px-4 py-8 relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
-          <motion.div
-            className="text-6xl mb-3"
-            animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.1, 1] }}
-            transition={{ duration: 3, repeat: Infinity }}
-          >
-            🏅
-          </motion.div>
+          <div className="text-6xl mb-3">🏅</div>
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">
             {lang === "he" ? "הישגים ותגים" : lang === "ar" ? "إنجازات وشارات" : "Achievements & Badges"}
           </h1>
@@ -84,11 +213,13 @@ const AchievementsPage = () => {
                       initial={{ scale: 0, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ delay: ti * 0.1 + i * 0.04, type: "spring" }}
-                      whileHover={isUnlocked ? { scale: 1.06, y: -4 } : { scale: 1.02 }}
-                      className={`relative rounded-2xl p-4 text-center border-2 transition-all overflow-hidden ${
+                      whileHover={isUnlocked ? { scale: 1.06, y: -4 } : { scale: 1.04 }}
+                      whileTap={!isUnlocked ? { scale: 0.96 } : undefined}
+                      onClick={!isUnlocked ? () => handleLockedClick(achievement) : undefined}
+                      className={`relative rounded-2xl p-4 text-center border-2 overflow-hidden ${
                         isUnlocked
                           ? `bg-card/90 backdrop-blur-sm ${tierBorder[tier]} shadow-md`
-                          : "bg-muted/30 border-transparent opacity-50 grayscale"
+                          : "bg-muted/30 border-muted/40 cursor-pointer hover:border-primary/30 hover:bg-muted/50 transition-colors"
                       } ${isRare ? "animate-glow-pulse" : ""}`}
                       style={isRare ? { boxShadow: rareGlow[tier] } : {}}
                     >
@@ -121,7 +252,9 @@ const AchievementsPage = () => {
                           : isUnlocked ? { rotate: [0, 3, -3, 0] } : {}}
                         transition={{ duration: isRare ? 3 : 4, repeat: Infinity }}
                       >
-                        {isUnlocked ? achievement.emoji : "🔒"}
+                        {isUnlocked ? achievement.emoji : (
+                          <Lock className="w-6 h-6 text-muted-foreground" />
+                        )}
                         {/* Sparkle dots orbiting rare badges */}
                         {isRare && (
                           <>
@@ -153,10 +286,16 @@ const AchievementsPage = () => {
                       </motion.div>
 
                       <p className="font-display text-sm font-bold text-foreground mb-0.5 relative z-10">
-                        {achievementNames[achievement.id]?.[lang] || achievement.id}
+                        {isUnlocked
+                          ? (achievementNames[achievement.id]?.[lang] || achievement.id)
+                          : "???"
+                        }
                       </p>
                       <p className="text-xs text-muted-foreground font-body leading-tight relative z-10">
-                        {achievementDescs[achievement.id]?.[lang] || ""}
+                        {isUnlocked
+                          ? (achievementDescs[achievement.id]?.[lang] || "")
+                          : (lang === "he" ? "לחץ לגלות 👆" : lang === "ar" ? "اضغط لاكتشاف 👆" : "Tap to discover 👆")
+                        }
                       </p>
 
                       {isUnlocked && (
