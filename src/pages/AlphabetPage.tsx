@@ -24,7 +24,12 @@ const AlphabetPage = () => {
   const { t, lang, dir } = useLanguage();
   const [selectedLetter, setSelectedLetter] = useState<number | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [learnedLetters, setLearnedLetters] = useState<string[]>([]);
+  const [learnedLetters, setLearnedLetters] = useState<string[]>(() => {
+    try {
+      const p = JSON.parse(localStorage.getItem("english-learning-progress") || "{}");
+      return p.completedLetters || [];
+    } catch { return []; }
+  });
 
   const handleLetterClick = (index: number) => {
     playClickSound();
@@ -54,9 +59,10 @@ const AlphabetPage = () => {
   };
 
   return (
-    <div className="min-h-screen" dir={dir}>
+    <div className="min-h-screen relative" dir={dir}>
+      <div className="bg-particles" />
       <Confetti show={showConfetti} />
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="max-w-5xl mx-auto px-4 py-8 relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">{t("alphabet.title")}</h1>
           <p className="text-muted-foreground font-body">{t("alphabet.subtitle")}</p>

@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useLanguage } from "@/lib/i18n";
 import { getCurrentLevel, getTotalEarnedStars, levels, getLevelProgress } from "@/lib/levels";
 import { getUnlockedAchievements } from "@/lib/achievements";
@@ -32,6 +32,7 @@ const Index = () => {
   const level = levels[currentLevel - 1];
   const levelProgress = getLevelProgress(level);
   const nextLevel = levels[currentLevel] || null;
+  const funFactIndex = useMemo(() => Math.floor(Math.random() * 5) + 1, []);
 
   const quickAccessCards = [
     { title: t("quick.alphabet"), emoji: "🔤", path: "/alphabet", gradient: "from-blue-400 to-cyan-400" },
@@ -165,7 +166,7 @@ const Index = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-sunshine/5 to-primary/5" />
           <motion.div className="text-4xl mb-3 relative z-10" animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>💡</motion.div>
           <h3 className="font-display text-lg font-bold mb-2 relative z-10">{t("home.didYouKnow")}</h3>
-          <p className="text-muted-foreground font-body text-sm relative z-10">{t(`home.funFact${Math.floor(Math.random() * 5) + 1}`)}</p>
+          <p className="text-muted-foreground font-body text-sm relative z-10">{t(`home.funFact${funFactIndex}`)}</p>
         </motion.div>
       </motion.div>
     </div>

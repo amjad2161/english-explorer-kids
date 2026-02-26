@@ -142,10 +142,11 @@ const SpellingBee = () => {
   if (words.length === 0) return null;
 
   return (
-    <div className="min-h-screen" dir={dir}>
+    <div className="min-h-screen relative" dir={dir}>
+      <div className="bg-particles" />
       <Confetti show={showConfetti} />
       <ScorePopup popups={popups} />
-      <div className="max-w-2xl mx-auto px-4 py-8">
+      <div className="max-w-2xl mx-auto px-4 py-8 relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-6">
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">
             {t("spelling.title")}

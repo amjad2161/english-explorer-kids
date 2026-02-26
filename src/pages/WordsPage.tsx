@@ -24,7 +24,12 @@ const WordsPage = () => {
   const { t, lang, dir } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [flippedCards, setFlippedCards] = useState<Set<string>>(new Set());
-  const [learnedWords, setLearnedWords] = useState<Set<string>>(new Set());
+  const [learnedWords, setLearnedWords] = useState<Set<string>>(() => {
+    try {
+      const p = JSON.parse(localStorage.getItem("english-learning-progress") || "{}");
+      return new Set(p.completedWords || []);
+    } catch { return new Set(); }
+  });
   const [showConfetti, setShowConfetti] = useState(false);
 
   const handleCardFlip = (word: WordCard) => {
@@ -50,9 +55,10 @@ const WordsPage = () => {
   };
 
   return (
-    <div className="min-h-screen" dir={dir}>
+    <div className="min-h-screen relative" dir={dir}>
+      <div className="bg-particles" />
       <Confetti show={showConfetti} />
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="max-w-5xl mx-auto px-4 py-8 relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">{t("words.title")}</h1>
           <p className="text-muted-foreground font-body">{t("words.subtitle")}</p>
