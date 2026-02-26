@@ -1,10 +1,15 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Star, Globe, Trophy, RotateCcw } from "lucide-react";
+import { Star, Globe, Trophy, RotateCcw, Volume2, VolumeX, Music, Music2 } from "lucide-react";
 import { getTotalEarnedStars } from "@/lib/levels";
 import { getUnlockedAchievements } from "@/lib/achievements";
 import { useLanguage, Language } from "@/lib/i18n";
 import { useState, useEffect, useRef } from "react";
+import {
+  isSoundEnabled, setSoundEnabled,
+  isMusicEnabled, setMusicEnabled,
+  playClickSound, startBgMusic, stopBgMusic,
+} from "@/lib/sounds";
 
 const langOptions: { code: Language; flag: string; name: string }[] = [
   { code: "ar", flag: "🇸🇦", name: "العربية" },
@@ -19,7 +24,23 @@ const AppHeader = () => {
   const [stars, setStars] = useState(0);
   const [badges, setBadges] = useState(0);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const [soundOn, setSoundOn] = useState(isSoundEnabled);
+  const [musicOn, setMusicOn] = useState(isMusicEnabled);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const toggleSound = () => {
+    const next = !soundOn;
+    setSoundOn(next);
+    setSoundEnabled(next);
+    if (next) playClickSound();
+  };
+
+  const toggleMusic = () => {
+    const next = !musicOn;
+    setMusicOn(next);
+    setMusicEnabled(next);
+    if (next) startBgMusic(); else stopBgMusic();
+  };
 
   const navItems = [
     { path: "/", label: t("nav.home"), icon: "🏠" },
@@ -101,6 +122,29 @@ const AppHeader = () => {
 
         {/* Actions */}
         <div className="flex items-center gap-1.5">
+          {/* Sound & Music */}
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={toggleSound}
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+              soundOn ? "bg-primary/15 text-primary" : "bg-muted/60 text-muted-foreground"
+            }`}
+            title={soundOn ? "Mute sounds" : "Enable sounds"}
+          >
+            {soundOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={toggleMusic}
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+              musicOn ? "bg-accent/15 text-accent" : "bg-muted/60 text-muted-foreground"
+            }`}
+            title={musicOn ? "Stop music" : "Play music"}
+          >
+            {musicOn ? <Music className="w-4 h-4" /> : <Music2 className="w-4 h-4" />}
+          </motion.button>
           {/* Language Switcher */}
           <div className="relative" ref={menuRef}>
             <motion.button
