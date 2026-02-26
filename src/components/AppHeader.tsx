@@ -2,21 +2,23 @@ import { motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Star } from "lucide-react";
 import { getTotalEarnedStars } from "@/lib/levels";
+import { useLanguage } from "@/lib/i18n";
 import { useState, useEffect } from "react";
-
-const navItems = [
-  { path: "/", label: "🏠 בית", labelEn: "Home" },
-  { path: "/levels", label: "🗺️ רמות", labelEn: "Levels" },
-  { path: "/alphabet", label: "🔤 אלפבית", labelEn: "ABC" },
-  { path: "/words", label: "📝 מילים", labelEn: "Words" },
-  { path: "/memory", label: "🧩 התאמה", labelEn: "Match" },
-  { path: "/quiz", label: "🎯 חידון", labelEn: "Quiz" },
-];
 
 const AppHeader = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t, lang, setLang } = useLanguage();
   const [stars, setStars] = useState(0);
+
+  const navItems = [
+    { path: "/", label: t("nav.home") },
+    { path: "/levels", label: t("nav.levels") },
+    { path: "/alphabet", label: t("nav.alphabet") },
+    { path: "/words", label: t("nav.words") },
+    { path: "/memory", label: t("nav.memory") },
+    { path: "/quiz", label: t("nav.quiz") },
+  ];
 
   useEffect(() => {
     setStars(getTotalEarnedStars());
@@ -63,16 +65,29 @@ const AppHeader = () => {
           })}
         </nav>
 
-        <motion.div
-          className="flex items-center gap-1 bg-sunshine/20 px-3 py-1.5 rounded-full"
-          animate={{ scale: [1, 1.05, 1] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          <Star className="w-5 h-5 star-earned fill-current" />
-          <span className="font-display font-bold text-sunshine-foreground">
-            {stars}
-          </span>
-        </motion.div>
+        <div className="flex items-center gap-2">
+          {/* Language Switcher */}
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setLang(lang === "he" ? "ar" : "he")}
+            className="flex items-center gap-1 bg-muted px-3 py-1.5 rounded-full font-display text-xs font-bold transition-colors hover:bg-muted/80"
+          >
+            <span>{lang === "he" ? "🇮🇱" : "🇸🇦"}</span>
+            <span>{lang === "he" ? "عربي" : "עברית"}</span>
+          </motion.button>
+
+          <motion.div
+            className="flex items-center gap-1 bg-sunshine/20 px-3 py-1.5 rounded-full"
+            animate={{ scale: [1, 1.05, 1] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            <Star className="w-5 h-5 star-earned fill-current" />
+            <span className="font-display font-bold text-sunshine-foreground">
+              {stars}
+            </span>
+          </motion.div>
+        </div>
       </div>
     </motion.header>
   );
