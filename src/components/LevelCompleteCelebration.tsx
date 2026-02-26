@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useLanguage } from "@/lib/i18n";
+import { useLanguage, Language } from "@/lib/i18n";
 import Confetti from "./Confetti";
 
 interface Props {
@@ -10,12 +10,13 @@ interface Props {
   onClose: () => void;
 }
 
-const messages: Record<string, Record<"he" | "ar", string>> = {
-  title: { he: "🎉 כל הכבוד!", ar: "🎉 أحسنت!" },
-  completed: { he: "סיימת את הרמה!", ar: "أكملت المستوى!" },
-  allStars: { he: "אספת את כל הכוכבים! ⭐", ar: "جمعت كل النجوم! ⭐" },
-  champion: { he: "אתה אלוף אמיתי!", ar: "أنت بطل حقيقي!" },
-  continue: { he: "יאללה, קדימה! 🚀", ar: "يلا، نكمل! 🚀" },
+const messages: Record<string, Record<Language, string>> = {
+  title: { he: "🎉 כל הכבוד!", ar: "🎉 أحسنت!", en: "🎉 Well Done!" },
+  completed: { he: "סיימת את הרמה!", ar: "أكملت المستوى!", en: "Level Complete!" },
+  allStars: { he: "אספת את כל הכוכבים! ⭐", ar: "جمعت كل النجوم! ⭐", en: "You collected all the stars! ⭐" },
+  champion: { he: "אתה אלוף אמיתי!", ar: "أنت بطل حقيقي!", en: "You're a real champion!" },
+  continue: { he: "יאללה, קדימה! 🚀", ar: "يلا، نكمل! 🚀", en: "Let's go! 🚀" },
+  level: { he: "רמה", ar: "مستوى", en: "Level" },
 };
 
 const LevelCompleteCelebration = ({ show, levelNumber, levelEmoji, totalStars, onClose }: Props) => {
@@ -28,7 +29,7 @@ const LevelCompleteCelebration = ({ show, levelNumber, levelEmoji, totalStars, o
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-md"
           onClick={onClose}
         >
           <Confetti show={show} />
@@ -42,7 +43,7 @@ const LevelCompleteCelebration = ({ show, levelNumber, levelEmoji, totalStars, o
           >
             {/* Sparkle background */}
             <div className="absolute inset-0 pointer-events-none">
-              {[...Array(12)].map((_, i) => (
+              {[...Array(15)].map((_, i) => (
                 <motion.div
                   key={i}
                   className="absolute text-xl"
@@ -50,12 +51,12 @@ const LevelCompleteCelebration = ({ show, levelNumber, levelEmoji, totalStars, o
                   animate={{
                     opacity: [0, 1, 0],
                     scale: [0, 1.2, 0],
-                    x: [0, (Math.random() - 0.5) * 60],
-                    y: [0, (Math.random() - 0.5) * 60],
+                    x: [0, (Math.random() - 0.5) * 80],
+                    y: [0, (Math.random() - 0.5) * 80],
                   }}
                   transition={{
                     duration: 2,
-                    delay: i * 0.15,
+                    delay: i * 0.12,
                     repeat: Infinity,
                     repeatDelay: 1,
                   }}
@@ -69,11 +70,13 @@ const LevelCompleteCelebration = ({ show, levelNumber, levelEmoji, totalStars, o
               ))}
             </div>
 
-            {/* Trophy animation */}
+            <div className="absolute inset-0 bg-gradient-to-br from-sunshine/5 to-primary/5 pointer-events-none" />
+
+            {/* Trophy */}
             <motion.div
               animate={{ scale: [1, 1.2, 1], rotate: [0, -5, 5, 0] }}
               transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 0.5 }}
-              className="text-7xl mb-4"
+              className="text-7xl mb-4 relative z-10"
             >
               🏆
             </motion.div>
@@ -82,33 +85,20 @@ const LevelCompleteCelebration = ({ show, levelNumber, levelEmoji, totalStars, o
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="text-3xl font-display font-bold text-gradient mb-2"
+              className="text-3xl font-display font-bold text-gradient mb-2 relative z-10"
             >
               {messages.title[lang]}
             </motion.h2>
 
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.5 }}
-            >
-              <p className="text-xl font-display mb-1">
-                {messages.completed[lang]}
-              </p>
+            <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }} className="relative z-10">
+              <p className="text-xl font-display mb-1">{messages.completed[lang]}</p>
               <div className="inline-flex items-center gap-2 bg-accent/20 px-4 py-2 rounded-full mb-3">
                 <span className="text-2xl">{levelEmoji}</span>
-                <span className="font-display font-bold text-lg">
-                  {lang === "he" ? "רמה" : "مستوى"} {levelNumber}
-                </span>
+                <span className="font-display font-bold text-lg">{messages.level[lang]} {levelNumber}</span>
               </div>
             </motion.div>
 
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.7, type: "spring" }}
-              className="my-4"
-            >
+            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.7, type: "spring" }} className="my-4 relative z-10">
               <div className="flex justify-center gap-1 mb-2">
                 {[...Array(totalStars)].map((_, i) => (
                   <motion.span
@@ -122,16 +112,14 @@ const LevelCompleteCelebration = ({ show, levelNumber, levelEmoji, totalStars, o
                   </motion.span>
                 ))}
               </div>
-              <p className="text-muted-foreground font-body text-sm">
-                {messages.allStars[lang]}
-              </p>
+              <p className="text-muted-foreground font-body text-sm">{messages.allStars[lang]}</p>
             </motion.div>
 
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1.2 }}
-              className="text-lg font-display font-semibold text-primary mb-4"
+              className="text-lg font-display font-semibold text-primary mb-4 relative z-10"
             >
               {messages.champion[lang]}
             </motion.p>
@@ -143,7 +131,7 @@ const LevelCompleteCelebration = ({ show, levelNumber, levelEmoji, totalStars, o
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={onClose}
-              className="btn-kid gradient-primary text-primary-foreground text-lg px-8"
+              className="btn-kid gradient-primary text-primary-foreground text-lg px-8 relative z-10"
             >
               {messages.continue[lang]}
             </motion.button>
