@@ -38,8 +38,11 @@ const HangmanGame = () => {
   const { popups, addPopup } = useScorePopups();
 
   useEffect(() => {
-    const all = shuffleArray(getSpellingWords(7));
-    setWords(all.slice(0, TOTAL_ROUNDS));
+    // Mix short and long words for variety
+    const short = shuffleArray(getSpellingWords(5)).slice(0, 3);
+    const medium = shuffleArray(getSpellingWords(7).filter(w => w.english.length > 4)).slice(0, 3);
+    const long = shuffleArray(getSpellingWords(9).filter(w => w.english.length > 6)).slice(0, 2);
+    setWords(shuffleArray([...short, ...medium, ...long]).slice(0, TOTAL_ROUNDS));
   }, []);
 
   useEffect(() => {
@@ -103,8 +106,10 @@ const HangmanGame = () => {
   };
 
   const restart = () => {
-    const all = shuffleArray(getSpellingWords(7));
-    setWords(all.slice(0, TOTAL_ROUNDS));
+    const short = shuffleArray(getSpellingWords(5)).slice(0, 3);
+    const medium = shuffleArray(getSpellingWords(7).filter(w => w.english.length > 4)).slice(0, 3);
+    const long = shuffleArray(getSpellingWords(9).filter(w => w.english.length > 6)).slice(0, 2);
+    setWords(shuffleArray([...short, ...medium, ...long]).slice(0, TOTAL_ROUNDS));
     setCurrentIndex(0);
     setScore(0);
     setStreak(0);

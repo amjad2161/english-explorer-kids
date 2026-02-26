@@ -679,6 +679,6 @@ export const getWordTranslation = (word: WordCard, lang: Language) =>
 export const getAllWords = (): WordCard[] =>
   wordCategories.flatMap(cat => cat.words);
 
-/** Get words suitable for spelling games (3-7 letter words) */
+/** Get words suitable for spelling games (filtered by max length, no spaces) */
 export const getSpellingWords = (maxLen = 7): WordCard[] =>
-  getAllWords().filter(w => w.english.length <= maxLen && !w.english.includes(" "));
+  getAllWords().filter(w => w.english.length <= maxLen && w.english.length >= 3 && !w.english.includes(" "));
