@@ -1,32 +1,27 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { wordCategories, WordCard } from "@/data/learningData";
-import { speakEnglish, speakHebrew, playClickSound, playStarSound } from "@/lib/sounds";
+import { useLanguage } from "@/lib/i18n";
+import { wordCategories, WordCard, getCategoryName, getWordTranslation } from "@/data/learningData";
+import { speakEnglish, playClickSound, playStarSound } from "@/lib/sounds";
 import { addCompletedWord } from "@/lib/progress";
 import { saveStageProgress } from "@/lib/levels";
 import Confetti from "@/components/Confetti";
 import { Volume2, ArrowRight } from "lucide-react";
 
 const categoryGradients: Record<string, string> = {
-  grass: "gradient-grass",
-  candy: "gradient-candy",
-  sky: "gradient-sky",
-  sunshine: "gradient-primary",
-  lavender: "gradient-lavender",
+  grass: "gradient-grass", candy: "gradient-candy", sky: "gradient-sky",
+  sunshine: "gradient-primary", lavender: "gradient-lavender",
 };
-
 const categoryBgs: Record<string, string> = {
-  grass: "bg-grass-light",
-  candy: "bg-candy-light",
-  sky: "bg-sky-light",
-  sunshine: "bg-sunshine-light",
-  lavender: "bg-lavender-light",
+  grass: "bg-grass-light", candy: "bg-candy-light", sky: "bg-sky-light",
+  sunshine: "bg-sunshine-light", lavender: "bg-lavender-light",
 };
 
 const WordsPage = () => {
   const [searchParams] = useSearchParams();
   const stageId = searchParams.get("stage");
+  const { t, lang } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [flippedCards, setFlippedCards] = useState<Set<string>>(new Set());
   const [learnedWords, setLearnedWords] = useState<Set<string>>(new Set());
@@ -37,12 +32,7 @@ const WordsPage = () => {
     const key = word.english;
     setFlippedCards((prev) => {
       const next = new Set(prev);
-      if (next.has(key)) {
-        next.delete(key);
-      } else {
-        next.add(key);
-        speakEnglish(word.english);
-      }
+      if (next.has(key)) { next.delete(key); } else { next.add(key); speakEnglish(word.english); }
       return next;
     });
   };
@@ -55,9 +45,7 @@ const WordsPage = () => {
       playStarSound();
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 100);
-      if (stageId) {
-        saveStageProgress(stageId, Math.min(newLearned.size, 4));
-      }
+      if (stageId) saveStageProgress(stageId, Math.min(newLearned.size, 4));
     }
   };
 
@@ -65,161 +53,77 @@ const WordsPage = () => {
     <div className="min-h-screen" dir="rtl">
       <Confetti show={showConfetti} />
       <div className="max-w-5xl mx-auto px-4 py-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
-        >
-          <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">
-            📝 מילים ראשונות
-          </h1>
-          <p className="text-muted-foreground font-body">
-            בחר קטגוריה ולמד מילים חדשות!
-          </p>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
+          <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">{t("words.title")}</h1>
+          <p className="text-muted-foreground font-body">{t("words.subtitle")}</p>
         </motion.div>
 
         <AnimatePresence mode="wait">
           {selectedCategory === null ? (
-            <motion.div
-              key="categories"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-4"
-            >
+            <motion.div key="categories" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {wordCategories.map((cat, index) => (
-                <motion.button
-                  key={cat.name}
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
+                <motion.button key={cat.nameEn}
+                  initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: index * 0.1, type: "spring" }}
-                  whileHover={{ y: -6, scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => {
-                    playClickSound();
-                    setSelectedCategory(index);
-                  }}
-                  className="card-kid text-center"
-                >
-                  <div
-                    className={`${categoryGradients[cat.color]} w-20 h-20 rounded-2xl mx-auto mb-3 flex items-center justify-center`}
-                  >
+                  whileHover={{ y: -6, scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                  onClick={() => { playClickSound(); setSelectedCategory(index); }}
+                  className="card-kid text-center">
+                  <div className={`${categoryGradients[cat.color]} w-20 h-20 rounded-2xl mx-auto mb-3 flex items-center justify-center`}>
                     <span className="text-4xl">{cat.emoji}</span>
                   </div>
-                  <h3 className="font-display text-lg font-bold">{cat.name}</h3>
+                  <h3 className="font-display text-lg font-bold">{getCategoryName(cat, lang)}</h3>
                   <p className="text-sm text-muted-foreground">{cat.nameEn}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {cat.words.length} מילים
-                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">{cat.words.length} {t("words.numWords")}</p>
                 </motion.button>
               ))}
             </motion.div>
           ) : (
-            <motion.div
-              key="words"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-            >
-              <motion.button
-                onClick={() => {
-                  setSelectedCategory(null);
-                  setFlippedCards(new Set());
-                }}
-                className="flex items-center gap-2 mb-6 font-display font-semibold text-primary hover:text-primary/80 transition-colors"
-                whileHover={{ x: 4 }}
-              >
-                <ArrowRight className="w-4 h-4" />
-                חזרה לקטגוריות
+            <motion.div key="words" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
+              <motion.button onClick={() => { setSelectedCategory(null); setFlippedCards(new Set()); }}
+                className="flex items-center gap-2 mb-6 font-display font-semibold text-primary hover:text-primary/80 transition-colors" whileHover={{ x: 4 }}>
+                <ArrowRight className="w-4 h-4" />{t("words.backToCategories")}
               </motion.button>
-
               <div className="text-center mb-6">
-                <span className="text-4xl mb-2 block">
-                  {wordCategories[selectedCategory].emoji}
-                </span>
-                <h2 className="font-display text-2xl font-bold">
-                  {wordCategories[selectedCategory].name}
-                </h2>
+                <span className="text-4xl mb-2 block">{wordCategories[selectedCategory].emoji}</span>
+                <h2 className="font-display text-2xl font-bold">{getCategoryName(wordCategories[selectedCategory], lang)}</h2>
               </div>
-
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {wordCategories[selectedCategory].words.map((word, index) => {
                   const isFlipped = flippedCards.has(word.english);
                   const isLearned = learnedWords.has(word.english);
                   const colorClass = categoryBgs[wordCategories[selectedCategory].color];
-
                   return (
-                    <motion.div
-                      key={word.english}
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ delay: index * 0.08, type: "spring" }}
-                    >
-                      <motion.div
-                        whileHover={{ y: -4 }}
-                        whileTap={{ scale: 0.95 }}
+                    <motion.div key={word.english}
+                      initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: index * 0.08, type: "spring" }}>
+                      <motion.div whileHover={{ y: -4 }} whileTap={{ scale: 0.95 }}
                         onClick={() => handleCardFlip(word)}
-                        className={`card-kid cursor-pointer text-center relative overflow-hidden ${colorClass}`}
-                      >
-                        {isLearned && (
-                          <span className="absolute top-2 left-2 text-lg">⭐</span>
-                        )}
-                        
+                        className={`card-kid cursor-pointer text-center relative overflow-hidden ${colorClass}`}>
+                        {isLearned && <span className="absolute top-2 left-2 text-lg">⭐</span>}
                         <span className="text-5xl mb-3 block">{word.emoji}</span>
-                        
                         <AnimatePresence mode="wait">
                           {isFlipped ? (
-                            <motion.div
-                              key="english"
-                              initial={{ rotateY: 90 }}
-                              animate={{ rotateY: 0 }}
-                              exit={{ rotateY: -90 }}
-                              transition={{ duration: 0.2 }}
-                            >
-                              <p className="font-display text-2xl font-bold mb-1">
-                                {word.english}
-                              </p>
-                              <p className="text-sm text-muted-foreground">
-                                {word.hebrew}
-                              </p>
+                            <motion.div key="english" initial={{ rotateY: 90 }} animate={{ rotateY: 0 }} exit={{ rotateY: -90 }} transition={{ duration: 0.2 }}>
+                              <p className="font-display text-2xl font-bold mb-1">{word.english}</p>
+                              <p className="text-sm text-muted-foreground">{getWordTranslation(word, lang)}</p>
                               <div className="flex gap-2 mt-3 justify-center">
-                                <motion.button
-                                  whileTap={{ scale: 0.9 }}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    speakEnglish(word.english);
-                                  }}
-                                  className="btn-kid gradient-sky text-secondary-foreground text-xs px-3 py-2 flex items-center gap-1"
-                                >
-                                  <Volume2 className="w-3 h-3" />
-                                  השמע
+                                <motion.button whileTap={{ scale: 0.9 }}
+                                  onClick={(e) => { e.stopPropagation(); speakEnglish(word.english); }}
+                                  className="btn-kid gradient-sky text-secondary-foreground text-xs px-3 py-2 flex items-center gap-1">
+                                  <Volume2 className="w-3 h-3" />{t("words.listen")}
                                 </motion.button>
-                                <motion.button
-                                  whileTap={{ scale: 0.9 }}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleLearnWord(word);
-                                  }}
-                                  className="btn-kid gradient-primary text-primary-foreground text-xs px-3 py-2"
-                                >
-                                  ⭐ למדתי
+                                <motion.button whileTap={{ scale: 0.9 }}
+                                  onClick={(e) => { e.stopPropagation(); handleLearnWord(word); }}
+                                  className="btn-kid gradient-primary text-primary-foreground text-xs px-3 py-2">
+                                  {t("words.iLearned")}
                                 </motion.button>
                               </div>
                             </motion.div>
                           ) : (
-                            <motion.div
-                              key="hebrew"
-                              initial={{ rotateY: -90 }}
-                              animate={{ rotateY: 0 }}
-                              exit={{ rotateY: 90 }}
-                              transition={{ duration: 0.2 }}
-                            >
-                              <p className="font-display text-xl font-bold">
-                                {word.hebrew}
-                              </p>
-                              <p className="text-xs text-muted-foreground mt-1">
-                                לחץ לגלות! 👆
-                              </p>
+                            <motion.div key="native" initial={{ rotateY: -90 }} animate={{ rotateY: 0 }} exit={{ rotateY: 90 }} transition={{ duration: 0.2 }}>
+                              <p className="font-display text-xl font-bold">{getWordTranslation(word, lang)}</p>
+                              <p className="text-xs text-muted-foreground mt-1">{t("words.tapToReveal")}</p>
                             </motion.div>
                           )}
                         </AnimatePresence>
