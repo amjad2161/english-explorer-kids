@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Star, Globe, Trophy } from "lucide-react";
+import { Star, Globe, Trophy, RotateCcw } from "lucide-react";
 import { getTotalEarnedStars } from "@/lib/levels";
 import { getUnlockedAchievements } from "@/lib/achievements";
 import { useLanguage, Language } from "@/lib/i18n";
@@ -146,6 +146,19 @@ const AppHeader = () => {
                       {lang === opt.code && <span className="ms-auto text-primary">✓</span>}
                     </motion.button>
                   ))}
+                  <div className="border-t border-border my-1" />
+                  <motion.button
+                    whileHover={{ x: 4 }}
+                    onClick={() => {
+                      localStorage.removeItem("english-fun-onboarded");
+                      setLangMenuOpen(false);
+                      window.location.reload();
+                    }}
+                    className="flex items-center gap-2.5 w-full px-4 py-3 font-display text-sm font-semibold text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    <span>{lang === "he" ? "מסך פתיחה" : lang === "ar" ? "شاشة الترحيب" : "Welcome Screen"}</span>
+                  </motion.button>
                 </motion.div>
               )}
             </AnimatePresence>
