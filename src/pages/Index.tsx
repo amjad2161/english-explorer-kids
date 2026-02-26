@@ -17,7 +17,7 @@ const itemVariants = {
 
 const Index = () => {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, dir } = useLanguage();
   const [totalStars, setTotalStars] = useState(0);
   const [currentLevel, setCurrentLevel] = useState(1);
 
@@ -41,7 +41,7 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen" dir="rtl">
+    <div className="min-h-screen" dir={dir}>
       <motion.div variants={containerVariants} initial="hidden" animate="visible" className="max-w-5xl mx-auto px-4 py-8">
         {/* Hero */}
         <motion.div variants={itemVariants} className="text-center mb-8">
