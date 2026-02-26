@@ -66,13 +66,9 @@ const AppHeader = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <motion.span
-            className="text-3xl"
-            animate={{ rotate: [0, -10, 10, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          >
+          <span className="text-3xl">
             🦉
-          </motion.span>
+          </span>
           <h1 className="text-xl font-display font-bold text-gradient hidden sm:block">
             English Fun
           </h1>
@@ -93,15 +89,10 @@ const AppHeader = () => {
                 }`}
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.92 }}
-                layout
               >
                 {item.label}
                 {isActive && (
-                  <motion.div
-                    layoutId="nav-indicator"
-                    className="absolute -bottom-1 left-1/2 w-1.5 h-1.5 rounded-full bg-primary"
-                    style={{ marginLeft: "-3px" }}
-                  />
+                  <div className="absolute -bottom-1 left-1/2 w-1.5 h-1.5 rounded-full bg-primary" style={{ marginLeft: "-3px" }} />
                 )}
               </motion.button>
             );
@@ -180,16 +171,12 @@ const AppHeader = () => {
           )}
 
           {/* Stars */}
-          <motion.div
-            className="flex items-center gap-1 bg-sunshine/15 px-2.5 py-1.5 rounded-full"
-            animate={{ scale: [1, 1.04, 1] }}
-            transition={{ duration: 3, repeat: Infinity }}
-          >
+          <div className="flex items-center gap-1 bg-sunshine/15 px-2.5 py-1.5 rounded-full">
             <Star className="w-4 h-4 star-earned fill-current" />
             <span className="font-display font-bold text-xs text-sunshine-foreground">
               {stars}
             </span>
-          </motion.div>
+          </div>
         </div>
       </div>
     </motion.header>
