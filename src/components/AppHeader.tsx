@@ -8,6 +8,7 @@ const navItems = [
   { path: "/", label: "🏠 בית", labelEn: "Home" },
   { path: "/alphabet", label: "🔤 אלפבית", labelEn: "ABC" },
   { path: "/words", label: "📝 מילים", labelEn: "Words" },
+  { path: "/memory", label: "🧩 התאמה", labelEn: "Match" },
   { path: "/quiz", label: "🎯 חידון", labelEn: "Quiz" },
 ];
 
