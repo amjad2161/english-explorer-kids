@@ -18,6 +18,9 @@ const AppHeader = () => {
     { path: "/words", label: t("nav.words") },
     { path: "/memory", label: t("nav.memory") },
     { path: "/quiz", label: t("nav.quiz") },
+    { path: "/spelling", label: t("nav.spelling") },
+    { path: "/scramble", label: t("nav.scramble") },
+    { path: "/hangman", label: t("nav.hangman") },
   ];
 
   useEffect(() => {
@@ -44,14 +47,14 @@ const AppHeader = () => {
           </h1>
         </motion.div>
 
-        <nav className="flex items-center gap-1">
+        <nav className="flex items-center gap-1 overflow-x-auto max-w-[50vw] scrollbar-hide">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
               <motion.button
                 key={item.path}
                 onClick={() => navigate(item.path)}
-                className={`px-3 py-2 rounded-xl font-display text-sm font-semibold transition-colors ${
+                className={`px-2 py-1.5 rounded-xl font-display text-xs font-semibold transition-colors whitespace-nowrap ${
                   isActive
                     ? "gradient-primary text-primary-foreground"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
