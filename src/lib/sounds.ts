@@ -1,6 +1,18 @@
 // Sound utility using Web Speech API for kid-friendly pronunciation
+
+const SOUND_KEY = "english-fun-sound-enabled";
+const MUSIC_KEY = "english-fun-music-enabled";
+
+export const isSoundEnabled = (): boolean => localStorage.getItem(SOUND_KEY) !== "false";
+export const isMusicEnabled = (): boolean => localStorage.getItem(MUSIC_KEY) !== "false";
+export const setSoundEnabled = (v: boolean) => localStorage.setItem(SOUND_KEY, String(v));
+export const setMusicEnabled = (v: boolean) => {
+  localStorage.setItem(MUSIC_KEY, String(v));
+  if (!v) stopBgMusic();
+};
+
 export const speak = (text: string, lang: string = 'en-US', rate: number = 0.8) => {
-  if (!('speechSynthesis' in window)) return;
+  if (!('speechSynthesis' in window) || !isSoundEnabled()) return;
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = lang;
@@ -23,7 +35,7 @@ export const speakHebrew = (text: string) => speak(text, 'he-IL', 0.85);
 const audioCtx = typeof window !== 'undefined' ? new (window.AudioContext || (window as any).webkitAudioContext)() : null;
 
 const playTone = (freq: number, start: number, dur: number, vol = 0.3, type: OscillatorType = 'sine') => {
-  if (!audioCtx) return;
+  if (!audioCtx || !isSoundEnabled()) return;
   const osc = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
   osc.connect(gain);
@@ -91,4 +103,59 @@ export const playVictoryFanfare = () => {
 export const playLetterPopSound = (index: number) => {
   if (!audioCtx) return;
   playTone(300 + index * 80, audioCtx.currentTime, 0.12, 0.15);
+};
+
+export const playWelcomeChime = () => {
+  if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  const notes = [392, 440, 523, 659, 784];
+  notes.forEach((freq, i) => playTone(freq, t + i * 0.18, 0.35, 0.2));
+};
+
+export const playSelectSound = () => {
+  if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  playTone(440, t, 0.1, 0.2);
+  playTone(660, t + 0.08, 0.15, 0.2);
+  playTone(880, t + 0.16, 0.2, 0.15);
+};
+
+// ─── Background Music (simple synthesised loop) ───
+let bgMusicInterval: ReturnType<typeof setInterval> | null = null;
+let bgMusicGain: GainNode | null = null;
+
+const bgMelody = [
+  262, 294, 330, 349, 392, 349, 330, 294,
+  262, 330, 392, 523, 392, 330, 294, 262,
+];
+
+export const startBgMusic = () => {
+  if (!audioCtx || !isMusicEnabled() || bgMusicInterval) return;
+
+  bgMusicGain = audioCtx.createGain();
+  bgMusicGain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+  bgMusicGain.connect(audioCtx.destination);
+
+  let noteIndex = 0;
+  const playNote = () => {
+    if (!audioCtx || !bgMusicGain || !isMusicEnabled()) { stopBgMusic(); return; }
+    const osc = audioCtx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(bgMelody[noteIndex % bgMelody.length], audioCtx.currentTime);
+    osc.connect(bgMusicGain);
+    osc.start(audioCtx.currentTime);
+    osc.stop(audioCtx.currentTime + 0.4);
+    noteIndex++;
+  };
+
+  playNote();
+  bgMusicInterval = setInterval(playNote, 500);
+};
+
+export const stopBgMusic = () => {
+  if (bgMusicInterval) {
+    clearInterval(bgMusicInterval);
+    bgMusicInterval = null;
+  }
+  bgMusicGain = null;
 };
