@@ -1,8 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useCallback, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { wordCategories } from "@/data/learningData";
 import { playCorrectSound, playWrongSound, playClickSound, playStarSound } from "@/lib/sounds";
 import { addQuizScore } from "@/lib/progress";
+import { saveStageProgress } from "@/lib/levels";
 import StarRating from "@/components/StarRating";
 import Confetti from "@/components/Confetti";
 import { ArrowRight, RotateCcw } from "lucide-react";
@@ -15,6 +17,8 @@ interface MemoryCard {
 }
 
 const MemoryGame = () => {
+  const [searchParams] = useSearchParams();
+  const stageId = searchParams.get("stage");
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [cards, setCards] = useState<MemoryCard[]>([]);
   const [flipped, setFlipped] = useState<string[]>([]);
@@ -76,6 +80,9 @@ const MemoryGame = () => {
             // Game complete
             const stars = moves < 8 ? 3 : moves < 12 ? 2 : 1;
             addQuizScore(stars);
+            if (stageId) {
+              saveStageProgress(stageId, stars);
+            }
             playStarSound();
             setShowConfetti(true);
             setGameComplete(true);

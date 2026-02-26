@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Star } from "lucide-react";
-import { getProgress } from "@/lib/progress";
+import { getTotalEarnedStars } from "@/lib/levels";
 import { useState, useEffect } from "react";
 
 const navItems = [
   { path: "/", label: "🏠 בית", labelEn: "Home" },
+  { path: "/levels", label: "🗺️ רמות", labelEn: "Levels" },
   { path: "/alphabet", label: "🔤 אלפבית", labelEn: "ABC" },
   { path: "/words", label: "📝 מילים", labelEn: "Words" },
   { path: "/memory", label: "🧩 התאמה", labelEn: "Match" },
@@ -18,7 +19,7 @@ const AppHeader = () => {
   const [stars, setStars] = useState(0);
 
   useEffect(() => {
-    setStars(getProgress().totalStars);
+    setStars(getTotalEarnedStars());
   }, [location]);
 
   return (

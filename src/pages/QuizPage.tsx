@@ -1,8 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import { quizQuestions } from "@/data/learningData";
 import { speakEnglish, playCorrectSound, playWrongSound, playStarSound } from "@/lib/sounds";
 import { addQuizScore } from "@/lib/progress";
+import { saveStageProgress } from "@/lib/levels";
 import StarRating from "@/components/StarRating";
 import Confetti from "@/components/Confetti";
 
@@ -14,6 +16,8 @@ const optionColors = [
 ];
 
 const QuizPage = () => {
+  const [searchParams] = useSearchParams();
+  const stageId = searchParams.get("stage");
   const [currentQ, setCurrentQ] = useState(0);
   const [score, setScore] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
@@ -51,6 +55,9 @@ const QuizPage = () => {
           const finalScore = correct ? score + 1 : score;
           addQuizScore(finalScore);
           setIsFinished(true);
+          if (stageId) {
+            saveStageProgress(stageId, finalScore);
+          }
           if (finalScore >= 3) {
             playStarSound();
             setShowConfetti(true);

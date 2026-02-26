@@ -1,8 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { alphabet } from "@/data/learningData";
 import { speakEnglish, playClickSound, playStarSound } from "@/lib/sounds";
 import { addCompletedLetter } from "@/lib/progress";
+import { saveStageProgress } from "@/lib/levels";
 import StarRating from "@/components/StarRating";
 import Confetti from "@/components/Confetti";
 import { ChevronRight, ChevronLeft, Volume2 } from "lucide-react";
@@ -16,6 +18,8 @@ const letterColors = [
 ];
 
 const AlphabetPage = () => {
+  const [searchParams] = useSearchParams();
+  const stageId = searchParams.get("stage");
   const [selectedLetter, setSelectedLetter] = useState<number | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [learnedLetters, setLearnedLetters] = useState<string[]>([]);
@@ -33,11 +37,16 @@ const AlphabetPage = () => {
     speakEnglish(`${letter.letter} is for ${letter.word}`);
     
     if (!learnedLetters.includes(letter.letter)) {
-      setLearnedLetters((prev) => [...prev, letter.letter]);
+      const newLearned = [...learnedLetters, letter.letter];
+      setLearnedLetters(newLearned);
       addCompletedLetter(letter.letter);
       playStarSound();
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 100);
+      // Save stage progress
+      if (stageId) {
+        saveStageProgress(stageId, Math.min(newLearned.length, 5));
+      }
     }
   };
 

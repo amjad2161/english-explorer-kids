@@ -1,8 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { wordCategories, WordCard } from "@/data/learningData";
 import { speakEnglish, speakHebrew, playClickSound, playStarSound } from "@/lib/sounds";
 import { addCompletedWord } from "@/lib/progress";
+import { saveStageProgress } from "@/lib/levels";
 import Confetti from "@/components/Confetti";
 import { Volume2, ArrowRight } from "lucide-react";
 
@@ -23,6 +25,8 @@ const categoryBgs: Record<string, string> = {
 };
 
 const WordsPage = () => {
+  const [searchParams] = useSearchParams();
+  const stageId = searchParams.get("stage");
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [flippedCards, setFlippedCards] = useState<Set<string>>(new Set());
   const [learnedWords, setLearnedWords] = useState<Set<string>>(new Set());
@@ -45,11 +49,15 @@ const WordsPage = () => {
 
   const handleLearnWord = (word: WordCard) => {
     if (!learnedWords.has(word.english)) {
-      setLearnedWords((prev) => new Set(prev).add(word.english));
+      const newLearned = new Set(learnedWords).add(word.english);
+      setLearnedWords(newLearned);
       addCompletedWord(word.english);
       playStarSound();
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 100);
+      if (stageId) {
+        saveStageProgress(stageId, Math.min(newLearned.size, 4));
+      }
     }
   };
 

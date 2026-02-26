@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getProgress } from "@/lib/progress";
+import { getCurrentLevel, getTotalEarnedStars, levels, getLevelProgress } from "@/lib/levels";
 import mascotImg from "@/assets/mascot.png";
 import alphabetImg from "@/assets/alphabet-hero.png";
 import wordsImg from "@/assets/words-hero.png";
@@ -20,55 +21,26 @@ const itemVariants = {
   visible: { y: 0, opacity: 1, transition: { type: "spring" as const, stiffness: 200 } },
 };
 
-const lessonCards = [
-  {
-    title: "האלפבית",
-    titleEn: "Alphabet",
-    description: "למד את כל 26 האותיות באנגלית!",
-    path: "/alphabet",
-    image: alphabetImg,
-    gradient: "gradient-sky",
-    emoji: "🔤",
-  },
-  {
-    title: "מילים ראשונות",
-    titleEn: "First Words",
-    description: "למד מילים בסיסיות בנושאים שונים",
-    path: "/words",
-    image: wordsImg,
-    gradient: "gradient-grass",
-    emoji: "📝",
-  },
-  {
-    title: "משחק התאמה",
-    titleEn: "Memory Match",
-    description: "התאם מילים באנגלית לתמונות!",
-    path: "/memory",
-    image: quizImg,
-    gradient: "gradient-lavender",
-    emoji: "🧩",
-  },
-  {
-    title: "חידון כיף",
-    titleEn: "Fun Quiz",
-    description: "בדוק את מה שלמדת במשחק שאלות!",
-    path: "/quiz",
-    image: quizImg,
-    gradient: "gradient-candy",
-    emoji: "🎯",
-  },
+const quickAccessCards = [
+  { title: "אלפבית", emoji: "🔤", path: "/alphabet", gradient: "gradient-sky" },
+  { title: "מילים", emoji: "📝", path: "/words", gradient: "gradient-grass" },
+  { title: "התאמה", emoji: "🧩", path: "/memory", gradient: "gradient-lavender" },
+  { title: "חידון", emoji: "🎯", path: "/quiz", gradient: "gradient-candy" },
 ];
 
 const Index = () => {
   const navigate = useNavigate();
-  const [progress, setProgress] = useState(getProgress());
+  const [totalStars, setTotalStars] = useState(0);
+  const [currentLevel, setCurrentLevel] = useState(1);
 
   useEffect(() => {
-    setProgress(getProgress());
+    setTotalStars(getTotalEarnedStars());
+    setCurrentLevel(getCurrentLevel());
   }, []);
 
-  const totalProgress =
-    progress.completedLetters.length + progress.completedWords.length;
+  const level = levels[currentLevel - 1];
+  const levelProgress = getLevelProgress(level);
+  const nextLevel = levels[currentLevel] || null;
 
   return (
     <div className="min-h-screen" dir="rtl">
@@ -79,14 +51,11 @@ const Index = () => {
         className="max-w-5xl mx-auto px-4 py-8"
       >
         {/* Hero Section */}
-        <motion.div
-          variants={itemVariants}
-          className="text-center mb-10"
-        >
+        <motion.div variants={itemVariants} className="text-center mb-8">
           <motion.img
             src={mascotImg}
             alt="Owl mascot"
-            className="w-32 h-32 mx-auto mb-4 drop-shadow-lg"
+            className="w-28 h-28 mx-auto mb-4 drop-shadow-lg"
             animate={{ y: [0, -8, 0] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           />
@@ -98,55 +67,76 @@ const Index = () => {
           </p>
         </motion.div>
 
-        {/* Progress Bar */}
-        {totalProgress > 0 && (
-          <motion.div variants={itemVariants} className="mb-8 max-w-md mx-auto">
-            <div className="flex justify-between mb-2">
-              <span className="font-display font-semibold text-sm">ההתקדמות שלי</span>
-              <span className="font-display font-semibold text-sm text-primary">
-                ⭐ {progress.totalStars} כוכבים
-              </span>
+        {/* Current Level Card */}
+        <motion.div
+          variants={itemVariants}
+          whileHover={{ y: -4 }}
+          onClick={() => navigate("/levels")}
+          className="card-kid cursor-pointer max-w-lg mx-auto mb-8 relative overflow-hidden"
+        >
+          <div className={`absolute inset-0 ${level.gradient} opacity-10`} />
+          <div className="relative flex items-center gap-4">
+            <div className={`w-16 h-16 rounded-2xl ${level.gradient} flex items-center justify-center text-3xl shrink-0`}>
+              {level.emoji}
             </div>
-            <div className="progress-bar h-4">
-              <div
-                className="progress-bar-fill"
-                style={{ width: `${Math.min((totalProgress / 50) * 100, 100)}%` }}
-              />
-            </div>
-          </motion.div>
-        )}
-
-        {/* Lesson Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
-          {lessonCards.map((card, index) => (
-            <motion.div
-              key={card.path}
-              variants={itemVariants}
-              whileHover={{ y: -8, scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={() => navigate(card.path)}
-              className="card-kid cursor-pointer overflow-hidden group"
-            >
-              <div className={`${card.gradient} rounded-2xl p-4 mb-4 flex items-center justify-center`}>
-                <motion.img
-                  src={card.image}
-                  alt={card.titleEn}
-                  className="w-36 h-36 object-contain drop-shadow-lg"
-                  whileHover={{ rotate: [0, -3, 3, 0] }}
-                  transition={{ duration: 0.5 }}
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-muted-foreground font-display font-semibold mb-0.5">
+                הרמה הנוכחית
+              </p>
+              <h2 className="font-display text-lg font-bold truncate">
+                רמה {level.id}: {level.name}
+              </h2>
+              <div className="progress-bar h-2.5 mt-2">
+                <div
+                  className="progress-bar-fill"
+                  style={{ width: `${(levelProgress.completed / levelProgress.total) * 100}%` }}
                 />
               </div>
-              <div className="text-center">
-                <h3 className="font-display text-xl font-bold mb-1">
-                  {card.emoji} {card.title}
-                </h3>
-                <p className="text-sm text-muted-foreground font-body">
-                  {card.description}
-                </p>
-              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                {levelProgress.completed}/{levelProgress.total} שלבים • ⭐ {totalStars} כוכבים
+                {nextLevel && ` • עוד ${Math.max(0, nextLevel.starsToUnlock - totalStars)} לרמה הבאה`}
+              </p>
+            </div>
+            <motion.div
+              animate={{ x: [0, -4, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="text-primary text-xl"
+            >
+              ◀
             </motion.div>
-          ))}
-        </div>
+          </div>
+        </motion.div>
+
+        {/* Quick Access */}
+        <motion.div variants={itemVariants} className="mb-8">
+          <h3 className="font-display text-lg font-bold mb-3 text-center">תרגול חופשי</h3>
+          <div className="grid grid-cols-4 gap-3">
+            {quickAccessCards.map((card) => (
+              <motion.button
+                key={card.path}
+                whileHover={{ y: -5, scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate(card.path)}
+                className="card-kid text-center py-4"
+              >
+                <span className="text-3xl block mb-2">{card.emoji}</span>
+                <span className="font-display text-sm font-bold">{card.title}</span>
+              </motion.button>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Levels Journey Button */}
+        <motion.div variants={itemVariants} className="text-center mb-8">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate("/levels")}
+            className="btn-kid gradient-primary text-primary-foreground text-lg px-8 py-4"
+          >
+            🗺️ מסע הלמידה שלי
+          </motion.button>
+        </motion.div>
 
         {/* Fun Facts */}
         <motion.div
