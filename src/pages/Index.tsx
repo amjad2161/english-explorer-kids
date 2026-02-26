@@ -40,6 +40,15 @@ const lessonCards = [
     emoji: "📝",
   },
   {
+    title: "משחק התאמה",
+    titleEn: "Memory Match",
+    description: "התאם מילים באנגלית לתמונות!",
+    path: "/memory",
+    image: quizImg,
+    gradient: "gradient-lavender",
+    emoji: "🧩",
+  },
+  {
     title: "חידון כיף",
     titleEn: "Fun Quiz",
     description: "בדוק את מה שלמדת במשחק שאלות!",
@@ -108,7 +117,7 @@ const Index = () => {
         )}
 
         {/* Lesson Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
           {lessonCards.map((card, index) => (
             <motion.div
               key={card.path}
