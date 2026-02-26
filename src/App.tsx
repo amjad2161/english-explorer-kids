@@ -9,6 +9,7 @@ import AlphabetPage from "./pages/AlphabetPage";
 import WordsPage from "./pages/WordsPage";
 import QuizPage from "./pages/QuizPage";
 import MemoryGame from "./pages/MemoryGame";
+import LevelsPage from "./pages/LevelsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/words" element={<WordsPage />} />
           <Route path="/quiz" element={<QuizPage />} />
           <Route path="/memory" element={<MemoryGame />} />
+          <Route path="/levels" element={<LevelsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
