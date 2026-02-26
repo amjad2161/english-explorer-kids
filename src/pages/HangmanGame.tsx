@@ -23,7 +23,7 @@ const shuffleArray = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 
 const HangmanGame = () => {
   const [searchParams] = useSearchParams();
   const stageId = searchParams.get("stage");
-  const { t, lang } = useLanguage();
+  const { t, lang, dir } = useLanguage();
 
   const [words, setWords] = useState<WordCard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -121,7 +121,7 @@ const HangmanGame = () => {
   if (words.length === 0) return null;
 
   return (
-    <div className="min-h-screen" dir="rtl">
+    <div className="min-h-screen" dir={dir}>
       <Confetti show={showConfetti} />
       <ScorePopup popups={popups} />
       <div className="max-w-2xl mx-auto px-4 py-8">

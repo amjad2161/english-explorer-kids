@@ -16,7 +16,7 @@ const levelLightColors: Record<string, string> = {
 
 const LevelsPage = () => {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, dir } = useLanguage();
   const [totalStars, setTotalStars] = useState(0);
   const [celebration, setCelebration] = useState<{ levelNumber: number; emoji: string; stars: number } | null>(null);
   const [celebratedLevels, setCelebratedLevels] = useState<Set<number>>(() => {
@@ -57,7 +57,7 @@ const LevelsPage = () => {
   };
 
   return (
-    <div className="min-h-screen" dir="rtl">
+    <div className="min-h-screen" dir={dir}>
       <LevelCompleteCelebration
         show={!!celebration}
         levelNumber={celebration?.levelNumber ?? 0}

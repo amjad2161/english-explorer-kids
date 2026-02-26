@@ -21,7 +21,7 @@ const categoryBgs: Record<string, string> = {
 const WordsPage = () => {
   const [searchParams] = useSearchParams();
   const stageId = searchParams.get("stage");
-  const { t, lang } = useLanguage();
+  const { t, lang, dir } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [flippedCards, setFlippedCards] = useState<Set<string>>(new Set());
   const [learnedWords, setLearnedWords] = useState<Set<string>>(new Set());
@@ -50,7 +50,7 @@ const WordsPage = () => {
   };
 
   return (
-    <div className="min-h-screen" dir="rtl">
+    <div className="min-h-screen" dir={dir}>
       <Confetti show={showConfetti} />
       <div className="max-w-5xl mx-auto px-4 py-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">

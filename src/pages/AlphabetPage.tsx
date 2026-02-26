@@ -21,7 +21,7 @@ const letterColors = [
 const AlphabetPage = () => {
   const [searchParams] = useSearchParams();
   const stageId = searchParams.get("stage");
-  const { t, lang } = useLanguage();
+  const { t, lang, dir } = useLanguage();
   const [selectedLetter, setSelectedLetter] = useState<number | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [learnedLetters, setLearnedLetters] = useState<string[]>([]);
@@ -54,7 +54,7 @@ const AlphabetPage = () => {
   };
 
   return (
-    <div className="min-h-screen" dir="rtl">
+    <div className="min-h-screen" dir={dir}>
       <Confetti show={showConfetti} />
       <div className="max-w-5xl mx-auto px-4 py-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">

@@ -1,15 +1,23 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Star } from "lucide-react";
+import { Star, Globe } from "lucide-react";
 import { getTotalEarnedStars } from "@/lib/levels";
-import { useLanguage } from "@/lib/i18n";
-import { useState, useEffect } from "react";
+import { useLanguage, Language } from "@/lib/i18n";
+import { useState, useEffect, useRef } from "react";
+
+const langOptions: { code: Language; flag: string; name: string }[] = [
+  { code: "ar", flag: "🇸🇦", name: "العربية" },
+  { code: "he", flag: "🇮🇱", name: "עברית" },
+  { code: "en", flag: "🇬🇧", name: "English" },
+];
 
 const AppHeader = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { t, lang, setLang } = useLanguage();
+  const { t, lang, setLang, dir } = useLanguage();
   const [stars, setStars] = useState(0);
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const navItems = [
     { path: "/", label: t("nav.home") },
@@ -27,6 +35,19 @@ const AppHeader = () => {
     setStars(getTotalEarnedStars());
   }, [location]);
 
+  // Close menu on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setLangMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const currentLang = langOptions.find(l => l.code === lang)!;
+
   return (
     <motion.header
       initial={{ y: -80 }}
@@ -34,7 +55,7 @@ const AppHeader = () => {
       transition={{ type: "spring", stiffness: 200, damping: 20 }}
       className="sticky top-0 z-50 backdrop-blur-md bg-card/80 border-b border-border"
     >
-      <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between" dir={dir}>
         <motion.div
           className="flex items-center gap-2 cursor-pointer"
           onClick={() => navigate("/")}
@@ -70,15 +91,48 @@ const AppHeader = () => {
 
         <div className="flex items-center gap-2">
           {/* Language Switcher */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setLang(lang === "he" ? "ar" : "he")}
-            className="flex items-center gap-1 bg-muted px-3 py-1.5 rounded-full font-display text-xs font-bold transition-colors hover:bg-muted/80"
-          >
-            <span>{lang === "he" ? "🇮🇱" : "🇸🇦"}</span>
-            <span>{lang === "he" ? "عربي" : "עברית"}</span>
-          </motion.button>
+          <div className="relative" ref={menuRef}>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setLangMenuOpen(prev => !prev)}
+              className="flex items-center gap-1.5 bg-muted px-3 py-1.5 rounded-full font-display text-xs font-bold transition-colors hover:bg-muted/80"
+            >
+              <span>{currentLang.flag}</span>
+              <span>{currentLang.name}</span>
+              <Globe className="w-3.5 h-3.5 text-muted-foreground" />
+            </motion.button>
+
+            <AnimatePresence>
+              {langMenuOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute top-full mt-2 end-0 bg-card border border-border rounded-xl shadow-lg overflow-hidden z-50 min-w-[140px]"
+                >
+                  {langOptions.map((opt) => (
+                    <motion.button
+                      key={opt.code}
+                      whileHover={{ backgroundColor: "hsl(var(--muted))" }}
+                      onClick={() => {
+                        setLang(opt.code);
+                        setLangMenuOpen(false);
+                      }}
+                      className={`flex items-center gap-2 w-full px-4 py-2.5 font-display text-sm font-semibold transition-colors ${
+                        lang === opt.code ? "bg-primary/10 text-primary" : "text-foreground"
+                      }`}
+                    >
+                      <span className="text-lg">{opt.flag}</span>
+                      <span>{opt.name}</span>
+                      {lang === opt.code && <span className="ms-auto">✓</span>}
+                    </motion.button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
           <motion.div
             className="flex items-center gap-1 bg-sunshine/20 px-3 py-1.5 rounded-full"

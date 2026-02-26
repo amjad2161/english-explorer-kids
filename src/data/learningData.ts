@@ -28,13 +28,13 @@ export interface QuizQuestion {
 }
 
 export const getLocal = (item: { hebrew: string; arabic: string }, lang: Language) =>
-  lang === "he" ? item.hebrew : item.arabic;
+  lang === "he" ? item.hebrew : lang === "ar" ? item.arabic : item.hebrew;
 
 export const getWordLocal = (item: { wordHebrew: string; wordArabic: string }, lang: Language) =>
-  lang === "he" ? item.wordHebrew : item.wordArabic;
+  lang === "he" ? item.wordHebrew : lang === "ar" ? item.wordArabic : item.wordHebrew;
 
 export const getQuestionLocal = (item: { questionHebrew: string; questionArabic: string }, lang: Language) =>
-  lang === "he" ? item.questionHebrew : item.questionArabic;
+  lang === "he" ? item.questionHebrew : lang === "ar" ? item.questionArabic : item.questionHebrew;
 
 export const alphabet: LetterData[] = [
   { letter: "A", hebrew: "אֵי", arabic: "إيْ", word: "Apple", wordHebrew: "תפוח", wordArabic: "تفاحة", emoji: "🍎" },
@@ -670,10 +670,10 @@ export const quizQuestions: QuizQuestion[] = [
 ];
 
 export const getCategoryName = (cat: typeof wordCategories[0], lang: Language) =>
-  lang === "he" ? cat.name : cat.nameAr;
+  lang === "he" ? cat.name : lang === "ar" ? cat.nameAr : cat.nameEn;
 
 export const getWordTranslation = (word: WordCard, lang: Language) =>
-  lang === "he" ? word.hebrew : word.arabic;
+  lang === "he" ? word.hebrew : lang === "ar" ? word.arabic : word.hebrew;
 
 /** Get all words flattened from all categories */
 export const getAllWords = (): WordCard[] =>

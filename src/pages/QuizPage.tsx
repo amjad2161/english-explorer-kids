@@ -18,7 +18,7 @@ const QUIZ_SIZE = 8;
 const QuizPage = () => {
   const [searchParams] = useSearchParams();
   const stageId = searchParams.get("stage");
-  const { t, lang } = useLanguage();
+  const { t, lang, dir } = useLanguage();
   const [currentQ, setCurrentQ] = useState(0);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
@@ -88,7 +88,7 @@ const QuizPage = () => {
   if (!question && !isFinished) return null;
 
   return (
-    <div className="min-h-screen" dir="rtl">
+    <div className="min-h-screen" dir={dir}>
       <Confetti show={showConfetti} />
       <ScorePopup popups={popups} />
       <div className="max-w-2xl mx-auto px-4 py-8">
