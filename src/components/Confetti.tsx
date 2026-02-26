@@ -7,6 +7,8 @@ interface ConfettiPiece {
   color: string;
   delay: number;
   rotation: number;
+  size: number;
+  shape: "circle" | "square" | "star";
 }
 
 const colors = [
@@ -16,6 +18,8 @@ const colors = [
   "hsl(145, 65%, 48%)",
   "hsl(330, 85%, 60%)",
   "hsl(270, 70%, 65%)",
+  "hsl(0, 85%, 60%)",
+  "hsl(60, 100%, 55%)",
 ];
 
 const Confetti = ({ show }: { show: boolean }) => {
@@ -23,15 +27,17 @@ const Confetti = ({ show }: { show: boolean }) => {
 
   useEffect(() => {
     if (show) {
-      const newPieces: ConfettiPiece[] = Array.from({ length: 30 }, (_, i) => ({
+      const newPieces: ConfettiPiece[] = Array.from({ length: 45 }, (_, i) => ({
         id: i,
         x: Math.random() * 100,
         color: colors[Math.floor(Math.random() * colors.length)],
-        delay: Math.random() * 0.5,
-        rotation: Math.random() * 720 - 360,
+        delay: Math.random() * 0.6,
+        rotation: Math.random() * 1080 - 540,
+        size: 6 + Math.random() * 10,
+        shape: (["circle", "square", "star"] as const)[Math.floor(Math.random() * 3)],
       }));
       setPieces(newPieces);
-      const timer = setTimeout(() => setPieces([]), 2500);
+      const timer = setTimeout(() => setPieces([]), 3000);
       return () => clearTimeout(timer);
     }
   }, [show]);
@@ -49,23 +55,25 @@ const Confetti = ({ show }: { show: boolean }) => {
             scale: 1,
           }}
           animate={{
-            top: "105%",
+            top: "110%",
             opacity: 0,
             rotate: piece.rotation,
-            scale: 0.5,
+            scale: [1, 1.2, 0.5],
+            x: [0, (Math.random() - 0.5) * 80],
           }}
           exit={{ opacity: 0 }}
           transition={{
-            duration: 2,
+            duration: 2.5,
             delay: piece.delay,
-            ease: "easeIn",
+            ease: [0.25, 0.46, 0.45, 0.94],
           }}
           className="fixed z-50 pointer-events-none"
           style={{
-            width: "12px",
-            height: "12px",
-            borderRadius: Math.random() > 0.5 ? "50%" : "2px",
+            width: `${piece.size}px`,
+            height: `${piece.size}px`,
+            borderRadius: piece.shape === "circle" ? "50%" : piece.shape === "star" ? "2px" : "3px",
             backgroundColor: piece.color,
+            boxShadow: `0 0 6px ${piece.color}`,
           }}
         />
       ))}

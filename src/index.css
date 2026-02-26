@@ -55,11 +55,14 @@
     --gradient-candy: linear-gradient(135deg, hsl(330, 85%, 60%), hsl(330, 85%, 75%));
     --gradient-lavender: linear-gradient(135deg, hsl(270, 70%, 65%), hsl(270, 70%, 80%));
     --gradient-bg: linear-gradient(180deg, hsl(45, 100%, 97%), hsl(45, 60%, 94%));
+    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.6), rgba(255,255,255,0.2));
 
     /* Shadows */
-    --shadow-card: 0 8px 30px -8px hsl(25 95% 55% / 0.15);
+    --shadow-card: 0 8px 30px -8px hsl(25 95% 55% / 0.12), 0 2px 8px -2px hsl(240 20% 20% / 0.06);
     --shadow-button: 0 4px 15px -3px hsl(25 95% 55% / 0.3);
-    --shadow-float: 0 15px 40px -10px hsl(240 20% 20% / 0.15);
+    --shadow-float: 0 20px 50px -12px hsl(240 20% 20% / 0.18);
+    --shadow-glow-primary: 0 0 25px hsl(25 95% 55% / 0.25);
+    --shadow-glow-accent: 0 0 25px hsl(145 65% 48% / 0.25);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -91,6 +94,7 @@
     --border: 240 15% 25%;
     --input: 240 15% 25%;
     --ring: 25 95% 55%;
+    --gradient-glass: linear-gradient(135deg, rgba(30,30,50,0.6), rgba(30,30,50,0.2));
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -111,6 +115,7 @@
     @apply bg-background text-foreground font-body;
     background: var(--gradient-bg);
     min-height: 100vh;
+    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -119,19 +124,81 @@
 }
 
 @layer components {
+  /* ─── Animated Background Particles ─── */
+  .bg-particles {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .bg-particles::before,
+  .bg-particles::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.07;
+    animation: bg-drift 25s ease-in-out infinite;
+  }
+
+  .bg-particles::before {
+    width: 500px;
+    height: 500px;
+    background: hsl(var(--primary));
+    top: -100px;
+    right: -100px;
+  }
+
+  .bg-particles::after {
+    width: 400px;
+    height: 400px;
+    background: hsl(var(--accent));
+    bottom: -80px;
+    left: -80px;
+    animation-delay: -12s;
+    animation-direction: reverse;
+  }
+
+  @keyframes bg-drift {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -40px) scale(1.1); }
+    66% { transform: translate(-20px, 30px) scale(0.95); }
+  }
+
+  /* ─── Glass Card ─── */
   .card-kid {
-    @apply bg-card rounded-2xl p-6 transition-all duration-300;
+    @apply bg-card/90 rounded-2xl p-6 transition-all duration-300;
     box-shadow: var(--shadow-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border) / 0.5);
   }
 
   .card-kid:hover {
     transform: translateY(-4px) scale(1.02);
     box-shadow: var(--shadow-float);
+    border-color: hsl(var(--primary) / 0.2);
   }
 
+  .card-glass {
+    background: var(--gradient-glass);
+    backdrop-filter: blur(16px);
+    border: 1px solid hsl(var(--border) / 0.3);
+    @apply rounded-2xl p-6;
+  }
+
+  /* ─── Buttons ─── */
   .btn-kid {
-    @apply font-display font-bold rounded-2xl px-6 py-3 transition-all duration-200;
+    @apply font-display font-bold rounded-2xl px-6 py-3 transition-all duration-200 relative overflow-hidden;
     box-shadow: var(--shadow-button);
+  }
+
+  .btn-kid::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+    pointer-events: none;
   }
 
   .btn-kid:hover {
@@ -143,25 +210,12 @@
     transform: translateY(0);
   }
 
-  .gradient-primary {
-    background: var(--gradient-hero);
-  }
-
-  .gradient-sky {
-    background: var(--gradient-sky);
-  }
-
-  .gradient-grass {
-    background: var(--gradient-grass);
-  }
-
-  .gradient-candy {
-    background: var(--gradient-candy);
-  }
-
-  .gradient-lavender {
-    background: var(--gradient-lavender);
-  }
+  /* ─── Gradients ─── */
+  .gradient-primary { background: var(--gradient-hero); }
+  .gradient-sky { background: var(--gradient-sky); }
+  .gradient-grass { background: var(--gradient-grass); }
+  .gradient-candy { background: var(--gradient-candy); }
+  .gradient-lavender { background: var(--gradient-lavender); }
 
   .text-gradient {
     background: var(--gradient-hero);
@@ -170,6 +224,60 @@
     background-clip: text;
   }
 
+  /* ─── 3D Letter Card ─── */
+  .letter-card {
+    @apply bg-card rounded-3xl flex items-center justify-center cursor-pointer select-none transition-all duration-200 relative;
+    box-shadow: var(--shadow-card), inset 0 -3px 0 hsl(var(--border));
+    font-family: 'Baloo 2', cursive;
+    transform-style: preserve-3d;
+    perspective: 600px;
+  }
+
+  .letter-card:hover {
+    transform: scale(1.1) translateY(-4px) rotateX(5deg);
+    box-shadow: var(--shadow-float), inset 0 -4px 0 hsl(var(--primary) / 0.3);
+  }
+
+  .letter-card:active {
+    transform: scale(0.95) translateY(2px);
+    box-shadow: var(--shadow-card), inset 0 -1px 0 hsl(var(--border));
+  }
+
+  /* ─── Progress Bar with Shine ─── */
+  .progress-bar {
+    @apply rounded-full overflow-hidden relative;
+    background: hsl(var(--muted));
+  }
+
+  .progress-bar-fill {
+    @apply h-full rounded-full transition-all duration-700 ease-out relative;
+    background: var(--gradient-hero);
+  }
+
+  .progress-bar-fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shimmer 2.5s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  /* ─── Stars ─── */
+  .star-earned {
+    color: hsl(var(--sunshine));
+    filter: drop-shadow(0 0 8px hsl(45 100% 60% / 0.6));
+  }
+
+  .star-empty {
+    color: hsl(var(--muted));
+  }
+
+  /* ─── Animations ─── */
   .bubble {
     @apply rounded-full;
     animation: float 3s ease-in-out infinite;
@@ -202,57 +310,41 @@
     100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
   }
 
-  .animate-wiggle {
-    animation: wiggle 0.5s ease-in-out;
+  @keyframes glow-pulse {
+    0%, 100% { box-shadow: 0 0 15px hsl(var(--primary) / 0.2); }
+    50% { box-shadow: 0 0 30px hsl(var(--primary) / 0.4); }
   }
 
-  .animate-bounce-in {
-    animation: bounce-in 0.5s ease-out;
+  @keyframes rainbow-border {
+    0% { border-color: hsl(0, 80%, 60%); }
+    25% { border-color: hsl(90, 80%, 50%); }
+    50% { border-color: hsl(195, 85%, 55%); }
+    75% { border-color: hsl(270, 70%, 65%); }
+    100% { border-color: hsl(0, 80%, 60%); }
   }
 
-  .animate-sparkle {
-    animation: sparkle 1.5s ease-in-out infinite;
-  }
+  .animate-wiggle { animation: wiggle 0.5s ease-in-out; }
+  .animate-bounce-in { animation: bounce-in 0.5s ease-out; }
+  .animate-sparkle { animation: sparkle 1.5s ease-in-out infinite; }
+  .animate-glow-pulse { animation: glow-pulse 2s ease-in-out infinite; }
+  .animate-rainbow-border { animation: rainbow-border 4s linear infinite; border-width: 2px; }
 
-  .letter-card {
-    @apply bg-card rounded-3xl flex items-center justify-center cursor-pointer select-none transition-all duration-200;
-    box-shadow: var(--shadow-card);
-    font-family: 'Baloo 2', cursive;
-  }
-
-  .letter-card:hover {
-    transform: scale(1.1);
-    box-shadow: var(--shadow-float);
-  }
-
-  .letter-card:active {
-    transform: scale(0.95);
-  }
-
-  .progress-bar {
-    @apply rounded-full overflow-hidden;
-    background: hsl(var(--muted));
-  }
-
-  .progress-bar-fill {
-    @apply h-full rounded-full transition-all duration-500 ease-out;
-    background: var(--gradient-hero);
-  }
-
-  .star-earned {
-    color: hsl(var(--sunshine));
-    filter: drop-shadow(0 0 6px hsl(45 100% 60% / 0.5));
-  }
-
-  .star-empty {
-    color: hsl(var(--muted));
-  }
-
+  /* ─── Scrollbar ─── */
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+
+  /* ─── Smooth page transitions ─── */
+  .page-transition {
+    animation: page-enter 0.4s ease-out;
+  }
+
+  @keyframes page-enter {
+    0% { opacity: 0; transform: translateY(12px); }
+    100% { opacity: 1; transform: translateY(0); }
   }
 }
