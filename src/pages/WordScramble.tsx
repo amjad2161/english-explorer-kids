@@ -5,6 +5,7 @@ import { useLanguage } from "@/lib/i18n";
 import { getSpellingWords, getWordTranslation, WordCard } from "@/data/learningData";
 import { speakEnglish, playCorrectSound, playWrongSound, playComboSound, playVictoryFanfare, playClickSound } from "@/lib/sounds";
 import { saveStageProgress } from "@/lib/levels";
+import { saveBestStreak } from "@/lib/achievements";
 import StarRating from "@/components/StarRating";
 import Confetti from "@/components/Confetti";
 import GameTimer from "@/components/GameTimer";
@@ -93,7 +94,7 @@ const WordScramble = () => {
       setResult("correct");
       setScore(s => s + points);
       setStreak(newStreak);
-      setBestStreak(b => Math.max(b, newStreak));
+      setBestStreak(b => { const best = Math.max(b, newStreak); saveBestStreak(best); return best; });
       if (newStreak >= 3) playComboSound(newStreak); else playCorrectSound();
       addPopup(points, newStreak >= 3 ? `×${newStreak}` : "✓");
       setShowConfetti(true);

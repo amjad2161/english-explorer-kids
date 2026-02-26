@@ -17,7 +17,7 @@ const itemVariants = {
 
 const Index = () => {
   const navigate = useNavigate();
-  const { t, dir } = useLanguage();
+  const { t, dir, lang } = useLanguage();
   const [totalStars, setTotalStars] = useState(0);
   const [currentLevel, setCurrentLevel] = useState(1);
 
@@ -90,10 +90,14 @@ const Index = () => {
           </div>
         </motion.div>
 
-        <motion.div variants={itemVariants} className="text-center mb-8">
+        <motion.div variants={itemVariants} className="text-center mb-8 flex gap-3 justify-center flex-wrap">
           <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
             onClick={() => navigate("/levels")} className="btn-kid gradient-primary text-primary-foreground text-lg px-8 py-4">
             {t("home.myJourney")}
+          </motion.button>
+          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+            onClick={() => navigate("/achievements")} className="btn-kid bg-muted text-foreground text-lg px-6 py-4">
+            🏅 {lang === "he" ? "הישגים" : lang === "ar" ? "إنجازات" : "Badges"}
           </motion.button>
         </motion.div>
 

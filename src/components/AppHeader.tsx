@@ -29,6 +29,7 @@ const AppHeader = () => {
     { path: "/spelling", label: t("nav.spelling") },
     { path: "/scramble", label: t("nav.scramble") },
     { path: "/hangman", label: t("nav.hangman") },
+    { path: "/achievements", label: "🏅" },
   ];
 
   useEffect(() => {
