@@ -64,7 +64,8 @@ const MemoryGame = () => {
           const newMatched = [...matched, newFlipped[0], newFlipped[1]];
           setMatched(newMatched); setFlipped([]); setIsChecking(false);
           if (newMatched.length === cards.length) {
-            const stars = moves < 8 ? 3 : moves < 12 ? 2 : 1;
+            const currentMoves = moves + 1; // moves state not yet updated
+            const stars = currentMoves < 8 ? 3 : currentMoves < 12 ? 2 : 1;
             addQuizScore(stars);
             if (stageId) saveStageProgress(stageId, stars);
             playStarSound(); setShowConfetti(true); setGameComplete(true);
@@ -85,9 +86,10 @@ const MemoryGame = () => {
   };
 
   return (
-    <div className="min-h-screen" dir={dir}>
+    <div className="min-h-screen relative" dir={dir}>
+      <div className="bg-particles" />
       <Confetti show={showConfetti} />
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="max-w-5xl mx-auto px-4 py-8 relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">{t("memory.title")}</h1>
           <p className="text-muted-foreground font-body">{t("memory.subtitle")}</p>

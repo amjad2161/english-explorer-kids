@@ -16,7 +16,7 @@ const levelLightColors: Record<string, string> = {
 
 const LevelsPage = () => {
   const navigate = useNavigate();
-  const { t, dir } = useLanguage();
+  const { t, lang, dir } = useLanguage();
   const [totalStars, setTotalStars] = useState(0);
   const [celebration, setCelebration] = useState<{ levelNumber: number; emoji: string; stars: number } | null>(null);
   const [celebratedLevels, setCelebratedLevels] = useState<Set<number>>(() => {
@@ -57,7 +57,8 @@ const LevelsPage = () => {
   };
 
   return (
-    <div className="min-h-screen" dir={dir}>
+    <div className="min-h-screen relative" dir={dir}>
+      <div className="bg-particles" />
       <LevelCompleteCelebration
         show={!!celebration}
         levelNumber={celebration?.levelNumber ?? 0}
@@ -65,7 +66,7 @@ const LevelsPage = () => {
         totalStars={Math.min(celebration?.stars ?? 0, 8)}
         onClose={() => setCelebration(null)}
       />
-      <div className="max-w-3xl mx-auto px-4 py-8">
+      <div className="max-w-3xl mx-auto px-4 py-8 relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">{t("levels.title")}</h1>
           <p className="text-muted-foreground font-body">{t("levels.subtitle")}</p>
@@ -130,7 +131,7 @@ const LevelsPage = () => {
                                 </div>
                               )}
                               <span className="text-2xl block mb-1">{stageUnlocked ? stage.emoji : "🔒"}</span>
-                              <p className="font-display text-xs font-bold leading-tight">{stage.title}</p>
+                              <p className="font-display text-xs font-bold leading-tight">{lang === "en" ? stage.titleEn : stage.title}</p>
                               {sp.completed && <div className="mt-1"><StarRating earned={sp.starsEarned} total={stage.starsToComplete} size={10} /></div>}
                             </motion.button>
                           );
