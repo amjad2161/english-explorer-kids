@@ -33,7 +33,9 @@ const MemoryGame = () => {
   const startGame = useCallback((catIndex: number) => {
     playClickSound();
     setSelectedCategory(catIndex);
-    const words = wordCategories[catIndex].words.slice(0, 6);
+    const allCatWords = [...wordCategories[catIndex].words];
+    // Shuffle and pick 6 random words from category each time
+    const words = allCatWords.sort(() => Math.random() - 0.5).slice(0, 6);
     const gameCards: MemoryCard[] = [];
     words.forEach((w) => {
       gameCards.push({ id: `word-${w.english}`, content: w.english, type: "word", matchId: w.english });

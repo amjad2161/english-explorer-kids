@@ -37,7 +37,8 @@ const SpellingBee = () => {
   const { popups, addPopup } = useScorePopups();
 
   useEffect(() => {
-    const all = shuffle(getSpellingWords(6));
+    // Pick random words each time, different lengths for variety
+    const all = shuffle(getSpellingWords(8));
     setWords(all.slice(0, TOTAL_ROUNDS));
   }, []);
 
@@ -125,7 +126,7 @@ const SpellingBee = () => {
   };
 
   const restart = () => {
-    const all = shuffle(getSpellingWords(6));
+    const all = shuffle(getSpellingWords(8));
     setWords(all.slice(0, TOTAL_ROUNDS));
     setCurrentIndex(0);
     setScore(0);
