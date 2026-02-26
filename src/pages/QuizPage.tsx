@@ -7,6 +7,7 @@ import { generateDynamicQuiz } from "@/lib/quizGenerator";
 import { playCorrectSound, playWrongSound, playStarSound, playComboSound } from "@/lib/sounds";
 import { addQuizScore } from "@/lib/progress";
 import { saveStageProgress } from "@/lib/levels";
+import { saveBestStreak } from "@/lib/achievements";
 import StarRating from "@/components/StarRating";
 import Confetti from "@/components/Confetti";
 import StreakCounter from "@/components/StreakCounter";
@@ -47,7 +48,7 @@ const QuizPage = () => {
       const points = 10 + Math.min(newStreak, 5) * 5;
       setScore(s => s + points);
       setStreak(newStreak);
-      setBestStreak(b => Math.max(b, newStreak));
+      setBestStreak(b => { const best = Math.max(b, newStreak); saveBestStreak(best); return best; });
       if (newStreak >= 3) playComboSound(newStreak); else playCorrectSound();
       addPopup(points, newStreak >= 3 ? `×${newStreak}` : "✓");
       setShowConfetti(true);
