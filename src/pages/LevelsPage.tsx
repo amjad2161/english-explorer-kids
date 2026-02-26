@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Lock, Check } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 import {
@@ -8,6 +8,7 @@ import {
   getStageProgress, getTotalEarnedStars,
 } from "@/lib/levels";
 import StarRating from "@/components/StarRating";
+import LevelCompleteCelebration from "@/components/LevelCompleteCelebration";
 
 const levelLightColors: Record<string, string> = {
   grass: "bg-grass-light", sky: "bg-sky-light", sunshine: "bg-sunshine-light", candy: "bg-candy-light",
@@ -17,8 +18,34 @@ const LevelsPage = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const [totalStars, setTotalStars] = useState(0);
+  const [celebration, setCelebration] = useState<{ levelNumber: number; emoji: string; stars: number } | null>(null);
+  const [celebratedLevels, setCelebratedLevels] = useState<Set<number>>(() => {
+    try {
+      const stored = localStorage.getItem("celebrated-levels");
+      return stored ? new Set(JSON.parse(stored)) : new Set();
+    } catch { return new Set(); }
+  });
 
-  useEffect(() => { setTotalStars(getTotalEarnedStars()); }, []);
+  const checkForCompletedLevels = useCallback(() => {
+    for (const level of levels) {
+      if (!isLevelUnlocked(level)) continue;
+      const progress = getLevelProgress(level);
+      const totalLevelStars = level.stages.reduce((a, s) => a + s.starsToComplete, 0);
+      if (progress.completed === progress.total && progress.stars >= totalLevelStars && !celebratedLevels.has(level.id)) {
+        setCelebration({ levelNumber: level.id, emoji: level.emoji, stars: progress.stars });
+        const updated = new Set(celebratedLevels);
+        updated.add(level.id);
+        setCelebratedLevels(updated);
+        localStorage.setItem("celebrated-levels", JSON.stringify([...updated]));
+        break;
+      }
+    }
+  }, [celebratedLevels]);
+
+  useEffect(() => {
+    setTotalStars(getTotalEarnedStars());
+    checkForCompletedLevels();
+  }, [checkForCompletedLevels]);
 
   const handleStageClick = (_levelId: number, stageId: string, type: string) => {
     const params = new URLSearchParams({ stage: stageId });
@@ -28,6 +55,13 @@ const LevelsPage = () => {
 
   return (
     <div className="min-h-screen" dir="rtl">
+      <LevelCompleteCelebration
+        show={!!celebration}
+        levelNumber={celebration?.levelNumber ?? 0}
+        levelEmoji={celebration?.emoji ?? ""}
+        totalStars={Math.min(celebration?.stars ?? 0, 8)}
+        onClose={() => setCelebration(null)}
+      />
       <div className="max-w-3xl mx-auto px-4 py-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">{t("levels.title")}</h1>
