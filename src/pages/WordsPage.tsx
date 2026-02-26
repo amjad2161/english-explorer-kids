@@ -11,6 +11,7 @@ const categoryGradients: Record<string, string> = {
   candy: "gradient-candy",
   sky: "gradient-sky",
   sunshine: "gradient-primary",
+  lavender: "gradient-lavender",
 };
 
 const categoryBgs: Record<string, string> = {
@@ -18,6 +19,7 @@ const categoryBgs: Record<string, string> = {
   candy: "bg-candy-light",
   sky: "bg-sky-light",
   sunshine: "bg-sunshine-light",
+  lavender: "bg-lavender-light",
 };
 
 const WordsPage = () => {
