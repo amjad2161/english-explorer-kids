@@ -1,6 +1,14 @@
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { Volume2, VolumeX, Music, Music2 } from "lucide-react";
 import { Language } from "@/lib/i18n";
 import mascotImg from "@/assets/mascot.png";
+import {
+  isSoundEnabled, setSoundEnabled,
+  isMusicEnabled, setMusicEnabled,
+  playWelcomeChime, playSelectSound, playClickSound,
+  startBgMusic, stopBgMusic,
+} from "@/lib/sounds";
 
 const ONBOARDING_KEY = "english-fun-onboarded";
 
@@ -26,18 +34,38 @@ const FloatingShape = ({ delay, x, y, size, color }: { delay: number; x: string;
   <motion.div
     className="absolute rounded-full opacity-10"
     style={{ left: x, top: y, width: size, height: size, background: color }}
-    animate={{
-      y: [0, -30, 0],
-      x: [0, 15, 0],
-      scale: [1, 1.15, 1],
-      rotate: [0, 180, 360],
-    }}
+    animate={{ y: [0, -30, 0], x: [0, 15, 0], scale: [1, 1.15, 1], rotate: [0, 180, 360] }}
     transition={{ duration: 8 + delay, repeat: Infinity, ease: "easeInOut", delay }}
   />
 );
 
 const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
+  const [soundOn, setSoundOn] = useState(isSoundEnabled);
+  const [musicOn, setMusicOn] = useState(isMusicEnabled);
+
+  useEffect(() => {
+    playWelcomeChime();
+    if (isMusicEnabled()) startBgMusic();
+    return () => stopBgMusic();
+  }, []);
+
+  const toggleSound = () => {
+    const next = !soundOn;
+    setSoundOn(next);
+    setSoundEnabled(next);
+    if (next) playClickSound();
+  };
+
+  const toggleMusic = () => {
+    const next = !musicOn;
+    setMusicOn(next);
+    setMusicEnabled(next);
+    if (next) startBgMusic(); else stopBgMusic();
+  };
+
   const handleSelect = (lang: Language) => {
+    playSelectSound();
+    stopBgMusic();
     markOnboarded();
     onComplete(lang);
   };
@@ -51,6 +79,47 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
       <FloatingShape delay={4} x="80%" y="70%" size={180} color="hsl(145, 65%, 48%)" />
       <FloatingShape delay={1} x="20%" y="75%" size={120} color="hsl(330, 85%, 60%)" />
       <FloatingShape delay={3} x="50%" y="50%" size={100} color="hsl(270, 70%, 65%)" />
+
+      {/* Sound/Music toggles */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8 }}
+        className="fixed top-4 end-4 z-20 flex gap-2"
+      >
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={toggleSound}
+          className={`w-11 h-11 rounded-full flex items-center justify-center backdrop-blur-sm border transition-colors ${
+            soundOn
+              ? "bg-primary/15 border-primary/30 text-primary"
+              : "bg-muted/60 border-border/50 text-muted-foreground"
+          }`}
+          title={soundOn ? "Mute sounds" : "Enable sounds"}
+        >
+          {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={toggleMusic}
+          className={`w-11 h-11 rounded-full flex items-center justify-center backdrop-blur-sm border transition-colors ${
+            musicOn
+              ? "bg-accent/15 border-accent/30 text-accent"
+              : "bg-muted/60 border-border/50 text-muted-foreground"
+          }`}
+          title={musicOn ? "Stop music" : "Play music"}
+        >
+          {musicOn ? (
+            <motion.div animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 1, repeat: Infinity }}>
+              <Music className="w-5 h-5" />
+            </motion.div>
+          ) : (
+            <Music2 className="w-5 h-5" />
+          )}
+        </motion.button>
+      </motion.div>
 
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
@@ -75,7 +144,6 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           />
         </div>
 
-        {/* Title with shimmer */}
         <motion.h1
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
