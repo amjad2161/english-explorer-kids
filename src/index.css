@@ -168,14 +168,14 @@
 
   /* ─── Glass Card ─── */
   .card-kid {
-    @apply bg-card/90 rounded-2xl p-6 transition-all duration-300;
+    @apply bg-card/90 rounded-2xl p-6;
     box-shadow: var(--shadow-card);
     backdrop-filter: blur(12px);
     border: 1px solid hsl(var(--border) / 0.5);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
   }
 
   .card-kid:hover {
-    transform: translateY(-4px) scale(1.02);
     box-shadow: var(--shadow-float);
     border-color: hsl(var(--primary) / 0.2);
   }
@@ -189,8 +189,9 @@
 
   /* ─── Buttons ─── */
   .btn-kid {
-    @apply font-display font-bold rounded-2xl px-6 py-3 transition-all duration-200 relative overflow-hidden;
+    @apply font-display font-bold rounded-2xl px-6 py-3 relative overflow-hidden;
     box-shadow: var(--shadow-button);
+    transition: box-shadow 0.2s ease;
   }
 
   .btn-kid::after {
@@ -202,12 +203,7 @@
   }
 
   .btn-kid:hover {
-    transform: translateY(-2px);
     box-shadow: 0 6px 20px -3px hsl(25 95% 55% / 0.4);
-  }
-
-  .btn-kid:active {
-    transform: translateY(0);
   }
 
   /* ─── Gradients ─── */
@@ -226,21 +222,14 @@
 
   /* ─── 3D Letter Card ─── */
   .letter-card {
-    @apply bg-card rounded-3xl flex items-center justify-center cursor-pointer select-none transition-all duration-200 relative;
+    @apply bg-card rounded-3xl flex items-center justify-center cursor-pointer select-none relative;
     box-shadow: var(--shadow-card), inset 0 -3px 0 hsl(var(--border));
     font-family: 'Baloo 2', cursive;
-    transform-style: preserve-3d;
-    perspective: 600px;
+    transition: box-shadow 0.2s ease;
   }
 
   .letter-card:hover {
-    transform: scale(1.1) translateY(-4px) rotateX(5deg);
     box-shadow: var(--shadow-float), inset 0 -4px 0 hsl(var(--primary) / 0.3);
-  }
-
-  .letter-card:active {
-    transform: scale(0.95) translateY(2px);
-    box-shadow: var(--shadow-card), inset 0 -1px 0 hsl(var(--border));
   }
 
   /* ─── Progress Bar with Shine ─── */

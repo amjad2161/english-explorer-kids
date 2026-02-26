@@ -54,14 +54,14 @@ const Index = () => {
             <motion.div
               className="absolute inset-0 rounded-full"
               style={{ background: "var(--gradient-hero)", filter: "blur(25px)", opacity: 0.2 }}
-              animate={{ scale: [1, 1.3, 1] }}
-              transition={{ duration: 4, repeat: Infinity }}
+              animate={{ scale: [1, 1.15, 1] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
             />
             <motion.img
               src={mascotImg} alt="Owl mascot"
               className="w-28 h-28 relative z-10 drop-shadow-xl"
-              animate={{ y: [0, -10, 0], rotate: [0, 3, -3, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
             />
           </div>
           <h1 className="text-4xl md:text-5xl font-display font-bold text-gradient mb-3">{t("app.subtitle")}</h1>
@@ -100,8 +100,8 @@ const Index = () => {
           <div className="relative flex items-center gap-4">
             <motion.div
               className={`w-16 h-16 rounded-2xl ${level.gradient} flex items-center justify-center text-3xl shrink-0 shadow-lg`}
-              animate={{ rotate: [0, 5, -5, 0] }}
-              transition={{ duration: 4, repeat: Infinity }}
+              animate={{ rotate: [0, 3, -3, 0] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
             >
               {level.emoji}
             </motion.div>
@@ -116,7 +116,7 @@ const Index = () => {
                 {nextLevel && ` • ${Math.max(0, nextLevel.starsToUnlock - totalStars)} ${t("home.moreToNext")}`}
               </p>
             </div>
-            <motion.div animate={{ x: [0, -4, 0] }} transition={{ duration: 1.5, repeat: Infinity }} className="text-primary text-xl">◀</motion.div>
+            <span className="text-primary text-xl">◀</span>
           </div>
         </motion.div>
 
@@ -136,13 +136,9 @@ const Index = () => {
                 transition={{ delay: i * 0.05, type: "spring" }}
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-0 group-hover:opacity-10 transition-opacity`} />
-                <motion.span
-                  className="text-3xl block mb-2 relative z-10"
-                  animate={{ y: [0, -3, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: i * 0.15 }}
-                >
+                <span className="text-3xl block mb-2 relative z-10">
                   {card.emoji}
-                </motion.span>
+                </span>
                 <span className="font-display text-xs font-bold relative z-10">{card.title}</span>
               </motion.button>
             ))}
@@ -164,7 +160,7 @@ const Index = () => {
         {/* Fun Fact */}
         <motion.div variants={itemVariants} className="card-kid text-center max-w-lg mx-auto relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-sunshine/5 to-primary/5" />
-          <motion.div className="text-4xl mb-3 relative z-10" animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>💡</motion.div>
+          <div className="text-4xl mb-3 relative z-10">💡</div>
           <h3 className="font-display text-lg font-bold mb-2 relative z-10">{t("home.didYouKnow")}</h3>
           <p className="text-muted-foreground font-body text-sm relative z-10">{t(`home.funFact${funFactIndex}`)}</p>
         </motion.div>
