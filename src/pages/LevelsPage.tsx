@@ -49,7 +49,10 @@ const LevelsPage = () => {
 
   const handleStageClick = (_levelId: number, stageId: string, type: string) => {
     const params = new URLSearchParams({ stage: stageId });
-    const routes: Record<string, string> = { alphabet: "/alphabet", words: "/words", quiz: "/quiz", memory: "/memory" };
+    const routes: Record<string, string> = {
+      alphabet: "/alphabet", words: "/words", quiz: "/quiz", memory: "/memory",
+      spelling: "/spelling", scramble: "/scramble", hangman: "/hangman",
+    };
     navigate(`${routes[type]}?${params}`);
   };
 
