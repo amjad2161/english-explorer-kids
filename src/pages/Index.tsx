@@ -35,6 +35,9 @@ const Index = () => {
     { title: t("quick.words"), emoji: "📝", path: "/words" },
     { title: t("quick.match"), emoji: "🧩", path: "/memory" },
     { title: t("quick.quiz"), emoji: "🎯", path: "/quiz" },
+    { title: t("quick.spelling"), emoji: "🐝", path: "/spelling" },
+    { title: t("quick.scramble"), emoji: "🔀", path: "/scramble" },
+    { title: t("quick.hangman"), emoji: "🎭", path: "/hangman" },
   ];
 
   return (
@@ -76,7 +79,7 @@ const Index = () => {
         {/* Quick Access */}
         <motion.div variants={itemVariants} className="mb-8">
           <h3 className="font-display text-lg font-bold mb-3 text-center">{t("home.freePlay")}</h3>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-4 sm:grid-cols-7 gap-3">
             {quickAccessCards.map((card) => (
               <motion.button key={card.path} whileHover={{ y: -5, scale: 1.05 }} whileTap={{ scale: 0.95 }}
                 onClick={() => navigate(card.path)} className="card-kid text-center py-4">

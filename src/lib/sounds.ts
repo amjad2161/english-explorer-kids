@@ -1,94 +1,94 @@
 // Sound utility using Web Speech API for kid-friendly pronunciation
 export const speak = (text: string, lang: string = 'en-US', rate: number = 0.8) => {
   if (!('speechSynthesis' in window)) return;
-  
-  // Cancel any ongoing speech
   window.speechSynthesis.cancel();
-  
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = lang;
   utterance.rate = rate;
-  utterance.pitch = 1.4; // Higher pitch for kid-friendly voice
+  utterance.pitch = 1.4;
   utterance.volume = 1;
-  
-  // Try to find a child-like or friendly voice
   const voices = window.speechSynthesis.getVoices();
-  const preferredVoice = voices.find(v => 
-    v.name.toLowerCase().includes('child') || 
-    v.name.toLowerCase().includes('kid') ||
+  const preferredVoice = voices.find(v =>
+    v.name.toLowerCase().includes('child') ||
     v.name.toLowerCase().includes('samantha') ||
-    v.name.toLowerCase().includes('karen') ||
     (lang === 'he-IL' && v.lang.startsWith('he'))
   );
-  
-  if (preferredVoice) {
-    utterance.voice = preferredVoice;
-  }
-  
+  if (preferredVoice) utterance.voice = preferredVoice;
   window.speechSynthesis.speak(utterance);
 };
 
 export const speakEnglish = (text: string) => speak(text, 'en-US', 0.75);
 export const speakHebrew = (text: string) => speak(text, 'he-IL', 0.85);
 
-// Sound effects using AudioContext
 const audioCtx = typeof window !== 'undefined' ? new (window.AudioContext || (window as any).webkitAudioContext)() : null;
 
-export const playCorrectSound = () => {
+const playTone = (freq: number, start: number, dur: number, vol = 0.3, type: OscillatorType = 'sine') => {
   if (!audioCtx) return;
   const osc = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
   osc.connect(gain);
   gain.connect(audioCtx.destination);
-  osc.frequency.setValueAtTime(523, audioCtx.currentTime); // C5
-  osc.frequency.setValueAtTime(659, audioCtx.currentTime + 0.1); // E5
-  osc.frequency.setValueAtTime(784, audioCtx.currentTime + 0.2); // G5
-  gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-  osc.start(audioCtx.currentTime);
-  osc.stop(audioCtx.currentTime + 0.4);
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, start);
+  gain.gain.setValueAtTime(vol, start);
+  gain.gain.exponentialRampToValueAtTime(0.01, start + dur);
+  osc.start(start);
+  osc.stop(start + dur);
+};
+
+export const playCorrectSound = () => {
+  if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  playTone(523, t, 0.15);
+  playTone(659, t + 0.1, 0.15);
+  playTone(784, t + 0.2, 0.2);
 };
 
 export const playWrongSound = () => {
   if (!audioCtx) return;
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
-  osc.type = 'square';
-  osc.frequency.setValueAtTime(200, audioCtx.currentTime);
-  osc.frequency.setValueAtTime(150, audioCtx.currentTime + 0.15);
-  gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-  osc.start(audioCtx.currentTime);
-  osc.stop(audioCtx.currentTime + 0.3);
+  const t = audioCtx.currentTime;
+  playTone(200, t, 0.15, 0.2, 'square');
+  playTone(150, t + 0.15, 0.15, 0.2, 'square');
 };
 
 export const playClickSound = () => {
   if (!audioCtx) return;
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
-  osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-  gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-  osc.start(audioCtx.currentTime);
-  osc.stop(audioCtx.currentTime + 0.1);
+  playTone(800, audioCtx.currentTime, 0.1, 0.15);
 };
 
 export const playStarSound = () => {
   if (!audioCtx) return;
-  const notes = [523, 659, 784, 1047]; // C5, E5, G5, C6
-  notes.forEach((freq, i) => {
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime + i * 0.12);
-    gain.gain.setValueAtTime(0.2, audioCtx.currentTime + i * 0.12);
-    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.12 + 0.3);
-    osc.start(audioCtx.currentTime + i * 0.12);
-    osc.stop(audioCtx.currentTime + i * 0.12 + 0.3);
-  });
+  const t = audioCtx.currentTime;
+  [523, 659, 784, 1047].forEach((freq, i) => playTone(freq, t + i * 0.12, 0.3, 0.2));
+};
+
+export const playComboSound = (combo: number) => {
+  if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  const baseFreq = 400 + combo * 50;
+  [0, 0.08, 0.16].forEach((delay, i) => playTone(baseFreq + i * 100, t + delay, 0.15, 0.25));
+};
+
+export const playTickSound = () => {
+  if (!audioCtx) return;
+  playTone(1200, audioCtx.currentTime, 0.05, 0.1);
+};
+
+export const playTimerWarning = () => {
+  if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  playTone(600, t, 0.1, 0.2);
+  playTone(400, t + 0.15, 0.15, 0.2);
+};
+
+export const playVictoryFanfare = () => {
+  if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  const melody = [523, 523, 659, 784, 784, 659, 784, 1047];
+  melody.forEach((freq, i) => playTone(freq, t + i * 0.15, 0.2, 0.25));
+};
+
+export const playLetterPopSound = (index: number) => {
+  if (!audioCtx) return;
+  playTone(300 + index * 80, audioCtx.currentTime, 0.12, 0.15);
 };

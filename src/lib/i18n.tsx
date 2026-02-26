@@ -112,6 +112,42 @@ const translations: Record<string, Record<Language, string>> = {
   "level.2": { he: "מתקדמים!", ar: "!نتقدم" },
   "level.3": { he: "חוקר מילים", ar: "مستكشف الكلمات" },
   "level.4": { he: "אלוף אנגלית!", ar: "!بطل الإنجليزية" },
+
+  // Navigation - new games
+  "nav.spelling": { he: "🐝 איות", ar: "🐝 تهجئة" },
+  "nav.scramble": { he: "🔀 בלבול", ar: "🔀 خلط" },
+  "nav.hangman": { he: "🎭 ניחוש", ar: "🎭 تخمين" },
+
+  // Spelling Bee
+  "spelling.title": { he: "🐝 מרוץ האיות", ar: "🐝 سباق التهجئة" },
+  "spelling.subtitle": { he: "שמע את המילה וסדר את האותיות!", ar: "اسمع الكلمة ورتّب الحروف!" },
+  "spelling.listen": { he: "שמע שוב", ar: "اسمع مرة أخرى" },
+  "spelling.finished": { he: "!סיימת את המרוץ", ar: "!أنهيت السباق" },
+  "spelling.points": { he: "נקודות", ar: "نقاط" },
+  "spelling.bestStreak": { he: "רצף שיא", ar: "أفضل سلسلة" },
+
+  // Word Scramble
+  "scramble.title": { he: "🔀 מילים מבולבלות", ar: "🔀 كلمات مخلوطة" },
+  "scramble.subtitle": { he: "פענח את המילה המבולבלת!", ar: "فك شفرة الكلمة المخلوطة!" },
+  "scramble.reshuffle": { he: "ערבב", ar: "اخلط" },
+  "scramble.hint": { he: "רמז", ar: "تلميح" },
+  "scramble.check": { he: "בדוק", ar: "تحقق" },
+
+  // Hangman
+  "hangman.title": { he: "🎭 נחש את המילה", ar: "🎭 خمّن الكلمة" },
+  "hangman.subtitle": { he: "בחר אותיות וגלה את המילה הנסתרת!", ar: "اختر حروف واكتشف الكلمة المخفية!" },
+  "hangman.lost": { he: "לא נורא, ננסה שוב", ar: "لا بأس، نحاول مرة أخرى" },
+
+  // Quick access - new
+  "quick.spelling": { he: "איות", ar: "تهجئة" },
+  "quick.scramble": { he: "בלבול", ar: "خلط" },
+  "quick.hangman": { he: "ניחוש", ar: "تخمين" },
+
+  // Categories - new
+  "cat.clothes": { he: "בגדים", ar: "ملابس" },
+  "cat.nature": { he: "טבע", ar: "طبيعة" },
+  "cat.home": { he: "בית", ar: "بيت" },
+  "cat.vehicles": { he: "רכבים", ar: "مركبات" },
 };
 
 const LanguageContext = createContext<LanguageContextType | null>(null);
