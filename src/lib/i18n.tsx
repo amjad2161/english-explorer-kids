@@ -101,11 +101,20 @@ const translations: Record<string, Record<Language, string>> = {
   "cat.animals": { he: "חיות", ar: "حيوانات" },
   "cat.colors": { he: "צבעים", ar: "ألوان" },
   "cat.numbers": { he: "מספרים", ar: "أرقام" },
-  "cat.fruits": { he: "פירות", ar: "فواكه" },
+  "cat.fruits": { he: "פירות וירקות", ar: "فواكه وخضروات" },
   "cat.body": { he: "חלקי גוף", ar: "أجزاء الجسم" },
-  "cat.family": { he: "משפחה", ar: "عائلة" },
+  "cat.family": { he: "משפחה ואנשים", ar: "عائلة وناس" },
   "cat.school": { he: "בית ספר", ar: "مدرسة" },
-  "cat.food": { he: "אוכל", ar: "طعام" },
+  "cat.food": { he: "אוכל ומשקאות", ar: "طعام ومشروبات" },
+  "cat.clothes": { he: "בגדים", ar: "ملابس" },
+  "cat.nature": { he: "טבע ומזג אוויר", ar: "طبيعة وطقس" },
+  "cat.home": { he: "בית וחדרים", ar: "بيت وغرف" },
+  "cat.vehicles": { he: "רכבים ותחבורה", ar: "مركبات ومواصلات" },
+  "cat.feelings": { he: "רגשות ותחושות", ar: "مشاعر وأحاسيس" },
+  "cat.time": { he: "זמן ועונות", ar: "وقت وفصول" },
+  "cat.sports": { he: "ספורט ומשחקים", ar: "رياضة وألعاب" },
+  "cat.actions": { he: "פעולות יומיומיות", ar: "أفعال يومية" },
+  "cat.places": { he: "מקומות", ar: "أماكن" },
 
   // Level names
   "level.1": { he: "צעדים ראשונים", ar: "الخطوات الأولى" },
@@ -143,11 +152,12 @@ const translations: Record<string, Record<Language, string>> = {
   "quick.scramble": { he: "בלבול", ar: "خلط" },
   "quick.hangman": { he: "ניחוש", ar: "تخمين" },
 
-  // Categories - new
-  "cat.clothes": { he: "בגדים", ar: "ملابس" },
-  "cat.nature": { he: "טבע", ar: "طبيعة" },
-  "cat.home": { he: "בית", ar: "بيت" },
-  "cat.vehicles": { he: "רכבים", ar: "مركبات" },
+  // Fun facts
+  "home.funFact1": { he: "השפה האנגלית היא השפה הנפוצה ביותר בעולם! יותר ממיליארד אנשים מדברים אנגלית ברחבי העולם 🌍", ar: "اللغة الإنجليزية هي اللغة الأكثر انتشاراً في العالم! أكثر من مليار شخص يتحدثون الإنجليزية حول العالم 🌍" },
+  "home.funFact2": { he: "המילה הארוכה ביותר באנגלית בלי חזרה על אות היא 'uncopyrightable' 📝", ar: "أطول كلمة إنجليزية بدون تكرار حرف هي 'uncopyrightable' 📝" },
+  "home.funFact3": { he: "האות E היא האות הנפוצה ביותר באנגלית! 📊", ar: "حرف E هو الحرف الأكثر استخداماً في الإنجليزية! 📊" },
+  "home.funFact4": { he: "יש יותר מ-170,000 מילים בשפה האנגלית! 📚", ar: "يوجد أكثر من 170,000 كلمة في اللغة الإنجليزية! 📚" },
+  "home.funFact5": { he: "המילה 'set' באנגלית היא המילה עם הכי הרבה משמעויות - יותר מ-430! 🤯", ar: "كلمة 'set' هي الكلمة الإنجليزية التي لديها أكثر المعاني - أكثر من 430! 🤯" },
 };
 
 const LanguageContext = createContext<LanguageContextType | null>(null);

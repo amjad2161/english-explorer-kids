@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useLanguage } from "@/lib/i18n";
 import { getCurrentLevel, getTotalEarnedStars, levels, getLevelProgress } from "@/lib/levels";
 import mascotImg from "@/assets/mascot.png";
@@ -100,7 +100,7 @@ const Index = () => {
         <motion.div variants={itemVariants} className="card-kid text-center max-w-lg mx-auto">
           <motion.div className="text-4xl mb-3" animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>💡</motion.div>
           <h3 className="font-display text-lg font-bold mb-2">{t("home.didYouKnow")}</h3>
-          <p className="text-muted-foreground font-body text-sm">{t("home.funFact")}</p>
+          <p className="text-muted-foreground font-body text-sm">{t(`home.funFact${Math.floor(Math.random() * 5) + 1}`)}</p>
         </motion.div>
       </motion.div>
     </div>
