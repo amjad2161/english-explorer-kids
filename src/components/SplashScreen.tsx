@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
-import owlImage from "@/assets/owl-mascot.png";
+import Interactive3DMascot from "@/components/Interactive3DMascot";
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -140,8 +140,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
           <div className="relative z-10 text-center">
             {/* Owl mascot entrance */}
             <motion.div
-              className="relative mx-auto mb-6"
-              style={{ width: 200, height: 200 }}
+              className="relative mx-auto mb-6 flex justify-center"
               initial={{ scale: 0, opacity: 0, rotate: -15 }}
               animate={{ scale: 1, opacity: 1, rotate: 0 }}
               transition={{
@@ -151,32 +150,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
                 delay: 0.2,
               }}
             >
-              {/* Ambient glow behind owl */}
-              <motion.div
-                className="absolute inset-0 rounded-full"
-                style={{
-                  background: "radial-gradient(circle, hsl(var(--primary) / 0.2), hsl(var(--sunshine) / 0.1), transparent 65%)",
-                  filter: "blur(30px)",
-                  width: "300%",
-                  height: "300%",
-                  left: "-100%",
-                  top: "-100%",
-                }}
-                animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              />
-              <motion.img
-                src={owlImage}
-                alt="English Fun Owl"
-                className="w-full h-full object-contain relative z-10 select-none"
-                style={{
-                  WebkitMaskImage: "radial-gradient(ellipse 48% 50% at 50% 48%, black 55%, transparent 80%)",
-                  maskImage: "radial-gradient(ellipse 48% 50% at 50% 48%, black 55%, transparent 80%)",
-                  filter: "drop-shadow(0 8px 25px hsl(var(--primary) / 0.3))",
-                }}
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-              />
+              <Interactive3DMascot mood="celebrate" size="lg" />
             </motion.div>
 
             {/* Title */}
