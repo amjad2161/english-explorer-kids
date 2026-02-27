@@ -19,7 +19,7 @@ import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 import { Zap, Trophy, RotateCcw, Lightbulb } from "lucide-react";
 
 /* ─── Pattern Types ─── */
-type PatternType = "letter-sequence" | "number-sequence" | "shape-pattern" | "mirror-pattern" | "color-word";
+type PatternType = "letter-sequence" | "number-sequence" | "shape-pattern" | "mirror-pattern" | "color-word" | "analogy" | "sentence-completion" | "odd-letter-out";
 
 interface Puzzle {
   type: PatternType;
@@ -167,12 +167,107 @@ const generateColorWordPattern = (): Puzzle => {
   };
 };
 
+/* ─── Analogy Puzzles ─── */
+const ANALOGIES: { a: string; b: string; c: string; d: string; hint: string }[] = [
+  { a: "Hot", b: "Cold", c: "Big", d: "Small", hint: "Opposites!" },
+  { a: "Cat", b: "Kitten", c: "Dog", d: "Puppy", hint: "Parent → Baby" },
+  { a: "Day", b: "Night", c: "Sun", d: "Moon", hint: "Opposites in the sky" },
+  { a: "Up", b: "Down", c: "Left", d: "Right", hint: "Opposite directions" },
+  { a: "Happy", b: "Sad", c: "Fast", d: "Slow", hint: "Opposites!" },
+  { a: "Book", b: "Read", c: "Food", d: "Eat", hint: "Object → Action" },
+  { a: "Eye", b: "See", c: "Ear", d: "Hear", hint: "Body part → Sense" },
+  { a: "Bird", b: "Fly", c: "Fish", d: "Swim", hint: "Animal → Movement" },
+  { a: "Teacher", b: "School", c: "Doctor", d: "Hospital", hint: "Person → Place" },
+  { a: "Milk", b: "White", c: "Sky", d: "Blue", hint: "Thing → Color" },
+  { a: "Winter", b: "Cold", c: "Summer", d: "Hot", hint: "Season → Temperature" },
+  { a: "Hand", b: "Glove", c: "Foot", d: "Shoe", hint: "Body part → Clothing" },
+];
+
+const generateAnalogy = (): Puzzle => {
+  const a = ANALOGIES[Math.floor(Math.random() * ANALOGIES.length)];
+  const wrongAnswers = ANALOGIES.filter(x => x.d !== a.d).sort(() => Math.random() - 0.5).slice(0, 3).map(x => x.d);
+  const options = [...wrongAnswers, a.d].sort(() => Math.random() - 0.5);
+  return {
+    type: "analogy",
+    sequence: [a.a, "→", a.b, "|", a.c, "→", "?"],
+    missingIndex: 6,
+    answer: a.d,
+    options,
+    hint: a.hint,
+  };
+};
+
+/* ─── Sentence Completion ─── */
+const SENTENCES: { parts: string[]; answer: string; distractors: string[]; hint: string }[] = [
+  { parts: ["The cat is", "?", "the table"], answer: "on", distractors: ["run", "blue", "eat"], hint: "A place word (preposition)" },
+  { parts: ["I", "?", "to school every day"], answer: "go", distractors: ["eat", "red", "big"], hint: "A movement verb" },
+  { parts: ["She is", "?", "a book"], answer: "reading", distractors: ["swimming", "green", "table"], hint: "What do you do with a book?" },
+  { parts: ["The sun is", "?"], answer: "yellow", distractors: ["running", "eating", "sleeping"], hint: "It's a color" },
+  { parts: ["We drink", "?", "every morning"], answer: "water", distractors: ["chair", "happy", "run"], hint: "A liquid" },
+  { parts: ["He has two", "?"], answer: "eyes", distractors: ["run", "blue", "happy"], hint: "Body parts for seeing" },
+  { parts: ["Birds can", "?"], answer: "fly", distractors: ["table", "green", "milk"], hint: "Movement in the sky" },
+  { parts: ["I sleep in my", "?"], answer: "bed", distractors: ["eat", "run", "sing"], hint: "Furniture for sleeping" },
+  { parts: ["The dog likes to", "?"], answer: "play", distractors: ["chair", "blue", "milk"], hint: "A fun activity" },
+  { parts: ["It is very", "?", "outside"], answer: "cold", distractors: ["running", "book", "singing"], hint: "A weather feeling" },
+];
+
+const generateSentenceCompletion = (): Puzzle => {
+  const s = SENTENCES[Math.floor(Math.random() * SENTENCES.length)];
+  const missingIndex = s.parts.indexOf("?");
+  const options = [...s.distractors, s.answer].sort(() => Math.random() - 0.5);
+  return {
+    type: "sentence-completion",
+    sequence: s.parts,
+    missingIndex,
+    answer: s.answer,
+    options,
+    hint: s.hint,
+  };
+};
+
+/* ─── Odd Letter Out ─── */
+const generateOddLetterOut = (): Puzzle => {
+  const vowels = ["A", "E", "I", "O", "U"];
+  const consonants = "BCDFGHJKLMNPQRSTVWXYZ".split("");
+  
+  const useVowelGroup = Math.random() > 0.5;
+  let items: string[], oddItem: string, hintText: string;
+  
+  if (useVowelGroup) {
+    items = [...vowels].sort(() => Math.random() - 0.5).slice(0, 4);
+    oddItem = consonants[Math.floor(Math.random() * consonants.length)];
+    hintText = "One is not a vowel (A, E, I, O, U)";
+  } else {
+    items = [...consonants].sort(() => Math.random() - 0.5).slice(0, 4);
+    oddItem = vowels[Math.floor(Math.random() * vowels.length)];
+    hintText = "One is a vowel among consonants";
+  }
+  
+  const insertAt = Math.floor(Math.random() * 5);
+  const seq = [...items];
+  seq.splice(insertAt, 0, oddItem);
+  
+  const options = [...seq].sort(() => Math.random() - 0.5);
+  
+  return {
+    type: "odd-letter-out",
+    sequence: seq,
+    missingIndex: -1,
+    answer: oddItem,
+    options,
+    hint: hintText,
+  };
+};
+
 const GENERATORS = [
   generateLetterSequence,
   generateNumberSequence,
   generateShapePattern,
   generateMirrorPattern,
   generateColorWordPattern,
+  generateAnalogy,
+  generateSentenceCompletion,
+  generateOddLetterOut,
 ];
 
 const generatePuzzles = (count: number): Puzzle[] => {
@@ -190,6 +285,9 @@ const TYPE_LABELS: Record<PatternType, Record<string, string>> = {
   "shape-pattern": { he: "דפוס צורות", ar: "نمط أشكال", en: "Shape Pattern" },
   "mirror-pattern": { he: "דפוס מראה", ar: "نمط مرآة", en: "Mirror Pattern" },
   "color-word": { he: "מילות צבע", ar: "كلمات ألوان", en: "Color Words" },
+  "analogy": { he: "אנלוגיה", ar: "قياس", en: "Analogy" },
+  "sentence-completion": { he: "השלמת משפט", ar: "إكمال جملة", en: "Complete the Sentence" },
+  "odd-letter-out": { he: "אות חורגת", ar: "الحرف الشاذ", en: "Odd Letter Out" },
 };
 
 const TYPE_EMOJIS: Record<PatternType, string> = {
@@ -198,6 +296,9 @@ const TYPE_EMOJIS: Record<PatternType, string> = {
   "shape-pattern": "🔷",
   "mirror-pattern": "🪞",
   "color-word": "🎨",
+  "analogy": "🔗",
+  "sentence-completion": "📝",
+  "odd-letter-out": "🚫",
 };
 
 /* ─── Sequence cell ─── */
@@ -205,11 +306,21 @@ const SequenceCell = ({ value, isMissing, isRevealed, revealedAnswer, type }: {
   value: string; isMissing: boolean; isRevealed: boolean; revealedAnswer?: string; type: PatternType;
 }) => {
   const colorInfo = type === "color-word" ? COLOR_WORDS.find(c => c.word === (isRevealed ? revealedAnswer : value)) : null;
+  const isWord = type === "sentence-completion" || type === "analogy";
+  const isSymbol = value === "→" || value === "|";
+
+  if (isSymbol) {
+    return (
+      <span className="text-muted-foreground font-display font-bold text-xl mx-1">
+        {value === "|" ? ":" : value}
+      </span>
+    );
+  }
 
   return (
     <motion.div
       layout
-      className={`w-12 h-14 sm:w-14 sm:h-16 rounded-xl flex items-center justify-center font-display font-extrabold text-lg sm:text-xl border-2 transition-all ${
+      className={`${isWord ? "px-3 py-2 min-w-[3rem]" : "w-12 h-14 sm:w-14 sm:h-16"} rounded-xl flex items-center justify-center font-display font-extrabold ${isWord ? "text-sm sm:text-base" : "text-lg sm:text-xl"} border-2 transition-all ${
         isMissing
           ? isRevealed
             ? "border-accent"
@@ -244,6 +355,18 @@ const SequenceCell = ({ value, isMissing, isRevealed, revealedAnswer, type }: {
       )}
     </motion.div>
   );
+};
+
+/* ─── Question prompts per type ─── */
+const TYPE_QUESTIONS: Record<PatternType, Record<string, string>> = {
+  "letter-sequence": { he: "מצא את האות החסרה בסדרה", ar: "اعثر على الحرف المفقود", en: "Find the missing letter" },
+  "number-sequence": { he: "מצא את המספר החסר בסדרה", ar: "اعثر على الرقم المفقود", en: "Find the missing number" },
+  "shape-pattern": { he: "מצא את הצורה החסרה בדפוס", ar: "اعثر على الشكل المفقود", en: "Find the missing shape" },
+  "mirror-pattern": { he: "מצא את המראה של האות", ar: "اعثر على انعكاس الحرف", en: "Find the mirror letter" },
+  "color-word": { he: "איזה צבע חסר?", ar: "أي لون مفقود؟", en: "Which color is missing?" },
+  "analogy": { he: "השלם את האנלוגיה", ar: "أكمل القياس", en: "Complete the analogy" },
+  "sentence-completion": { he: "השלם את המשפט", ar: "أكمل الجملة", en: "Complete the sentence" },
+  "odd-letter-out": { he: "מצא את האות שלא שייכת!", ar: "اعثر على الحرف الذي لا ينتمي!", en: "Find the letter that doesn't belong!" },
 };
 
 /* ═══ MAIN COMPONENT ═══ */
@@ -443,6 +566,11 @@ const PatternPuzzle = () => {
                     <span>{TYPE_EMOJIS[puzzle.type]}</span>
                     {TYPE_LABELS[puzzle.type][lang] || TYPE_LABELS[puzzle.type].en}
                   </motion.div>
+
+                  {/* Question prompt */}
+                  <p className="text-sm font-body text-muted-foreground mb-3">
+                    {TYPE_QUESTIONS[puzzle.type][lang] || TYPE_QUESTIONS[puzzle.type].en}
+                  </p>
 
                   {/* Sequence display */}
                   <div className="flex items-center justify-center gap-2 sm:gap-3 mb-6 flex-wrap">
