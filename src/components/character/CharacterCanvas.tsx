@@ -5,6 +5,7 @@ import professorOwl from "@/assets/professor-owl.png";
 import type { CharacterMood } from "@/lib/characterStore";
 import { useCharacterStore } from "@/lib/characterStore";
 import { playOwlSpeechSound } from "@/lib/sounds";
+import OwlBodyAnimations from "./OwlBodyAnimations";
 
 interface CharacterCanvasProps {
   mood: CharacterMood;
@@ -351,6 +352,9 @@ const CharacterCanvas = ({
             animate={getMoodAnimation()}
           />
         </motion.div>
+
+        {/* Body animations overlay (wings, head, feathers, blink, breathing) */}
+        <OwlBodyAnimations mood={mood} width={width} />
 
         {/* Ground shadow */}
         <motion.div
