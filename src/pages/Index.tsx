@@ -361,6 +361,22 @@ const Index = () => {
           >
             🏅 {lang === "he" ? "הישגים" : lang === "ar" ? "إنجازات" : "Badges"}
           </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.06, y: -3 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => { playClickSound(); navigate("/report"); }}
+            className="btn-kid bg-card text-foreground text-sm px-5 py-3 border border-border shadow-lg"
+          >
+            📋 {lang === "he" ? "דוח התקדמות" : lang === "ar" ? "تقرير التقدم" : "Report"}
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.06, y: -3 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => { playClickSound(); navigate("/settings"); }}
+            className="btn-kid bg-card text-foreground text-sm px-5 py-3 border border-border shadow-lg"
+          >
+            ⚙️ {lang === "he" ? "הגדרות" : lang === "ar" ? "إعدادات" : "Settings"}
+          </motion.button>
         </motion.div>
 
         {/* ── FUN FACT ── */}
