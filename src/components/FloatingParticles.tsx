@@ -1,6 +1,12 @@
 import { motion } from "framer-motion";
 import { useMemo } from "react";
 
+const EDU_ITEMS = [
+  "📚", "✏️", "📐", "🎓", "📖", "🔬", "🎨", "📏",
+  "🧮", "🖊️", "📝", "🏫", "🎒", "✂️", "📎", "🖍️",
+  "🧲", "⭐", "💡", "🌍", "📓", "🔔", "✨", "🎵",
+];
+
 interface Particle {
   id: number;
   emoji: string;
@@ -11,36 +17,36 @@ interface Particle {
   delay: number;
 }
 
-const EMOJIS_LIGHT = ["⭐", "🌟", "✨", "💫", "🎈", "🦋", "🌸", "🍀", "🎵", "💎", "🌈", "🎪"];
-const EMOJIS_DARK = ["✨", "💫", "⭐", "🌟", "🔮", "💎", "🌙", "⚡", "🪐", "🌠", "💜", "🦉"];
-
 const FloatingParticles = ({ count = 18 }: { count?: number }) => {
-  const isDark = document.documentElement.classList.contains("dark");
-  const emojis = isDark ? EMOJIS_DARK : EMOJIS_LIGHT;
-
   const particles = useMemo<Particle[]>(() =>
     Array.from({ length: count }, (_, i) => ({
       id: i,
-      emoji: emojis[i % emojis.length],
+      emoji: EDU_ITEMS[i % EDU_ITEMS.length],
       x: Math.random() * 100,
       y: Math.random() * 100,
-      size: 12 + Math.random() * 16,
-      duration: 14 + Math.random() * 22,
+      size: 14 + Math.random() * 14,
+      duration: 18 + Math.random() * 20,
       delay: Math.random() * -20,
     })), [count]);
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+      {/* Educational floating items */}
       {particles.map(p => (
         <motion.div
           key={p.id}
           className="absolute select-none will-change-transform"
-          style={{ left: `${p.x}%`, top: `${p.y}%`, fontSize: p.size, transform: "translateZ(0)" }}
+          style={{
+            left: `${p.x}%`, top: `${p.y}%`,
+            fontSize: p.size,
+            transform: "translateZ(0)",
+            filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.15))",
+          }}
           animate={{
-            y: [0, -50, 15, -35, 0],
-            x: [0, 25, -15, 12, 0],
-            rotate: [0, 12, -8, 6, 0],
-            opacity: [0.12, 0.3, 0.18, 0.25, 0.12],
+            y: [0, -40, 10, -25, 0],
+            x: [0, 20, -10, 8, 0],
+            rotate: [0, 10, -6, 4, 0],
+            opacity: [0.15, 0.35, 0.2, 0.3, 0.15],
           }}
           transition={{
             duration: p.duration,
@@ -53,33 +59,24 @@ const FloatingParticles = ({ count = 18 }: { count?: number }) => {
         </motion.div>
       ))}
 
-      {/* Ambient gradient orbs */}
+      {/* Chalkboard dust/glow effects */}
       <motion.div
-        className="absolute w-[600px] h-[600px] rounded-full opacity-[0.06] dark:opacity-[0.08]"
+        className="absolute w-[500px] h-[500px] rounded-full"
         style={{
-          background: "radial-gradient(circle, hsl(var(--primary)), transparent 65%)",
-          top: "-10%", right: "-10%",
+          background: "radial-gradient(circle, hsl(var(--primary) / 0.06), transparent 65%)",
+          top: "-8%", right: "-8%",
         }}
-        animate={{ scale: [1, 1.3, 1], x: [0, 50, 0], y: [0, -30, 0] }}
-        transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+        animate={{ scale: [1, 1.25, 1], x: [0, 40, 0] }}
+        transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="absolute w-[500px] h-[500px] rounded-full opacity-[0.04] dark:opacity-[0.06]"
+        className="absolute w-[400px] h-[400px] rounded-full"
         style={{
-          background: "radial-gradient(circle, hsl(var(--accent)), transparent 65%)",
-          bottom: "-5%", left: "-8%",
+          background: "radial-gradient(circle, hsl(var(--accent) / 0.05), transparent 65%)",
+          bottom: "-5%", left: "-6%",
         }}
-        animate={{ scale: [1, 1.2, 1], x: [0, -40, 0], y: [0, 40, 0] }}
-        transition={{ duration: 25, repeat: Infinity, ease: "easeInOut", delay: -8 }}
-      />
-      <motion.div
-        className="absolute w-[400px] h-[400px] rounded-full opacity-[0.03] dark:opacity-[0.05]"
-        style={{
-          background: "radial-gradient(circle, hsl(var(--candy)), transparent 65%)",
-          top: "40%", left: "50%",
-        }}
-        animate={{ scale: [0.8, 1.1, 0.8], x: [0, 60, 0] }}
-        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: -5 }}
+        animate={{ scale: [1, 1.15, 1], y: [0, 30, 0] }}
+        transition={{ duration: 28, repeat: Infinity, ease: "easeInOut", delay: -10 }}
       />
     </div>
   );

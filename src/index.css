@@ -6,63 +6,65 @@
 
 @layer base {
   :root {
-    --background: 45 100% 97%;
-    --foreground: 240 20% 20%;
+    --background: 40 30% 96%;
+    --foreground: 220 25% 18%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 240 20% 20%;
+    --card: 38 40% 98%;
+    --card-foreground: 220 25% 18%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 20% 20%;
+    --popover: 38 40% 98%;
+    --popover-foreground: 220 25% 18%;
 
-    --primary: 25 95% 55%;
+    --primary: 25 95% 53%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 195 85% 55%;
+    --secondary: 195 80% 50%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 45 30% 92%;
-    --muted-foreground: 240 10% 45%;
+    --muted: 38 25% 90%;
+    --muted-foreground: 220 12% 42%;
 
-    --accent: 145 65% 48%;
+    --accent: 145 60% 45%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 45 30% 88%;
-    --input: 45 30% 88%;
-    --ring: 25 95% 55%;
+    --border: 38 25% 85%;
+    --input: 38 25% 85%;
+    --ring: 25 95% 53%;
 
     --radius: 1rem;
 
-    /* Custom kid-friendly colors */
-    --sunshine: 45 100% 60%;
-    --sunshine-foreground: 45 100% 20%;
-    --sky: 195 85% 55%;
-    --sky-light: 195 85% 92%;
-    --grass: 145 65% 48%;
-    --grass-light: 145 65% 92%;
-    --candy: 330 85% 60%;
-    --candy-light: 330 85% 92%;
-    --lavender: 270 70% 65%;
-    --lavender-light: 270 70% 92%;
+    /* Educational palette */
+    --sunshine: 45 100% 58%;
+    --sunshine-foreground: 45 100% 18%;
+    --sky: 195 80% 50%;
+    --sky-light: 195 80% 92%;
+    --grass: 145 60% 45%;
+    --grass-light: 145 60% 92%;
+    --candy: 330 80% 58%;
+    --candy-light: 330 80% 92%;
+    --lavender: 270 65% 62%;
+    --lavender-light: 270 65% 92%;
+    --chalk: 45 20% 95%;
+    --board: 160 25% 22%;
 
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(25, 95%, 55%), hsl(45, 100%, 60%));
-    --gradient-sky: linear-gradient(135deg, hsl(195, 85%, 55%), hsl(195, 85%, 75%));
-    --gradient-grass: linear-gradient(135deg, hsl(145, 65%, 48%), hsl(145, 65%, 65%));
-    --gradient-candy: linear-gradient(135deg, hsl(330, 85%, 60%), hsl(330, 85%, 75%));
-    --gradient-lavender: linear-gradient(135deg, hsl(270, 70%, 65%), hsl(270, 70%, 80%));
-    --gradient-bg: linear-gradient(180deg, hsl(45, 100%, 97%), hsl(45, 60%, 94%));
-    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.7), rgba(255,255,255,0.25));
+    --gradient-hero: linear-gradient(135deg, hsl(25, 95%, 53%), hsl(45, 100%, 58%));
+    --gradient-sky: linear-gradient(135deg, hsl(195, 80%, 50%), hsl(195, 80%, 72%));
+    --gradient-grass: linear-gradient(135deg, hsl(145, 60%, 45%), hsl(145, 60%, 62%));
+    --gradient-candy: linear-gradient(135deg, hsl(330, 80%, 58%), hsl(330, 80%, 72%));
+    --gradient-lavender: linear-gradient(135deg, hsl(270, 65%, 62%), hsl(270, 65%, 78%));
+    --gradient-bg: linear-gradient(180deg, hsl(38, 35%, 97%) 0%, hsl(40, 30%, 93%) 50%, hsl(38, 25%, 90%) 100%);
+    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.75), rgba(255,255,255,0.3));
 
     /* Shadows */
-    --shadow-card: 0 8px 30px -8px hsl(25 95% 55% / 0.12), 0 2px 8px -2px hsl(240 20% 20% / 0.06);
-    --shadow-button: 0 4px 15px -3px hsl(25 95% 55% / 0.3);
-    --shadow-float: 0 20px 50px -12px hsl(240 20% 20% / 0.18);
-    --shadow-glow-primary: 0 0 25px hsl(25 95% 55% / 0.25);
-    --shadow-glow-accent: 0 0 25px hsl(145 65% 48% / 0.25);
+    --shadow-card: 0 8px 30px -8px hsl(25 95% 53% / 0.1), 0 2px 8px -2px hsl(220 25% 18% / 0.06);
+    --shadow-button: 0 4px 15px -3px hsl(25 95% 53% / 0.3);
+    --shadow-float: 0 20px 50px -12px hsl(220 25% 18% / 0.15);
+    --shadow-glow-primary: 0 0 25px hsl(25 95% 53% / 0.2);
+    --shadow-glow-accent: 0 0 25px hsl(145 60% 45% / 0.2);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -75,45 +77,47 @@
   }
 
   .dark {
-    --background: 240 25% 8%;
-    --foreground: 45 30% 95%;
-    --card: 240 22% 13%;
-    --card-foreground: 45 30% 95%;
-    --popover: 240 22% 13%;
-    --popover-foreground: 45 30% 95%;
-    --primary: 25 95% 58%;
+    --background: 160 30% 10%;
+    --foreground: 40 30% 92%;
+    --card: 160 25% 14%;
+    --card-foreground: 40 30% 92%;
+    --popover: 160 25% 14%;
+    --popover-foreground: 40 30% 92%;
+    --primary: 25 95% 56%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 195 85% 58%;
+    --secondary: 195 80% 55%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 240 18% 18%;
-    --muted-foreground: 45 15% 60%;
-    --accent: 145 65% 52%;
+    --muted: 160 20% 18%;
+    --muted-foreground: 40 15% 58%;
+    --accent: 145 60% 50%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
-    --border: 240 15% 20%;
-    --input: 240 15% 20%;
-    --ring: 25 95% 58%;
-    --sunshine: 45 100% 62%;
-    --sunshine-foreground: 45 100% 90%;
-    --sky: 195 85% 60%;
-    --candy: 330 85% 65%;
-    --lavender: 270 70% 70%;
-    --gradient-glass: linear-gradient(135deg, rgba(25,25,45,0.7), rgba(20,20,40,0.3));
-    --gradient-bg: linear-gradient(180deg, hsl(240, 25%, 8%), hsl(250, 30%, 5%));
-    --gradient-hero: linear-gradient(135deg, hsl(25, 95%, 58%), hsl(45, 100%, 62%));
-    --shadow-card: 0 8px 30px -8px hsl(25 95% 55% / 0.1), 0 2px 10px hsl(0 0% 0% / 0.3);
-    --shadow-button: 0 4px 20px -3px hsl(25 95% 55% / 0.25);
-    --shadow-float: 0 20px 60px -12px hsl(0 0% 0% / 0.5);
-    --shadow-glow-primary: 0 0 30px hsl(25 95% 55% / 0.2);
-    --shadow-glow-accent: 0 0 30px hsl(145 65% 48% / 0.2);
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
+    --border: 160 15% 20%;
+    --input: 160 15% 20%;
+    --ring: 25 95% 56%;
+    --sunshine: 45 100% 60%;
+    --sunshine-foreground: 45 100% 88%;
+    --sky: 195 80% 58%;
+    --candy: 330 80% 62%;
+    --lavender: 270 65% 68%;
+    --chalk: 40 15% 85%;
+    --board: 160 30% 10%;
+    --gradient-glass: linear-gradient(135deg, rgba(20,35,30,0.7), rgba(15,30,25,0.3));
+    --gradient-bg: linear-gradient(180deg, hsl(160, 30%, 10%), hsl(160, 35%, 6%));
+    --gradient-hero: linear-gradient(135deg, hsl(25, 95%, 56%), hsl(45, 100%, 60%));
+    --shadow-card: 0 8px 30px -8px hsl(25 95% 53% / 0.08), 0 2px 10px hsl(0 0% 0% / 0.25);
+    --shadow-button: 0 4px 20px -3px hsl(25 95% 53% / 0.2);
+    --shadow-float: 0 20px 60px -12px hsl(0 0% 0% / 0.4);
+    --shadow-glow-primary: 0 0 30px hsl(25 95% 53% / 0.15);
+    --shadow-glow-accent: 0 0 30px hsl(145 60% 45% / 0.15);
+    --sidebar-background: 160 25% 8%;
+    --sidebar-foreground: 40 15% 92%;
     --sidebar-primary: 224.3 76.3% 48%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-accent: 160 20% 14%;
+    --sidebar-accent-foreground: 40 15% 92%;
+    --sidebar-border: 160 15% 15%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
@@ -129,6 +133,22 @@
     min-height: 100vh;
     overflow-x: hidden;
     transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s ease;
+    /* Subtle notebook lines for light mode */
+    background-image: 
+      var(--gradient-bg),
+      repeating-linear-gradient(
+        transparent,
+        transparent 39px,
+        hsl(var(--primary) / 0.03) 39px,
+        hsl(var(--primary) / 0.03) 40px
+      );
+  }
+
+  .dark body {
+    /* Chalkboard texture for dark mode */
+    background-image:
+      var(--gradient-bg),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   }
 
   /* Smooth scroll */
@@ -303,6 +323,34 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  /* ─── 3D Text Effect ─── */
+  .text-3d {
+    text-shadow:
+      0 1px 0 hsl(var(--primary) / 0.15),
+      0 2px 0 hsl(var(--primary) / 0.12),
+      0 3px 0 hsl(var(--primary) / 0.09),
+      0 4px 8px hsl(var(--foreground) / 0.1);
+  }
+
+  .dark .text-3d {
+    text-shadow:
+      0 1px 0 hsl(var(--primary) / 0.2),
+      0 2px 0 hsl(var(--primary) / 0.15),
+      0 3px 0 hsl(var(--primary) / 0.1),
+      0 4px 12px hsl(0 0% 0% / 0.3);
+  }
+
+  /* ─── Emoji 3D style ─── */
+  .emoji-3d {
+    filter: drop-shadow(0 3px 6px rgba(0,0,0,0.2));
+    transition: transform 0.3s ease, filter 0.3s ease;
+  }
+
+  .emoji-3d:hover {
+    filter: drop-shadow(0 6px 12px rgba(0,0,0,0.25));
+    transform: scale(1.15) translateY(-4px);
   }
 
   /* ─── 3D Letter Card ─── */
@@ -493,21 +541,41 @@
     @apply rounded-2xl p-4;
   }
 
-  /* ─── Dark mode ambient noise texture ─── */
+  /* ─── Dark mode chalkboard texture ─── */
   .dark body::before {
     content: '';
     position: fixed;
     inset: 0;
-    opacity: 0.015;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     pointer-events: none;
     z-index: 0;
   }
 
-  /* ─── Premium header glassmorphism ─── */
+  /* ─── Light mode notebook paper dots ─── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    opacity: 0.03;
+    background-image: radial-gradient(circle, hsl(var(--primary) / 0.3) 1px, transparent 1px);
+    background-size: 24px 24px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .dark body::after {
+    opacity: 0;
+  }
+
+  /* ─── Header glassmorphism ─── */
+  header {
+    backdrop-filter: blur(16px) saturate(1.2) !important;
+  }
+
   .dark header {
-    background: hsl(var(--card) / 0.6) !important;
-    border-bottom-color: hsl(var(--primary) / 0.08) !important;
+    background: hsl(var(--card) / 0.7) !important;
+    border-bottom-color: hsl(var(--primary) / 0.1) !important;
   }
 
   /* ─── Glow text for dark mode ─── */
