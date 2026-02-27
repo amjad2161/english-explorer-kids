@@ -255,11 +255,17 @@ const HangmanGame = () => {
                 {/* Ambient gradient */}
                 <div className="absolute inset-0 pointer-events-none" style={{
                   background: result === "won"
-                    ? "radial-gradient(circle at 50% 30%, hsl(var(--accent) / 0.06), transparent 60%)"
+                    ? "radial-gradient(circle at 50% 30%, hsl(var(--accent) / 0.08), transparent 60%)"
                     : result === "lost"
-                    ? "radial-gradient(circle at 50% 30%, hsl(var(--destructive) / 0.06), transparent 60%)"
-                    : "radial-gradient(circle at 50% 30%, hsl(var(--primary) / 0.03), transparent 60%)"
+                    ? "radial-gradient(circle at 50% 30%, hsl(var(--destructive) / 0.08), transparent 60%)"
+                    : "radial-gradient(circle at 50% 30%, hsl(var(--primary) / 0.05), transparent 60%)"
                 }} />
+                {/* Shimmer sweep */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent pointer-events-none"
+                  animate={{ x: ["-100%", "200%"] }}
+                  transition={{ duration: 4, repeat: Infinity, repeatDelay: 5, ease: "easeInOut" }}
+                />
 
                 {/* Hangman figure + lives */}
                 <div className="flex items-center justify-center gap-6 mb-4 relative">
@@ -355,9 +361,9 @@ const HangmanGame = () => {
                         onClick={() => handleGuess(letter)}
                         disabled={guessed || !!result}
                         className={`w-9 h-10 rounded-lg font-display font-bold text-sm shadow-sm transition-all duration-200 ${
-                          isCorrectGuess ? "bg-accent text-accent-foreground shadow-md" :
+                          isCorrectGuess ? "bg-gradient-to-br from-accent to-accent/80 text-accent-foreground shadow-md shadow-accent/15" :
                           isWrongGuess ? "bg-destructive/15 text-destructive/50 line-through" :
-                          "bg-muted hover:bg-primary/15 hover:shadow-md text-foreground"
+                          "bg-card/80 backdrop-blur-sm hover:bg-primary/15 hover:shadow-md hover:shadow-primary/10 text-foreground border border-border/30"
                         } ${guessed || result ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
                       >
                         {letter}
@@ -376,8 +382,14 @@ const HangmanGame = () => {
             className="card-kid text-center relative overflow-hidden"
           >
             <div className="absolute inset-0 pointer-events-none" style={{
-              background: "radial-gradient(circle at 50% 20%, hsl(var(--sunshine) / 0.08), transparent 60%)"
+              background: "radial-gradient(circle at 50% 20%, hsl(var(--sunshine) / 0.1), transparent 60%)"
             }} />
+            {/* Shimmer effect */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-sunshine/8 to-transparent pointer-events-none"
+              animate={{ x: ["-100%", "200%"] }}
+              transition={{ duration: 3, repeat: Infinity, repeatDelay: 3, ease: "easeInOut" }}
+            />
             <div className="relative">
               <Interactive3DMascot mood="celebrate" size="md" />
               <h2 className="text-3xl font-display font-bold text-gradient mb-2">{t("spelling.finished")}</h2>

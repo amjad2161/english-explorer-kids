@@ -65,16 +65,17 @@ const StreakCalendar = ({ days = 28 }: Props) => {
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: i * 0.01 }}
-              className={`aspect-square rounded-lg flex items-center justify-center text-[10px] font-display font-bold relative cursor-default transition-colors ${
+              whileHover={{ scale: 1.15, y: -2, zIndex: 10 }}
+              className={`aspect-square rounded-lg flex items-center justify-center text-[10px] font-display font-bold relative cursor-default transition-all ${
                 isToday
-                  ? "ring-2 ring-primary ring-offset-1 ring-offset-background"
+                  ? "ring-2 ring-primary ring-offset-1 ring-offset-background shadow-md"
                   : ""
               } ${
                 day.active
                   ? day.intensity > 0.7
-                    ? "bg-primary/80 text-primary-foreground"
+                    ? "bg-gradient-to-br from-primary/90 to-primary/70 text-primary-foreground shadow-sm shadow-primary/20"
                     : day.intensity > 0.3
-                    ? "bg-primary/40 text-foreground"
+                    ? "bg-gradient-to-br from-primary/50 to-primary/30 text-foreground shadow-sm"
                     : "bg-primary/15 text-foreground"
                   : "bg-muted/30 text-muted-foreground"
               }`}
@@ -96,7 +97,7 @@ const StreakCalendar = ({ days = 28 }: Props) => {
       {/* Legend */}
       <div className="flex items-center justify-center gap-3 mt-3">
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-muted/30" />
+          <div className="w-3 h-3 rounded bg-muted/30 shadow-inner" />
           <span className="text-[10px] text-muted-foreground font-display">
             {t({ he: "לא פעיל", ar: "غير نشط", en: "Inactive" })}
           </span>
@@ -108,13 +109,13 @@ const StreakCalendar = ({ days = 28 }: Props) => {
           </span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-primary/40" />
+          <div className="w-3 h-3 rounded bg-gradient-to-br from-primary/50 to-primary/30 shadow-sm" />
           <span className="text-[10px] text-muted-foreground font-display">
             {t({ he: "בינוני", ar: "متوسط", en: "Medium" })}
           </span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-primary/80" />
+          <div className="w-3 h-3 rounded bg-gradient-to-br from-primary/90 to-primary/70 shadow-sm shadow-primary/20" />
           <span className="text-[10px] text-muted-foreground font-display">
             {t({ he: "חזק", ar: "قوي", en: "Strong" })}
           </span>

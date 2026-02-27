@@ -8,6 +8,7 @@ import { addCompletedWord } from "@/lib/progress";
 import { saveStageProgress, levels } from "@/lib/levels";
 import Confetti from "@/components/Confetti";
 import ClassroomBackground from "@/components/ClassroomBackground";
+import FloatingParticles from "@/components/FloatingParticles";
 import XPReward from "@/components/XPReward";
 import { Volume2, ArrowRight, BookOpen, Sparkles } from "lucide-react";
 import BackToLevels from "@/components/BackToLevels";
@@ -86,6 +87,7 @@ const WordsPage = () => {
   return (
     <div className="min-h-screen relative" dir={dir}>
       <ClassroomBackground />
+      <FloatingParticles count={8} />
       <Confetti show={showConfetti} />
       <XPReward amount={xpAmount} show={showXP} gameType="words" onComplete={() => setShowXP(false)} />
       
@@ -115,11 +117,13 @@ const WordsPage = () => {
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05, duration: 0.3 }}
-                    whileHover={{ y: -4, scale: 1.02 }}
+                    whileHover={{ y: -6, scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                     onClick={() => { playClickSound(); setSelectedCategory(index); }}
-                    className="card-kid text-center group"
+                    className="card-kid text-center group relative overflow-hidden"
                   >
+                    {/* Premium gradient overlay */}
+                    <div className={`absolute inset-0 bg-gradient-to-br ${categoryGradients[cat.color].replace('from-', 'from-').split(' ')[0]}/5 to-transparent pointer-events-none opacity-60`} />
                     <div className={`bg-gradient-to-br ${categoryGradients[cat.color]} w-20 h-20 rounded-2xl mx-auto mb-3 flex items-center justify-center shadow-lg`}>
                       <span className="text-4xl">{cat.emoji}</span>
                     </div>
@@ -172,12 +176,22 @@ const WordsPage = () => {
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.03, duration: 0.3 }}>
-                      <motion.div whileHover={{ y: -3, scale: 1.01 }} whileTap={{ scale: 0.98 }}
+                      <motion.div whileHover={{ y: -4, scale: 1.02 }} whileTap={{ scale: 0.98 }}
                         onClick={() => handleCardFlip(word)}
                         className={`card-kid cursor-pointer text-center relative overflow-hidden ${colorClass} ${
-                          isLearned ? "border-2 border-accent/30" : ""
+                          isLearned ? "border-2 border-accent/30 shadow-md shadow-accent/10" : ""
                         }`}>
-                        {isLearned && <span className="absolute top-2 start-2 text-lg">⭐</span>}
+                        {/* Premium gradient overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none" />
+                        {isLearned && (
+                          <motion.span
+                            className="absolute top-2 start-2 text-lg"
+                            animate={{ scale: [1, 1.15, 1], rotate: [0, 5, -5, 0] }}
+                            transition={{ duration: 3, repeat: Infinity }}
+                          >
+                            ⭐
+                          </motion.span>
+                        )}
                         <span className="text-5xl mb-3 block">{word.emoji}</span>
                         <AnimatePresence mode="wait">
                           {isFlipped ? (

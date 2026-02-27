@@ -36,7 +36,7 @@ const ScrambledTile = ({ letter, index, total }: { letter: string; index: number
       delay: index * 0.05,
     }}
     whileHover={{ y: -4, scale: 1.08, rotateZ: [-2, 2, 0] }}
-    className="w-12 h-14 rounded-xl bg-candy/15 border-2 border-candy/30 flex items-center justify-center text-2xl font-display font-bold text-foreground shadow-sm relative overflow-hidden cursor-default"
+    className="w-12 h-14 rounded-xl bg-gradient-to-br from-candy/20 to-candy/10 border-2 border-candy/30 flex items-center justify-center text-2xl font-display font-bold text-foreground shadow-md relative overflow-hidden cursor-default"
     style={{ perspective: "400px" }}
   >
     {/* Shine effect */}
@@ -242,11 +242,17 @@ const WordScramble = () => {
                 {/* Ambient gradient */}
                 <div className="absolute inset-0 pointer-events-none" style={{
                   background: result === "correct"
-                    ? "radial-gradient(circle at 50% 30%, hsl(var(--accent) / 0.06), transparent 60%)"
+                    ? "radial-gradient(circle at 50% 30%, hsl(var(--accent) / 0.08), transparent 60%)"
                     : result === "wrong"
-                    ? "radial-gradient(circle at 50% 30%, hsl(var(--destructive) / 0.06), transparent 60%)"
-                    : "radial-gradient(circle at 50% 30%, hsl(var(--candy) / 0.04), transparent 60%)"
+                    ? "radial-gradient(circle at 50% 30%, hsl(var(--destructive) / 0.08), transparent 60%)"
+                    : "radial-gradient(circle at 50% 30%, hsl(var(--candy) / 0.06), transparent 60%)"
                 }} />
+                {/* Shimmer sweep */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent pointer-events-none"
+                  animate={{ x: ["-100%", "200%"] }}
+                  transition={{ duration: 4, repeat: Infinity, repeatDelay: 5, ease: "easeInOut" }}
+                />
 
                 <div className="relative">
                   <motion.span className="text-6xl mb-3 block" whileHover={{ scale: 1.15 }}>{currentWord.emoji}</motion.span>
@@ -272,10 +278,10 @@ const WordScramble = () => {
                       onChange={e => setUserInput(e.target.value.toUpperCase())}
                       onKeyDown={e => e.key === "Enter" && handleSubmit()}
                       maxLength={currentWord.english.length}
-                      className={`text-center text-2xl font-display font-bold tracking-[0.3em] w-full max-w-xs px-4 py-3 rounded-xl border-2 bg-card focus:outline-none transition-all duration-300 ${
-                        result === "correct" ? "border-accent bg-accent/10 shadow-lg shadow-accent/10" :
-                        result === "wrong" ? "border-destructive bg-destructive/10 shadow-lg shadow-destructive/10" :
-                        "border-primary/30 focus:border-primary focus:shadow-lg focus:shadow-primary/10"
+                      className={`text-center text-2xl font-display font-bold tracking-[0.3em] w-full max-w-xs px-4 py-3 rounded-xl border-2 bg-card/90 backdrop-blur-sm focus:outline-none transition-all duration-300 ${
+                        result === "correct" ? "border-accent bg-accent/10 shadow-lg shadow-accent/15" :
+                        result === "wrong" ? "border-destructive bg-destructive/10 shadow-lg shadow-destructive/15" :
+                        "border-primary/30 focus:border-primary focus:shadow-lg focus:shadow-primary/15 hover:border-primary/50"
                       }`}
                       placeholder={currentWord.english.replace(/./g, "_ ").trim()}
                       disabled={!!result}
@@ -327,17 +333,23 @@ const WordScramble = () => {
             className="card-kid text-center relative overflow-hidden"
           >
             <div className="absolute inset-0 pointer-events-none" style={{
-              background: "radial-gradient(circle at 50% 20%, hsl(var(--sunshine) / 0.08), transparent 60%)"
+              background: "radial-gradient(circle at 50% 20%, hsl(var(--sunshine) / 0.1), transparent 60%)"
             }} />
+            {/* Shimmer effect */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-sunshine/8 to-transparent pointer-events-none"
+              animate={{ x: ["-100%", "200%"] }}
+              transition={{ duration: 3, repeat: Infinity, repeatDelay: 3, ease: "easeInOut" }}
+            />
             <div className="relative">
               <Interactive3DMascot mood="celebrate" size="md" />
               <h2 className="text-3xl font-display font-bold text-gradient mb-2">{t("spelling.finished")}</h2>
               <div className="flex justify-center gap-4 mb-4">
-                <motion.div whileHover={{ scale: 1.05 }} className="bg-primary/10 rounded-2xl px-4 py-2 flex items-center gap-2">
+                <motion.div whileHover={{ scale: 1.08, y: -2 }} className="bg-gradient-to-br from-primary/15 to-primary/5 rounded-2xl px-4 py-2 flex items-center gap-2 border border-primary/10 shadow-sm">
                   <Zap className="w-5 h-5 text-primary" />
                   <span className="font-display font-bold text-lg">{score}</span>
                 </motion.div>
-                <motion.div whileHover={{ scale: 1.05 }} className="bg-accent/10 rounded-2xl px-4 py-2 flex items-center gap-2">
+                <motion.div whileHover={{ scale: 1.08, y: -2 }} className="bg-gradient-to-br from-accent/15 to-accent/5 rounded-2xl px-4 py-2 flex items-center gap-2 border border-accent/10 shadow-sm">
                   <Trophy className="w-5 h-5 text-accent" />
                   <span className="font-display font-bold text-lg">{bestStreak}</span>
                 </motion.div>
