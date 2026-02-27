@@ -18,9 +18,8 @@ import Interactive3DMascot from "@/components/Interactive3DMascot";
 import FloatingParticles from "@/components/FloatingParticles";
 import { Volume2, RotateCcw, Shuffle, Zap, Trophy } from "lucide-react";
 import BackToLevels from "@/components/BackToLevels";
-
-const TOTAL_ROUNDS = 8;
-const TIME_PER_ROUND = 25;
+import CinematicBackground from "@/components/CinematicBackground";
+import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 const shuffleArray = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
 
 /* ─── Draggable scrambled letter tile ─── */
@@ -48,6 +47,9 @@ const WordScramble = () => {
   const [searchParams] = useSearchParams();
   const stageId = searchParams.get("stage");
   const { t, lang, dir } = useLanguage();
+  const adaptive = useAgeAdaptive();
+  const TOTAL_ROUNDS = adaptive.spellingRounds;
+  const TIME_PER_ROUND = adaptive.scrambleTimer;
 
   const [words, setWords] = useState<WordCard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -68,10 +70,8 @@ const WordScramble = () => {
   const { popups, addPopup } = useScorePopups();
 
   useEffect(() => {
-    const short = shuffleArray(getSpellingWords(5)).slice(0, 3);
-    const medium = shuffleArray(getSpellingWords(7).filter(w => w.english.length > 4)).slice(0, 3);
-    const long = shuffleArray(getSpellingWords(9).filter(w => w.english.length > 6)).slice(0, 2);
-    setWords(shuffleArray([...short, ...medium, ...long]).slice(0, TOTAL_ROUNDS));
+    const all = shuffleArray(getSpellingWords(adaptive.maxWordLength));
+    setWords(all.slice(0, TOTAL_ROUNDS));
   }, []);
 
   useEffect(() => {
@@ -160,10 +160,8 @@ const WordScramble = () => {
   };
 
   const restart = () => {
-    const short = shuffleArray(getSpellingWords(5)).slice(0, 3);
-    const medium = shuffleArray(getSpellingWords(7).filter(w => w.english.length > 4)).slice(0, 3);
-    const long = shuffleArray(getSpellingWords(9).filter(w => w.english.length > 6)).slice(0, 2);
-    setWords(shuffleArray([...short, ...medium, ...long]).slice(0, TOTAL_ROUNDS));
+    const all = shuffleArray(getSpellingWords(adaptive.maxWordLength));
+    setWords(all.slice(0, TOTAL_ROUNDS));
     setCurrentIndex(0); setScore(0); setStreak(0); setBestStreak(0);
     setFinished(false); setOwlMood("idle");
   };
@@ -175,6 +173,7 @@ const WordScramble = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
+      <CinematicBackground intensity={0.5} />
       <FloatingParticles count={6} />
       <Confetti show={showConfetti} />
       <ScorePopup popups={popups} />

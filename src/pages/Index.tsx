@@ -14,6 +14,7 @@ import DailyChallengeCard from "@/components/DailyChallengeCard";
 import WordOfTheDay from "@/components/WordOfTheDay";
 import { getSmartRecommendations, getMotivationalMessage, Recommendation } from "@/lib/recommendations";
 import Interactive3DMascot from "@/components/Interactive3DMascot";
+import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 import { Zap, Trophy, ArrowRight, Map, Star, BookOpen, Gamepad2, Sparkles } from "lucide-react";
 
 const container = {
@@ -138,6 +139,7 @@ const Index = () => {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [motivation, setMotivation] = useState(getMotivationalMessage(lang));
   const [heroReady, setHeroReady] = useState(false);
+  const adaptive = useAgeAdaptive();
 
   useEffect(() => {
     setTotalStars(getTotalEarnedStars());
@@ -151,11 +153,17 @@ const Index = () => {
     const t0 = setTimeout(() => setHeroReady(true), 200);
     const t1 = setTimeout(() => {
       setMascotMood("wave");
-      const greetings = {
-        he: "!שלום 👋",
-        ar: "!مرحباً 👋",
-        en: "Hello! 👋",
-      };
+      const greetings = adaptive.displayName
+        ? {
+            he: `!${adaptive.displayName} שלום 👋`,
+            ar: `!مرحباً ${adaptive.displayName} 👋`,
+            en: `Hello ${adaptive.displayName}! 👋`,
+          }
+        : {
+            he: "!שלום 👋",
+            ar: "!مرحباً 👋",
+            en: "Hello! 👋",
+          };
       setSpeechBubble(greetings[lang] || greetings.en);
     }, 800);
     const t2 = setTimeout(() => { setMascotMood("idle"); setSpeechBubble(undefined); }, 3000);
