@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useLanguage } from "@/lib/i18n";
 import { Heart, BookOpen, Pencil, Star } from "lucide-react";
 import { Link } from "react-router-dom";
-import owlPixar from "@/assets/owl-pixar.png";
+import CharacterCanvas from "@/components/character/CharacterCanvas";
 
 const ChalkDoodle = ({ children, x, y, delay = 0 }: { children: React.ReactNode; x: string; y: string; delay?: number }) => (
   <motion.span
@@ -87,17 +87,18 @@ const AppFooter = () => {
             whileHover={{ scale: 1.05 }}
           >
             <motion.div className="relative">
-              <motion.img
-                src={owlPixar}
-                alt="English Fun Owl"
-                className="w-12 h-12 object-contain rounded-full"
+              <motion.div
                 style={{
                   boxShadow: "0 0 16px hsl(var(--grass) / 0.2), 0 0 4px hsl(var(--grass) / 0.3)",
                   border: "2px solid hsl(var(--grass) / 0.25)",
+                  borderRadius: "50%",
+                  overflow: "hidden",
                 }}
                 animate={{ y: [0, -3, 0] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              />
+              >
+                <CharacterCanvas mood="idle" animationKey={0} width={48} height={48} />
+              </motion.div>
               {/* Tiny chalk circle */}
               <div
                 className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full"

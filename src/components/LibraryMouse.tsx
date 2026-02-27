@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import mouseLibrarian from "@/assets/mouse-librarian.png";
+import CharacterCanvas from "@/components/character/CharacterCanvas";
 
 const LibraryMouse = () => {
   return (
@@ -27,19 +27,19 @@ const LibraryMouse = () => {
         transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      <motion.img
-        src={mouseLibrarian}
-        alt="Mouse Librarian"
-        draggable={false}
-        className="w-full h-full object-contain select-none pointer-events-none relative z-10"
-        style={{
-          filter: "drop-shadow(0 5px 14px hsl(20 30% 8% / 0.5))",
-          WebkitMaskImage: "radial-gradient(ellipse 42% 48% at 50% 46%, black 50%, rgba(0,0,0,0.5) 65%, transparent 72%)",
-          maskImage: "radial-gradient(ellipse 42% 48% at 50% 46%, black 50%, rgba(0,0,0,0.5) 65%, transparent 72%)",
-        }}
+      {/* Real-time 3D character — no <img> */}
+      <motion.div
         animate={{ y: [0, -2, 0], x: [0, 1, 0] }}
         transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-      />
+        className="w-full h-full relative z-10"
+      >
+        <CharacterCanvas
+          mood="idle"
+          animationKey={0}
+          width={100}
+          height={130}
+        />
+      </motion.div>
     </motion.div>
   );
 };
