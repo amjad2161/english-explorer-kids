@@ -7,6 +7,8 @@ import { getStatsHistory, getLastNDays, getWeeklySummary } from "@/lib/statsTrac
 import { getTotalEarnedStars, levels, getLevelProgress } from "@/lib/levels";
 import { getUnlockedAchievements, achievementNames } from "@/lib/achievements";
 import FloatingParticles from "@/components/FloatingParticles";
+import Interactive3DMascot from "@/components/Interactive3DMascot";
+import BackToLevels from "@/components/BackToLevels";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   RadarChart, PolarGrid, PolarAngleAxis, Radar, PieChart, Pie, Cell,
@@ -133,6 +135,8 @@ const ProgressReport = () => {
         animate="visible"
         className="max-w-3xl mx-auto px-4 py-8 relative z-10"
       >
+        <BackToLevels />
+        <div className="text-center mb-4"><Interactive3DMascot mood="idle" size="sm" /></div>
         {/* Header with actions */}
         <motion.div variants={itemVariants} className="flex items-center justify-between mb-6">
           <div>

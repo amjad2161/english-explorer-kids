@@ -10,6 +10,7 @@ import Confetti from "@/components/Confetti";
 import XPReward from "@/components/XPReward";
 import { Volume2, ArrowRight, BookOpen, Sparkles } from "lucide-react";
 import BackToLevels from "@/components/BackToLevels";
+import Interactive3DMascot from "@/components/Interactive3DMascot";
 
 const categoryGradients: Record<string, string> = {
   grass: "from-grass to-grass/70", candy: "from-candy to-candy/70", sky: "from-sky to-sky/70",
@@ -95,6 +96,7 @@ const WordsPage = () => {
           transition={{ duration: 0.4 }}
           className="text-center mb-8"
         >
+          <Interactive3DMascot mood="idle" size="sm" />
           <span className="text-5xl mb-3 block">📝</span>
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">{t("words.title")}</h1>
           <p className="text-muted-foreground font-body">{t("words.subtitle")}</p>

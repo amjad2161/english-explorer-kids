@@ -10,6 +10,8 @@ import {
 import StarRating from "@/components/StarRating";
 import LevelCompleteCelebration from "@/components/LevelCompleteCelebration";
 import FloatingParticles from "@/components/FloatingParticles";
+import Interactive3DMascot from "@/components/Interactive3DMascot";
+import BackToLevels from "@/components/BackToLevels";
 
 const levelColors: Record<string, { gradient: string; bg: string; border: string; glow: string }> = {
   grass: { gradient: "from-grass to-grass/70", bg: "bg-grass/8", border: "border-grass/30", glow: "shadow-grass/20" },
@@ -77,12 +79,14 @@ const LevelsPage = () => {
       />
       
       <div className="max-w-3xl mx-auto px-4 py-8 relative z-10">
+        <BackToLevels />
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
+          <Interactive3DMascot mood="idle" size="sm" />
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">
             {t("levels.title")}
           </h1>
