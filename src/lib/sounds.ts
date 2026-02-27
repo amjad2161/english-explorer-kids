@@ -105,10 +105,20 @@ export const speakSpelling = (letter: string) => {
   window.speechSynthesis.speak(utterance);
 };
 
-// ─── Audio Context ───
-const audioCtx = typeof window !== 'undefined' ? new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)() : null;
+// ─── Audio Context (lazy — created on first user interaction) ───
+let audioCtx: AudioContext | null = null;
+const getAudioCtx = (): AudioContext | null => {
+  if (typeof window === 'undefined') return null;
+  if (!audioCtx) {
+    try {
+      audioCtx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+    } catch { return null; }
+  }
+  return audioCtx;
+};
 
 const ensureContext = () => {
+  if (!audioCtx) getAudioCtx();
   if (audioCtx?.state === 'suspended') audioCtx.resume();
 };
 
@@ -164,7 +174,7 @@ const playSparkleTrail = (start: number, count = 5, vol = 0.04) => {
 
 // ✅ Correct answer - triumphant "TA-DA!" with sparkles
 export const playCorrectSound = () => {
-  if (!audioCtx) return;
+  ensureContext(); if (!audioCtx) return;
   const t = audioCtx.currentTime;
   // Bright ascending major triad - like a cartoon "correct!" jingle
   playTone(523, t, 0.12, 0.2);       // C5
@@ -179,7 +189,7 @@ export const playCorrectSound = () => {
 
 // ❌ Wrong answer - gentle cartoon "womp womp" (not scary!)
 export const playWrongSound = () => {
-  if (!audioCtx) return;
+  ensureContext(); if (!audioCtx) return;
   const t = audioCtx.currentTime;
   // Descending minor - sad trombone style but cute
   playTone(350, t, 0.15, 0.12, 'triangle');
@@ -210,7 +220,7 @@ export const playWrongSound = () => {
 
 // 🖱️ Click/tap - cartoon "pop" bubble
 export const playClickSound = () => {
-  if (!audioCtx) return;
+  ensureContext(); if (!audioCtx) return;
   const t = audioCtx.currentTime;
   // Quick pitch-up pop like a bubble
   playBoing(900, t, 0.08);
@@ -218,7 +228,7 @@ export const playClickSound = () => {
 
 // ⭐ Star earned - magical Disney-like ascending sparkle
 export const playStarSound = () => {
-  if (!audioCtx) return;
+  ensureContext(); if (!audioCtx) return;
   const t = audioCtx.currentTime;
   // Magical ascending pentatonic scale
   const scale = [523, 659, 784, 988, 1175, 1319];
@@ -234,7 +244,7 @@ export const playStarSound = () => {
 
 // 🔥 Combo streak - increasingly epic cartoon power-up
 export const playComboSound = (combo: number) => {
-  if (!audioCtx) return;
+  ensureContext(); if (!audioCtx) return;
   const t = audioCtx.currentTime;
   const baseFreq = 400 + combo * 100;
   // Fast ascending arpeggio - gets higher with each combo
@@ -266,13 +276,13 @@ export const playComboSound = (combo: number) => {
 
 // ⏱️ Timer tick - gentle metronome
 export const playTickSound = () => {
-  if (!audioCtx) return;
+  ensureContext(); if (!audioCtx) return;
   playTone(1200, audioCtx.currentTime, 0.03, 0.05);
 };
 
 // ⚠️ Timer warning - urgent but not scary
 export const playTimerWarning = () => {
-  if (!audioCtx) return;
+  ensureContext(); if (!audioCtx) return;
   const t = audioCtx.currentTime;
   playTone(600, t, 0.08, 0.15);
   playTone(500, t + 0.1, 0.08, 0.15);
@@ -283,7 +293,7 @@ export const playTimerWarning = () => {
 
 // 🏆 Victory fanfare - full cartoon celebration orchestra
 export const playVictoryFanfare = () => {
-  if (!audioCtx) return;
+  ensureContext(); if (!audioCtx) return;
   const t = audioCtx.currentTime;
   // Triumphant fanfare melody (Looney Tunes style "That's All Folks" vibe)
   const melody = [392, 440, 523, 523, 659, 659, 784, 880, 1047];
@@ -306,7 +316,7 @@ export const playVictoryFanfare = () => {
 
 // 🔤 Letter pop - musical xylophone note (each letter has its own pitch)
 export const playLetterPopSound = (index: number) => {
-  if (!audioCtx) return;
+  ensureContext(); if (!audioCtx) return;
   const t = audioCtx.currentTime;
   // Xylophone-like chromatic scale for each letter
   const freq = 350 + index * 60;
@@ -318,7 +328,7 @@ export const playLetterPopSound = (index: number) => {
 
 // 🎉 Welcome chime - warm, inviting cartoon intro
 export const playWelcomeChime = () => {
-  if (!audioCtx) return;
+  ensureContext(); if (!audioCtx) return;
   const t = audioCtx.currentTime;
   // Music box style ascending with warmth
   const notes = [349, 440, 523, 659, 784, 1047];
@@ -333,14 +343,14 @@ export const playWelcomeChime = () => {
 
 // 👆 Selection sound - cute cartoon "boop"
 export const playSelectSound = () => {
-  if (!audioCtx) return;
+  ensureContext(); if (!audioCtx) return;
   const t = audioCtx.currentTime;
   playBoing(700, t, 0.1);
 };
 
 // 🆙 Level up - epic cartoon power-up transformation
 export const playLevelUpSound = () => {
-  if (!audioCtx) return;
+  ensureContext(); if (!audioCtx) return;
   const t = audioCtx.currentTime;
   // Rapid ascending chromatic scale - "powering up!"
   const scale = [392, 440, 494, 523, 587, 659, 698, 784, 880, 988, 1047];
@@ -359,7 +369,7 @@ export const playLevelUpSound = () => {
 
 // ✨ XP gain - coins/gems collecting jingle
 export const playXPGainSound = (amount: number) => {
-  if (!audioCtx) return;
+  ensureContext(); if (!audioCtx) return;
   const t = audioCtx.currentTime;
   const count = Math.min(Math.ceil(amount / 5), 8);
   for (let i = 0; i < count; i++) {
@@ -373,7 +383,7 @@ export const playXPGainSound = (amount: number) => {
 
 // 🃏 Card flip - whooshy flip sound
 export const playFlipSound = () => {
-  if (!audioCtx) return;
+  ensureContext(); if (!audioCtx) return;
   const t = audioCtx.currentTime;
   ensureContext();
   // Quick frequency sweep for "flip" effect
@@ -393,7 +403,7 @@ export const playFlipSound = () => {
 
 // 🎯 Match found - happy recognition jingle
 export const playMatchSound = () => {
-  if (!audioCtx) return;
+  ensureContext(); if (!audioCtx) return;
   const t = audioCtx.currentTime;
   playTone(523, t, 0.1, 0.15);
   playTone(659, t + 0.05, 0.1, 0.15);
@@ -405,7 +415,7 @@ export const playMatchSound = () => {
 
 // ⏳ Countdown beep - urgency that's exciting, not scary
 export const playCountdownBeep = (remaining: number) => {
-  if (!audioCtx) return;
+  ensureContext(); if (!audioCtx) return;
   const t = audioCtx.currentTime;
   if (remaining <= 3) {
     // Dramatic but fun
@@ -445,7 +455,7 @@ const bgBass = [
 ];
 
 export const startBgMusic = () => {
-  if (!audioCtx || !isMusicEnabled() || bgMusicInterval) return;
+  ensureContext(); if (!audioCtx || !isMusicEnabled() || bgMusicInterval) return;
   ensureContext();
 
   bgMusicGain = audioCtx.createGain();

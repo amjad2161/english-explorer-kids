@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, forwardRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import type { CharacterMood } from "@/lib/characterStore";
@@ -16,7 +16,7 @@ interface ProxyCharacterProps {
  * It logs a single console.error per mount so developers know to supply a
  * real rigged GLB.
  */
-const ProxyCharacter = ({ mood, animationKey }: ProxyCharacterProps) => {
+const ProxyCharacter = forwardRef<THREE.Group, ProxyCharacterProps>(({ mood, animationKey }, _ref) => {
   const groupRef = useRef<THREE.Group>(null!);
   const headRef = useRef<THREE.Mesh>(null!);
   const leftEyeRef = useRef<THREE.Mesh>(null!);
@@ -207,6 +207,8 @@ const ProxyCharacter = ({ mood, animationKey }: ProxyCharacterProps) => {
       </mesh>
     </group>
   );
-};
+});
+
+ProxyCharacter.displayName = "ProxyCharacter";
 
 export default ProxyCharacter;
