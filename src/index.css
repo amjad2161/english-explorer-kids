@@ -66,90 +66,56 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
-
-    /* ═══ Magical Library tokens (light mode) ═══ */
-    --library-bg: 25 25% 10%;
-    --library-border: 35 40% 25%;
-    --library-text: 35 30% 65%;
-    --library-text-dim: 35 30% 50%;
-    --library-text-bright: 40 40% 85%;
-    --library-gold: 40 80% 55%;
-    --library-gold-dim: 38 70% 40%;
-    --library-amber: 30 80% 55%;
-    --library-warm: 25 70% 50%;
-    --library-glow: 38 70% 45%;
-    --gradient-gold: linear-gradient(135deg, hsl(40 80% 65%), hsl(35 70% 50%), hsl(30 60% 40%));
-    --gradient-gold-bar: linear-gradient(90deg, hsl(38 70% 40%), hsl(30 80% 50%), hsl(40 90% 55%));
-    --gradient-gold-btn: linear-gradient(135deg, hsl(38 70% 40%), hsl(30 60% 35%));
-    --shadow-library: 0 4px 20px hsl(25 30% 8% / 0.4), inset 0 1px 0 hsl(40 50% 30% / 0.1);
-    --shadow-gold-glow: 0 0 15px hsl(38 70% 40% / 0.25);
   }
 
   .dark {
-    --background: 228 22% 9%;
-    --foreground: 35 20% 92%;
-    --card: 228 20% 13%;
-    --card-foreground: 35 20% 92%;
-    --popover: 228 20% 13%;
-    --popover-foreground: 35 20% 92%;
+    --background: 160 20% 12%;
+    --foreground: 45 20% 90%;
+    --card: 160 18% 16%;
+    --card-foreground: 45 20% 90%;
+    --popover: 160 18% 16%;
+    --popover-foreground: 45 20% 90%;
     --primary: 142 55% 50%;
     --primary-foreground: 0 0% 100%;
     --secondary: 210 60% 55%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 228 16% 17%;
-    --muted-foreground: 35 12% 55%;
+    --muted: 160 14% 20%;
+    --muted-foreground: 45 12% 58%;
     --accent: 25 85% 58%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 62% 35%;
+    --destructive: 0 62% 40%;
     --destructive-foreground: 0 0% 100%;
-    --border: 228 14% 18%;
-    --input: 228 14% 18%;
+    --border: 160 12% 22%;
+    --input: 160 12% 22%;
     --ring: 142 55% 50%;
     --sunshine: 42 100% 60%;
     --sunshine-foreground: 42 100% 88%;
-    --sky: 210 60% 55%;
-    --candy: 330 65% 60%;
-    --lavender: 265 50% 62%;
-    --chalk: 35 15% 85%;
-    --board: 228 22% 9%;
+    --sky: 210 60% 58%;
+    --candy: 330 65% 62%;
+    --lavender: 265 50% 65%;
+    --chalk: 45 20% 85%;
+    --board: 160 20% 12%;
 
-    /* Warm cinematic gradients */
-    --gradient-glass: linear-gradient(135deg, rgba(32, 30, 42, 0.92), rgba(24, 22, 34, 0.65));
-    --gradient-bg: linear-gradient(180deg, hsl(228, 22%, 9%) 0%, hsl(235, 24%, 6%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(142, 55%, 50%) 0%, hsl(170, 50%, 45%) 50%, hsl(210, 60%, 55%) 100%);
+    /* Chalkboard gradients */
+    --gradient-glass: linear-gradient(135deg, hsl(160, 18%, 18% / 0.92), hsl(160, 16%, 14% / 0.7));
+    --gradient-bg: linear-gradient(180deg, hsl(160, 20%, 12%) 0%, hsl(160, 22%, 9%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(142, 55%, 48%) 0%, hsl(170, 50%, 42%) 50%, hsl(210, 60%, 52%) 100%);
 
-    /* Warm amber-tinted shadows */
-    --shadow-card: 0 1px 3px hsl(0 0% 0% / 0.25), 0 6px 20px hsl(0 0% 0% / 0.2);
-    --shadow-card-hover: 0 8px 32px hsl(0 0% 0% / 0.35), 0 0 40px hsl(38 90% 55% / 0.08);
-    --shadow-button: 0 4px 16px hsl(38 90% 55% / 0.2), 0 1px 3px hsl(0 0% 0% / 0.2);
-    --shadow-button-hover: 0 6px 28px hsl(38 90% 55% / 0.28), 0 2px 6px hsl(0 0% 0% / 0.25);
+    /* Chalkboard shadows */
+    --shadow-card: 0 2px 8px hsl(0 0% 0% / 0.3), 0 4px 16px hsl(0 0% 0% / 0.2);
+    --shadow-card-hover: 0 8px 32px hsl(0 0% 0% / 0.35), 0 0 20px hsl(142 55% 50% / 0.06);
+    --shadow-button: 0 4px 16px hsl(142 55% 50% / 0.15), 0 1px 3px hsl(0 0% 0% / 0.2);
+    --shadow-button-hover: 0 6px 28px hsl(142 55% 50% / 0.22), 0 2px 6px hsl(0 0% 0% / 0.25);
     --shadow-float: 0 12px 40px -12px hsl(0 0% 0% / 0.5);
 
-    --sidebar-background: 228 20% 7%;
-    --sidebar-foreground: 35 15% 92%;
+    --sidebar-background: 160 18% 10%;
+    --sidebar-foreground: 45 15% 90%;
     --sidebar-primary: 142 55% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 228 16% 13%;
-    --sidebar-accent-foreground: 35 15% 92%;
-    --sidebar-border: 228 14% 15%;
+    --sidebar-accent: 160 14% 16%;
+    --sidebar-accent-foreground: 45 15% 90%;
+    --sidebar-border: 160 12% 18%;
     --sidebar-ring: 142 55% 50%;
-
-    /* ═══ Magical Library tokens ═══ */
-    --library-bg: 25 25% 10%;
-    --library-border: 35 40% 25%;
-    --library-text: 35 30% 65%;
-    --library-text-dim: 35 30% 50%;
-    --library-text-bright: 40 40% 85%;
-    --library-gold: 40 80% 55%;
-    --library-gold-dim: 38 70% 40%;
-    --library-amber: 30 80% 55%;
-    --library-warm: 25 70% 50%;
-    --library-glow: 38 70% 45%;
-    --gradient-gold: linear-gradient(135deg, hsl(40 80% 65%), hsl(35 70% 50%), hsl(30 60% 40%));
-    --gradient-gold-bar: linear-gradient(90deg, hsl(38 70% 40%), hsl(30 80% 50%), hsl(40 90% 55%));
-    --gradient-gold-btn: linear-gradient(135deg, hsl(38 70% 40%), hsl(30 60% 35%));
-    --shadow-library: 0 4px 20px hsl(25 30% 8% / 0.4), inset 0 1px 0 hsl(40 50% 30% / 0.1);
-    --shadow-gold-glow: 0 0 15px hsl(38 70% 40% / 0.25);
   }
 }
 
