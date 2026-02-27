@@ -106,7 +106,7 @@ export const speakSpelling = (letter: string) => {
 };
 
 // ─── Audio Context ───
-const audioCtx = typeof window !== 'undefined' ? new (window.AudioContext || (window as any).webkitAudioContext)() : null;
+const audioCtx = typeof window !== 'undefined' ? new (window.AudioContext || (window as unknown as Record<string, typeof AudioContext>).webkitAudioContext)() : null;
 
 const ensureContext = () => {
   if (audioCtx?.state === 'suspended') audioCtx.resume();
