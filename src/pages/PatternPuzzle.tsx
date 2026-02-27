@@ -1,9 +1,11 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useLanguage } from "@/lib/i18n";
 import { playCorrectSound, playWrongSound, playComboSound, playVictoryFanfare } from "@/lib/sounds";
 import { updateDailyProgress } from "@/lib/xp";
 import { trackGamePlayed } from "@/lib/statsTracker";
+import { saveStageProgress } from "@/lib/levels";
 import StarRating from "@/components/StarRating";
 import Confetti from "@/components/Confetti";
 import StreakCounter from "@/components/StreakCounter";
@@ -375,6 +377,8 @@ const PatternPuzzle = () => {
   const { t, lang, dir } = useLanguage();
   const adaptive = useAgeAdaptive();
   const TOTAL_ROUNDS = 10;
+  const [searchParams] = useSearchParams();
+  const stageId = searchParams.get("stage");
 
   const [puzzles, setPuzzles] = useState<Puzzle[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -448,8 +452,10 @@ const PatternPuzzle = () => {
       setXpAmount(xp);
       setShowXP(true);
       const correctCount = Math.round(score / 20);
+      const finalStars = Math.ceil((score / (TOTAL_ROUNDS * 30)) * 5);
       trackGamePlayed("pattern", correctCount, TOTAL_ROUNDS - correctCount, xp);
       updateDailyProgress("pattern");
+      if (stageId) saveStageProgress(stageId, Math.min(finalStars, 5));
     } else {
       setCurrentIndex(i => i + 1);
       setSelected(null);

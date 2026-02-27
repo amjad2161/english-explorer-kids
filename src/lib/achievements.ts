@@ -43,7 +43,8 @@ export const achievements: Achievement[] = [
   { id: "first_scramble", emoji: "🔀", tier: "bronze", check: () => hasCompletedGameType("scramble") },
   { id: "first_hangman", emoji: "🎭", tier: "bronze", check: () => hasCompletedGameType("hangman") },
   { id: "first_memory", emoji: "🧩", tier: "bronze", check: () => hasCompletedGameType("memory") },
-  { id: "all_games", emoji: "🎮", tier: "gold", check: () => ["quiz","spelling","scramble","hangman","memory"].every(t => hasCompletedGameType(t)) },
+  { id: "first_pattern", emoji: "🔮", tier: "bronze", check: () => hasCompletedGameType("pattern") },
+  { id: "all_games", emoji: "🎮", tier: "gold", check: () => ["quiz","spelling","scramble","hangman","memory","pattern"].every(t => hasCompletedGameType(t)) },
 
   // Streaks (from localStorage)
   { id: "streak_3", emoji: "🔥", tier: "bronze", check: () => getBestStreak() >= 3 },
@@ -80,6 +81,7 @@ export const achievementNames: Record<string, { he: string; ar: string; en: stri
   first_scramble: { he: "מפענח", ar: "فك الشفرة", en: "Unscrambler" },
   first_hangman: { he: "מנחש", ar: "المخمّن", en: "Guesser" },
   first_memory: { he: "זיכרון חד", ar: "ذاكرة حادة", en: "Sharp Memory" },
+  first_pattern: { he: "פותר דפוסים", ar: "حل الأنماط", en: "Pattern Solver" },
   all_games: { he: "שחקן מושלם", ar: "لاعب كامل", en: "All-Rounder" },
   streak_3: { he: "רצף חם", ar: "سلسلة حارة", en: "Hot Streak" },
   streak_5: { he: "בוער!", ar: "مشتعل!", en: "On Fire!" },
@@ -110,6 +112,7 @@ export const achievementDescs: Record<string, { he: string; ar: string; en: stri
   first_scramble: { he: "השלם מילים מבולבלות", ar: "أكمل كلمات مخلوطة", en: "Complete word scramble" },
   first_hangman: { he: "השלם ניחוש מילה", ar: "أكمل تخمين كلمة", en: "Complete hangman" },
   first_memory: { he: "השלם משחק זיכרון", ar: "أكمل لعبة ذاكرة", en: "Complete memory game" },
+  first_pattern: { he: "השלם פאזל דפוסים", ar: "أكمل لغز الأنماط", en: "Complete pattern puzzle" },
   all_games: { he: "שחק בכל סוגי המשחקים", ar: "العب جميع أنواع الألعاب", en: "Play all game types" },
   streak_3: { he: "רצף של 3 תשובות נכונות", ar: "سلسلة من 3 إجابات صحيحة", en: "3 correct in a row" },
   streak_5: { he: "רצף של 5 תשובות נכונות", ar: "سلسلة من 5 إجابات صحيحة", en: "5 correct in a row" },

@@ -127,6 +127,7 @@ const translations: Record<string, Record<Language, string>> = {
   "nav.spelling": { he: "🐝 איות", ar: "🐝 تهجئة", en: "🐝 Spelling" },
   "nav.scramble": { he: "🔀 בלבול", ar: "🔀 خلط", en: "🔀 Scramble" },
   "nav.hangman": { he: "🎭 ניחוש", ar: "🎭 تخمين", en: "🎭 Guess" },
+  "nav.pattern": { he: "🔮 דפוסים", ar: "🔮 أنماط", en: "🔮 Patterns" },
 
   // Spelling Bee
   "spelling.title": { he: "🐝 מרוץ האיות", ar: "🐝 سباق التهجئة", en: "🐝 Spelling Bee" },

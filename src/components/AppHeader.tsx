@@ -118,6 +118,7 @@ const AppHeader = () => {
     { path: "/spelling", label: t("nav.spelling"), icon: "🐝", mobileOnly: true },
     { path: "/scramble", label: t("nav.scramble"), icon: "🔀", mobileOnly: true },
     { path: "/hangman", label: t("nav.hangman"), icon: "🎭", mobileOnly: true },
+    { path: "/pattern", label: t("nav.pattern"), icon: "🔮", mobileOnly: true },
     { path: "/achievements", label: "🏅", icon: "🏅", mobileOnly: true },
     { path: "/stats", label: "📊", icon: "📊", mobileOnly: true },
     { path: "/report", label: "📋", icon: "📋", mobileOnly: true },

@@ -6,7 +6,7 @@ export interface LevelStage {
   titleEn: string;
   description: string;
   emoji: string;
-  type: "alphabet" | "words" | "quiz" | "memory" | "spelling" | "scramble" | "hangman";
+  type: "alphabet" | "words" | "quiz" | "memory" | "spelling" | "scramble" | "hangman" | "pattern";
   // For alphabet: which letters (indices)
   letterRange?: [number, number];
   // For words: which category indices
@@ -73,6 +73,7 @@ export const levels: Level[] = [
       { id: "3-4", title: "משחק התאמה", titleEn: "Memory Match", description: "התאם מילים לתמונות!", emoji: "🧩", type: "memory", starsToComplete: 3 },
       { id: "3-5", title: "נחש את המילה", titleEn: "Hangman", description: "גלה את המילה הנסתרת!", emoji: "🎭", type: "hangman", starsToComplete: 3 },
       { id: "3-6", title: "איות מתקדם", titleEn: "Advanced Spelling", description: "מרוץ איות עם טיימר!", emoji: "🐝", type: "spelling", starsToComplete: 4 },
+      { id: "3-7", title: "פאזל דפוסים", titleEn: "Pattern Puzzle", description: "פתור דפוסים ורצפים!", emoji: "🔮", type: "pattern", starsToComplete: 3 },
     ],
   },
   {
