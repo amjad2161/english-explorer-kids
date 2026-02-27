@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useCallback } from "react";
+import { useRef, useEffect, useState, useCallback, forwardRef } from "react";
 import { motion, useSpring, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import professorOwl from "@/assets/professor-owl.png";
@@ -21,13 +21,14 @@ interface CharacterCanvasProps {
 }
 
 // Feather particles that float off during celebrations
-const Feather = ({ index, mood }: { index: number; mood: CharacterMood }) => {
+const Feather = forwardRef<HTMLDivElement, { index: number; mood: CharacterMood }>(({ index, mood }, ref) => {
   const side = index % 2 === 0 ? -1 : 1;
   const delay = index * 0.12;
   const isCelebrate = mood === "celebrate";
 
   return (
     <motion.div
+      ref={ref}
       className="absolute pointer-events-none"
       style={{
         width: 6 + Math.random() * 4,
@@ -65,13 +66,15 @@ const Feather = ({ index, mood }: { index: number; mood: CharacterMood }) => {
       }}
     />
   );
-};
+});
+Feather.displayName = "Feather";
 
 // Sparkle effect for celebrations
-const Sparkle = ({ index }: { index: number }) => {
+const CharacterSparkle = forwardRef<HTMLSpanElement, { index: number }>(({ index }, ref) => {
   const emojis = ["✨", "⭐", "🌟", "💫"];
   return (
     <motion.span
+      ref={ref}
       className="absolute pointer-events-none text-sm"
       style={{ left: "50%", top: "30%" }}
       initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
@@ -86,7 +89,8 @@ const Sparkle = ({ index }: { index: number }) => {
       {emojis[index % emojis.length]}
     </motion.span>
   );
-};
+});
+CharacterSparkle.displayName = "CharacterSparkle";
 
 // Encouragement lines by mood
 const encouragements: Record<string, string[]> = {
@@ -329,7 +333,7 @@ const CharacterCanvas = ({
         {mood === "celebrate" && (
           <div key={`sparkle-${animationKey}`}>
             {Array.from({ length: 4 }).map((_, i) => (
-              <Sparkle key={`s-${i}`} index={i} />
+              <CharacterSparkle key={`s-${i}`} index={i} />
             ))}
           </div>
         )}

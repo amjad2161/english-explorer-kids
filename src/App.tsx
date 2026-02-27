@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { LanguageProvider, useLanguage, Language } from "@/lib/i18n";
 import { ThemeProvider } from "@/lib/theme";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, forwardRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { EraserTransitionProvider } from "@/components/ChalkEraserTransition";
 import AppHeader from "@/components/AppHeader";
@@ -137,7 +137,7 @@ const AppContent = () => {
   );
 };
 
-const App = () => (
+const App = forwardRef<HTMLDivElement>((_props, _ref) => (
   <QueryClientProvider client={queryClient}>
     <LanguageProvider>
       <ThemeProvider>
@@ -151,6 +151,8 @@ const App = () => (
       </ThemeProvider>
     </LanguageProvider>
   </QueryClientProvider>
-);
+));
+
+App.displayName = "App";
 
 export default App;

@@ -1,5 +1,5 @@
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, forwardRef } from "react";
 import CharacterCanvas from "@/components/character/CharacterCanvas";
 import type { CharacterMood } from "@/lib/characterStore";
 
@@ -48,13 +48,13 @@ const Sparkle = ({ delay, dim }: { delay: number; dim: number }) => {
   );
 };
 
-const Interactive3DMascot = ({
+const Interactive3DMascot = forwardRef<HTMLButtonElement, Interactive3DMascotProps>(({
   mood = "idle",
   size = "md",
   onClick,
   showSpeechBubble,
   autoSpeak = false,
-}: Interactive3DMascotProps) => {
+}, _ref) => {
   const dim = sizeMap[size];
   const [tapCount, setTapCount] = useState(0);
   const [autoSpeech, setAutoSpeech] = useState<string | null>(null);
@@ -218,6 +218,8 @@ const Interactive3DMascot = ({
       </AnimatePresence>
     </motion.button>
   );
-};
+});
+
+Interactive3DMascot.displayName = "Interactive3DMascot";
 
 export default Interactive3DMascot;

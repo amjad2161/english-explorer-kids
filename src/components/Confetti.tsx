@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef } from "react";
 
 interface ConfettiPiece {
   id: number;
@@ -26,7 +26,7 @@ const colors = [
   "hsl(300, 80%, 65%)",
 ];
 
-const Confetti = ({ show }: { show: boolean }) => {
+const Confetti = forwardRef<HTMLDivElement, { show: boolean }>(({ show }, _ref) => {
   const [pieces, setPieces] = useState<ConfettiPiece[]>([]);
 
   useEffect(() => {
@@ -95,6 +95,8 @@ const Confetti = ({ show }: { show: boolean }) => {
       ))}
     </AnimatePresence>
   );
-};
+});
+
+Confetti.displayName = "Confetti";
 
 export default Confetti;
