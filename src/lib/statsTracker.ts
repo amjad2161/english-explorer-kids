@@ -29,7 +29,7 @@ export const getStatsHistory = (): StatsHistory => {
   try {
     const raw = localStorage.getItem(STATS_KEY);
     if (raw) return JSON.parse(raw);
-  } catch {}
+  } catch { /* ignored */ }
   return {
     days: [],
     totalGamesPlayed: 0,
