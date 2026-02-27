@@ -6,7 +6,7 @@ import { getTotalEarnedStars } from "@/lib/levels";
 import { getUnlockedAchievements } from "@/lib/achievements";
 import { getXP, getLevel } from "@/lib/xp";
 import { useLanguage, Language } from "@/lib/i18n";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import owlPixar from "@/assets/owl-pixar.png";
 import { getProfile } from "@/lib/ageProfile";
 import {
@@ -21,6 +21,62 @@ const langOptions: { code: Language; flag: string; name: string }[] = [
   { code: "en", flag: "🇬🇧", name: "English" },
 ];
 
+/* ─── Chalk dust particle system ─── */
+const ChalkDustBurst = ({ active }: { active: boolean }) => {
+  const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number; size: number; opacity: number; dx: number; dy: number; color: string }>>([]);
+
+  useEffect(() => {
+    if (!active) return;
+    const colors = [
+      "hsl(var(--chalk))",
+      "hsl(var(--grass) / 0.7)",
+      "hsl(var(--sunshine) / 0.6)",
+      "hsl(var(--sky) / 0.5)",
+    ];
+    const newParticles = Array.from({ length: 12 }, (_, i) => ({
+      id: Date.now() + i,
+      x: 20 + Math.random() * 60,
+      y: 10 + Math.random() * 30,
+      size: 2 + Math.random() * 4,
+      opacity: 0.4 + Math.random() * 0.5,
+      dx: (Math.random() - 0.5) * 40,
+      dy: -10 - Math.random() * 25,
+      color: colors[Math.floor(Math.random() * colors.length)],
+    }));
+    setParticles(newParticles);
+    const t = setTimeout(() => setParticles([]), 900);
+    return () => clearTimeout(t);
+  }, [active]);
+
+  return (
+    <AnimatePresence>
+      {particles.map((p) => (
+        <motion.div
+          key={p.id}
+          className="absolute rounded-full pointer-events-none z-30"
+          style={{
+            width: p.size,
+            height: p.size,
+            left: `${p.x}%`,
+            top: `${p.y}%`,
+            background: p.color,
+            filter: "blur(0.5px)",
+          }}
+          initial={{ opacity: p.opacity, scale: 1, x: 0, y: 0 }}
+          animate={{
+            opacity: 0,
+            scale: 0.3,
+            x: p.dx,
+            y: p.dy,
+          }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.6 + Math.random() * 0.3, ease: "easeOut" }}
+        />
+      ))}
+    </AnimatePresence>
+  );
+};
+
 const AppHeader = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,6 +88,7 @@ const AppHeader = () => {
   const [musicOn, setMusicOn] = useState(isMusicEnabled);
   const [xpLevel, setXpLevel] = useState(getLevel(getXP().totalXP));
   const [xpTotal, setXpTotal] = useState(getXP().totalXP);
+  const [logoHovered, setLogoHovered] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const { theme, toggleTheme } = useTheme();
   const profile = getProfile();
@@ -124,11 +181,14 @@ const AppHeader = () => {
       <div className="max-w-5xl mx-auto px-4 py-2.5 flex items-center justify-between relative" dir={dir}>
         {/* Logo */}
         <motion.div
-          className="flex items-center gap-2.5 cursor-pointer"
+          className="flex items-center gap-2.5 cursor-pointer relative"
           onClick={() => navigate("/")}
+          onHoverStart={() => setLogoHovered(true)}
+          onHoverEnd={() => setLogoHovered(false)}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
+          <ChalkDustBurst active={logoHovered} />
           <div className="relative">
             <img src={owlPixar} alt="English Fun" className="w-8 h-8 object-contain rounded-full ring-2 ring-grass/30" />
             {/* Tiny chalk circle decoration */}
