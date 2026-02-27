@@ -20,43 +20,53 @@ const markOnboarded = () => {
   localStorage.setItem(ONBOARDING_KEY, "true");
 };
 
-const languages: { code: Language; flag: string; name: string; subtitle: string; color: string }[] = [
-  { code: "ar", flag: "🇸🇦", name: "العربية", subtitle: "تعلم الإنجليزية بالعربية", color: "var(--gradient-grass)" },
-  { code: "he", flag: "🇮🇱", name: "עברית", subtitle: "למד אנגלית בעברית", color: "var(--gradient-sky)" },
-  { code: "en", flag: "🇬🇧", name: "English", subtitle: "Learn English in English", color: "var(--gradient-hero)" },
+const languages: { code: Language; flag: string; name: string; subtitle: string; gradient: string }[] = [
+  { code: "ar", flag: "🇸🇦", name: "العربية", subtitle: "تعلم الإنجليزية بالعربية", gradient: "linear-gradient(135deg, hsl(var(--grass)), hsl(var(--grass) / 0.7))" },
+  { code: "he", flag: "🇮🇱", name: "עברית", subtitle: "למד אנגלית בעברית", gradient: "linear-gradient(135deg, hsl(var(--sky)), hsl(var(--sky) / 0.7))" },
+  { code: "en", flag: "🇬🇧", name: "English", subtitle: "Learn English in English", gradient: "var(--gradient-hero)" },
 ];
 
 interface WelcomeScreenProps {
   onComplete: (lang: Language) => void;
 }
 
-const FloatingShape = ({ delay, x, y, size, color }: { delay: number; x: string; y: string; size: number; color: string }) => (
+/* ───── Cinematic light streaks ───── */
+const LightStreak = ({ delay, angle, length }: { delay: number; angle: number; length: number }) => (
   <motion.div
-    className="absolute opacity-[0.06]"
-    style={{ 
-      left: x, top: y, width: size, height: size, background: color,
-      borderRadius: "40% 60% 55% 45% / 50% 40% 60% 50%",
+    className="absolute left-1/2 top-1/2 origin-left pointer-events-none"
+    style={{
+      width: length,
+      height: 1,
+      background: `linear-gradient(90deg, transparent, hsl(var(--primary) / 0.15), transparent)`,
+      transform: `rotate(${angle}deg)`,
+      filter: "blur(1px)",
     }}
-    animate={{ 
-      y: [0, -30, 0], x: [0, 15, 0], scale: [1, 1.15, 1],
-      borderRadius: [
-        "40% 60% 55% 45% / 50% 40% 60% 50%",
-        "55% 45% 40% 60% / 45% 55% 45% 55%",
-        "40% 60% 55% 45% / 50% 40% 60% 50%",
-      ],
-    }}
-    transition={{ duration: 8 + delay, repeat: Infinity, ease: "easeInOut", delay }}
+    initial={{ opacity: 0, scaleX: 0 }}
+    animate={{ opacity: [0, 0.6, 0], scaleX: [0, 1, 0.5] }}
+    transition={{ duration: 3, delay, repeat: Infinity, repeatDelay: 4, ease: "easeInOut" }}
+  />
+);
+
+/* ───── Floating sparkle ───── */
+const Sparkle = ({ delay, x, y }: { delay: number; x: string; y: string }) => (
+  <motion.div
+    className="absolute w-1 h-1 rounded-full bg-primary/30 pointer-events-none"
+    style={{ left: x, top: y, boxShadow: "0 0 6px hsl(var(--primary) / 0.3)" }}
+    animate={{ opacity: [0, 1, 0], scale: [0.5, 1.5, 0.5], y: [0, -30, -60] }}
+    transition={{ duration: 3, delay, repeat: Infinity, repeatDelay: Math.random() * 3 }}
   />
 );
 
 const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   const [soundOn, setSoundOn] = useState(isSoundEnabled);
   const [musicOn, setMusicOn] = useState(isMusicEnabled);
+  const [entered, setEntered] = useState(false);
 
   useEffect(() => {
     playWelcomeChime();
     if (isMusicEnabled()) startBgMusic();
-    return () => stopBgMusic();
+    const timer = setTimeout(() => setEntered(true), 300);
+    return () => { stopBgMusic(); clearTimeout(timer); };
   }, []);
 
   const toggleSound = () => {
@@ -82,20 +92,37 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
 
   return (
     <div className="min-h-screen min-h-[100dvh] flex items-center justify-center relative overflow-hidden">
-      {/* Animated background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
-      <div className="absolute inset-0" style={{ background: "var(--gradient-mesh)" }} />
-      <FloatingShape delay={0} x="10%" y="20%" size={250} color="hsl(25, 95%, 55%)" />
-      <FloatingShape delay={2} x="70%" y="10%" size={200} color="hsl(195, 85%, 55%)" />
-      <FloatingShape delay={4} x="80%" y="70%" size={220} color="hsl(145, 65%, 48%)" />
-      <FloatingShape delay={1} x="20%" y="75%" size={160} color="hsl(330, 85%, 60%)" />
-      <FloatingShape delay={3} x="50%" y="50%" size={140} color="hsl(270, 70%, 65%)" />
+      {/* ── Layered background ── */}
+      <div className="absolute inset-0" style={{ background: "hsl(var(--background))" }} />
+      <motion.div
+        className="absolute inset-0"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 2 }}
+        style={{
+          background: `
+            radial-gradient(ellipse 80% 60% at 50% 30%, hsl(var(--primary) / 0.06) 0%, transparent 60%),
+            radial-gradient(ellipse 60% 80% at 20% 80%, hsl(var(--sky) / 0.05) 0%, transparent 50%),
+            radial-gradient(ellipse 50% 60% at 85% 60%, hsl(var(--candy) / 0.04) 0%, transparent 50%)
+          `,
+        }}
+      />
+
+      {/* Light streaks */}
+      {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => (
+        <LightStreak key={angle} angle={angle} length={300 + Math.random() * 200} delay={i * 0.4} />
+      ))}
+
+      {/* Floating sparkles */}
+      {Array.from({ length: 15 }, (_, i) => (
+        <Sparkle key={i} delay={i * 0.5} x={`${10 + Math.random() * 80}%`} y={`${10 + Math.random() * 80}%`} />
+      ))}
 
       {/* Sound/Music toggles */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8 }}
+        transition={{ delay: 1.2 }}
         className="fixed top-4 end-4 z-20 flex gap-2"
         style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
       >
@@ -131,21 +158,38 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         </motion.button>
       </motion.div>
 
+      {/* ── Main content ── */}
       <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
+        initial={{ scale: 0.85, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 200, damping: 20 }}
+        transition={{ type: "spring", stiffness: 150, damping: 20, delay: 0.15 }}
         className="max-w-md w-full text-center relative z-10 px-4"
       >
-        {/* SVG Owl mascot - no image, no white box */}
-        <div className="relative mx-auto mb-6 flex justify-center">
+        {/* Owl mascot with cinematic entrance */}
+        <motion.div
+          className="relative mx-auto mb-4 flex justify-center"
+          initial={{ y: -80, opacity: 0, scale: 0.4 }}
+          animate={{ y: 0, opacity: 1, scale: 1 }}
+          transition={{ type: "spring", stiffness: 120, damping: 14, delay: 0.3 }}
+        >
+          {/* Spotlight glow */}
+          <motion.div
+            className="absolute w-[200%] h-[120%] -left-[50%] -top-[10%] pointer-events-none"
+            style={{
+              background: "radial-gradient(ellipse at 50% 60%, hsl(var(--primary) / 0.08), transparent 55%)",
+              filter: "blur(20px)",
+            }}
+            animate={{ opacity: [0.3, 0.6, 0.3] }}
+            transition={{ duration: 4, repeat: Infinity }}
+          />
           <Interactive3DMascot mood="wave" size="lg" />
-        </div>
+        </motion.div>
 
+        {/* Title with staggered letter animation */}
         <motion.h1
-          initial={{ y: 20, opacity: 0 }}
+          initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.6, duration: 0.6, ease: "easeOut" }}
           className="text-5xl md:text-7xl font-display font-extrabold mb-3"
           style={{
             background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--candy)), hsl(var(--lavender)))",
@@ -162,7 +206,7 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         <motion.p
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 0.8 }}
           className="text-muted-foreground font-body text-lg mb-1"
         >
           🌟 Learn English the fun way! 🌟
@@ -171,28 +215,40 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         <motion.p
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.9 }}
           className="text-muted-foreground/60 font-body text-sm mb-8"
         >
           اختر لغتك • בחר שפה • Choose your language
         </motion.p>
 
-        {/* Language buttons */}
+        {/* Language buttons with staggered spring entrance */}
         <div className="space-y-3">
           {languages.map((lang, i) => (
             <motion.button
               key={lang.code}
-              initial={{ x: i % 2 === 0 ? -40 : 40, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.5 + i * 0.12, type: "spring" as const, stiffness: 200 }}
+              initial={{ x: i % 2 === 0 ? -60 : 60, opacity: 0, scale: 0.8 }}
+              animate={{ x: 0, opacity: 1, scale: 1 }}
+              transition={{
+                delay: 1.0 + i * 0.15,
+                type: "spring",
+                stiffness: 180,
+                damping: 16,
+              }}
               whileHover={{ scale: 1.04, y: -3 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => handleSelect(lang.code)}
-              className="w-full card-kid flex items-center gap-4 px-6 py-5 text-start group"
+              className="w-full card-kid flex items-center gap-4 px-6 py-5 text-start group relative overflow-hidden"
             >
+              {/* Hover shimmer effect */}
               <motion.div
-                className="w-14 h-14 rounded-3xl flex items-center justify-center text-3xl shadow-lg"
-                style={{ background: lang.color }}
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                style={{
+                  background: "linear-gradient(90deg, transparent, hsl(var(--primary) / 0.05), transparent)",
+                }}
+              />
+              <motion.div
+                className="w-14 h-14 rounded-3xl flex items-center justify-center text-3xl shadow-lg shrink-0"
+                style={{ background: lang.gradient }}
                 whileHover={{ rotate: [0, -10, 10, 0] }}
                 transition={{ duration: 0.5 }}
               >
@@ -213,11 +269,11 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           ))}
         </div>
 
-        {/* Animated game icons */}
+        {/* Animated game icons with bounce-in */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
+          transition={{ delay: 1.6 }}
           className="mt-10 flex justify-center gap-4"
         >
           {[
@@ -229,12 +285,23 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           ].map((item, i) => (
             <motion.div
               key={item.emoji}
+              initial={{ scale: 0, rotate: -20 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{
+                type: "spring",
+                stiffness: 250,
+                damping: 12,
+                delay: 1.7 + i * 0.1,
+              }}
               className={`w-12 h-12 rounded-2xl ${item.color} flex items-center justify-center text-2xl backdrop-blur-sm`}
-              animate={{ y: [0, -10, 0], rotate: [0, 5, -5, 0] }}
-              transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.25, ease: "easeInOut" }}
               style={{ filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.1))" }}
             >
-              {item.emoji}
+              <motion.span
+                animate={{ y: [0, -6, 0], rotate: [0, 5, -5, 0] }}
+                transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.25, ease: "easeInOut" }}
+              >
+                {item.emoji}
+              </motion.span>
             </motion.div>
           ))}
         </motion.div>
