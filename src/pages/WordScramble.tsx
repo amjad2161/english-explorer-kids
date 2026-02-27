@@ -173,7 +173,7 @@ const WordScramble = () => {
   if (words.length === 0) return null;
 
   return (
-    <div className="min-h-screen relative" dir={dir}>
+    <div className="min-h-screen relative" dir={dir} style={{ direction: dir === "rtl" ? "rtl" : "ltr" }}>
       <GameEntrance title={t("quick.scramble")} emoji="🔀" />
       <CinematicBackground intensity={0.5} />
       <FloatingParticles count={6} />
@@ -248,14 +248,14 @@ const WordScramble = () => {
                   </motion.button>
 
                   {/* Scrambled letters - premium tiles */}
-                  <div className="flex justify-center gap-2 mb-5 flex-wrap">
+                  <div className="flex justify-center gap-2 mb-5 flex-wrap" dir="ltr">
                     {scrambled.split("").map((letter, i) => (
                       <ScrambledTile key={`${i}-${letter}-${scrambled}`} letter={letter} index={i} total={scrambled.length} />
                     ))}
                   </div>
 
                   {/* Input */}
-                  <div className="flex justify-center gap-2 mb-4">
+                  <div className="flex justify-center gap-2 mb-4" dir="ltr">
                     <motion.input
                       type="text"
                       value={userInput}
