@@ -1,4 +1,4 @@
-import { Suspense, useRef, forwardRef } from "react";
+import { Suspense, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, AdaptiveDpr } from "@react-three/drei";
 import ErrorBoundary from "@/components/ErrorBoundary";
