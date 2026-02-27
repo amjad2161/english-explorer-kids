@@ -91,7 +91,7 @@ const AppHeader = () => {
       initial={{ y: -60 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="sticky top-0 z-50 backdrop-blur-xl bg-card/80 dark:bg-card/70 border-b border-border"
+      className="sticky top-0 z-50 backdrop-blur-xl bg-card/85 dark:bg-card/80 border-b border-border/50"
       style={{
         boxShadow: "0 1px 4px hsl(var(--foreground) / 0.04)",
         paddingTop: "env(safe-area-inset-top, 0px)",
