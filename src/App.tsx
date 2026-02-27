@@ -5,13 +5,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { LanguageProvider, useLanguage, Language } from "@/lib/i18n";
 import { ThemeProvider } from "@/lib/theme";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import AppHeader from "@/components/AppHeader";
 import AppFooter from "@/components/AppFooter";
 import AchievementToast from "@/components/AchievementToast";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import WelcomeScreen, { hasCompletedOnboarding } from "@/components/WelcomeScreen";
+import SplashScreen from "@/components/SplashScreen";
 import { useAchievementChecker } from "@/hooks/useAchievementChecker";
 import OfflineIndicator from "@/components/OfflineIndicator";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
@@ -101,8 +102,15 @@ const AppRoutes = () => (
 const AppContent = () => {
   const { setLang } = useLanguage();
   const [onboarded, setOnboarded] = useState(hasCompletedOnboarding);
+  const [splashDone, setSplashDone] = useState(false);
 
+  const handleSplashComplete = useCallback(() => setSplashDone(true), []);
+
+  // Show splash on first load (before onboarding)
   if (!onboarded) {
+    if (!splashDone) {
+      return <SplashScreen onComplete={handleSplashComplete} />;
+    }
     return (
       <WelcomeScreen
         onComplete={(lang: Language) => {
