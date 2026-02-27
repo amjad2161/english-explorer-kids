@@ -6,7 +6,7 @@ import { getCurrentLevel, getTotalEarnedStars, levels, getLevelProgress } from "
 import { getUnlockedAchievements } from "@/lib/achievements";
 import { getXP, getLevel, getDailyChallenge } from "@/lib/xp";
 import { playClickSound } from "@/lib/sounds";
-import MagicalLibraryBackground from "@/components/MagicalLibraryBackground";
+import BrightBackground from "@/components/BrightBackground";
 import PremiumGameCard from "@/components/PremiumGameCard";
 import AnimatedSection from "@/components/AnimatedSection";
 import Card3D from "@/components/Card3D";
@@ -207,7 +207,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
-      <MagicalLibraryBackground />
+      <BrightBackground />
 
       {/* ═══ SIMPLE ENTRANCE (once per session) ═══ */}
       <AnimatePresence>
