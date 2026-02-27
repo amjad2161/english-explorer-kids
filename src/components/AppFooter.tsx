@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useLanguage } from "@/lib/i18n";
 import { Heart, BookOpen, Pencil, Star } from "lucide-react";
+import { Link } from "react-router-dom";
 import owlPixar from "@/assets/owl-pixar.png";
 
 const ChalkDoodle = ({ children, x, y, delay = 0 }: { children: React.ReactNode; x: string; y: string; delay?: number }) => (
@@ -140,26 +141,33 @@ const AppFooter = () => {
           {/* Fun quick-links row */}
           <div className="flex items-center gap-4">
             {[
-              { icon: <BookOpen className="w-4 h-4" />, label: t({ he: "מילים", ar: "كلمات", en: "Words" }) },
-              { icon: <Pencil className="w-4 h-4" />, label: t({ he: "חידון", ar: "اختبار", en: "Quiz" }) },
-              { icon: <Star className="w-4 h-4" />, label: t({ he: "הישגים", ar: "إنجازات", en: "Badges" }) },
+              { icon: <BookOpen className="w-4 h-4" />, label: t({ he: "מילים", ar: "كلمات", en: "Words" }), to: "/words" },
+              { icon: <Pencil className="w-4 h-4" />, label: t({ he: "חידון", ar: "اختبار", en: "Quiz" }), to: "/quiz" },
+              { icon: <Star className="w-4 h-4" />, label: t({ he: "הישגים", ar: "إنجازات", en: "Badges" }), to: "/achievements" },
             ].map((item, i) => (
               <motion.div
                 key={i}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-display text-[11px] font-semibold"
-                style={{
-                  color: "hsl(var(--chalk) / 0.45)",
-                  border: "1px solid hsl(var(--chalk) / 0.1)",
-                  background: "hsl(var(--chalk) / 0.04)",
-                }}
                 whileHover={{
                   scale: 1.08,
                   borderColor: "hsl(var(--grass) / 0.3)",
                   color: "hsl(var(--grass))",
                 }}
+                style={{
+                  color: "hsl(var(--chalk) / 0.45)",
+                }}
               >
-                {item.icon}
-                {item.label}
+                <Link
+                  to={item.to}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-display text-[11px] font-semibold no-underline"
+                  style={{
+                    color: "inherit",
+                    border: "1px solid hsl(var(--chalk) / 0.1)",
+                    background: "hsl(var(--chalk) / 0.04)",
+                  }}
+                >
+                  {item.icon}
+                  {item.label}
+                </Link>
               </motion.div>
             ))}
           </div>
