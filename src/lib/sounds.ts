@@ -653,7 +653,7 @@ export const playEraserSound = (durationMs: number = 900) => {
 };
 
 // 🦉 Owl speech chirp — short cheerful chirp when the owl speaks
-export const playOwlSpeechSound = (mood: 'correct' | 'wrong' | 'combo' | 'celebrate' | 'idle' = 'correct') => {
+export const playOwlSpeechSound = (mood: 'correct' | 'wrong' | 'combo' | 'celebrate' | 'idle' | 'think' | 'surprised' | 'wave' = 'correct') => {
   if (!audioCtx || !isSoundEnabled()) return;
   ensureContext();
   const t = audioCtx.currentTime;
@@ -680,6 +680,68 @@ export const playOwlSpeechSound = (mood: 'correct' | 'wrong' | 'combo' | 'celebr
       playTone(520, t + 0.22, 0.1, 0.15, 'triangle');
       playTone(660, t + 0.32, 0.12, 0.12, 'sine');
       playSparkleTrail(t + 0.35, 3, 0.03);
+      break;
+    }
+    case 'think': {
+      // Thoughtful hum — low, contemplative, with gentle vibrato
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      const lfo = audioCtx.createOscillator();
+      const lfoGain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(320, t);
+      osc.frequency.linearRampToValueAtTime(360, t + 0.25);
+      osc.frequency.linearRampToValueAtTime(340, t + 0.4);
+      // Slow vibrato for "hmm" effect
+      lfo.type = 'sine';
+      lfo.frequency.setValueAtTime(4, t);
+      lfoGain.gain.setValueAtTime(8, t);
+      lfo.connect(lfoGain);
+      lfoGain.connect(osc.frequency);
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.1, t + 0.05);
+      gain.gain.setValueAtTime(0.1, t + 0.3);
+      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.45);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      lfo.start(t);
+      osc.start(t);
+      lfo.stop(t + 0.45);
+      osc.stop(t + 0.5);
+      // Soft questioning uptick at end
+      playTone(420, t + 0.35, 0.08, 0.06, 'triangle');
+      playTone(480, t + 0.4, 0.06, 0.04, 'sine');
+      break;
+    }
+    case 'surprised': {
+      // Startled hoot — quick pitch jump with widening
+      playTone(400, t, 0.04, 0.1, 'triangle');
+      playTone(900, t + 0.04, 0.06, 0.15, 'triangle');
+      playTone(1200, t + 0.08, 0.05, 0.12, 'sine');
+      // "Whooo!" glide
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(700, t + 0.12);
+      osc.frequency.exponentialRampToValueAtTime(1100, t + 0.2);
+      osc.frequency.exponentialRampToValueAtTime(800, t + 0.3);
+      gain.gain.setValueAtTime(0.1, t + 0.12);
+      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.35);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t + 0.12);
+      osc.stop(t + 0.35);
+      // Tiny sparkle of wonder
+      playSparkleTrail(t + 0.25, 2, 0.03);
+      break;
+    }
+    case 'wave': {
+      // Friendly greeting chirp — cheerful two-note "hoo-hoo!"
+      playTone(600, t, 0.1, 0.1, 'triangle');
+      playTone(750, t + 0.1, 0.1, 0.12, 'triangle');
+      playTone(600, t + 0.22, 0.08, 0.08, 'triangle');
+      // Gentle warmth
+      playTone(300, t, 0.3, 0.03, 'sine');
       break;
     }
     default: {

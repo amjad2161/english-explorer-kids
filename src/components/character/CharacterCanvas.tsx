@@ -251,13 +251,13 @@ const CharacterCanvas = ({
   const prevBubbleRef = useRef<string | null>(null);
   useEffect(() => {
     if (bubbleText && bubbleText !== prevBubbleRef.current) {
-      const moodMap: Record<string, "correct" | "wrong" | "celebrate" | "idle"> = {
+      const moodMap: Record<string, "correct" | "wrong" | "celebrate" | "idle" | "think" | "surprised" | "wave"> = {
         celebrate: "celebrate",
         sad: "wrong",
-        surprised: "correct",
-        wave: "idle",
+        surprised: "surprised",
+        wave: "wave",
         talk: "correct",
-        think: "idle",
+        think: "think",
         point: "correct",
       };
       playOwlSpeechSound(moodMap[mood] || "idle");
