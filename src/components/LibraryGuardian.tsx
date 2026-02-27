@@ -1,10 +1,11 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useCallback, useEffect } from "react";
-import foxGuardian from "@/assets/fox-guardian.png";
+import CharacterCanvas from "@/components/character/CharacterCanvas";
+import type { CharacterMood } from "@/lib/characterStore";
 
 /**
- * LibraryGuardian — Interactive Pixar-style fox character
- * Uses AI-generated 3D character image instead of SVG.
+ * LibraryGuardian — Interactive 3D fox character rendered in real-time.
+ * No <img> tags; uses CharacterCanvas with ProxyCharacter fallback.
  */
 
 const TIPS = [
@@ -25,7 +26,8 @@ const TIPS = [
 const LibraryGuardian = () => {
   const [showBubble, setShowBubble] = useState(false);
   const [tipIndex, setTipIndex] = useState(0);
-  const [bouncing, setBouncing] = useState(false);
+  const [animKey, setAnimKey] = useState(0);
+  const [currentMood, setCurrentMood] = useState<CharacterMood>("idle");
 
   const lang = (() => {
     const stored = localStorage.getItem("app-lang");
@@ -35,17 +37,21 @@ const LibraryGuardian = () => {
   const handleClick = useCallback(() => {
     if (showBubble) {
       setShowBubble(false);
+      setCurrentMood("idle");
       return;
     }
     setTipIndex(Math.floor(Math.random() * TIPS.length));
     setShowBubble(true);
-    setBouncing(true);
-    setTimeout(() => setBouncing(false), 600);
+    setCurrentMood("talk");
+    setAnimKey((k) => k + 1);
   }, [showBubble]);
 
   useEffect(() => {
     if (!showBubble) return;
-    const t = setTimeout(() => setShowBubble(false), 6000);
+    const t = setTimeout(() => {
+      setShowBubble(false);
+      setCurrentMood("idle");
+    }, 6000);
     return () => clearTimeout(t);
   }, [showBubble, tipIndex]);
 
@@ -145,19 +151,13 @@ const LibraryGuardian = () => {
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Fox image */}
-      <motion.img
-        src={foxGuardian}
-        alt="Fox Guardian"
-        draggable={false}
-        className="w-full h-full object-contain select-none pointer-events-none relative z-10"
-        style={{
-          filter: "drop-shadow(0 8px 20px hsl(20 40% 8% / 0.6))",
-          WebkitMaskImage: "radial-gradient(ellipse 42% 48% at 50% 45%, black 50%, rgba(0,0,0,0.5) 65%, transparent 72%)",
-          maskImage: "radial-gradient(ellipse 42% 48% at 50% 45%, black 50%, rgba(0,0,0,0.5) 65%, transparent 72%)",
-        }}
-        animate={bouncing ? { y: [0, -8, 0], rotate: [0, -3, 2, 0] } : { y: [0, -3, 0] }}
-        transition={bouncing ? { duration: 0.5, ease: "easeOut" } : { duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+      {/* Real-time 3D character — no <img> */}
+      <CharacterCanvas
+        mood={currentMood}
+        animationKey={animKey}
+        width={160}
+        height={200}
+        className="relative z-10"
       />
     </motion.div>
   );

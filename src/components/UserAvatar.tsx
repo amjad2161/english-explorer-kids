@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { getProfile } from "@/lib/ageProfile";
-import owlPixar from "@/assets/owl-pixar.png";
+import CharacterCanvas from "@/components/character/CharacterCanvas";
 
 interface UserAvatarProps {
   size?: "xs" | "sm" | "md" | "lg" | "xl";
@@ -68,10 +68,11 @@ const UserAvatar = ({ size = "md", showName = false, showOwl = false, className 
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 300, delay: 0.3 }}
           >
-            <img
-              src={owlPixar}
-              alt="Owl companion"
-              className="w-full h-full object-cover"
+            <CharacterCanvas
+              mood="idle"
+              animationKey={0}
+              width={Math.round(config.container * 0.42)}
+              height={Math.round(config.container * 0.42)}
             />
           </motion.div>
         )}

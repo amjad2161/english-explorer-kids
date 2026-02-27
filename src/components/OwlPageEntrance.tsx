@@ -1,11 +1,12 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import owlPixar from "@/assets/owl-pixar.png";
+import CharacterCanvas from "@/components/character/CharacterCanvas";
 
 /**
  * OwlPageEntrance — The owl flies in from the side on each page navigation,
  * does a dramatic landing with dust particles, then fades out.
+ * Uses real-time 3D rendering — no <img> tags.
  */
 
 const DustParticle = ({ index }: { index: number }) => {
@@ -39,12 +40,14 @@ const OwlPageEntrance = () => {
   const location = useLocation();
   const [show, setShow] = useState(false);
   const [key, setKey] = useState("");
+  const [animKey, setAnimKey] = useState(0);
 
   useEffect(() => {
     // Skip homepage
     if (location.pathname === "/") return;
 
     setKey(location.pathname + Date.now());
+    setAnimKey((k) => k + 1);
     setShow(true);
     const timer = setTimeout(() => setShow(false), 1400);
     return () => clearTimeout(timer);
@@ -59,35 +62,37 @@ const OwlPageEntrance = () => {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, transition: { duration: 0.3 } }}
         >
-          {/* Owl flying in */}
-          <motion.div className="relative">
-            <motion.img
-              src={owlPixar}
-              alt=""
-              draggable={false}
-              className="w-24 h-24 sm:w-32 sm:h-32 object-contain select-none"
-              style={{
-                filter: "drop-shadow(0 8px 20px hsl(var(--primary) / 0.3))",
-              }}
-              initial={{
-                x: -300,
-                y: -200,
-                rotate: -25,
-                scale: 0.4,
-                opacity: 0,
-              }}
-              animate={{
-                x: [-300, 30, -8, 0],
-                y: [-200, -40, 8, 0],
-                rotate: [-25, 10, -5, 0],
-                scale: [0.4, 1.15, 0.92, 1],
-                opacity: [0, 1, 1, 1],
-              }}
-              transition={{
-                duration: 0.8,
-                ease: [0.22, 1.2, 0.36, 1],
-                times: [0, 0.5, 0.75, 1],
-              }}
+          {/* Owl flying in — 3D canvas animated via container transform */}
+          <motion.div
+            className="relative"
+            style={{
+              filter: "drop-shadow(0 8px 20px hsl(var(--primary) / 0.3))",
+            }}
+            initial={{
+              x: -300,
+              y: -200,
+              rotate: -25,
+              scale: 0.4,
+              opacity: 0,
+            }}
+            animate={{
+              x: [-300, 30, -8, 0],
+              y: [-200, -40, 8, 0],
+              rotate: [-25, 10, -5, 0],
+              scale: [0.4, 1.15, 0.92, 1],
+              opacity: [0, 1, 1, 1],
+            }}
+            transition={{
+              duration: 0.8,
+              ease: [0.22, 1.2, 0.36, 1],
+              times: [0, 0.5, 0.75, 1],
+            }}
+          >
+            <CharacterCanvas
+              mood="wave"
+              animationKey={animKey}
+              width={96}
+              height={96}
             />
 
             {/* Landing impact ring */}
