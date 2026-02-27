@@ -57,116 +57,182 @@ const playChord = (freqs: number[], start: number, dur: number, vol = 0.12) => {
 export const playCorrectSound = () => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
+  // Rich major chord with sparkle cascade
   playTone(523, t, 0.15, 0.2);
-  playTone(659, t + 0.08, 0.15, 0.2);
-  playTone(784, t + 0.16, 0.2, 0.25);
-  // Add sparkle
-  playTone(1568, t + 0.2, 0.1, 0.08, 'triangle');
+  playTone(659, t + 0.06, 0.15, 0.2);
+  playTone(784, t + 0.12, 0.2, 0.25);
+  playTone(1047, t + 0.18, 0.15, 0.15);
+  // Sparkle cascade
+  playTone(1568, t + 0.2, 0.1, 0.06, 'triangle');
+  playTone(2093, t + 0.25, 0.08, 0.04, 'triangle');
+  playTone(2637, t + 0.3, 0.06, 0.03, 'triangle');
 };
 
 export const playWrongSound = () => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
-  playTone(200, t, 0.15, 0.15, 'square');
-  playTone(150, t + 0.12, 0.15, 0.15, 'square');
+  playTone(220, t, 0.12, 0.15, 'sawtooth');
+  playTone(180, t + 0.1, 0.12, 0.12, 'sawtooth');
+  playTone(150, t + 0.2, 0.2, 0.1, 'square');
 };
 
 export const playClickSound = () => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
-  playTone(800, t, 0.06, 0.12);
-  playTone(1200, t + 0.03, 0.04, 0.06, 'triangle');
+  playTone(880, t, 0.04, 0.1);
+  playTone(1320, t + 0.02, 0.03, 0.05, 'triangle');
 };
 
 export const playStarSound = () => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
-  [523, 659, 784, 1047].forEach((freq, i) => {
-    playTone(freq, t + i * 0.1, 0.3, 0.15);
-    playTone(freq * 2, t + i * 0.1, 0.15, 0.05, 'triangle');
+  const scale = [523, 659, 784, 1047, 1319];
+  scale.forEach((freq, i) => {
+    playTone(freq, t + i * 0.08, 0.25, 0.12);
+    playTone(freq * 2, t + i * 0.08, 0.12, 0.04, 'triangle');
   });
+  // Final shimmer
+  playChord([1047, 1319, 1568], t + scale.length * 0.08, 0.5, 0.06);
 };
 
 export const playComboSound = (combo: number) => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
-  const baseFreq = 400 + combo * 60;
-  [0, 0.06, 0.12, 0.18].forEach((delay, i) => {
-    playTone(baseFreq + i * 120, t + delay, 0.12, 0.2);
+  const baseFreq = 400 + combo * 80;
+  // Ascending arpeggio based on combo level
+  [0, 0.05, 0.1, 0.15, 0.2].forEach((delay, i) => {
+    playTone(baseFreq + i * 150, t + delay, 0.1, 0.18);
   });
-  // Sparkle on high combos
+  // Power chord on high combos
   if (combo >= 3) {
-    playTone(2000, t + 0.2, 0.15, 0.05, 'triangle');
+    playChord([baseFreq * 2, baseFreq * 2.5, baseFreq * 3], t + 0.22, 0.2, 0.08);
+    // Sparkle sweep
+    for (let i = 0; i < 4; i++) {
+      playTone(2000 + i * 300, t + 0.25 + i * 0.03, 0.06, 0.03, 'triangle');
+    }
+  }
+  if (combo >= 5) {
+    // Epic power-up sound
+    playTone(baseFreq * 4, t + 0.3, 0.3, 0.05, 'sine');
   }
 };
 
 export const playTickSound = () => {
   if (!audioCtx) return;
-  playTone(1200, audioCtx.currentTime, 0.04, 0.08);
+  playTone(1200, audioCtx.currentTime, 0.03, 0.06);
 };
 
 export const playTimerWarning = () => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
-  playTone(600, t, 0.1, 0.2);
-  playTone(400, t + 0.12, 0.15, 0.2);
+  playTone(600, t, 0.08, 0.2);
+  playTone(400, t + 0.1, 0.12, 0.2);
+  playTone(300, t + 0.22, 0.15, 0.15);
 };
 
 export const playVictoryFanfare = () => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
-  // Triumphant melody
-  const melody = [523, 523, 659, 784, 784, 659, 784, 1047];
+  // Triumphant fanfare melody
+  const melody = [392, 392, 523, 523, 659, 659, 784, 1047];
   melody.forEach((freq, i) => {
-    playTone(freq, t + i * 0.13, 0.18, 0.2);
+    playTone(freq, t + i * 0.12, 0.16, 0.2);
   });
-  // Harmony
-  playChord([523, 659, 784], t + melody.length * 0.13, 0.6, 0.1);
-  playChord([523, 784, 1047], t + melody.length * 0.13 + 0.4, 0.8, 0.1);
+  // Harmony layers
+  playChord([523, 659, 784], t + melody.length * 0.12, 0.5, 0.1);
+  playChord([523, 784, 1047], t + melody.length * 0.12 + 0.3, 0.6, 0.1);
+  playChord([659, 1047, 1319], t + melody.length * 0.12 + 0.6, 0.8, 0.08);
+  // Final sparkle cascade
+  for (let i = 0; i < 6; i++) {
+    playTone(1047 + i * 200, t + melody.length * 0.12 + 0.8 + i * 0.04, 0.1, 0.03, 'triangle');
+  }
 };
 
 export const playLetterPopSound = (index: number) => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
-  playTone(300 + index * 80, t, 0.1, 0.12);
-  playTone(600 + index * 80, t + 0.03, 0.06, 0.05, 'triangle');
+  const freq = 300 + index * 80;
+  playTone(freq, t, 0.08, 0.12);
+  playTone(freq * 2, t + 0.02, 0.05, 0.04, 'triangle');
+  // Subtle resonance
+  playTone(freq * 1.5, t + 0.04, 0.06, 0.03, 'sine');
 };
 
 export const playWelcomeChime = () => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
-  const notes = [392, 440, 523, 659, 784];
-  notes.forEach((freq, i) => playTone(freq, t + i * 0.16, 0.35, 0.15));
-  playChord([523, 659, 784], t + notes.length * 0.16, 0.5, 0.08);
+  const notes = [392, 440, 523, 659, 784, 1047];
+  notes.forEach((freq, i) => playTone(freq, t + i * 0.14, 0.3, 0.12));
+  playChord([523, 659, 784, 1047], t + notes.length * 0.14, 0.6, 0.06);
 };
 
 export const playSelectSound = () => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
-  playTone(440, t, 0.08, 0.15);
-  playTone(660, t + 0.06, 0.12, 0.15);
-  playTone(880, t + 0.12, 0.15, 0.1);
+  playTone(440, t, 0.06, 0.12);
+  playTone(660, t + 0.04, 0.08, 0.12);
+  playTone(880, t + 0.08, 0.1, 0.08);
 };
 
 export const playLevelUpSound = () => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
+  // Fast ascending scale
   const scale = [523, 587, 659, 698, 784, 880, 988, 1047];
   scale.forEach((freq, i) => {
-    playTone(freq, t + i * 0.08, 0.2, 0.12 + i * 0.01);
-    if (i >= 6) playTone(freq / 2, t + i * 0.08, 0.3, 0.08);
+    playTone(freq, t + i * 0.06, 0.15, 0.12 + i * 0.01);
+    if (i >= 5) playTone(freq / 2, t + i * 0.06, 0.2, 0.08);
   });
-  playChord([1047, 1319, 1568], t + scale.length * 0.08, 1.0, 0.1);
+  // Power chord finale
+  playChord([1047, 1319, 1568], t + scale.length * 0.06, 0.8, 0.1);
+  playChord([1568, 2093, 2637], t + scale.length * 0.06 + 0.3, 0.6, 0.05);
+  // Twinkle trail
+  for (let i = 0; i < 5; i++) {
+    playTone(2093 + i * 200, t + scale.length * 0.06 + 0.5 + i * 0.06, 0.1, 0.02, 'triangle');
+  }
 };
 
 export const playXPGainSound = (amount: number) => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
-  const count = Math.min(amount / 5, 6);
+  const count = Math.min(Math.ceil(amount / 5), 8);
   for (let i = 0; i < count; i++) {
-    playTone(800 + i * 100, t + i * 0.05, 0.08, 0.1, 'triangle');
+    playTone(600 + i * 120, t + i * 0.04, 0.06, 0.08, 'triangle');
+  }
+  // Final coin sound
+  playTone(1500, t + count * 0.04, 0.1, 0.05, 'sine');
+};
+
+// Card flip sound
+export const playFlipSound = () => {
+  if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  playTone(400, t, 0.04, 0.1, 'triangle');
+  playTone(800, t + 0.02, 0.04, 0.06, 'sine');
+};
+
+// Match found jingle
+export const playMatchSound = () => {
+  if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  playTone(523, t, 0.1, 0.15);
+  playTone(659, t + 0.06, 0.1, 0.15);
+  playTone(784, t + 0.12, 0.15, 0.18);
+  playTone(1047, t + 0.18, 0.12, 0.1);
+  playTone(1568, t + 0.22, 0.08, 0.05, 'triangle');
+};
+
+// Countdown beep
+export const playCountdownBeep = (remaining: number) => {
+  if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  const freq = remaining <= 3 ? 800 : 600;
+  playTone(freq, t, 0.06, remaining <= 3 ? 0.2 : 0.1);
+  if (remaining <= 3) {
+    playTone(freq * 0.5, t + 0.04, 0.08, 0.08, 'square');
   }
 };
+
 
 // ─── Background Music (rich synthesised loop) ───
 let bgMusicInterval: ReturnType<typeof setInterval> | null = null;
