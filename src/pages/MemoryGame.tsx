@@ -15,6 +15,8 @@ import FloatingParticles from "@/components/FloatingParticles";
 import Interactive3DMascot from "@/components/Interactive3DMascot";
 import { ArrowRight, RotateCcw, Timer, Layers, Sparkles } from "lucide-react";
 import BackToLevels from "@/components/BackToLevels";
+import CinematicBackground from "@/components/CinematicBackground";
+import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 
 interface MemoryCard {
   id: string;
@@ -32,6 +34,7 @@ const MemoryGame = () => {
   const [searchParams] = useSearchParams();
   const stageId = searchParams.get("stage");
   const { t, lang, dir } = useLanguage();
+  const adaptive = useAgeAdaptive();
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [cards, setCards] = useState<MemoryCard[]>([]);
   const [flipped, setFlipped] = useState<string[]>([]);
@@ -49,7 +52,9 @@ const MemoryGame = () => {
     playClickSound();
     setSelectedCategory(catIndex);
     const allCatWords = [...wordCategories[catIndex].words];
-    const words = allCatWords.sort(() => Math.random() - 0.5).slice(0, 6);
+    const pairCount = adaptive.memoryPairs;
+    const filtered = allCatWords.filter(w => w.english.length <= adaptive.maxWordLength);
+    const words = (filtered.length >= pairCount ? filtered : allCatWords).sort(() => Math.random() - 0.5).slice(0, pairCount);
     const gameCards: MemoryCard[] = [];
     words.forEach((w) => {
       gameCards.push({ id: `word-${w.english}`, content: w.english, type: "word", matchId: w.english });
@@ -111,6 +116,7 @@ const MemoryGame = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
+      <CinematicBackground intensity={0.5} />
       <FloatingParticles count={8} />
       <Confetti show={showConfetti} />
       <XPReward amount={xpAmount} show={showXP} gameType="memory" onComplete={() => setShowXP(false)} />

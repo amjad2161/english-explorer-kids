@@ -17,14 +17,14 @@ import Interactive3DMascot from "@/components/Interactive3DMascot";
 import FloatingParticles from "@/components/FloatingParticles";
 import { Volume2, RotateCcw, Zap, Trophy, Heart } from "lucide-react";
 import BackToLevels from "@/components/BackToLevels";
-
-const TOTAL_ROUNDS = 8;
-const MAX_WRONG = 6;
+import CinematicBackground from "@/components/CinematicBackground";
+import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
+const DEFAULT_MAX_WRONG = 6;
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const shuffleArray = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
 
 /* Hangman figure stages */
-const HangmanFigure = ({ wrongCount }: { wrongCount: number }) => {
+const HangmanFigure = ({ wrongCount, maxWrong = DEFAULT_MAX_WRONG }: { wrongCount: number; maxWrong?: number }) => {
   const parts = [
     // Head
     <motion.circle key="head" cx="50" cy="25" r="10" fill="none" stroke="hsl(var(--foreground))" strokeWidth="2.5"
@@ -58,7 +58,7 @@ const HangmanFigure = ({ wrongCount }: { wrongCount: number }) => {
         {parts.slice(0, wrongCount)}
       </AnimatePresence>
       {/* Face expressions */}
-      {wrongCount > 0 && wrongCount < MAX_WRONG && (
+      {wrongCount > 0 && wrongCount < maxWrong && (
         <>
           <circle cx="46" cy="23" r="1.5" fill="hsl(var(--foreground))" />
           <circle cx="54" cy="23" r="1.5" fill="hsl(var(--foreground))" />
@@ -69,7 +69,7 @@ const HangmanFigure = ({ wrongCount }: { wrongCount: number }) => {
           )}
         </>
       )}
-      {wrongCount >= MAX_WRONG && (
+      {wrongCount >= maxWrong && (
         <>
           <motion.text x="43" y="27" fontSize="8" fill="hsl(var(--destructive))"
             initial={{ scale: 0 }} animate={{ scale: 1 }}>✕</motion.text>
@@ -85,6 +85,9 @@ const HangmanGame = () => {
   const [searchParams] = useSearchParams();
   const stageId = searchParams.get("stage");
   const { t, lang, dir } = useLanguage();
+  const adaptive = useAgeAdaptive();
+  const TOTAL_ROUNDS = 8;
+  const MAX_WRONG = adaptive.hangmanLives;
 
   const [words, setWords] = useState<WordCard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -102,10 +105,9 @@ const HangmanGame = () => {
   const { popups, addPopup } = useScorePopups();
 
   useEffect(() => {
-    const short = shuffleArray(getSpellingWords(5)).slice(0, 3);
-    const medium = shuffleArray(getSpellingWords(7).filter(w => w.english.length > 4)).slice(0, 3);
-    const long = shuffleArray(getSpellingWords(9).filter(w => w.english.length > 6)).slice(0, 2);
-    setWords(shuffleArray([...short, ...medium, ...long]).slice(0, TOTAL_ROUNDS));
+    const maxLen = adaptive.maxWordLength;
+    const all = shuffleArray(getSpellingWords(maxLen));
+    setWords(all.slice(0, TOTAL_ROUNDS));
   }, []);
 
   useEffect(() => {
@@ -177,10 +179,9 @@ const HangmanGame = () => {
   };
 
   const restart = () => {
-    const short = shuffleArray(getSpellingWords(5)).slice(0, 3);
-    const medium = shuffleArray(getSpellingWords(7).filter(w => w.english.length > 4)).slice(0, 3);
-    const long = shuffleArray(getSpellingWords(9).filter(w => w.english.length > 6)).slice(0, 2);
-    setWords(shuffleArray([...short, ...medium, ...long]).slice(0, TOTAL_ROUNDS));
+    const maxLen = adaptive.maxWordLength;
+    const all = shuffleArray(getSpellingWords(maxLen));
+    setWords(all.slice(0, TOTAL_ROUNDS));
     setCurrentIndex(0); setScore(0); setStreak(0); setBestStreak(0);
     setFinished(false); setOwlMood("idle");
   };
@@ -190,6 +191,7 @@ const HangmanGame = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
+      <CinematicBackground intensity={0.5} />
       <FloatingParticles count={6} />
       <Confetti show={showConfetti} />
       <ScorePopup popups={popups} />
@@ -250,7 +252,7 @@ const HangmanGame = () => {
 
                 {/* Hangman figure + lives */}
                 <div className="flex items-center justify-center gap-6 mb-4 relative">
-                  <HangmanFigure wrongCount={wrongCount} />
+                  <HangmanFigure wrongCount={wrongCount} maxWrong={MAX_WRONG} />
                   <div className="flex flex-col gap-1">
                     {Array.from({ length: MAX_WRONG }).map((_, i) => (
                       <motion.div key={i}

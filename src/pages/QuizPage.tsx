@@ -19,15 +19,17 @@ import XPReward from "@/components/XPReward";
 import ComboBurst from "@/components/ComboBurst";
 import FloatingParticles from "@/components/FloatingParticles";
 import Interactive3DMascot from "@/components/Interactive3DMascot";
+import CinematicBackground from "@/components/CinematicBackground";
+import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 import { RotateCcw, Zap, Target, Trophy, Sparkles } from "lucide-react";
-
-const QUIZ_SIZE = 8;
 const optionLabels = ["A", "B", "C", "D"];
 
 const QuizPage = () => {
   const [searchParams] = useSearchParams();
   const stageId = searchParams.get("stage");
   const { t, lang, dir } = useLanguage();
+  const adaptive = useAgeAdaptive();
+  const QUIZ_SIZE = adaptive.quizSize;
   const [currentQ, setCurrentQ] = useState(0);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
@@ -112,6 +114,7 @@ const QuizPage = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
+      <CinematicBackground intensity={0.6} />
       <FloatingParticles count={8} />
       <Confetti show={showConfetti} />
       <ScorePopup popups={popups} />

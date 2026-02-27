@@ -8,6 +8,7 @@ import { getXP, getLevel } from "@/lib/xp";
 import { useLanguage, Language } from "@/lib/i18n";
 import { useState, useEffect, useRef } from "react";
 import owlPixar from "@/assets/owl-pixar.png";
+import { getProfile } from "@/lib/ageProfile";
 import {
   isSoundEnabled, setSoundEnabled,
   isMusicEnabled, setMusicEnabled,
@@ -33,6 +34,7 @@ const AppHeader = () => {
   const [xpTotal, setXpTotal] = useState(getXP().totalXP);
   const menuRef = useRef<HTMLDivElement>(null);
   const { theme, toggleTheme } = useTheme();
+  const profile = getProfile();
 
   const toggleSound = () => {
     const next = !soundOn;
@@ -266,6 +268,19 @@ const AppHeader = () => {
             >
               <Trophy className="w-3.5 h-3.5 text-candy" />
               <span className="font-display font-bold text-xs text-candy">{badges}</span>
+            </motion.button>
+          )}
+
+          {/* Profile avatar */}
+          {profile && (
+            <motion.button
+              whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.85 }}
+              onClick={() => navigate("/parent")}
+              className="w-8 h-8 rounded-full flex items-center justify-center text-lg border-2 border-primary/25 hover:border-primary/50 transition-colors"
+              style={{ background: "hsl(var(--primary) / 0.08)" }}
+              title={profile.name}
+            >
+              {profile.avatar}
             </motion.button>
           )}
 
