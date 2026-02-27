@@ -1,26 +1,71 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- TODO: Set the document title to the name of your application -->
-    <title>Lovable App</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
-
-    <!-- TODO: Update og:title to match your application name -->
-    <meta property="og:title" content="Lovable App" />
-    <meta property="og:description" content="Lovable Generated Project" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    
+    <title>English Fun - Learn English the Fun Way! 🦉</title>
+    <meta name="description" content="Interactive English learning platform for kids with games, quizzes, spelling challenges and more. Supporting Hebrew, Arabic and English. למידה כיפית של אנגלית!" />
+    <meta name="author" content="Amjad Mobarsham" />
+    <meta name="keywords" content="learn english, kids, education, games, quiz, spelling, Hebrew, Arabic, interactive learning" />
+    
+    <!-- Theme Color for mobile browsers -->
+    <meta name="theme-color" content="#f5920a" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1a2e" media="(prefers-color-scheme: dark)" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="English Fun" />
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="English Fun - Learn English the Fun Way! 🦉" />
+    <meta property="og:description" content="Interactive English learning platform for kids with games, quizzes, and challenges. Supporting Hebrew, Arabic and English." />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-
+    <meta property="og:site_name" content="English Fun" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="he_IL" />
+    <meta property="og:locale:alternate" content="ar_SA" />
+    
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@Lovable" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta name="twitter:title" content="English Fun - Learn English the Fun Way!" />
+    <meta name="twitter:description" content="Interactive English learning for kids with games and quizzes" />
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" />
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "English Fun",
+      "description": "Interactive English learning platform for kids",
+      "url": "https://english-fun.app",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Amjad Mobarsham"
+      },
+      "inLanguage": ["en", "he", "ar"]
+    }
+    </script>
   </head>
 
   <body>
     <div id="root"></div>
+    <noscript>
+      <div style="text-align:center;padding:2rem;font-family:sans-serif;">
+        <h1>🦉 English Fun</h1>
+        <p>Please enable JavaScript to use this application.</p>
+      </div>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
