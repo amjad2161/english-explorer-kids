@@ -4,6 +4,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import professorOwl from "@/assets/professor-owl.png";
 import type { CharacterMood } from "@/lib/characterStore";
 import { useCharacterStore } from "@/lib/characterStore";
+import { playOwlSpeechSound } from "@/lib/sounds";
 
 interface CharacterCanvasProps {
   mood: CharacterMood;
@@ -269,6 +270,24 @@ const CharacterCanvas = ({
     : speechBubble === true
       ? storeSpeech
       : storeSpeech || autoText;
+
+  // Play owl speech sound when bubble appears
+  const prevBubbleRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (bubbleText && bubbleText !== prevBubbleRef.current) {
+      const moodMap: Record<string, "correct" | "wrong" | "celebrate" | "idle"> = {
+        celebrate: "celebrate",
+        sad: "wrong",
+        surprised: "correct",
+        wave: "idle",
+        talk: "correct",
+        think: "idle",
+        point: "correct",
+      };
+      playOwlSpeechSound(moodMap[mood] || "idle");
+    }
+    prevBubbleRef.current = bubbleText;
+  }, [bubbleText, mood]);
 
   return (
     <ErrorBoundary>
