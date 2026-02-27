@@ -28,8 +28,8 @@ const WordOfTheDay = () => {
 
   return (
     <motion.div
-      whileHover={{ scale: 1.02 }}
-      className="card-glass rounded-2xl p-4 cursor-pointer"
+      whileHover={{ scale: 1.02, y: -2 }}
+      className="relative rounded-2xl p-4 cursor-pointer overflow-hidden bg-card/90 backdrop-blur-sm border border-primary/15 shadow-md"
       onClick={speakWord}
       dir={dir}
       onViewportEnter={() => {
@@ -39,9 +39,18 @@ const WordOfTheDay = () => {
         }
       }}
     >
-      <div className="flex items-center gap-3">
+      {/* Animated gradient border glow */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-sunshine/5 to-accent/8 pointer-events-none" />
+      {/* Shimmer sweep */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/8 to-transparent pointer-events-none"
+        animate={{ x: ["-100%", "200%"] }}
+        transition={{ duration: 3, repeat: Infinity, repeatDelay: 4, ease: "easeInOut" }}
+      />
+
+      <div className="flex items-center gap-3 relative z-10">
         <motion.span
-          className="text-4xl"
+          className="text-4xl drop-shadow-sm"
           animate={{ rotate: [0, 5, -5, 0], scale: [1, 1.1, 1] }}
           transition={{ duration: 3, repeat: Infinity }}
         >
@@ -57,8 +66,9 @@ const WordOfTheDay = () => {
           </p>
         </div>
         <motion.div
-          className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0"
+          className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center shrink-0 shadow-sm"
           whileTap={{ scale: 0.85 }}
+          whileHover={{ scale: 1.1 }}
         >
           🔊
         </motion.div>
