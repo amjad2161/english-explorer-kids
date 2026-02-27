@@ -19,6 +19,7 @@ import FloatingParticles from "@/components/FloatingParticles";
 import { Volume2, RotateCcw, Shuffle, Zap, Trophy } from "lucide-react";
 import BackToLevels from "@/components/BackToLevels";
 import CinematicBackground from "@/components/CinematicBackground";
+import GameEntrance from "@/components/GameEntrance";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 const shuffleArray = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
 
@@ -173,6 +174,7 @@ const WordScramble = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
+      <GameEntrance title={t("quick.scramble")} emoji="🔀" />
       <CinematicBackground intensity={0.5} />
       <FloatingParticles count={6} />
       <Confetti show={showConfetti} />

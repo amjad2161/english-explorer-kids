@@ -18,6 +18,7 @@ import FloatingParticles from "@/components/FloatingParticles";
 import { Volume2, RotateCcw, Zap, Trophy, Heart } from "lucide-react";
 import BackToLevels from "@/components/BackToLevels";
 import CinematicBackground from "@/components/CinematicBackground";
+import GameEntrance from "@/components/GameEntrance";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 const DEFAULT_MAX_WRONG = 6;
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -191,6 +192,7 @@ const HangmanGame = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
+      <GameEntrance title={t("quick.hangman")} emoji="🎭" />
       <CinematicBackground intensity={0.5} />
       <FloatingParticles count={6} />
       <Confetti show={showConfetti} />
