@@ -172,7 +172,7 @@
     box-shadow: var(--shadow-card);
     backdrop-filter: blur(12px);
     border: 1px solid hsl(var(--border) / 0.5);
-    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
   }
 
   .card-kid:hover {
@@ -185,6 +185,26 @@
     backdrop-filter: blur(16px);
     border: 1px solid hsl(var(--border) / 0.3);
     @apply rounded-2xl p-6;
+  }
+
+  /* ─── 3D Game Cards ─── */
+  .game-card-3d {
+    @apply bg-card/85;
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border) / 0.4);
+    box-shadow: 
+      var(--shadow-card),
+      inset 0 1px 0 rgba(255,255,255,0.15),
+      inset 0 -2px 0 hsl(var(--border) / 0.3);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+
+  .game-card-3d:hover {
+    box-shadow: 
+      var(--shadow-float),
+      var(--shadow-glow-primary),
+      inset 0 1px 0 rgba(255,255,255,0.25);
+    border-color: hsl(var(--primary) / 0.3);
   }
 
   /* ─── Buttons ─── */
@@ -203,7 +223,7 @@
   }
 
   .btn-kid:hover {
-    box-shadow: 0 6px 20px -3px hsl(25 95% 55% / 0.4);
+    box-shadow: 0 6px 20px -3px hsl(25 95% 55% / 0.4), var(--shadow-glow-primary);
   }
 
   /* ─── Gradients ─── */
@@ -248,6 +268,14 @@
     position: absolute;
     inset: 0;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shimmer 2.5s ease-in-out infinite;
+  }
+
+  /* ─── Shimmer Animation (reusable) ─── */
+  .animate-shimmer::after,
+  .animate-shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+    background-size: 200% 100%;
     animation: shimmer 2.5s ease-in-out infinite;
   }
 
@@ -312,11 +340,17 @@
     100% { border-color: hsl(0, 80%, 60%); }
   }
 
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
+  }
+
   .animate-wiggle { animation: wiggle 0.5s ease-in-out; }
   .animate-bounce-in { animation: bounce-in 0.5s ease-out; }
   .animate-sparkle { animation: sparkle 1.5s ease-in-out infinite; }
   .animate-glow-pulse { animation: glow-pulse 2s ease-in-out infinite; }
   .animate-rainbow-border { animation: rainbow-border 4s linear infinite; border-width: 2px; }
+  .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
 
   /* ─── Scrollbar ─── */
   .scrollbar-hide {
