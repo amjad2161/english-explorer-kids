@@ -22,6 +22,7 @@ import Interactive3DMascot from "@/components/Interactive3DMascot";
 import ClassroomBackground from "@/components/ClassroomBackground";
 import GameEntrance from "@/components/GameEntrance";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
+import { recordPerformance, getDifficulty } from "@/lib/adaptiveDifficulty";
 import { RotateCcw, Zap, Target, Trophy, Sparkles } from "lucide-react";
 const optionLabels = ["A", "B", "C", "D"];
 
@@ -44,6 +45,8 @@ const QuizPage = () => {
   const [showXP, setShowXP] = useState(false);
   const [xpAmount, setXpAmount] = useState(0);
   const [owlMood, setOwlMood] = useState<"idle" | "celebrate" | "sad" | "surprised">("idle");
+  const [wrongWords, setWrongWords] = useState<string[]>([]);
+  const [correctWords, setCorrectWords] = useState<string[]>([]);
   const { popups, addPopup } = useScorePopups();
 
   const shuffledQuestions = useMemo(
@@ -64,6 +67,7 @@ const QuizPage = () => {
       setScore(s => s + points);
       setStreak(newStreak);
       setOwlMood("surprised");
+      setCorrectWords(prev => [...prev, question.options[question.correct]]);
       setBestStreak(b => { const best = Math.max(b, newStreak); saveBestStreak(best); return best; });
       if (newStreak >= 3) {
         playComboSound(newStreak);
@@ -76,6 +80,7 @@ const QuizPage = () => {
     } else {
       setStreak(0);
       setOwlMood("sad");
+      setWrongWords(prev => [...prev, question.options[question.correct]]);
       playWrongSound();
     }
     setTimeout(() => {
@@ -97,6 +102,7 @@ const QuizPage = () => {
         setShowXP(true);
         const totalCorrect = correct ? (score > 0 ? Math.round(score / 15) + 1 : 1) : Math.round(score / 15);
         trackGamePlayed("quiz", totalCorrect, QUIZ_SIZE - totalCorrect, xp);
+        recordPerformance("quiz", totalCorrect, QUIZ_SIZE, bestStreak, 0, wrongWords, correctWords);
         updateDailyProgress("quiz");
       }
     }, 1500);
@@ -106,6 +112,7 @@ const QuizPage = () => {
     setCurrentQ(0); setScore(0); setStreak(0); setBestStreak(0);
     setSelected(null); setIsCorrect(null); setIsFinished(false);
     setQuizKey(k => k + 1); setOwlMood("idle");
+    setWrongWords([]); setCorrectWords([]);
   };
 
   const stars = Math.min(Math.ceil((score / (QUIZ_SIZE * 30)) * 5), 5);

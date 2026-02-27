@@ -1,5 +1,6 @@
 import { getAllWords, wordCategories, WordCard, QuizQuestion } from "@/data/learningData";
 import { Language } from "@/lib/i18n";
+import { getAdaptiveQuizParams, getWeakWords } from "@/lib/adaptiveDifficulty";
 
 const shuffle = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
 const pick = <T,>(arr: T[], n: number): T[] => shuffle(arr).slice(0, n);
@@ -136,17 +137,34 @@ const templates: QuizTemplate[] = [
 ];
 
 /**
- * Generate N unique dynamic quiz questions with fully shuffled options each time.
+ * Generate N unique dynamic quiz questions with adaptive difficulty.
  */
 export const generateDynamicQuiz = (count: number, lang: Language): QuizQuestion[] => {
   const allWords = getAllWords();
+  const adaptive = getAdaptiveQuizParams("quiz");
+  const weakWords = getWeakWords();
   const questions: QuizQuestion[] = [];
   const usedWords = new Set<string>();
   let attempts = 0;
 
+  // Filter words by difficulty-appropriate length
+  const eligibleWords = allWords.filter(w => w.english.length <= adaptive.maxWordLength);
+
+  // Prioritize weak words (30% of questions)
+  const weakCount = Math.floor(count * 0.3);
+  const weakWordObjects = eligibleWords.filter(w => weakWords.includes(w.english));
+
   while (questions.length < count && attempts < count * 10) {
     attempts++;
-    const word = randItem(allWords);
+    
+    // Pick from weak words first if available
+    let word: WordCard;
+    if (questions.length < weakCount && weakWordObjects.length > 0) {
+      word = randItem(weakWordObjects);
+    } else {
+      word = randItem(eligibleWords);
+    }
+    
     if (usedWords.has(word.english)) continue;
 
     const template = randItem(templates);

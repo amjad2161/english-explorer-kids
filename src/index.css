@@ -499,6 +499,77 @@
   .animate-breathe { animation: breathe 4s ease-in-out infinite; }
   .animate-float-rotate { animation: float-rotate 5s ease-in-out infinite; }
 
+  /* ─── Difficulty indicator ─── */
+  .difficulty-badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-display font-bold;
+    border: 1px solid currentColor;
+  }
+
+  .difficulty-1 { color: hsl(var(--grass)); background: hsl(var(--grass) / 0.1); }
+  .difficulty-2 { color: hsl(var(--sky)); background: hsl(var(--sky) / 0.1); }
+  .difficulty-3 { color: hsl(var(--sunshine)); background: hsl(var(--sunshine) / 0.1); }
+  .difficulty-4 { color: hsl(var(--accent)); background: hsl(var(--accent) / 0.1); }
+  .difficulty-5 { color: hsl(var(--candy)); background: hsl(var(--candy) / 0.1); }
+
+  /* ─── Enhanced category cards ─── */
+  .category-card {
+    @apply relative overflow-hidden;
+    border-radius: 1.25rem;
+    background: hsl(0 0% 100% / 0.95);
+    border: 2px solid hsl(var(--border));
+    box-shadow: var(--shadow-card);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+
+  .category-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  .category-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-hero);
+    border-radius: 1.25rem 1.25rem 0 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .category-card:hover::before {
+    opacity: 1;
+  }
+
+  .dark .category-card {
+    background: hsl(220 20% 16% / 0.95);
+  }
+
+  /* ─── Animated underline for section headers ─── */
+  .animated-underline {
+    position: relative;
+    display: inline-block;
+  }
+
+  .animated-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 10%;
+    right: 10%;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--gradient-hero);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+  }
+
+  .animated-underline:hover::after {
+    transform: scaleX(1);
+  }
+
   .wave-divider { position: relative; width: 100%; height: 60px; }
   .wave-divider svg { position: absolute; bottom: 0; width: 100%; height: 100%; }
 }
