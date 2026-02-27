@@ -108,6 +108,29 @@ const MemoryGame = () => {
       
       <div className="max-w-5xl mx-auto px-4 py-8 relative z-10">
         <BackToLevels />
+        {/* 3D Memory Hero Scene */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex justify-center items-center gap-3 md:gap-5 mb-4 py-3"
+        >
+          {["🧩", "🃏", "🎴"].map((emoji, i) => (
+            <motion.span
+              key={i}
+              className="text-3xl md:text-5xl select-none"
+              style={{ filter: "drop-shadow(0 6px 12px rgba(0,0,0,0.2))" }}
+              animate={{
+                y: [0, -10 - i * 2, 0],
+                rotate: [0, (i % 2 === 0 ? 8 : -8), 0],
+                scale: [1, 1.15, 1],
+              }}
+              transition={{ duration: 3 + i * 0.3, repeat: Infinity, ease: "easeInOut", delay: i * 0.2 }}
+            >
+              {emoji}
+            </motion.span>
+          ))}
+        </motion.div>
+
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">{t("memory.title")}</h1>
           <p className="text-muted-foreground font-body">{t("memory.subtitle")}</p>
