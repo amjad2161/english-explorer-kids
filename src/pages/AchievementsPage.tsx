@@ -7,6 +7,7 @@ import {
 } from "@/lib/achievements";
 import { playClickSound } from "@/lib/sounds";
 import { Lock, X } from "lucide-react";
+import FloatingParticles from "@/components/FloatingParticles";
 
 const isRareTier = (tier: string) => tier === "gold" || tier === "diamond";
 
@@ -36,7 +37,7 @@ const AchievementsPage = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
-      <div className="bg-particles" />
+      <FloatingParticles count={10} />
 
       {/* Locked achievement modal */}
       <AnimatePresence>
