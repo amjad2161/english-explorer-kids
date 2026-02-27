@@ -36,6 +36,7 @@ const gameTypeLabels: Record<string, Record<string, string>> = {
   memory: { he: "זיכרון", ar: "ذاكرة", en: "Memory" },
   words: { he: "מילים", ar: "كلمات", en: "Words" },
   alphabet: { he: "אלפבית", ar: "أبجدية", en: "Alphabet" },
+  pattern: { he: "דפוסים", ar: "أنماط", en: "Patterns" },
 };
 
 const StatsPage = () => {

@@ -23,7 +23,7 @@ const levelColors: Record<string, { gradient: string; bg: string; border: string
 
 const stageTypeIcons: Record<string, string> = {
   alphabet: "🔤", words: "📝", quiz: "🎯", memory: "🧩",
-  spelling: "🐝", scramble: "🔀", hangman: "🎭",
+  spelling: "🐝", scramble: "🔀", hangman: "🎭", pattern: "🔮",
 };
 
 const LevelsPage = () => {
@@ -63,7 +63,7 @@ const LevelsPage = () => {
     const params = new URLSearchParams({ stage: stageId });
     const routes: Record<string, string> = {
       alphabet: "/alphabet", words: "/words", quiz: "/quiz", memory: "/memory",
-      spelling: "/spelling", scramble: "/scramble", hangman: "/hangman",
+      spelling: "/spelling", scramble: "/scramble", hangman: "/hangman", pattern: "/pattern",
     };
     navigate(`${routes[type]}?${params}`);
   };

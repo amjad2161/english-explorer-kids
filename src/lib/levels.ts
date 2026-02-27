@@ -6,7 +6,7 @@ export interface LevelStage {
   titleEn: string;
   description: string;
   emoji: string;
-  type: "alphabet" | "words" | "quiz" | "memory" | "spelling" | "scramble" | "hangman";
+  type: "alphabet" | "words" | "quiz" | "memory" | "spelling" | "scramble" | "hangman" | "pattern";
   // For alphabet: which letters (indices)
   letterRange?: [number, number];
   // For words: which category indices
@@ -34,7 +34,7 @@ export const levels: Level[] = [
     emoji: "🌱",
     color: "grass",
     gradient: "gradient-grass",
-    starsToUnlock: 0,
+    starsToUnlock: 0,   // Always available
     stages: [
       { id: "1-1", title: "אותיות A-I", titleEn: "Letters A-I", description: "למד את 9 האותיות הראשונות", emoji: "🔤", type: "alphabet", letterRange: [0, 8], starsToComplete: 5 },
       { id: "1-2", title: "חיות", titleEn: "Animals", description: "למד שמות של חיות באנגלית", emoji: "🐾", type: "words", categoryIndices: [0], starsToComplete: 4 },
@@ -49,7 +49,7 @@ export const levels: Level[] = [
     emoji: "🚀",
     color: "sky",
     gradient: "gradient-sky",
-    starsToUnlock: 0,
+    starsToUnlock: 12,  // Earn ~75% of Level 1's 16 max stars
     stages: [
       { id: "2-1", title: "אותיות J-R", titleEn: "Letters J-R", description: "למד עוד 9 אותיות", emoji: "🔤", type: "alphabet", letterRange: [9, 17], starsToComplete: 5 },
       { id: "2-2", title: "מספרים", titleEn: "Numbers", description: "למד מספרים באנגלית", emoji: "🔢", type: "words", categoryIndices: [2], starsToComplete: 4 },
@@ -65,7 +65,7 @@ export const levels: Level[] = [
     emoji: "🔍",
     color: "sunshine",
     gradient: "gradient-primary",
-    starsToUnlock: 0,
+    starsToUnlock: 28,  // Earn most of Levels 1+2 (35 max) stars
     stages: [
       { id: "3-1", title: "אותיות S-Z", titleEn: "Letters S-Z", description: "השלם את כל האלפבית!", emoji: "🔤", type: "alphabet", letterRange: [18, 25], starsToComplete: 5 },
       { id: "3-2", title: "חלקי גוף", titleEn: "Body Parts", description: "למד חלקי גוף באנגלית", emoji: "🦵", type: "words", categoryIndices: [4], starsToComplete: 4 },
@@ -73,6 +73,7 @@ export const levels: Level[] = [
       { id: "3-4", title: "משחק התאמה", titleEn: "Memory Match", description: "התאם מילים לתמונות!", emoji: "🧩", type: "memory", starsToComplete: 3 },
       { id: "3-5", title: "נחש את המילה", titleEn: "Hangman", description: "גלה את המילה הנסתרת!", emoji: "🎭", type: "hangman", starsToComplete: 3 },
       { id: "3-6", title: "איות מתקדם", titleEn: "Advanced Spelling", description: "מרוץ איות עם טיימר!", emoji: "🐝", type: "spelling", starsToComplete: 4 },
+      { id: "3-7", title: "פאזל דפוסים", titleEn: "Pattern Puzzle", description: "פתור דפוסים ורצפים!", emoji: "🔮", type: "pattern", starsToComplete: 3 },
     ],
   },
   {
@@ -82,7 +83,7 @@ export const levels: Level[] = [
     emoji: "🏆",
     color: "candy",
     gradient: "gradient-candy",
-    starsToUnlock: 0,
+    starsToUnlock: 50,  // Earn most of Levels 1+2+3 (61 max) stars
     stages: [
       { id: "4-1", title: "בית ספר", titleEn: "School", description: "למד מילים על בית הספר", emoji: "🏫", type: "words", categoryIndices: [6], starsToComplete: 4 },
       { id: "4-2", title: "אוכל", titleEn: "Food", description: "למד שמות של מאכלים", emoji: "🍕", type: "words", categoryIndices: [7], starsToComplete: 4 },
@@ -134,8 +135,10 @@ export const isLevelUnlocked = (level: Level): boolean => {
   return getTotalEarnedStars() >= level.starsToUnlock;
 };
 
-export const isStageUnlocked = (_level: Level, _stageIndex: number): boolean => {
-  return true;
+export const isStageUnlocked = (level: Level, stageIndex: number): boolean => {
+  if (stageIndex === 0) return true; // First stage of a level always unlocked
+  const prevStage = level.stages[stageIndex - 1];
+  return getStageProgress(prevStage.id).completed;
 };
 
 export const getLevelProgress = (level: Level): { completed: number; total: number; stars: number } => {
