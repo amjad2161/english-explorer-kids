@@ -585,3 +585,59 @@ export const stopChalkWriteSound = () => {
     chalkWritingInterval = null;
   }
 };
+
+// 🧹 Eraser / board wipe sound — soft whooshy friction
+export const playEraserSound = (durationMs: number = 900) => {
+  if (!audioCtx || !isSoundEnabled()) return;
+  ensureContext();
+
+  const t = audioCtx.currentTime;
+
+  // Low rumble swoosh
+  const rumble = audioCtx.createOscillator();
+  const rumbleGain = audioCtx.createGain();
+  const rumbleFilter = audioCtx.createBiquadFilter();
+  rumble.type = 'sawtooth';
+  rumble.frequency.setValueAtTime(120, t);
+  rumble.frequency.linearRampToValueAtTime(180, t + durationMs / 1000);
+  rumbleFilter.type = 'lowpass';
+  rumbleFilter.frequency.setValueAtTime(400, t);
+  rumbleGain.gain.setValueAtTime(0, t);
+  rumbleGain.gain.linearRampToValueAtTime(0.04, t + 0.1);
+  rumbleGain.gain.setValueAtTime(0.04, t + durationMs / 2000);
+  rumbleGain.gain.exponentialRampToValueAtTime(0.001, t + durationMs / 1000);
+  rumble.connect(rumbleFilter);
+  rumbleFilter.connect(rumbleGain);
+  rumbleGain.connect(audioCtx.destination);
+  rumble.start(t);
+  rumble.stop(t + durationMs / 1000 + 0.05);
+
+  // Breathy friction noise via detuned oscillators
+  const dur = durationMs / 1000;
+  for (let i = 0; i < 6; i++) {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    const filter = audioCtx.createBiquadFilter();
+    const delay = i * (dur / 6);
+
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(800 + Math.random() * 1200, t + delay);
+    osc.frequency.linearRampToValueAtTime(600 + Math.random() * 800, t + delay + dur / 6);
+
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(1200 + Math.random() * 800, t + delay);
+    filter.Q.setValueAtTime(0.8, t + delay);
+
+    const vol = 0.015 + Math.random() * 0.01;
+    gain.gain.setValueAtTime(0, t + delay);
+    gain.gain.linearRampToValueAtTime(vol, t + delay + 0.03);
+    gain.gain.linearRampToValueAtTime(vol * 0.8, t + delay + dur / 7);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + delay + dur / 5);
+
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(t + delay);
+    osc.stop(t + delay + dur / 4);
+  }
+};
