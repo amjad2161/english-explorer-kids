@@ -6,6 +6,7 @@ import { getSpellingWords, getWordTranslation, WordCard } from "@/data/learningD
 import { speakEnglish, playCorrectSound, playWrongSound, playComboSound, playVictoryFanfare, playClickSound } from "@/lib/sounds";
 import { saveStageProgress } from "@/lib/levels";
 import { saveBestStreak } from "@/lib/achievements";
+import { trackGamePlayed } from "@/lib/statsTracker";
 import StarRating from "@/components/StarRating";
 import Confetti from "@/components/Confetti";
 import GameTimer from "@/components/GameTimer";
@@ -121,6 +122,8 @@ const WordScramble = () => {
       if (stageId) saveStageProgress(stageId, Math.min(Math.ceil((score / (TOTAL_ROUNDS * 20)) * 5), 5));
       setXpAmount(Math.max(10, score));
       setShowXP(true);
+      const correctCount = Math.round(score / 15);
+      trackGamePlayed("scramble", correctCount, TOTAL_ROUNDS - correctCount, Math.max(10, score));
     } else {
       setCurrentIndex(i => i + 1);
     }
