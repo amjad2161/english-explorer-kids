@@ -163,6 +163,37 @@ const translations: Record<string, Record<Language, string>> = {
 
   // Language selector
   "lang.chooseLanguage": { he: "בחר שפה", ar: "اختر لغة", en: "Choose Language" },
+
+  // GameShell
+  "game.quit": { he: "צא מהמשחק", ar: "اخرج من اللعبة", en: "Quit Game" },
+  "game.pause": { he: "השהה", ar: "إيقاف مؤقت", en: "Pause" },
+  "game.resume": { he: "המשך", ar: "استئناف", en: "Resume" },
+  "game.hint": { he: "רמז", ar: "تلميح", en: "Hint" },
+  "game.paused": { he: "מושהה", ar: "متوقف مؤقتاً", en: "Paused" },
+  "game.quitTitle": { he: "לעזוב את המשחק?", ar: "هل تريد مغادرة اللعبة؟", en: "Leave the game?" },
+  "game.quitBody": { he: "ההתקדמות שלך בסשן הזה עלולה ללכת לאיבוד.", ar: "قد تضيع تقدمك في هذه الجلسة.", en: "Your progress in this session may be lost." },
+  "game.stay": { he: "הישאר", ar: "ابقَ", en: "Stay" },
+
+  // Story Engine
+  "story.title": { he: "📖 סיפורים אינטראקטיביים", ar: "📖 قصص تفاعلية", en: "📖 Interactive Stories" },
+  "story.subtitle": { he: "למד אנגלית דרך סיפורים כיפיים!", ar: "تعلم الإنجليزية من خلال قصص ممتعة!", en: "Learn English through fun stories!" },
+  "story.scene": { he: "סצנה", ar: "مشهد", en: "Scene" },
+  "story.activity": { he: "פעילות", ar: "نشاط", en: "Activity" },
+  "story.correct": { he: "!כן! מצוין", ar: "!نعم! ممتاز", en: "Yes! Excellent!" },
+  "story.wrong": { he: "נסה שוב", ar: "حاول مرة أخرى", en: "Try Again" },
+  "story.next": { he: "הבא", ar: "التالي", en: "Next" },
+  "story.finish": { he: "סיים", ar: "إنهاء", en: "Finish" },
+  "story.reward": { he: "סיימת את הסיפור!", ar: "أنهيت القصة!", en: "You finished the story!" },
+
+  // Learning Path
+  "path.warmUp": { he: "חימום", ar: "إحماء", en: "Warm-up" },
+  "path.teach": { he: "הוראה", ar: "تعليم", en: "Teach" },
+  "path.guidedPractice": { he: "תרגול מודרך", ar: "ممارسة موجهة", en: "Guided Practice" },
+  "path.game": { he: "משחק", ar: "لعبة", en: "Game" },
+  "path.story": { he: "סיפור", ar: "قصة", en: "Story" },
+  "path.review": { he: "חזרה", ar: "مراجعة", en: "Review" },
+  "path.reward": { he: "פרס", ar: "جائزة", en: "Reward" },
+  "path.dailyPlan": { he: "תכנית היומית שלי", ar: "خطتي اليومية", en: "My Daily Plan" },
 };
 
 const LanguageContext = createContext<LanguageContextType | null>(null);
