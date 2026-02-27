@@ -3,7 +3,7 @@ import { useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useLanguage } from "@/lib/i18n";
 import { wordCategories, getCategoryName } from "@/data/learningData";
-import { playCorrectSound, playWrongSound, playClickSound, playStarSound, playVictoryFanfare, speakEnglish } from "@/lib/sounds";
+import { playCorrectSound, playWrongSound, playClickSound, playStarSound, playVictoryFanfare, speakEnglish, playFlipSound, playMatchSound } from "@/lib/sounds";
 import { addQuizScore } from "@/lib/progress";
 import { saveStageProgress } from "@/lib/levels";
 import { trackGamePlayed } from "@/lib/statsTracker";
@@ -56,7 +56,7 @@ const MemoryGame = () => {
 
   const handleCardClick = useCallback((cardId: string) => {
     if (isChecking || flipped.includes(cardId) || matched.includes(cardId)) return;
-    playClickSound();
+    playFlipSound();
     const newFlipped = [...flipped, cardId];
     setFlipped(newFlipped);
     
@@ -67,8 +67,8 @@ const MemoryGame = () => {
       const card2 = cards.find((c) => c.id === newFlipped[1])!;
       if (card1.matchId === card2.matchId && card1.type !== card2.type) {
         setTimeout(() => {
-          playCorrectSound();
-          speakEnglish(card1.matchId); // Pronounce the matched word!
+          playMatchSound();
+          speakEnglish(card1.matchId);
           setLastMatchWord(card1.matchId);
           setTimeout(() => setLastMatchWord(null), 1500);
           const newMatched = [...matched, newFlipped[0], newFlipped[1]];

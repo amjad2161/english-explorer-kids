@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { LanguageProvider, useLanguage, Language } from "@/lib/i18n";
 import { useState, useEffect } from "react";
 import AppHeader from "@/components/AppHeader";
+import AppFooter from "@/components/AppFooter";
 import AchievementToast from "@/components/AchievementToast";
 import WelcomeScreen, { hasCompletedOnboarding } from "@/components/WelcomeScreen";
 import { useAchievementChecker } from "@/hooks/useAchievementChecker";
@@ -55,6 +56,7 @@ const AppRoutes = () => (
       <Route path="/stats" element={<StatsPage />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
+    <AppFooter />
   </>
 );
 
