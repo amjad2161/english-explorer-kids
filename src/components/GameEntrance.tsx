@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useMemo } from "react";
 import Interactive3DMascot from "./Interactive3DMascot";
+import ChalkWriteText from "./ChalkWriteText";
 
 /**
  * GameEntrance — Bright, fun entrance animation for game pages
@@ -83,7 +84,7 @@ const GameEntrance = ({ title, emoji, onComplete, duration = 1800 }: Props) => {
     <AnimatePresence>
       <motion.div
         className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden"
-        style={{ background: "hsl(var(--background))" }}
+        style={{ background: "hsl(var(--chalkboard, var(--background)))" }}
         animate={phase >= 2 ? { opacity: 0 } : { opacity: 1 }}
         transition={{ duration: 0.4, ease: "easeInOut" }}
       >
@@ -121,15 +122,16 @@ const GameEntrance = ({ title, emoji, onComplete, duration = 1800 }: Props) => {
             {emoji}
           </motion.span>
 
-          {/* Title */}
-          <motion.h1
-            className="font-display font-extrabold text-2xl sm:text-3xl text-gradient text-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={phase >= 1 ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.4, delay: 0.15 }}
-          >
-            {title}
-          </motion.h1>
+          {/* Chalk-written title */}
+          {phase >= 1 && (
+            <ChalkWriteText
+              text={title}
+              className="text-foreground"
+              delay={0.15}
+              duration={0.8}
+              fontSize={32}
+            />
+          )}
 
           {/* Sparkle dots */}
           <motion.div
