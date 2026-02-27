@@ -52,9 +52,10 @@
     --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.75));
 
     /* Shadows */
-    --shadow-card: 0 1px 3px hsl(220 25% 14% / 0.04), 0 4px 12px hsl(220 25% 14% / 0.06);
-    --shadow-card-hover: 0 4px 16px hsl(220 25% 14% / 0.08), 0 8px 32px hsl(220 25% 14% / 0.06);
-    --shadow-button: 0 2px 8px hsl(142 60% 45% / 0.25);
+    --shadow-card: 0 1px 3px hsl(220 25% 14% / 0.05), 0 6px 16px hsl(220 25% 14% / 0.07);
+    --shadow-card-hover: 0 8px 30px hsl(220 25% 14% / 0.1), 0 2px 8px hsl(220 25% 14% / 0.04);
+    --shadow-button: 0 4px 14px hsl(142 60% 45% / 0.3), 0 1px 3px hsl(142 60% 45% / 0.15);
+    --shadow-button-hover: 0 6px 24px hsl(142 60% 45% / 0.35), 0 2px 6px hsl(142 60% 45% / 0.2);
     --shadow-float: 0 12px 40px -12px hsl(220 25% 14% / 0.15);
 
     --sidebar-background: 0 0% 98%;
@@ -97,9 +98,10 @@
     --gradient-glass: linear-gradient(135deg, rgba(35,38,52,0.9), rgba(28,30,42,0.6));
     --gradient-bg: linear-gradient(180deg, hsl(230, 20%, 10%) 0%, hsl(240, 22%, 7%) 100%);
     --gradient-hero: linear-gradient(135deg, hsl(142, 55%, 50%) 0%, hsl(210, 65%, 58%) 100%);
-    --shadow-card: 0 1px 3px hsl(0 0% 0% / 0.2), 0 4px 12px hsl(0 0% 0% / 0.15);
-    --shadow-card-hover: 0 4px 20px hsl(0 0% 0% / 0.25), 0 0 30px hsl(142 55% 50% / 0.08);
-    --shadow-button: 0 2px 12px hsl(142 55% 50% / 0.2);
+    --shadow-card: 0 1px 3px hsl(0 0% 0% / 0.2), 0 6px 16px hsl(0 0% 0% / 0.18);
+    --shadow-card-hover: 0 8px 30px hsl(0 0% 0% / 0.3), 0 0 40px hsl(142 55% 50% / 0.1);
+    --shadow-button: 0 4px 14px hsl(142 55% 50% / 0.25), 0 1px 3px hsl(0 0% 0% / 0.15);
+    --shadow-button-hover: 0 6px 24px hsl(142 55% 50% / 0.3), 0 2px 6px hsl(0 0% 0% / 0.2);
     --shadow-float: 0 12px 40px -12px hsl(0 0% 0% / 0.4);
     --sidebar-background: 230 18% 8%;
     --sidebar-foreground: 220 15% 92%;
@@ -162,39 +164,70 @@
   /* ═══════════════════════════════════ */
   
   .card-kid {
-    @apply bg-card p-5 sm:p-6;
+    @apply bg-card p-5 sm:p-6 relative;
     border-radius: 1.25rem;
     box-shadow: var(--shadow-card);
     border: 1px solid hsl(var(--border));
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), 
+                box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1), 
+                border-color 0.3s ease;
+  }
+
+  .card-kid::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.04), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
   }
 
   .card-kid:hover {
     box-shadow: var(--shadow-card-hover);
-    border-color: hsl(var(--primary) / 0.2);
-    transform: translateY(-2px);
+    border-color: hsl(var(--primary) / 0.25);
+    transform: translateY(-3px);
   }
 
-  .dark .card-kid {
-    border-color: hsl(var(--border));
+  .card-kid:hover::before {
+    opacity: 1;
   }
 
   .dark .card-kid:hover {
-    border-color: hsl(var(--primary) / 0.25);
+    border-color: hsl(var(--primary) / 0.3);
     box-shadow: var(--shadow-card-hover);
   }
 
   .card-glass {
-    @apply bg-card/80 backdrop-blur-md p-5 sm:p-6;
+    @apply bg-card/80 backdrop-blur-md p-5 sm:p-6 relative;
     border-radius: 1.25rem;
     border: 1px solid hsl(var(--border));
     box-shadow: var(--shadow-card);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), 
+                box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1), 
+                border-color 0.3s ease;
+  }
+
+  .card-glass::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.03), transparent 50%);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
   }
 
   .card-glass:hover {
-    border-color: hsl(var(--primary) / 0.15);
+    border-color: hsl(var(--primary) / 0.2);
     box-shadow: var(--shadow-card-hover);
+    transform: translateY(-2px);
+  }
+
+  .card-glass:hover::before {
+    opacity: 1;
   }
 
   /* ═══════════════════════════════════ */
@@ -202,24 +235,40 @@
   /* ═══════════════════════════════════ */
   
   .game-card-3d {
-    @apply bg-card;
+    @apply bg-card relative;
     border: 1px solid hsl(var(--border));
     border-radius: 1.25rem;
     box-shadow: var(--shadow-card);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-    position: relative;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), 
+                box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1), 
+                border-color 0.3s ease;
     overflow: hidden;
+  }
+
+  .game-card-3d::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.06), transparent 50%);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
   }
 
   .game-card-3d:hover {
     box-shadow: var(--shadow-card-hover);
-    border-color: hsl(var(--primary) / 0.2);
-    transform: translateY(-4px);
+    border-color: hsl(var(--primary) / 0.25);
+    transform: translateY(-5px) scale(1.01);
+  }
+
+  .game-card-3d:hover::after {
+    opacity: 1;
   }
 
   .dark .game-card-3d:hover {
     box-shadow: var(--shadow-card-hover);
-    border-color: hsl(var(--primary) / 0.3);
+    border-color: hsl(var(--primary) / 0.35);
   }
 
   /* ═══════════════════════════════════ */
@@ -230,33 +279,66 @@
     @apply font-display font-bold px-6 py-3 relative overflow-hidden;
     border-radius: 0.875rem;
     box-shadow: var(--shadow-button);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), 
+                box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1), 
+                filter 0.2s ease;
     letter-spacing: 0.01em;
   }
 
+  .btn-kid::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+  }
+
   .btn-kid:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px hsl(var(--primary) / 0.3);
-    filter: brightness(1.05);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: var(--shadow-button-hover);
+    filter: brightness(1.06);
+  }
+
+  .btn-kid:hover::after {
+    opacity: 1;
   }
 
   .btn-kid:active {
-    transform: translateY(0);
-    filter: brightness(0.98);
+    transform: translateY(0) scale(0.98);
+    filter: brightness(0.97);
+    box-shadow: var(--shadow-button);
   }
 
   .btn-glow {
-    @apply font-display font-bold px-6 py-3;
+    @apply font-display font-bold px-6 py-3 relative overflow-hidden;
     border-radius: 0.875rem;
     background: hsl(var(--card));
-    border: 2px solid hsl(var(--primary) / 0.2);
-    transition: all 0.2s ease;
+    border: 2px solid hsl(var(--primary) / 0.15);
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 0.25s ease, 
+                box-shadow 0.25s ease;
+  }
+
+  .btn-glow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.05), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
   }
 
   .btn-glow:hover {
-    border-color: hsl(var(--primary) / 0.5);
-    box-shadow: 0 0 20px hsl(var(--primary) / 0.1);
-    transform: translateY(-1px);
+    border-color: hsl(var(--primary) / 0.4);
+    box-shadow: 0 0 24px hsl(var(--primary) / 0.12), 0 4px 12px hsl(var(--primary) / 0.08);
+    transform: translateY(-2px);
+  }
+
+  .btn-glow:hover::before {
+    opacity: 1;
   }
 
   /* ─── Gradients ─── */
