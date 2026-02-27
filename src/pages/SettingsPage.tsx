@@ -20,7 +20,8 @@ import {
   Volume2, VolumeX, Music, Music2, Sun, Moon, Globe, RotateCcw,
   Trash2, Download, Shield, Info, ChevronRight, Sparkles, Users,
 } from "lucide-react";
-import { getProfile } from "@/lib/ageProfile";
+import { getProfile, saveProfile, AVATAR_OPTIONS } from "@/lib/ageProfile";
+import UserAvatar from "@/components/UserAvatar";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -46,7 +47,8 @@ const SettingsPage = () => {
   const [musicOn, setMusicOn] = useState(isMusicEnabled);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [resetDone, setResetDone] = useState(false);
-  const profile = getProfile();
+  const [profile, setProfileState] = useState(getProfile());
+  const [selectedAvatar, setSelectedAvatar] = useState(profile?.avatar || "🦉");
 
   const t = (texts: Record<string, string>) => texts[lang] || texts.en;
 
@@ -128,19 +130,45 @@ const SettingsPage = () => {
         <motion.div variants={itemVariants} className="card-kid mb-6 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-sunshine/5 pointer-events-none" />
           <div className="relative flex items-center gap-4">
-            <motion.div
-              className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-sunshine flex items-center justify-center text-3xl shadow-lg"
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ duration: 3, repeat: Infinity }}
-            >
-              {level.title.split(" ")[0]}
-            </motion.div>
+            <UserAvatar size="lg" showOwl />
             <div className="flex-1">
-              <h2 className="font-display font-bold text-lg">{level.title.split(" ").slice(1).join(" ")}</h2>
+              {profile?.name && <h2 className="font-display font-bold text-lg">{profile.name}</h2>}
               <p className="text-sm text-muted-foreground font-display">
                 {t({ he: `רמה ${level.level}`, ar: `مستوى ${level.level}`, en: `Level ${level.level}` })} • {xp.totalXP} XP • ⭐ {getTotalEarnedStars()}
               </p>
             </div>
+          </div>
+        </motion.div>
+
+        {/* Avatar Picker */}
+        <motion.div variants={itemVariants} className="card-kid mb-4">
+          <h3 className="font-display font-bold text-base mb-4 flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-sunshine-foreground" />
+            {t({ he: "בחר אווטר", ar: "اختر الصورة الرمزية", en: "Choose Avatar" })}
+          </h3>
+          <div className="grid grid-cols-8 gap-2">
+            {AVATAR_OPTIONS.map((emoji) => (
+              <motion.button
+                key={emoji}
+                whileHover={{ scale: 1.15 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => {
+                  setSelectedAvatar(emoji);
+                  if (profile) {
+                    const updated = { ...profile, avatar: emoji };
+                    saveProfile(updated);
+                    setProfileState(updated);
+                  }
+                }}
+                className={`w-full aspect-square rounded-xl flex items-center justify-center text-2xl transition-all ${
+                  selectedAvatar === emoji
+                    ? "bg-primary/20 border-2 border-primary/50 shadow-md"
+                    : "bg-muted/30 border-2 border-transparent hover:bg-muted/50"
+                }`}
+              >
+                {emoji}
+              </motion.button>
+            ))}
           </div>
         </motion.div>
 
