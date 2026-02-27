@@ -7,6 +7,7 @@ import { LanguageProvider, useLanguage, Language } from "@/lib/i18n";
 import { ThemeProvider } from "@/lib/theme";
 import { useState, useEffect, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { EraserTransitionProvider } from "@/components/ChalkEraserTransition";
 import AppHeader from "@/components/AppHeader";
 import AppFooter from "@/components/AppFooter";
 import AchievementToast from "@/components/AchievementToast";
@@ -89,7 +90,7 @@ const AnimatedRoutes = () => {
 };
 
 const AppRoutes = () => (
-  <>
+  <EraserTransitionProvider>
     <AppHeader />
     <AchievementWatcher />
     <KeyboardShortcuts />
@@ -100,7 +101,7 @@ const AppRoutes = () => (
       <AnimatedRoutes />
     </main>
     <AppFooter />
-  </>
+  </EraserTransitionProvider>
 );
 
 const AppContent = () => {
