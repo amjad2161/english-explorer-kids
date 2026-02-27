@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { useLanguage } from "@/lib/i18n";
@@ -34,6 +34,72 @@ const gameCards = [
   { titleKey: "quick.hangman", emoji: "🎭", path: "/hangman", color: "bg-sky/10 dark:bg-sky/15", iconColor: "text-sky" },
 ];
 
+const TypingText = ({ text, delay = 0 }: { text: string; delay?: number }) => {
+  const [displayed, setDisplayed] = useState("");
+  const [started, setStarted] = useState(false);
+
+  useEffect(() => {
+    const startTimer = setTimeout(() => setStarted(true), delay);
+    return () => clearTimeout(startTimer);
+  }, [delay]);
+
+  useEffect(() => {
+    if (!started) return;
+    setDisplayed("");
+    let i = 0;
+    const interval = setInterval(() => {
+      i++;
+      setDisplayed(text.slice(0, i));
+      if (i >= text.length) clearInterval(interval);
+    }, 55);
+    return () => clearInterval(interval);
+  }, [text, started]);
+
+  return (
+    <span>
+      {displayed}
+      {started && displayed.length < text.length && (
+        <motion.span
+          animate={{ opacity: [1, 0] }}
+          transition={{ duration: 0.5, repeat: Infinity }}
+          className="inline-block w-[3px] h-[1em] bg-primary align-middle ms-0.5 rounded-full"
+        />
+      )}
+    </span>
+  );
+};
+
+const HeroBurst = ({ show }: { show: boolean }) => {
+  if (!show) return null;
+  const particles = Array.from({ length: 16 }, (_, i) => ({
+    angle: (i * 360) / 16,
+    distance: 60 + Math.random() * 80,
+    size: 4 + Math.random() * 6,
+    color: ["hsl(var(--primary))", "hsl(var(--sunshine))", "hsl(var(--candy))", "hsl(var(--sky))", "hsl(var(--accent))"][i % 5],
+    delay: Math.random() * 0.15,
+  }));
+
+  return (
+    <div className="absolute inset-0 pointer-events-none z-0 flex items-center justify-center">
+      {particles.map((p, i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-full"
+          style={{ width: p.size, height: p.size, background: p.color }}
+          initial={{ opacity: 1, scale: 0, x: 0, y: 0 }}
+          animate={{
+            opacity: [1, 1, 0],
+            scale: [0, 1.5, 0.5],
+            x: Math.cos((p.angle * Math.PI) / 180) * p.distance,
+            y: Math.sin((p.angle * Math.PI) / 180) * p.distance,
+          }}
+          transition={{ duration: 0.9, ease: "easeOut", delay: 0.4 + p.delay }}
+        />
+      ))}
+    </div>
+  );
+};
+
 const Index = () => {
   const navigate = useNavigate();
   const { t, dir, lang } = useLanguage();
@@ -46,6 +112,7 @@ const Index = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [motivation, setMotivation] = useState(getMotivationalMessage(lang));
+  const [heroReady, setHeroReady] = useState(false);
 
   useEffect(() => {
     setTotalStars(getTotalEarnedStars());
@@ -56,9 +123,10 @@ const Index = () => {
     setRecommendations(getSmartRecommendations(lang));
     setMotivation(getMotivationalMessage(lang));
     
-    const t1 = setTimeout(() => setMascotMood("wave"), 800);
-    const t2 = setTimeout(() => setMascotMood("idle"), 2500);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    const t0 = setTimeout(() => setHeroReady(true), 200);
+    const t1 = setTimeout(() => setMascotMood("wave"), 600);
+    const t2 = setTimeout(() => setMascotMood("idle"), 2200);
+    return () => { clearTimeout(t0); clearTimeout(t1); clearTimeout(t2); };
   }, [lang]);
 
   const level = levels[currentLevel - 1];
@@ -87,8 +155,15 @@ const Index = () => {
         className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 relative z-10"
       >
         {/* ── HERO ── */}
-        <motion.section variants={item} className="text-center mb-8 sm:mb-12">
-          <div className="inline-block mb-3">
+        <motion.section variants={item} className="text-center mb-8 sm:mb-12 relative">
+          <HeroBurst show={heroReady} />
+          
+          <motion.div
+            initial={{ scale: 0.3, opacity: 0, y: 40 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 180, damping: 18, delay: 0.1 }}
+            className="inline-block mb-3 relative z-10"
+          >
             <Interactive3DMascot
               mood={mascotMood}
               size="lg"
@@ -98,14 +173,25 @@ const Index = () => {
                 setTimeout(() => setMascotMood("idle"), 2000);
               }}
             />
-          </div>
+          </motion.div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-extrabold mb-2 text-gradient leading-tight">
-            {t("app.subtitle")}
-          </h1>
-          <p className="text-base sm:text-lg text-muted-foreground font-body max-w-md mx-auto">
-            {t("app.description")}
-          </p>
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.35 }}
+            className="text-4xl sm:text-5xl md:text-6xl font-display font-extrabold mb-2 text-gradient leading-tight"
+          >
+            <TypingText text={t("app.subtitle")} delay={500} />
+          </motion.h1>
+          
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.6 }}
+            className="text-base sm:text-lg text-muted-foreground font-body max-w-md mx-auto"
+          >
+            {t("app.description")} <span className="inline-block">🌟</span>
+          </motion.p>
         </motion.section>
 
         {/* ── STATS ROW ── */}
