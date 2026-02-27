@@ -19,6 +19,7 @@ import OfflineIndicator from "@/components/OfflineIndicator";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import BreakReminder from "@/components/BreakReminder";
 import KeyboardShortcuts from "@/components/KeyboardShortcuts";
+import CharacterStage from "@/components/character/CharacterStage";
 import Index from "./pages/Index";
 import AlphabetPage from "./pages/AlphabetPage";
 import WordsPage from "./pages/WordsPage";
@@ -101,6 +102,8 @@ const AppRoutes = () => (
       <AnimatedRoutes />
     </main>
     <AppFooter />
+    {/* Persistent character companion — mounted once, never remounts across routes */}
+    <CharacterStage size="md" />
   </EraserTransitionProvider>
 );
 
