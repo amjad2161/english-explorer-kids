@@ -1,20 +1,34 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useMemo } from "react";
 import { useLanguage } from "@/lib/i18n";
 import { getCurrentLevel, getTotalEarnedStars, levels, getLevelProgress } from "@/lib/levels";
 import { getUnlockedAchievements } from "@/lib/achievements";
+import { getXP, getLevel, getDailyChallenge } from "@/lib/xp";
+import { playClickSound } from "@/lib/sounds";
+import FloatingParticles from "@/components/FloatingParticles";
+import Card3D from "@/components/Card3D";
 import mascotImg from "@/assets/mascot.png";
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.12 } },
+  visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
 };
 
 const itemVariants = {
-  hidden: { y: 30, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { type: "spring" as const, stiffness: 200 } },
+  hidden: { y: 40, opacity: 0, scale: 0.95 },
+  visible: { y: 0, opacity: 1, scale: 1, transition: { type: "spring" as const, stiffness: 150, damping: 18 } },
 };
+
+const quickAccessCards = [
+  { titleKey: "quick.alphabet", emoji: "🔤", path: "/alphabet", color: "--secondary" },
+  { titleKey: "quick.words", emoji: "📝", path: "/words", color: "--accent" },
+  { titleKey: "quick.match", emoji: "🧩", path: "/memory", color: "--lavender" },
+  { titleKey: "quick.quiz", emoji: "🎯", path: "/quiz", color: "--primary" },
+  { titleKey: "quick.spelling", emoji: "🐝", path: "/spelling", color: "--sunshine" },
+  { titleKey: "quick.scramble", emoji: "🔀", path: "/scramble", color: "--candy" },
+  { titleKey: "quick.hangman", emoji: "🎭", path: "/hangman", color: "--sky" },
+];
 
 const Index = () => {
   const navigate = useNavigate();
@@ -22,148 +36,320 @@ const Index = () => {
   const [totalStars, setTotalStars] = useState(0);
   const [currentLevel, setCurrentLevel] = useState(1);
   const [badgeCount, setBadgeCount] = useState(0);
+  const [xpState, setXpState] = useState(getXP());
+  const [dailyChallenge, setDailyChallenge] = useState(getDailyChallenge());
+  const [mascotMood, setMascotMood] = useState<"idle" | "wave" | "celebrate">("idle");
 
   useEffect(() => {
     setTotalStars(getTotalEarnedStars());
     setCurrentLevel(getCurrentLevel());
     setBadgeCount(getUnlockedAchievements().length);
+    setXpState(getXP());
+    setDailyChallenge(getDailyChallenge());
+    
+    // Mascot wave on enter
+    const t1 = setTimeout(() => setMascotMood("wave"), 800);
+    const t2 = setTimeout(() => setMascotMood("idle"), 2500);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
 
   const level = levels[currentLevel - 1];
   const levelProgress = getLevelProgress(level);
   const nextLevel = levels[currentLevel] || null;
+  const xpLevel = getLevel(xpState.totalXP);
   const funFactIndex = useMemo(() => Math.floor(Math.random() * 5) + 1, []);
-
-  const quickAccessCards = [
-    { title: t("quick.alphabet"), emoji: "🔤", path: "/alphabet", gradient: "from-blue-400 to-cyan-400" },
-    { title: t("quick.words"), emoji: "📝", path: "/words", gradient: "from-emerald-400 to-green-500" },
-    { title: t("quick.match"), emoji: "🧩", path: "/memory", gradient: "from-purple-400 to-violet-500" },
-    { title: t("quick.quiz"), emoji: "🎯", path: "/quiz", gradient: "from-orange-400 to-red-400" },
-    { title: t("quick.spelling"), emoji: "🐝", path: "/spelling", gradient: "from-yellow-400 to-amber-500" },
-    { title: t("quick.scramble"), emoji: "🔀", path: "/scramble", gradient: "from-pink-400 to-rose-500" },
-    { title: t("quick.hangman"), emoji: "🎭", path: "/hangman", gradient: "from-indigo-400 to-blue-500" },
-  ];
+  
+  const dailyLabel = dailyChallenge.type === "quiz" ? "🎯" : dailyChallenge.type === "words" ? "📝" : dailyChallenge.type === "spelling" ? "🐝" : "🧩";
+  const dailyDone = dailyChallenge.progress >= dailyChallenge.target;
 
   return (
-    <div className="min-h-screen relative" dir={dir}>
-      <div className="bg-particles" />
-      <motion.div variants={containerVariants} initial="hidden" animate="visible" className="max-w-5xl mx-auto px-4 py-8 relative z-10">
-        {/* Hero */}
-        <motion.div variants={itemVariants} className="text-center mb-8">
-          <div className="relative inline-block mb-4">
+    <div className="min-h-screen relative overflow-hidden" dir={dir}>
+      <FloatingParticles count={20} />
+      
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="max-w-5xl mx-auto px-4 py-6 relative z-10"
+      >
+        {/* ── HERO SECTION ── */}
+        <motion.div variants={itemVariants} className="text-center mb-10 relative">
+          {/* Cinematic glow behind mascot */}
+          <div className="relative inline-block mb-5">
             <motion.div
               className="absolute inset-0 rounded-full"
-              style={{ background: "var(--gradient-hero)", filter: "blur(25px)", opacity: 0.2 }}
-              animate={{ scale: [1, 1.15, 1] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              style={{
+                background: "radial-gradient(circle, hsl(var(--primary) / 0.3), hsl(var(--sunshine) / 0.15), transparent 70%)",
+                filter: "blur(40px)",
+                width: "200%", height: "200%", left: "-50%", top: "-50%",
+              }}
+              animate={{ scale: [1, 1.2, 1], rotate: [0, 5, -5, 0] }}
+              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
             />
             <motion.img
-              src={mascotImg} alt="Owl mascot"
-              className="w-28 h-28 relative z-10 drop-shadow-xl"
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              src={mascotImg}
+              alt="Owl mascot"
+              className="w-32 h-32 md:w-36 md:h-36 relative z-10 drop-shadow-2xl"
+              animate={
+                mascotMood === "wave"
+                  ? { y: [0, -15, 0], rotate: [0, -8, 8, 0], scale: [1, 1.1, 1] }
+                  : mascotMood === "celebrate"
+                  ? { y: [0, -25, 0], scale: [1, 1.2, 1] }
+                  : { y: [0, -6, 0] }
+              }
+              transition={{ duration: mascotMood === "idle" ? 4 : 1.5, repeat: mascotMood === "idle" ? Infinity : 0, ease: "easeInOut" }}
             />
+            {/* Speech bubble */}
+            <AnimatePresence>
+              {mascotMood === "wave" && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0, x: 40, y: -20 }}
+                  animate={{ opacity: 1, scale: 1, x: 50, y: -30 }}
+                  exit={{ opacity: 0, scale: 0 }}
+                  className="absolute top-0 end-0 bg-card/95 backdrop-blur-xl rounded-2xl px-4 py-2 shadow-xl border border-border/50 z-20"
+                >
+                  <span className="font-display font-bold text-sm">
+                    {lang === "he" ? "!שלום" : lang === "ar" ? "!مرحبًا" : "Hi there!"}
+                  </span>
+                  <div className="absolute bottom-0 start-0 w-3 h-3 bg-card/95 rotate-45 translate-y-1.5 -translate-x-1" />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-          <h1 className="text-4xl md:text-5xl font-display font-bold text-gradient mb-3">{t("app.subtitle")}</h1>
-          <p className="text-lg text-muted-foreground font-body max-w-md mx-auto">{t("app.description")}</p>
+
+          <motion.h1
+            className="text-5xl md:text-6xl lg:text-7xl font-display font-extrabold mb-3 leading-tight"
+            style={{
+              background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--sunshine)), hsl(var(--candy)))",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}
+          >
+            {t("app.subtitle")}
+          </motion.h1>
+          <motion.p
+            className="text-lg md:text-xl text-muted-foreground font-body max-w-lg mx-auto"
+            variants={itemVariants}
+          >
+            {t("app.description")}
+          </motion.p>
         </motion.div>
 
-        {/* Stats Row */}
-        <motion.div variants={itemVariants} className="flex justify-center gap-3 mb-6 flex-wrap">
-          <motion.div whileHover={{ scale: 1.05 }} className="card-glass flex items-center gap-2 px-5 py-3 rounded-2xl">
-            <span className="text-2xl">⭐</span>
-            <div>
-              <p className="font-display font-bold text-lg leading-tight">{totalStars}</p>
-              <p className="text-xs text-muted-foreground">{t("home.stars")}</p>
-            </div>
-          </motion.div>
-          <motion.div whileHover={{ scale: 1.05 }} className="card-glass flex items-center gap-2 px-5 py-3 rounded-2xl">
-            <span className="text-2xl">🏅</span>
-            <div>
-              <p className="font-display font-bold text-lg leading-tight">{badgeCount}</p>
-              <p className="text-xs text-muted-foreground">{lang === "he" ? "הישגים" : lang === "ar" ? "إنجازات" : "Badges"}</p>
-            </div>
-          </motion.div>
-          <motion.div whileHover={{ scale: 1.05 }} className="card-glass flex items-center gap-2 px-5 py-3 rounded-2xl">
-            <span className="text-2xl">{level.emoji}</span>
-            <div>
-              <p className="font-display font-bold text-lg leading-tight">{t("home.level")} {level.id}</p>
-              <p className="text-xs text-muted-foreground">{t(`level.${level.id}`)}</p>
-            </div>
-          </motion.div>
-        </motion.div>
-
-        {/* Current Level Card */}
-        <motion.div variants={itemVariants} whileHover={{ y: -4 }} onClick={() => navigate("/levels")}
-          className="card-kid cursor-pointer max-w-lg mx-auto mb-8 relative overflow-hidden group">
-          <div className={`absolute inset-0 ${level.gradient} opacity-5 group-hover:opacity-10 transition-opacity`} />
-          <div className="relative flex items-center gap-4">
-            <motion.div
-              className={`w-16 h-16 rounded-2xl ${level.gradient} flex items-center justify-center text-3xl shrink-0 shadow-lg`}
-              animate={{ rotate: [0, 3, -3, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            >
-              {level.emoji}
-            </motion.div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs text-muted-foreground font-display font-semibold mb-0.5">{t("home.currentLevel")}</p>
-              <h2 className="font-display text-lg font-bold truncate">{t("home.level")} {level.id}: {t(`level.${level.id}`)}</h2>
-              <div className="progress-bar h-3 mt-2">
-                <div className="progress-bar-fill" style={{ width: `${(levelProgress.completed / levelProgress.total) * 100}%` }} />
+        {/* ── XP LEVEL BAR ── */}
+        <motion.div variants={itemVariants} className="max-w-lg mx-auto mb-8">
+          <div className="card-glass rounded-2xl p-4 relative overflow-hidden">
+            <div className="absolute inset-0 opacity-5" style={{ background: "var(--gradient-hero)" }} />
+            <div className="relative flex items-center gap-3 mb-2">
+              <motion.span
+                className="text-3xl"
+                animate={{ scale: [1, 1.15, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                {xpLevel.title.split(" ")[0]}
+              </motion.span>
+              <div className="flex-1">
+                <div className="flex justify-between items-baseline">
+                  <span className="font-display font-bold text-sm">
+                    {lang === "he" ? "רמה" : lang === "ar" ? "المستوى" : "Level"} {xpLevel.level}
+                  </span>
+                  <span className="text-xs text-muted-foreground font-display">
+                    {xpState.totalXP} XP
+                  </span>
+                </div>
+                <div className="xp-bar h-3 mt-1 rounded-full overflow-hidden bg-muted/50">
+                  <motion.div
+                    className="h-full rounded-full relative"
+                    style={{
+                      background: "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--sunshine)), hsl(var(--candy)))",
+                    }}
+                    initial={{ width: 0 }}
+                    animate={{ width: `${Math.min((xpLevel.current / xpLevel.needed) * 100, 100)}%` }}
+                    transition={{ duration: 1.5, ease: "easeOut", delay: 0.5 }}
+                  >
+                    <div className="absolute inset-0 animate-shimmer" />
+                  </motion.div>
+                </div>
               </div>
-              <p className="text-xs text-muted-foreground mt-1.5">
-                {levelProgress.completed}/{levelProgress.total} {t("home.stagesCompleted")}
-                {nextLevel && ` • ${Math.max(0, nextLevel.starsToUnlock - totalStars)} ${t("home.moreToNext")}`}
-              </p>
             </div>
-            <span className="text-primary text-xl">◀</span>
+            {/* Streak & Daily */}
+            <div className="flex gap-3 mt-2">
+              {xpState.streak > 0 && (
+                <motion.div
+                  className="flex items-center gap-1.5 bg-primary/10 rounded-full px-3 py-1"
+                  animate={{ scale: [1, 1.05, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  <span className="text-sm">🔥</span>
+                  <span className="font-display font-bold text-xs text-primary">{xpState.streak} {lang === "he" ? "ימים" : lang === "ar" ? "أيام" : "days"}</span>
+                </motion.div>
+              )}
+              <div className={`flex items-center gap-1.5 rounded-full px-3 py-1 ${dailyDone ? "bg-accent/15" : "bg-muted/40"}`}>
+                <span className="text-sm">{dailyLabel}</span>
+                <span className="font-display font-bold text-xs">
+                  {dailyChallenge.progress}/{dailyChallenge.target}
+                </span>
+                {dailyDone && <span className="text-accent">✓</span>}
+              </div>
+            </div>
           </div>
         </motion.div>
 
-        {/* Quick Access */}
-        <motion.div variants={itemVariants} className="mb-8">
-          <h3 className="font-display text-lg font-bold mb-4 text-center">{t("home.freePlay")}</h3>
-          <div className="grid grid-cols-4 sm:grid-cols-7 gap-3">
+        {/* ── STATS ROW ── */}
+        <motion.div variants={itemVariants} className="flex justify-center gap-3 mb-8 flex-wrap">
+          {[
+            { emoji: "⭐", value: totalStars, label: t("home.stars"), bg: "bg-sunshine/10" },
+            { emoji: "🏅", value: badgeCount, label: lang === "he" ? "הישגים" : lang === "ar" ? "إنجازات" : "Badges", bg: "bg-candy/10" },
+            { emoji: level.emoji, value: `${t("home.level")} ${level.id}`, label: t(`level.${level.id}`), bg: "bg-primary/10" },
+          ].map((stat, i) => (
+            <motion.div
+              key={i}
+              whileHover={{ scale: 1.08, y: -4 }}
+              className={`card-glass flex items-center gap-3 px-5 py-3.5 rounded-2xl ${stat.bg} backdrop-blur-lg cursor-default`}
+            >
+              <motion.span
+                className="text-2xl"
+                animate={{ rotate: [0, 5, -5, 0] }}
+                transition={{ duration: 4, repeat: Infinity, delay: i * 0.5 }}
+              >
+                {stat.emoji}
+              </motion.span>
+              <div>
+                <p className="font-display font-bold text-lg leading-tight">{stat.value}</p>
+                <p className="text-xs text-muted-foreground">{stat.label}</p>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* ── CURRENT LEVEL CARD ── */}
+        <motion.div variants={itemVariants} className="max-w-lg mx-auto mb-10">
+          <Card3D
+            onClick={() => { playClickSound(); navigate("/levels"); }}
+            className="group"
+          >
+            <div className="card-kid relative overflow-hidden">
+              <div className="absolute inset-0 opacity-[0.04] group-hover:opacity-[0.08] transition-opacity" style={{ background: "var(--gradient-hero)" }} />
+              <div className="relative flex items-center gap-4">
+                <motion.div
+                  className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shrink-0 shadow-lg relative overflow-hidden"
+                  style={{ background: "var(--gradient-hero)" }}
+                  animate={{ rotate: [0, 3, -3, 0] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  {level.emoji}
+                  <div className="absolute inset-0 bg-white/20 animate-shimmer" />
+                </motion.div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-muted-foreground font-display font-semibold mb-0.5">{t("home.currentLevel")}</p>
+                  <h2 className="font-display text-lg font-bold truncate">{t("home.level")} {level.id}: {t(`level.${level.id}`)}</h2>
+                  <div className="progress-bar h-3 mt-2">
+                    <motion.div
+                      className="progress-bar-fill"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(levelProgress.completed / levelProgress.total) * 100}%` }}
+                      transition={{ duration: 1.2, ease: "easeOut", delay: 0.8 }}
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    {levelProgress.completed}/{levelProgress.total} {t("home.stagesCompleted")}
+                    {nextLevel && ` • ${Math.max(0, nextLevel.starsToUnlock - totalStars)} ${t("home.moreToNext")}`}
+                  </p>
+                </div>
+                <motion.span
+                  className="text-primary text-xl"
+                  animate={{ x: [0, -5, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  {dir === "rtl" ? "◀" : "▶"}
+                </motion.span>
+              </div>
+            </div>
+          </Card3D>
+        </motion.div>
+
+        {/* ── QUICK ACCESS GAMES ── */}
+        <motion.div variants={itemVariants} className="mb-10">
+          <h3 className="font-display text-xl font-bold mb-5 text-center">{t("home.freePlay")}</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
             {quickAccessCards.map((card, i) => (
               <motion.button
                 key={card.path}
-                whileHover={{ y: -6, scale: 1.08 }}
+                whileHover={{ y: -8, scale: 1.05 }}
                 whileTap={{ scale: 0.92 }}
-                onClick={() => navigate(card.path)}
-                className="card-kid text-center py-4 relative overflow-hidden group"
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: i * 0.05, type: "spring" }}
+                onClick={() => { playClickSound(); navigate(card.path); }}
+                className="game-card-3d group relative overflow-hidden rounded-2xl p-4 text-center"
+                initial={{ scale: 0, opacity: 0, rotateY: -30 }}
+                animate={{ scale: 1, opacity: 1, rotateY: 0 }}
+                transition={{ delay: 0.4 + i * 0.07, type: "spring", stiffness: 200 }}
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-0 group-hover:opacity-10 transition-opacity`} />
-                <span className="text-3xl block mb-2 relative z-10">
-                  {card.emoji}
-                </span>
-                <span className="font-display text-xs font-bold relative z-10">{card.title}</span>
+                {/* Background glow */}
+                <div
+                  className="absolute inset-0 opacity-[0.06] group-hover:opacity-[0.15] transition-opacity duration-300 rounded-2xl"
+                  style={{ background: `radial-gradient(circle at 50% 40%, hsl(${card.color}), transparent 70%)` }}
+                />
+                {/* Card body */}
+                <div className="relative z-10">
+                  <motion.span
+                    className="text-4xl block mb-2 drop-shadow-md"
+                    whileHover={{ scale: 1.2, rotate: [0, -10, 10, 0] }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    {card.emoji}
+                  </motion.span>
+                  <span className="font-display text-xs font-bold block">{t(card.titleKey)}</span>
+                </div>
+                {/* Bottom shine */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity"
+                  style={{ background: `linear-gradient(90deg, transparent, hsl(${card.color}), transparent)` }}
+                />
               </motion.button>
             ))}
           </div>
         </motion.div>
 
-        {/* Action Buttons */}
-        <motion.div variants={itemVariants} className="text-center mb-8 flex gap-3 justify-center flex-wrap">
-          <motion.button whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}
-            onClick={() => navigate("/levels")} className="btn-kid gradient-primary text-primary-foreground text-lg px-8 py-4">
-            {t("home.myJourney")}
+        {/* ── ACTION BUTTONS ── */}
+        <motion.div variants={itemVariants} className="text-center mb-10 flex gap-4 justify-center flex-wrap">
+          <motion.button
+            whileHover={{ scale: 1.06, y: -3 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => { playClickSound(); navigate("/levels"); }}
+            className="btn-kid gradient-primary text-primary-foreground text-lg px-10 py-4 shadow-xl"
+          >
+            <span className="relative z-10 flex items-center gap-2">
+              🗺️ {t("home.myJourney")}
+            </span>
           </motion.button>
-          <motion.button whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}
-            onClick={() => navigate("/achievements")} className="btn-kid bg-card text-foreground text-lg px-6 py-4 border border-border">
+          <motion.button
+            whileHover={{ scale: 1.06, y: -3 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => { playClickSound(); navigate("/achievements"); }}
+            className="btn-kid bg-card text-foreground text-lg px-8 py-4 border border-border shadow-lg"
+          >
             🏅 {lang === "he" ? "הישגים" : lang === "ar" ? "إنجازات" : "Badges"}
           </motion.button>
         </motion.div>
 
-        {/* Fun Fact */}
-        <motion.div variants={itemVariants} className="card-kid text-center max-w-lg mx-auto relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-sunshine/5 to-primary/5" />
-          <div className="text-4xl mb-3 relative z-10">💡</div>
-          <h3 className="font-display text-lg font-bold mb-2 relative z-10">{t("home.didYouKnow")}</h3>
-          <p className="text-muted-foreground font-body text-sm relative z-10">{t(`home.funFact${funFactIndex}`)}</p>
+        {/* ── FUN FACT ── */}
+        <motion.div variants={itemVariants} className="max-w-lg mx-auto">
+          <Card3D intensity={8}>
+            <div className="card-kid text-center relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-sunshine/5 to-primary/5" />
+              <motion.div
+                className="text-5xl mb-3 relative z-10"
+                animate={{ rotate: [0, 5, -5, 0], y: [0, -3, 0] }}
+                transition={{ duration: 3, repeat: Infinity }}
+              >
+                💡
+              </motion.div>
+              <h3 className="font-display text-lg font-bold mb-2 relative z-10">{t("home.didYouKnow")}</h3>
+              <p className="text-muted-foreground font-body text-sm relative z-10 leading-relaxed">{t(`home.funFact${funFactIndex}`)}</p>
+            </div>
+          </Card3D>
         </motion.div>
+
+        {/* Bottom spacer */}
+        <div className="h-8" />
       </motion.div>
     </div>
   );

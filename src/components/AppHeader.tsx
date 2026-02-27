@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Star, Globe, Trophy, RotateCcw, Volume2, VolumeX, Music, Music2 } from "lucide-react";
 import { getTotalEarnedStars } from "@/lib/levels";
 import { getUnlockedAchievements } from "@/lib/achievements";
+import { getXP, getLevel } from "@/lib/xp";
 import { useLanguage, Language } from "@/lib/i18n";
 import { useState, useEffect, useRef } from "react";
 import {
@@ -26,6 +27,8 @@ const AppHeader = () => {
   const [langMenuOpen, setLangMenuOpen] = useState(false);
   const [soundOn, setSoundOn] = useState(isSoundEnabled);
   const [musicOn, setMusicOn] = useState(isMusicEnabled);
+  const [xpLevel, setXpLevel] = useState(getLevel(getXP().totalXP));
+  const [xpTotal, setXpTotal] = useState(getXP().totalXP);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const toggleSound = () => {
@@ -58,6 +61,9 @@ const AppHeader = () => {
   useEffect(() => {
     setStars(getTotalEarnedStars());
     setBadges(getUnlockedAchievements().length);
+    const xp = getXP();
+    setXpTotal(xp.totalXP);
+    setXpLevel(getLevel(xp.totalXP));
   }, [location]);
 
   useEffect(() => {
@@ -79,7 +85,7 @@ const AppHeader = () => {
       transition={{ type: "spring", stiffness: 200, damping: 20 }}
       className="sticky top-0 z-50 backdrop-blur-xl bg-card/70 border-b border-border/50"
     >
-      <div className="max-w-5xl mx-auto px-4 py-2.5 flex items-center justify-between" dir={dir}>
+      <div className="max-w-5xl mx-auto px-4 py-2 flex items-center justify-between" dir={dir}>
         {/* Logo */}
         <motion.div
           className="flex items-center gap-2 cursor-pointer"
@@ -87,23 +93,44 @@ const AppHeader = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <span className="text-3xl">
+          <motion.span
+            className="text-3xl"
+            animate={{ rotate: [0, 5, -5, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          >
             🦉
-          </span>
-          <h1 className="text-xl font-display font-bold text-gradient hidden sm:block">
-            English Fun
-          </h1>
+          </motion.span>
+          <div className="hidden sm:block">
+            <h1 className="text-lg font-display font-bold text-gradient leading-tight">
+              English Fun
+            </h1>
+            {/* Mini XP bar in header */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] font-display font-semibold text-muted-foreground">
+                {xpLevel.title.split(" ")[0]}
+              </span>
+              <div className="w-16 h-1.5 rounded-full bg-muted/50 overflow-hidden">
+                <motion.div
+                  className="h-full rounded-full"
+                  style={{ background: "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--sunshine)))" }}
+                  animate={{ width: `${Math.min((xpLevel.current / xpLevel.needed) * 100, 100)}%` }}
+                  transition={{ duration: 0.8 }}
+                />
+              </div>
+              <span className="text-[10px] font-display text-muted-foreground">{xpTotal}</span>
+            </div>
+          </div>
         </motion.div>
 
         {/* Nav */}
-        <nav className="flex items-center gap-0.5 overflow-x-auto max-w-[55vw] scrollbar-hide px-1">
+        <nav className="flex items-center gap-0.5 overflow-x-auto max-w-[50vw] scrollbar-hide px-1">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
               <motion.button
                 key={item.path}
-                onClick={() => navigate(item.path)}
-                className={`px-2.5 py-1.5 rounded-xl font-display text-xs font-semibold transition-all whitespace-nowrap relative ${
+                onClick={() => { playClickSound(); navigate(item.path); }}
+                className={`px-2.5 py-1.5 rounded-xl font-display text-xs font-semibold whitespace-nowrap relative ${
                   isActive
                     ? "gradient-primary text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
@@ -113,7 +140,11 @@ const AppHeader = () => {
               >
                 {item.label}
                 {isActive && (
-                  <div className="absolute -bottom-1 left-1/2 w-1.5 h-1.5 rounded-full bg-primary" style={{ marginLeft: "-3px" }} />
+                  <motion.div
+                    layoutId="nav-indicator"
+                    className="absolute -bottom-1 left-1/2 w-1.5 h-1.5 rounded-full bg-primary-foreground"
+                    style={{ marginLeft: "-3px" }}
+                  />
                 )}
               </motion.button>
             );
@@ -121,40 +152,35 @@ const AppHeader = () => {
         </nav>
 
         {/* Actions */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1">
           {/* Sound & Music */}
           <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
             onClick={toggleSound}
-            className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+            className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
               soundOn ? "bg-primary/15 text-primary" : "bg-muted/60 text-muted-foreground"
             }`}
-            title={soundOn ? "Mute sounds" : "Enable sounds"}
           >
-            {soundOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+            {soundOn ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
           </motion.button>
           <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
             onClick={toggleMusic}
-            className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+            className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
               musicOn ? "bg-accent/15 text-accent" : "bg-muted/60 text-muted-foreground"
             }`}
-            title={musicOn ? "Stop music" : "Play music"}
           >
-            {musicOn ? <Music className="w-4 h-4" /> : <Music2 className="w-4 h-4" />}
+            {musicOn ? <Music className="w-3.5 h-3.5" /> : <Music2 className="w-3.5 h-3.5" />}
           </motion.button>
-          {/* Language Switcher */}
+
+          {/* Language */}
           <div className="relative" ref={menuRef}>
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => setLangMenuOpen(prev => !prev)}
-              className="flex items-center gap-1.5 bg-muted/60 backdrop-blur-sm px-2.5 py-1.5 rounded-full font-display text-xs font-bold transition-colors hover:bg-muted"
+              className="flex items-center gap-1 bg-muted/60 backdrop-blur-sm px-2 py-1.5 rounded-full font-display text-xs font-bold transition-colors hover:bg-muted"
             >
               <span>{currentLang.flag}</span>
-              <span className="hidden sm:inline">{currentLang.name}</span>
               <Globe className="w-3 h-3 text-muted-foreground" />
             </motion.button>
 
@@ -199,28 +225,27 @@ const AppHeader = () => {
             </AnimatePresence>
           </div>
 
-          {/* Badges count */}
+          {/* Badges */}
           {badges > 0 && (
             <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
               onClick={() => navigate("/achievements")}
-              className="flex items-center gap-1 bg-candy/10 px-2 py-1.5 rounded-full"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
+              className="flex items-center gap-0.5 bg-candy/10 px-2 py-1 rounded-full"
+              initial={{ scale: 0 }} animate={{ scale: 1 }}
             >
-              <Trophy className="w-4 h-4 text-candy" />
+              <Trophy className="w-3.5 h-3.5 text-candy" />
               <span className="font-display font-bold text-xs text-candy">{badges}</span>
             </motion.button>
           )}
 
           {/* Stars */}
-          <div className="flex items-center gap-1 bg-sunshine/15 px-2.5 py-1.5 rounded-full">
-            <Star className="w-4 h-4 star-earned fill-current" />
-            <span className="font-display font-bold text-xs text-sunshine-foreground">
-              {stars}
-            </span>
-          </div>
+          <motion.div
+            className="flex items-center gap-1 bg-sunshine/15 px-2 py-1 rounded-full"
+            whileHover={{ scale: 1.05 }}
+          >
+            <Star className="w-3.5 h-3.5 star-earned fill-current" />
+            <span className="font-display font-bold text-xs text-sunshine-foreground">{stars}</span>
+          </motion.div>
         </div>
       </div>
     </motion.header>
