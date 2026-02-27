@@ -10,59 +10,19 @@ interface Interactive3DMascotProps {
 
 const sizeMap = { sm: 120, md: 180, lg: 260 };
 
-/**
- * AAA-Quality Interactive Owl Mascot
- * 
- * Features:
- * - Squash-and-stretch on mood transitions (Disney principle)
- * - Secondary action (subtle body sway independent of main motion)
- * - Anticipation on click (brief squish before bounce)
- * - Ambient breathing animation layer
- * - Dynamic drop shadows that respond to mood
- * - Radial mask for seamless background integration
- */
 const Interactive3DMascot = ({ mood = "idle", size = "md", onClick, showSpeechBubble }: Interactive3DMascotProps) => {
   const dim = sizeMap[size];
 
-  // Primary motion by mood (squash-and-stretch principles)
   const animateByMood =
     mood === "wave"
-      ? {
-          y: [0, -10, 0, -7, 0],
-          rotate: [0, -5, 5, -3, 0],
-          scale: [1, 1.03, 1, 1.02, 1],
-          scaleX: [1, 1.02, 0.98, 1.01, 1],
-          scaleY: [1, 0.98, 1.03, 0.99, 1],
-        }
+      ? { y: [0, -10, 0, -7, 0], rotate: [0, -5, 5, -3, 0], scale: [1, 1.03, 1, 1.02, 1], scaleX: [1, 1.02, 0.98, 1.01, 1], scaleY: [1, 0.98, 1.03, 0.99, 1] }
       : mood === "celebrate"
-      ? {
-          y: [0, -16, 0, -12, 0],
-          rotate: [0, -6, 6, -4, 0],
-          scale: [1, 1.08, 0.96, 1.04, 1],
-          scaleX: [1, 0.94, 1.06, 0.98, 1],
-          scaleY: [1, 1.06, 0.94, 1.02, 1],
-        }
+      ? { y: [0, -16, 0, -12, 0], rotate: [0, -6, 6, -4, 0], scale: [1, 1.08, 0.96, 1.04, 1], scaleX: [1, 0.94, 1.06, 0.98, 1], scaleY: [1, 1.06, 0.94, 1.02, 1] }
       : mood === "surprised"
-      ? {
-          y: [0, -8, 0],
-          scale: [1, 1.1, 1.02, 1],
-          scaleX: [1, 0.92, 1.04, 1],
-          scaleY: [1, 1.08, 0.97, 1],
-          rotate: [0, 2, -1, 0],
-        }
+      ? { y: [0, -8, 0], scale: [1, 1.1, 1.02, 1], scaleX: [1, 0.92, 1.04, 1], scaleY: [1, 1.08, 0.97, 1], rotate: [0, 2, -1, 0] }
       : mood === "sad"
-      ? {
-          y: [0, 3, 0],
-          rotate: [0, -1.5, 0],
-          scale: [1, 0.97, 1],
-          scaleY: [1, 0.98, 1],
-        }
-      : {
-          y: [0, -4, 0],
-          rotate: [0, -0.8, 0.8, 0],
-          scale: [1, 1.01, 1],
-          scaleY: [1, 1.005, 0.998, 1],
-        };
+      ? { y: [0, 3, 0], rotate: [0, -1.5, 0], scale: [1, 0.97, 1], scaleY: [1, 0.98, 1] }
+      : { y: [0, -4, 0], rotate: [0, -0.8, 0.8, 0], scale: [1, 1.01, 1], scaleY: [1, 1.005, 0.998, 1] };
 
   const transitionByMood =
     mood === "idle" ? { duration: 3.5, repeat: Infinity, ease: "easeInOut" as const }
@@ -105,10 +65,10 @@ const Interactive3DMascot = ({ mood = "idle", size = "md", onClick, showSpeechBu
           bottom: "5%",
           transform: "translateX(-50%)",
           background: mood === "celebrate"
-            ? "radial-gradient(ellipse, hsl(var(--sunshine) / 0.12), transparent 70%)"
+            ? "radial-gradient(ellipse, hsl(var(--sunshine) / 0.15), transparent 70%)"
             : mood === "surprised"
-            ? "radial-gradient(ellipse, hsl(var(--primary) / 0.1), transparent 70%)"
-            : "radial-gradient(ellipse, hsl(var(--primary) / 0.06), transparent 70%)",
+            ? "radial-gradient(ellipse, hsl(var(--primary) / 0.12), transparent 70%)"
+            : "radial-gradient(ellipse, hsl(var(--primary) / 0.08), transparent 70%)",
           filter: "blur(12px)",
         }}
         animate={{
@@ -118,7 +78,7 @@ const Interactive3DMascot = ({ mood = "idle", size = "md", onClick, showSpeechBu
         transition={{ duration: mood === "celebrate" ? 1.5 : 3, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Main owl image — black bg blends seamlessly with dark theme */}
+      {/* Main owl image with soft circular vignette to blend black bg */}
       <motion.img
         src={owlPixar}
         alt="Pixar-style owl mascot"
@@ -126,6 +86,8 @@ const Interactive3DMascot = ({ mood = "idle", size = "md", onClick, showSpeechBu
         className="w-full h-full object-contain select-none pointer-events-none relative z-10"
         style={{
           filter: shadowByMood,
+          WebkitMaskImage: "radial-gradient(ellipse 70% 75% at 50% 48%, black 40%, rgba(0,0,0,0.9) 55%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,0.2) 85%, transparent 100%)",
+          maskImage: "radial-gradient(ellipse 70% 75% at 50% 48%, black 40%, rgba(0,0,0,0.9) 55%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,0.2) 85%, transparent 100%)",
         }}
         animate={animateByMood}
         transition={transitionByMood}

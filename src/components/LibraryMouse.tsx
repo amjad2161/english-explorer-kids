@@ -1,11 +1,6 @@
 import { motion } from "framer-motion";
 import mouseLibrarian from "@/assets/mouse-librarian.png";
 
-/**
- * LibraryMouse — Pixar-style mouse librarian character.
- * Uses AI-generated 3D character image.
- */
-
 const LibraryMouse = () => {
   return (
     <motion.div
@@ -21,7 +16,6 @@ const LibraryMouse = () => {
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 1.2, delay: 3, ease: "easeOut" }}
     >
-      {/* Ambient glow */}
       <motion.div
         className="absolute rounded-full"
         style={{
@@ -40,6 +34,8 @@ const LibraryMouse = () => {
         className="w-full h-full object-contain select-none pointer-events-none relative z-10"
         style={{
           filter: "drop-shadow(0 5px 14px hsl(20 30% 8% / 0.5))",
+          WebkitMaskImage: "radial-gradient(ellipse 68% 72% at 50% 48%, black 40%, rgba(0,0,0,0.8) 58%, rgba(0,0,0,0.3) 75%, transparent 95%)",
+          maskImage: "radial-gradient(ellipse 68% 72% at 50% 48%, black 40%, rgba(0,0,0,0.8) 58%, rgba(0,0,0,0.3) 75%, transparent 95%)",
         }}
         animate={{ y: [0, -2, 0], x: [0, 1, 0] }}
         transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}

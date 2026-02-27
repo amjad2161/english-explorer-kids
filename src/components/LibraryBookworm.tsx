@@ -1,11 +1,6 @@
 import { motion } from "framer-motion";
 import bookworm from "@/assets/bookworm.png";
 
-/**
- * LibraryBookworm — Pixar-style bookworm character sitting on books.
- * Uses AI-generated 3D character image.
- */
-
 const LibraryBookworm = () => {
   return (
     <motion.div
@@ -21,7 +16,6 @@ const LibraryBookworm = () => {
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 1.5, delay: 2.5, ease: "easeOut" }}
     >
-      {/* Ambient glow */}
       <motion.div
         className="absolute rounded-full"
         style={{
@@ -40,6 +34,8 @@ const LibraryBookworm = () => {
         className="w-full h-full object-contain select-none pointer-events-none relative z-10"
         style={{
           filter: "drop-shadow(0 6px 16px hsl(20 30% 8% / 0.5))",
+          WebkitMaskImage: "radial-gradient(ellipse 68% 72% at 50% 45%, black 40%, rgba(0,0,0,0.8) 58%, rgba(0,0,0,0.3) 75%, transparent 95%)",
+          maskImage: "radial-gradient(ellipse 68% 72% at 50% 45%, black 40%, rgba(0,0,0,0.8) 58%, rgba(0,0,0,0.3) 75%, transparent 95%)",
         }}
         animate={{ y: [0, -3, 0], rotate: [0, 1, -1, 0] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
