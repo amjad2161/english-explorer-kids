@@ -17,6 +17,9 @@ import { getSmartRecommendations, getMotivationalMessage, Recommendation } from 
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 import { Zap, Trophy, ArrowRight, Map, Star, Sparkles, BookOpen, Shield } from "lucide-react";
 import UserAvatar, { CompanionAvatars } from "@/components/UserAvatar";
+import foxGuardian from "@/assets/fox-guardian.png";
+import bookworm from "@/assets/bookworm.png";
+import mouseLibrarian from "@/assets/mouse-librarian.png";
 
 /* ─── Animation variants ─── */
 const container = {
@@ -29,7 +32,7 @@ const item = {
   visible: { y: 0, opacity: 1, transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] } },
 };
 
-/* ─── Simple entrance — fade + scale with owl ─── */
+/* ─── Simple entrance — Disney fade + scale with owl ─── */
 const SimpleEntrance = ({ onComplete }: { onComplete: () => void }) => {
   useEffect(() => {
     const t = setTimeout(onComplete, 1800);
@@ -45,6 +48,10 @@ const SimpleEntrance = ({ onComplete }: { onComplete: () => void }) => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
+      {/* Background magic glow */}
+      <div className="absolute inset-0" style={{
+        background: `radial-gradient(ellipse 70% 60% at 50% 40%, hsl(262 70% 65% / 0.08) 0%, transparent 60%)`,
+      }} />
       <motion.div
         initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -56,7 +63,13 @@ const SimpleEntrance = ({ onComplete }: { onComplete: () => void }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.5 }}
-        className="font-display font-extrabold text-3xl sm:text-4xl text-gradient"
+        className="font-display font-extrabold text-3xl sm:text-4xl"
+        style={{
+          background: "linear-gradient(135deg, hsl(262 80% 65%), hsl(338 80% 68%), hsl(44 100% 62%))",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          backgroundClip: "text",
+        }}
       >
         English Fun ✨
       </motion.h1>
@@ -83,69 +96,21 @@ const gameCards = [
   { titleKey: "quick.pattern", emoji: "🧩", path: "/pattern", color: "bg-lavender/10 dark:bg-lavender/15" },
 ];
 
-/* ─── Notebook-style lined card wrapper ─── */
-const NotebookCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
+/* ─── Disney-quality Magic Card wrapper ─── */
+const MagicCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
   <div
     className={`relative rounded-2xl overflow-hidden ${className}`}
     style={{
-      background: "hsl(var(--card) / 0.95)",
-      border: "2px solid hsl(var(--border))",
-      boxShadow: "var(--shadow-card)",
+      background: "hsl(var(--card) / 0.97)",
+      border: "1.5px solid hsl(262 50% 65% / 0.18)",
+      boxShadow: "var(--shadow-card), inset 0 1px 0 rgba(255,255,255,0.8)",
     }}
   >
-    {/* Red margin line */}
+    {/* Gem-like top shine */}
     <div
-      className="absolute top-0 bottom-0 w-[2px]"
+      className="absolute top-0 left-0 right-0 h-px pointer-events-none"
       style={{
-        left: "2rem",
-        background: "hsl(0 65% 55% / 0.2)",
-      }}
-    />
-    {/* Horizontal ruled lines */}
-    <div
-      className="absolute inset-0 pointer-events-none"
-      style={{
-        backgroundImage: "repeating-linear-gradient(transparent, transparent 27px, hsl(var(--border) / 0.35) 27px, hsl(var(--border) / 0.35) 28px)",
-        backgroundPositionY: "12px",
-      }}
-    />
-    {/* Spiral binding holes */}
-    <div className="absolute top-0 bottom-0 left-1 flex flex-col items-center gap-6 pt-4 pointer-events-none">
-      {Array.from({ length: 12 }).map((_, i) => (
-        <div
-          key={i}
-          className="w-3 h-3 rounded-full border-2 shrink-0"
-          style={{
-            borderColor: "hsl(var(--muted-foreground) / 0.2)",
-            background: "hsl(var(--background) / 0.5)",
-          }}
-        />
-      ))}
-    </div>
-    <div className="relative z-10 p-5 sm:p-6 ps-12">
-      {children}
-    </div>
-  </div>
-);
-
-/* ─── Chalkboard section card ─── */
-const ChalkSection = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <div
-    className={`relative rounded-2xl overflow-hidden ${className}`}
-    style={{
-      background: "linear-gradient(135deg, hsl(var(--board)) 0%, hsl(160 22% 18%) 100%)",
-      border: "3px solid hsl(30 35% 30%)",
-      boxShadow: "inset 0 2px 12px hsl(0 0% 0% / 0.2), 0 4px 16px hsl(0 0% 0% / 0.15)",
-    }}
-  >
-    {/* Chalk dust */}
-    <div
-      className="absolute inset-0 pointer-events-none opacity-[0.04]"
-      style={{
-        backgroundImage: `radial-gradient(circle at 25% 35%, hsl(var(--chalk)) 1px, transparent 1px),
-          radial-gradient(circle at 65% 70%, hsl(var(--chalk)) 0.6px, transparent 0.6px),
-          radial-gradient(circle at 80% 25%, hsl(var(--chalk)) 0.8px, transparent 0.8px)`,
-        backgroundSize: "80px 60px, 60px 80px, 70px 50px",
+        background: "linear-gradient(90deg, transparent 10%, hsl(262 70% 80% / 0.6) 50%, transparent 90%)",
       }}
     />
     <div className="relative z-10 p-5 sm:p-6">
@@ -154,20 +119,46 @@ const ChalkSection = ({ children, className = "" }: { children: React.ReactNode;
   </div>
 );
 
-/* ─── Chalk text helper ─── */
-const ChalkText = ({ children, className = "", size = "base" }: { children: React.ReactNode; className?: string; size?: string }) => (
+/* ─── Disney-quality gradient section header ─── */
+const MagicSection = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
+  <div
+    className={`relative rounded-2xl overflow-hidden ${className}`}
+    style={{
+      background: "linear-gradient(135deg, hsl(262 65% 20%) 0%, hsl(295 60% 20%) 50%, hsl(245 55% 22%) 100%)",
+      border: "1.5px solid hsl(262 60% 45% / 0.25)",
+      boxShadow: "0 4px 20px hsl(262 65% 30% / 0.15), inset 0 1px 0 hsl(262 80% 70% / 0.12)",
+    }}
+  >
+    {/* Magic shimmer overlay */}
+    <div
+      className="absolute inset-0 pointer-events-none opacity-[0.06]"
+      style={{
+        backgroundImage: `radial-gradient(circle at 20% 40%, hsl(44 100% 70%) 1px, transparent 1px),
+          radial-gradient(circle at 65% 70%, hsl(262 80% 75%) 0.6px, transparent 0.6px),
+          radial-gradient(circle at 85% 25%, hsl(338 80% 75%) 0.8px, transparent 0.8px)`,
+        backgroundSize: "60px 45px, 80px 70px, 55px 60px",
+      }}
+    />
+    <div className="relative z-10 p-5 sm:p-6">
+      {children}
+    </div>
+  </div>
+);
+
+/* ─── Magic text helper ─── */
+const MagicText = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
   <span
     className={`font-display font-bold ${className}`}
     style={{
-      color: "hsl(var(--chalk))",
-      textShadow: "0 1px 3px hsl(0 0% 0% / 0.3)",
+      color: "hsl(262 60% 90%)",
+      textShadow: "0 1px 3px hsl(262 60% 20% / 0.4)",
     }}
   >
     {children}
   </span>
 );
 
-/* ─── Stat card — notebook style ─── */
+/* ─── Stat card — Disney gem style ─── */
 const StatCard = ({
   icon, value, label, delay, accentColor,
 }: {
@@ -181,22 +172,19 @@ const StatCard = ({
     initial={{ opacity: 0, y: 24, scale: 0.88 }}
     animate={{ opacity: 1, y: 0, scale: 1 }}
     transition={{ type: "spring", stiffness: 180, damping: 18, delay }}
-    whileHover={{ y: -5, scale: 1.05 }}
+    whileHover={{ y: -6, scale: 1.06 }}
     whileTap={{ scale: 0.95 }}
-    className="relative rounded-xl overflow-hidden text-center cursor-default group p-4"
+    className="relative rounded-2xl overflow-hidden text-center cursor-default group p-4"
     style={{
-      background: "hsl(var(--card) / 0.95)",
-      border: "2px solid hsl(var(--border))",
+      background: "hsl(var(--card) / 0.97)",
+      border: "1.5px solid hsl(262 50% 65% / 0.18)",
       boxShadow: "var(--shadow-card)",
     }}
   >
-    {/* Mini notebook lines */}
+    {/* Gem shine top */}
     <div
-      className="absolute inset-0 pointer-events-none opacity-30"
-      style={{
-        backgroundImage: "repeating-linear-gradient(transparent, transparent 19px, hsl(var(--border) / 0.4) 19px, hsl(var(--border) / 0.4) 20px)",
-        backgroundPositionY: "8px",
-      }}
+      className="absolute top-0 left-0 right-0 h-px pointer-events-none"
+      style={{ background: "linear-gradient(90deg, transparent, hsl(262 70% 80% / 0.5), transparent)" }}
     />
     <div className="relative z-10">
       <div className="flex justify-center mb-2">{icon}</div>
@@ -210,71 +198,133 @@ const StatCard = ({
   </motion.div>
 );
 
-/* ─── XP progress bar — chalkboard ─── */
+/* ─── XP progress bar — Disney magic style ─── */
 const XPProgressBar = ({ current, needed, level, title, lang }: {
   current: number; needed: number; level: number; title: string; lang: string;
 }) => {
   const percent = Math.min((current / needed) * 100, 100);
   return (
-    <ChalkSection>
+    <MagicSection>
       <div className="flex items-center justify-between mb-2.5">
         <div className="flex items-center gap-2.5">
           <motion.div
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-base shadow-md gradient-primary text-primary-foreground"
+            className="w-9 h-9 rounded-xl flex items-center justify-center text-base shadow-md"
+            style={{
+              background: "linear-gradient(135deg, hsl(262 80% 65%), hsl(338 80% 68%))",
+              boxShadow: "0 4px 12px hsl(262 70% 55% / 0.3)",
+            }}
             whileHover={{ scale: 1.12, rotate: 8 }}
           >
             {title.split(" ")[0]}
           </motion.div>
-          <ChalkText>
+          <MagicText>
             {lang === "he" ? "רמה" : lang === "ar" ? "المستوى" : "Level"} {level}
-          </ChalkText>
+          </MagicText>
         </div>
-        <span className="text-xs font-display font-semibold" style={{ color: "hsl(var(--chalk) / 0.6)" }}>
+        <span className="text-xs font-display font-semibold" style={{ color: "hsl(262 50% 75% / 0.6)" }}>
           {current}/{needed} XP
         </span>
       </div>
 
-      <div className="h-3 rounded-full overflow-hidden" style={{ background: "hsl(var(--chalk) / 0.12)" }}>
+      <div className="h-3 rounded-full overflow-hidden" style={{ background: "hsl(262 50% 55% / 0.12)" }}>
         <motion.div
-          className="h-full rounded-full gradient-primary relative overflow-hidden"
+          className="h-full rounded-full relative overflow-hidden"
+          style={{
+            background: "linear-gradient(90deg, hsl(262 80% 65%), hsl(338 80% 68%), hsl(44 100% 62%))",
+            backgroundSize: "200% 100%",
+          }}
           initial={{ width: 0 }}
           animate={{ width: `${percent}%` }}
           transition={{ duration: 1.4, ease: "easeOut", delay: 0.5 }}
         >
           <motion.div
             className="absolute inset-0"
-            style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)" }}
+            style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)" }}
             animate={{ x: ["-100%", "200%"] }}
             transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 2 }}
           />
         </motion.div>
       </div>
-    </ChalkSection>
+    </MagicSection>
   );
 };
 
-/* ─── Divider — chalk tray ─── */
-const ChalkDivider = () => (
+/* ─── Divider — magic sparkle style ─── */
+const MagicDivider = () => (
   <div className="flex items-center justify-center gap-3 my-6 sm:my-8">
     <div
-      className="h-[2px] flex-1 max-w-24"
-      style={{ background: "linear-gradient(90deg, transparent, hsl(var(--border)), transparent)" }}
+      className="h-[1.5px] flex-1 max-w-24 rounded-full"
+      style={{ background: "linear-gradient(90deg, transparent, hsl(262 50% 65% / 0.3), transparent)" }}
     />
     <motion.div
       className="flex gap-1"
-      animate={{ rotate: [0, 5, -5, 0] }}
+      animate={{ rotate: [0, 5, -5, 0], scale: [1, 1.05, 0.98, 1] }}
       transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
     >
-      <div className="w-6 h-2 rounded-sm" style={{ background: "hsl(var(--chalk) / 0.3)" }} />
-      <div className="w-4 h-2 rounded-sm" style={{ background: "hsl(var(--grass) / 0.3)" }} />
-      <div className="w-3 h-2 rounded-sm" style={{ background: "hsl(var(--sunshine) / 0.3)" }} />
+      {["✨", "⭐", "✨"].map((s, i) => (
+        <span key={i} className="text-sm" style={{ opacity: 0.5 }}>{s}</span>
+      ))}
     </motion.div>
     <div
-      className="h-[2px] flex-1 max-w-24"
-      style={{ background: "linear-gradient(90deg, transparent, hsl(var(--border)), transparent)" }}
+      className="h-[1.5px] flex-1 max-w-24 rounded-full"
+      style={{ background: "linear-gradient(90deg, transparent, hsl(262 50% 65% / 0.3), transparent)" }}
     />
   </div>
 );
+
+/* ─── Character showcase row ─── */
+const CharacterShowcase = () => {
+  const characters = [
+    { src: foxGuardian, name: "Fox", color: "hsl(32 95% 62%)" },
+    { src: bookworm, name: "Bookworm", color: "hsl(152 65% 50%)" },
+    { src: mouseLibrarian, name: "Mouse", color: "hsl(199 80% 55%)" },
+  ];
+
+  return (
+    <div className="flex items-end justify-center gap-3 sm:gap-4">
+      {characters.map((char, i) => (
+        <motion.div
+          key={char.name}
+          className="flex flex-col items-center gap-1.5"
+          initial={{ opacity: 0, y: 20, scale: 0.8 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ type: "spring", stiffness: 200, damping: 18, delay: 0.2 + i * 0.1 }}
+          whileHover={{ scale: 1.1, y: -4 }}
+        >
+          <motion.div
+            className="relative"
+            animate={{ y: [0, -6, 0] }}
+            transition={{ duration: 2.5 + i * 0.4, repeat: Infinity, ease: "easeInOut", delay: i * 0.3 }}
+          >
+            {/* Glow ring */}
+            <div
+              className="absolute inset-0 rounded-full pointer-events-none"
+              style={{
+                background: `radial-gradient(circle, ${char.color}25, transparent 70%)`,
+                filter: "blur(6px)",
+                transform: "scale(1.4)",
+              }}
+            />
+            <img
+              src={char.src}
+              alt={char.name}
+              className="w-12 h-12 sm:w-14 sm:h-14 object-contain relative z-10"
+              style={{
+                filter: `drop-shadow(0 4px 10px ${char.color}50)`,
+              }}
+            />
+          </motion.div>
+          <span
+            className="text-[9px] font-display font-bold"
+            style={{ color: char.color, opacity: 0.75 }}
+          >
+            {char.name}
+          </span>
+        </motion.div>
+      ))}
+    </div>
+  );
+};
 
 const Index = () => {
   const navigate = useNavigate();
@@ -322,7 +372,7 @@ const Index = () => {
     <div className="min-h-screen relative" dir={dir}>
       <ClassroomBackground />
 
-      {/* ═══ SIMPLE ENTRANCE (once per session) ═══ */}
+      {/* ═══ ENTRANCE (once per session) ═══ */}
       <AnimatePresence>
         {showEntrance && <SimpleEntrance onComplete={handleEntranceComplete} />}
       </AnimatePresence>
@@ -333,10 +383,10 @@ const Index = () => {
         animate={showEntrance ? "hidden" : "visible"}
         className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 relative z-10"
       >
-        {/* ═══ TITLE with mascot ═══ */}
+        {/* ═══ TITLE with mascot + companions ═══ */}
         <motion.section variants={item} className="text-center mb-6 sm:mb-10">
           {/* Hero: Owl mascot + User Avatar side by side */}
-          <div className="flex items-center justify-center gap-4 sm:gap-6 mb-3">
+          <div className="flex items-center justify-center gap-4 sm:gap-6 mb-4">
             <motion.div
               initial={{ x: -30, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -357,7 +407,15 @@ const Index = () => {
           </div>
 
           <motion.h1
-            className="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-gradient leading-tight mb-2"
+            className="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl leading-tight mb-2"
+            style={{
+              background: "linear-gradient(135deg, hsl(262 80% 62%), hsl(295 75% 65%), hsl(338 80% 68%), hsl(32 95% 62%))",
+              backgroundSize: "200% 200%",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              animation: "aurora 5s ease-in-out infinite",
+            }}
           >
             English Fun
           </motion.h1>
@@ -365,8 +423,18 @@ const Index = () => {
           <motion.p
             className="font-display text-sm sm:text-base text-muted-foreground max-w-md mx-auto"
           >
-            {lang === "ar" ? "رحلة تعلّم الإنجليزية الممتعة" : lang === "he" ? "מסע כיפי ללימוד אנגלית" : "A Fun English Learning Journey"} ✨
+            {lang === "ar" ? "رحلة تعلّم الإنجليزية الممتعة" : lang === "he" ? "מסע כיפי ללימוד אנגלית" : "A Magical English Learning Journey"} ✨
           </motion.p>
+
+          {/* Character showcase row */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            className="mt-4"
+          >
+            <CharacterShowcase />
+          </motion.div>
 
           {adaptive.displayName && (
             <motion.p
@@ -381,12 +449,12 @@ const Index = () => {
           )}
         </motion.section>
 
-        {/* ═══ XP PROGRESS BAR — Chalkboard ═══ */}
+        {/* ═══ XP PROGRESS BAR — Disney magic style ═══ */}
         <motion.section variants={item} className="max-w-lg mx-auto mb-6 sm:mb-8">
           <XPProgressBar current={xpLevel.current} needed={xpLevel.needed} level={xpLevel.level} title={xpLevel.title} lang={lang} />
         </motion.section>
 
-        {/* ═══ STAT CARDS — Notebook style ═══ */}
+        {/* ═══ STAT CARDS — Disney gem style ═══ */}
         <motion.section variants={item} className="grid grid-cols-3 gap-2.5 sm:gap-3 mb-6 sm:mb-8 max-w-lg mx-auto">
           <StatCard
             icon={<Zap className="w-6 h-6 text-primary" />}
@@ -414,55 +482,70 @@ const Index = () => {
         {/* ═══ STREAK ═══ */}
         {xpState.streak > 0 && (
           <motion.div variants={item} className="max-w-lg mx-auto mb-5 flex justify-center">
-            <div
+            <motion.div
               className="flex items-center gap-2 px-4 py-2 rounded-xl"
               style={{
-                background: "hsl(var(--accent) / 0.1)",
-                border: "1.5px solid hsl(var(--accent) / 0.2)",
+                background: "linear-gradient(135deg, hsl(32 95% 62% / 0.12), hsl(44 100% 62% / 0.08))",
+                border: "1.5px solid hsl(44 100% 62% / 0.25)",
               }}
+              whileHover={{ scale: 1.04 }}
             >
-              <span className="text-sm">🔥</span>
-              <span className="font-display font-bold text-xs text-accent">
+              <motion.span
+                className="text-sm"
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >🔥</motion.span>
+              <span className="font-display font-bold text-xs" style={{ color: "hsl(32 95% 62%)" }}>
                 {xpState.streak} {lang === "he" ? "ימים ברצף" : lang === "ar" ? "أيام متتالية" : "day streak"}
               </span>
-            </div>
+            </motion.div>
           </motion.div>
         )}
 
-        <ChalkDivider />
+        <MagicDivider />
 
-        {/* ═══ DAILY + WORD OF THE DAY — Notebook card ═══ */}
+        {/* ═══ DAILY + WORD OF THE DAY ═══ */}
         <AnimatedSection className="max-w-3xl mx-auto mb-6 sm:mb-8" delay={0.15}>
-          <NotebookCard>
+          <MagicCard>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <DailyChallengeCard key={refreshKey} challenge={dailyChallenge} onUpdate={refreshStats} />
               <WordOfTheDay />
             </div>
-          </NotebookCard>
+          </MagicCard>
         </AnimatedSection>
 
-        {/* ═══ MOTIVATION — Chalk style ═══ */}
+        {/* ═══ MOTIVATION — Magic style ═══ */}
         <AnimatedSection className="max-w-lg mx-auto mb-6 sm:mb-8" delay={0.1}>
-          <ChalkSection className="text-center">
+          <MagicSection className="text-center">
             <motion.div
               whileHover={{ scale: 1.02 }}
               className="flex items-center gap-3 justify-center"
             >
-              <span className="text-xl">{motivation.emoji}</span>
-              <ChalkText className="text-sm">
+              <motion.span
+                className="text-xl"
+                animate={{ rotate: [0, 10, -10, 0] }}
+                transition={{ duration: 3, repeat: Infinity }}
+              >
+                {motivation.emoji}
+              </motion.span>
+              <MagicText className="text-sm">
                 {motivation.text}
-              </ChalkText>
+              </MagicText>
             </motion.div>
-          </ChalkSection>
+          </MagicSection>
         </AnimatedSection>
 
-        {/* ═══ CURRENT LEVEL — Notebook card ═══ */}
+        {/* ═══ CURRENT LEVEL ═══ */}
         <AnimatedSection className="max-w-lg mx-auto mb-8 sm:mb-10" delay={0.15}>
           <Card3D onClick={() => { playClickSound(); navigate("/levels"); }}>
-            <NotebookCard className="cursor-pointer group">
+            <MagicCard className="cursor-pointer group">
               <div className="flex items-center gap-3 sm:gap-4">
                 <motion.div
-                  className="w-13 h-13 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center text-2xl sm:text-3xl shrink-0 shadow-md gradient-primary"
+                  className="w-13 h-13 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center text-2xl sm:text-3xl shrink-0 shadow-md"
+                  style={{
+                    background: "linear-gradient(135deg, hsl(262 80% 65%), hsl(338 80% 68%))",
+                    boxShadow: "0 4px 16px hsl(262 70% 55% / 0.3)",
+                  }}
                   whileHover={{ scale: 1.1, rotate: [0, -5, 5, 0] }}
                   transition={{ type: "spring", stiffness: 300, damping: 15 }}
                 >
@@ -478,14 +561,17 @@ const Index = () => {
                   </h2>
                   <div className="h-2.5 mt-2 rounded-full overflow-hidden bg-muted/50">
                     <motion.div
-                      className="h-full rounded-full gradient-primary relative overflow-hidden"
+                      className="h-full rounded-full relative overflow-hidden"
+                      style={{
+                        background: "linear-gradient(90deg, hsl(262 80% 65%), hsl(338 80% 68%))",
+                      }}
                       initial={{ width: 0 }}
                       animate={{ width: `${levelPercent}%` }}
                       transition={{ duration: 1, ease: "easeOut", delay: 0.6 }}
                     >
                       <motion.div
                         className="absolute inset-0"
-                        style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)" }}
+                        style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)" }}
                         animate={{ x: ["-100%", "200%"] }}
                         transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 2 }}
                       />
@@ -498,18 +584,18 @@ const Index = () => {
                 </div>
                 <ArrowRight className={`w-5 h-5 text-muted-foreground ${dir === "rtl" ? "rotate-180" : ""}`} />
               </div>
-            </NotebookCard>
+            </MagicCard>
           </Card3D>
         </AnimatedSection>
 
-        {/* ═══ RECOMMENDATIONS — Notebook ═══ */}
+        {/* ═══ RECOMMENDATIONS ═══ */}
         {recommendations.length > 0 && (
           <AnimatedSection className="max-w-lg mx-auto mb-8 sm:mb-10" delay={0.1}>
             <h3 className="font-display text-sm font-bold mb-3 flex items-center gap-1.5 justify-center text-foreground">
               <Sparkles className="w-4 h-4 text-primary" />
               {lang === "he" ? "מומלץ עבורך" : lang === "ar" ? "مُوصى لك" : "Recommended for You"}
             </h3>
-            <NotebookCard>
+            <MagicCard>
               <div className="space-y-2">
                 {recommendations.map((rec, i) => (
                   <motion.button
@@ -520,8 +606,8 @@ const Index = () => {
                     onClick={() => { playClickSound(); navigate(rec.path); }}
                     className="w-full flex items-center gap-3 p-3 rounded-xl text-start transition-all duration-300 group"
                     style={{
-                      background: "hsl(var(--muted) / 0.3)",
-                      border: "1px solid hsl(var(--border) / 0.5)",
+                      background: "hsl(262 50% 65% / 0.05)",
+                      border: "1px solid hsl(262 50% 65% / 0.12)",
                     }}
                   >
                     <motion.span className="text-2xl" whileHover={{ scale: 1.2, rotate: [-5, 5, 0] }}>
@@ -535,22 +621,26 @@ const Index = () => {
                   </motion.button>
                 ))}
               </div>
-            </NotebookCard>
+            </MagicCard>
           </AnimatedSection>
         )}
 
-        <ChalkDivider />
+        <MagicDivider />
 
-        {/* ═══ GAME CARDS — Chalkboard header ═══ */}
+        {/* ═══ GAME CARDS — Magic section header ═══ */}
         <AnimatedSection className="mb-8 sm:mb-10" delay={0.12}>
-          <ChalkSection className="mb-5 text-center">
+          <MagicSection className="mb-5 text-center">
             <div className="flex items-center gap-2.5 justify-center">
-              <BookOpen className="w-5 h-5" style={{ color: "hsl(var(--chalk) / 0.7)" }} />
-              <ChalkText className="text-lg sm:text-xl">
+              <BookOpen className="w-5 h-5" style={{ color: "hsl(262 60% 80% / 0.75)" }} />
+              <MagicText className="text-lg sm:text-xl">
                 {lang === "ar" ? "الألعاب" : lang === "he" ? "משחקים" : "Games"}
-              </ChalkText>
+              </MagicText>
+              <motion.span
+                animate={{ rotate: [0, 15, -15, 0], scale: [1, 1.2, 1] }}
+                transition={{ duration: 3, repeat: Infinity }}
+              >✨</motion.span>
             </div>
-          </ChalkSection>
+          </MagicSection>
           <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
             {gameCards.map((card, i) => (
               <PremiumGameCard
@@ -568,10 +658,13 @@ const Index = () => {
         {/* ═══ CTA BUTTONS ═══ */}
         <AnimatedSection className="text-center mb-8 sm:mb-10 flex gap-2 sm:gap-3 justify-center flex-wrap" delay={0.1}>
           <motion.button
-            whileHover={{ y: -3, scale: 1.02 }}
+            whileHover={{ y: -3, scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
             onClick={() => { playClickSound(); navigate("/levels"); }}
-            className="btn-kid inline-flex items-center gap-2 text-sm sm:text-base gradient-primary text-primary-foreground"
+            className="btn-kid inline-flex items-center gap-2 text-sm sm:text-base text-primary-foreground"
+            style={{
+              background: "linear-gradient(135deg, hsl(262 80% 60%), hsl(295 70% 62%), hsl(338 80% 65%))",
+            }}
           >
             <Map className="w-4 h-4 sm:w-5 sm:h-5" />
             {t("home.myJourney")}
@@ -596,9 +689,9 @@ const Index = () => {
           ))}
         </AnimatedSection>
 
-        {/* ═══ FUN FACT — Notebook ═══ */}
+        {/* ═══ FUN FACT ═══ */}
         <AnimatedSection className="max-w-lg mx-auto" delay={0.1}>
-          <NotebookCard>
+          <MagicCard>
             <div className="text-center">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <span className="text-lg">💡</span>
@@ -614,7 +707,7 @@ const Index = () => {
                   : "English is the most learned language in the world! 🌍"}
               </p>
             </div>
-          </NotebookCard>
+          </MagicCard>
         </AnimatedSection>
       </motion.div>
     </div>

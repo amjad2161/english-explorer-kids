@@ -6,57 +6,73 @@
 
 @layer base {
   :root {
-    --background: 220 16% 96%;
-    --foreground: 220 25% 14%;
+    --background: 225 35% 97%;
+    --foreground: 240 35% 12%;
     --card: 0 0% 100%;
-    --card-foreground: 220 25% 14%;
+    --card-foreground: 240 35% 12%;
     --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 14%;
-    --primary: 142 60% 42%;
+    --popover-foreground: 240 35% 12%;
+    --primary: 262 72% 55%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 70% 52%;
+    --secondary: 199 80% 52%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 220 14% 92%;
-    --muted-foreground: 220 10% 46%;
-    --accent: 25 95% 53%;
+    --muted: 225 25% 93%;
+    --muted-foreground: 225 15% 48%;
+    --accent: 32 100% 56%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 13% 90%;
-    --input: 220 13% 90%;
-    --ring: 142 60% 42%;
-    --radius: 1rem;
+    --border: 225 20% 88%;
+    --input: 225 20% 88%;
+    --ring: 262 72% 55%;
+    --radius: 1.1rem;
 
-    /* Educational palette */
-    --sunshine: 45 100% 55%;
+    /* Disney/Pixar magic palette */
+    --sunshine: 44 100% 58%;
     --sunshine-foreground: 35 90% 20%;
-    --sky: 210 70% 52%;
-    --sky-light: 210 70% 94%;
-    --grass: 142 60% 45%;
-    --grass-light: 142 60% 94%;
-    --candy: 330 75% 55%;
-    --candy-light: 330 75% 94%;
-    --lavender: 265 55% 58%;
-    --lavender-light: 265 55% 94%;
+    --sky: 199 80% 52%;
+    --sky-light: 199 80% 94%;
+    --grass: 152 65% 42%;
+    --grass-light: 152 65% 94%;
+    --candy: 338 85% 58%;
+    --candy-light: 338 85% 95%;
+    --lavender: 262 72% 62%;
+    --lavender-light: 262 72% 95%;
     --chalk: 45 20% 97%;
-    --board: 160 25% 22%;
+    --board: 245 35% 18%;
 
-    /* Duolingo-style gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(142, 60%, 42%) 0%, hsl(170, 55%, 40%) 50%, hsl(210, 70%, 52%) 100%);
-    --gradient-sky: linear-gradient(135deg, hsl(210, 70%, 52%), hsl(210, 70%, 68%));
-    --gradient-grass: linear-gradient(135deg, hsl(142, 60%, 42%), hsl(142, 60%, 58%));
-    --gradient-candy: linear-gradient(135deg, hsl(330, 75%, 55%), hsl(265, 55%, 58%));
-    --gradient-lavender: linear-gradient(135deg, hsl(265, 55%, 58%), hsl(210, 70%, 55%));
-    --gradient-warm: linear-gradient(135deg, hsl(25, 95%, 55%), hsl(45, 100%, 58%));
-    --gradient-bg: linear-gradient(180deg, hsl(220, 16%, 96%) 0%, hsl(225, 20%, 93%) 100%);
-    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.75));
+    /* ✨ New Disney magic colors */
+    --magic: 295 80% 62%;
+    --magic-light: 295 80% 96%;
+    --starlight: 52 100% 70%;
+    --royal: 255 65% 50%;
+    --emerald: 160 65% 42%;
+    --rose-gold: 345 55% 68%;
+    --crystal: 200 75% 72%;
+    --midnight: 240 45% 14%;
 
-    /* Shadows */
-    --shadow-card: 0 2px 8px hsl(0 0% 0% / 0.06), 0 4px 16px hsl(0 0% 0% / 0.04);
-    --shadow-card-hover: 0 8px 30px hsl(0 0% 0% / 0.1);
-    --shadow-button: 0 4px 14px hsl(142 60% 42% / 0.2);
-    --shadow-button-hover: 0 6px 24px hsl(142 60% 42% / 0.3);
-    --shadow-float: 0 12px 40px -12px hsl(220 25% 14% / 0.15);
+    /* Disney-quality gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(262, 72%, 55%) 0%, hsl(295, 70%, 58%) 40%, hsl(338, 80%, 60%) 80%, hsl(32, 100%, 58%) 100%);
+    --gradient-magic: linear-gradient(135deg, hsl(262, 72%, 55%) 0%, hsl(199, 80%, 52%) 50%, hsl(152, 65%, 42%) 100%);
+    --gradient-sky: linear-gradient(135deg, hsl(199, 80%, 52%), hsl(230, 75%, 65%));
+    --gradient-grass: linear-gradient(135deg, hsl(152, 65%, 42%), hsl(152, 65%, 58%));
+    --gradient-candy: linear-gradient(135deg, hsl(338, 85%, 58%), hsl(262, 72%, 62%));
+    --gradient-lavender: linear-gradient(135deg, hsl(262, 72%, 62%), hsl(199, 80%, 55%));
+    --gradient-warm: linear-gradient(135deg, hsl(32, 100%, 58%), hsl(44, 100%, 62%));
+    --gradient-royal: linear-gradient(135deg, hsl(255, 65%, 50%), hsl(295, 70%, 58%));
+    --gradient-bg: linear-gradient(145deg, hsl(225, 35%, 97%) 0%, hsl(240, 30%, 95%) 40%, hsl(260, 28%, 94%) 100%);
+    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(255,255,255,0.82));
+
+    /* Disney-quality shadows */
+    --shadow-card: 0 4px 16px hsl(262 60% 50% / 0.08), 0 2px 6px hsl(0 0% 0% / 0.05), 0 8px 32px hsl(262 60% 50% / 0.04);
+    --shadow-card-hover: 0 12px 40px hsl(262 60% 50% / 0.18), 0 4px 12px hsl(0 0% 0% / 0.08);
+    --shadow-button: 0 6px 20px hsl(262 72% 55% / 0.30), 0 2px 6px hsl(0 0% 0% / 0.08);
+    --shadow-button-hover: 0 8px 28px hsl(262 72% 55% / 0.40), 0 3px 8px hsl(0 0% 0% / 0.1);
+    --shadow-float: 0 20px 60px -15px hsl(262 50% 30% / 0.2);
+    --shadow-magic: 0 0 30px hsl(262 80% 65% / 0.25), 0 0 60px hsl(262 80% 65% / 0.1);
+    --shadow-glow-primary: 0 0 20px hsl(262 72% 55% / 0.4), 0 0 40px hsl(262 72% 55% / 0.2);
+    --shadow-glow-sunshine: 0 0 20px hsl(44 100% 58% / 0.5), 0 0 40px hsl(44 100% 58% / 0.2);
+    --shadow-glow-candy: 0 0 20px hsl(338 85% 58% / 0.4), 0 0 40px hsl(338 85% 58% / 0.2);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -69,53 +85,67 @@
   }
 
   .dark {
-    --background: 160 20% 12%;
-    --foreground: 45 20% 90%;
-    --card: 160 18% 16%;
-    --card-foreground: 45 20% 90%;
-    --popover: 160 18% 16%;
-    --popover-foreground: 45 20% 90%;
-    --primary: 142 55% 50%;
+    --background: 240 45% 8%;
+    --foreground: 225 25% 92%;
+    --card: 245 38% 12%;
+    --card-foreground: 225 25% 92%;
+    --popover: 245 38% 12%;
+    --popover-foreground: 225 25% 92%;
+    --primary: 262 72% 62%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 60% 55%;
+    --secondary: 199 75% 58%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 160 14% 20%;
-    --muted-foreground: 45 12% 58%;
-    --accent: 25 85% 58%;
+    --muted: 245 30% 18%;
+    --muted-foreground: 225 15% 60%;
+    --accent: 32 95% 62%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 62% 40%;
+    --destructive: 0 62% 45%;
     --destructive-foreground: 0 0% 100%;
-    --border: 160 12% 22%;
-    --input: 160 12% 22%;
-    --ring: 142 55% 50%;
-    --sunshine: 42 100% 60%;
-    --sunshine-foreground: 42 100% 88%;
-    --sky: 210 60% 58%;
-    --candy: 330 65% 62%;
-    --lavender: 265 50% 65%;
-    --chalk: 45 20% 85%;
-    --board: 160 20% 12%;
+    --border: 245 25% 22%;
+    --input: 245 25% 22%;
+    --ring: 262 72% 62%;
+    --sunshine: 44 100% 64%;
+    --sunshine-foreground: 44 100% 90%;
+    --sky: 199 75% 60%;
+    --candy: 338 80% 65%;
+    --lavender: 262 65% 68%;
+    --grass: 152 60% 50%;
+    --chalk: 225 20% 88%;
+    --board: 245 35% 14%;
 
-    /* Chalkboard gradients */
-    --gradient-glass: linear-gradient(135deg, hsl(160, 18%, 18% / 0.92), hsl(160, 16%, 14% / 0.7));
-    --gradient-bg: linear-gradient(180deg, hsl(160, 20%, 12%) 0%, hsl(160, 22%, 9%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(142, 55%, 48%) 0%, hsl(170, 50%, 42%) 50%, hsl(210, 60%, 52%) 100%);
+    /* Dark magic colors */
+    --magic: 295 75% 68%;
+    --magic-light: 295 60% 20%;
+    --starlight: 52 100% 72%;
+    --royal: 255 60% 58%;
+    --crystal: 200 70% 70%;
 
-    /* Chalkboard shadows */
-    --shadow-card: 0 2px 8px hsl(0 0% 0% / 0.3), 0 4px 16px hsl(0 0% 0% / 0.2);
-    --shadow-card-hover: 0 8px 32px hsl(0 0% 0% / 0.35), 0 0 20px hsl(142 55% 50% / 0.06);
-    --shadow-button: 0 4px 16px hsl(142 55% 50% / 0.15), 0 1px 3px hsl(0 0% 0% / 0.2);
-    --shadow-button-hover: 0 6px 28px hsl(142 55% 50% / 0.22), 0 2px 6px hsl(0 0% 0% / 0.25);
-    --shadow-float: 0 12px 40px -12px hsl(0 0% 0% / 0.5);
+    /* Dark Disney gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(262, 65%, 62%) 0%, hsl(295, 65%, 62%) 40%, hsl(338, 72%, 65%) 80%, hsl(32, 90%, 62%) 100%);
+    --gradient-magic: linear-gradient(135deg, hsl(262, 65%, 62%) 0%, hsl(199, 70%, 58%) 50%, hsl(152, 58%, 52%) 100%);
+    --gradient-glass: linear-gradient(135deg, hsl(245, 38%, 16%, 0.9), hsl(245, 35%, 12%, 0.72));
+    --gradient-bg: linear-gradient(145deg, hsl(240, 45%, 8%) 0%, hsl(250, 42%, 10%) 50%, hsl(255, 40%, 9%) 100%);
+    --gradient-royal: linear-gradient(135deg, hsl(255, 60%, 58%), hsl(295, 65%, 62%));
 
-    --sidebar-background: 160 18% 10%;
-    --sidebar-foreground: 45 15% 90%;
-    --sidebar-primary: 142 55% 50%;
+    /* Dark Disney shadows */
+    --shadow-card: 0 4px 16px hsl(0 0% 0% / 0.35), 0 2px 6px hsl(0 0% 0% / 0.25), 0 0 0 1px hsl(262 50% 50% / 0.06);
+    --shadow-card-hover: 0 12px 40px hsl(0 0% 0% / 0.45), 0 0 20px hsl(262 65% 62% / 0.1);
+    --shadow-button: 0 6px 20px hsl(262 65% 62% / 0.20), 0 2px 6px hsl(0 0% 0% / 0.25);
+    --shadow-button-hover: 0 8px 28px hsl(262 65% 62% / 0.30), 0 3px 8px hsl(0 0% 0% / 0.3);
+    --shadow-float: 0 20px 60px -15px hsl(0 0% 0% / 0.6);
+    --shadow-magic: 0 0 30px hsl(262 72% 68% / 0.3), 0 0 60px hsl(262 72% 68% / 0.15);
+    --shadow-glow-primary: 0 0 20px hsl(262 72% 62% / 0.5), 0 0 40px hsl(262 72% 62% / 0.25);
+    --shadow-glow-sunshine: 0 0 20px hsl(44 100% 64% / 0.55), 0 0 40px hsl(44 100% 64% / 0.25);
+    --shadow-glow-candy: 0 0 20px hsl(338 80% 65% / 0.45), 0 0 40px hsl(338 80% 65% / 0.2);
+
+    --sidebar-background: 245 38% 8%;
+    --sidebar-foreground: 225 20% 90%;
+    --sidebar-primary: 262 65% 62%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 160 14% 16%;
-    --sidebar-accent-foreground: 45 15% 90%;
-    --sidebar-border: 160 12% 18%;
-    --sidebar-ring: 142 55% 50%;
+    --sidebar-accent: 245 30% 16%;
+    --sidebar-accent-foreground: 225 20% 90%;
+    --sidebar-border: 245 25% 18%;
+    --sidebar-ring: 262 65% 62%;
   }
 }
 
@@ -181,125 +211,139 @@
 @layer components {
 
   /* ═══════════════════════════════════ */
-  /* ─── CARDS ─── */
+  /* ─── DISNEY-QUALITY CARDS ─── */
   /* ═══════════════════════════════════ */
   
   .card-kid {
     @apply p-5 sm:p-6 relative;
-    border-radius: 1.25rem;
-    background: hsl(0 0% 100% / 0.95);
-    box-shadow: 0 4px 16px hsl(0 0% 0% / 0.08), 0 1px 3px hsl(0 0% 0% / 0.06);
-    border: 2px solid hsl(210 70% 52% / 0.15);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    border-radius: 1.4rem;
+    background: hsl(0 0% 100% / 0.97);
+    box-shadow: 0 6px 24px hsl(262 60% 50% / 0.1), 0 2px 6px hsl(0 0% 0% / 0.05), 0 1px 0 hsl(262 60% 90% / 0.8) inset;
+    border: 1.5px solid hsl(262 50% 70% / 0.18);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease, border-color 0.3s ease;
   }
 
   .card-kid:hover {
-    box-shadow: 0 8px 28px hsl(0 0% 0% / 0.12), 0 2px 8px hsl(210 70% 52% / 0.08);
-    border-color: hsl(210 70% 52% / 0.35);
-    transform: translateY(-3px);
+    box-shadow: 0 12px 40px hsl(262 60% 50% / 0.18), 0 4px 12px hsl(0 0% 0% / 0.06);
+    border-color: hsl(262 60% 65% / 0.35);
+    transform: translateY(-4px) scale(1.01);
   }
 
   .dark .card-kid {
-    background: hsl(220 20% 16% / 0.95);
-    border-color: hsl(210 60% 55% / 0.2);
-    box-shadow: 0 4px 16px hsl(0 0% 0% / 0.3), 0 1px 3px hsl(0 0% 0% / 0.2);
+    background: hsl(245 38% 14% / 0.97);
+    border-color: hsl(262 50% 60% / 0.2);
+    box-shadow: 0 6px 24px hsl(0 0% 0% / 0.35), 0 2px 8px hsl(0 0% 0% / 0.25), 0 0 0 1px hsl(262 50% 50% / 0.08) inset;
   }
 
   .dark .card-kid:hover {
-    border-color: hsl(210 60% 55% / 0.4);
-    box-shadow: 0 8px 28px hsl(0 0% 0% / 0.4);
+    border-color: hsl(262 55% 65% / 0.45);
+    box-shadow: 0 12px 40px hsl(0 0% 0% / 0.45), 0 0 25px hsl(262 65% 62% / 0.1);
   }
 
   .card-glass {
     @apply backdrop-blur-xl p-5 sm:p-6 relative;
-    border-radius: 1.25rem;
-    background: hsl(0 0% 100% / 0.85);
-    border: 2px solid hsl(142 60% 45% / 0.15);
-    box-shadow: 0 4px 16px hsl(0 0% 0% / 0.06);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    border-radius: 1.4rem;
+    background: hsl(0 0% 100% / 0.88);
+    border: 1.5px solid hsl(262 60% 70% / 0.18);
+    box-shadow: 0 6px 24px hsl(262 60% 50% / 0.08), inset 0 1px 0 rgba(255,255,255,0.9);
+    transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.3s ease;
   }
 
   .card-glass:hover {
-    border-color: hsl(142 60% 45% / 0.3);
-    box-shadow: 0 6px 24px hsl(0 0% 0% / 0.1);
-    transform: translateY(-2px);
+    border-color: hsl(262 60% 65% / 0.35);
+    box-shadow: 0 10px 32px hsl(262 60% 50% / 0.12);
+    transform: translateY(-3px);
   }
 
   .dark .card-glass {
-    background: hsl(220 20% 14% / 0.85);
-    border-color: hsl(142 50% 50% / 0.15);
+    background: hsl(245 38% 14% / 0.88);
+    border-color: hsl(262 50% 55% / 0.18);
   }
 
   /* ═══════════════════════════════════ */
-  /* ─── GAME CARDS ─── */
+  /* ─── DISNEY-QUALITY GAME CARDS ─── */
   /* ═══════════════════════════════════ */
   
   .game-card-3d {
     @apply relative;
-    border: 2px solid hsl(265 55% 58% / 0.15);
-    border-radius: 1.25rem;
-    background: hsl(0 0% 100% / 0.95);
-    box-shadow: 0 4px 16px hsl(0 0% 0% / 0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    border: 1.5px solid hsl(262 55% 65% / 0.18);
+    border-radius: 1.4rem;
+    background: hsl(0 0% 100% / 0.97);
+    box-shadow: 0 6px 24px hsl(262 60% 50% / 0.1), 0 2px 6px hsl(0 0% 0% / 0.04);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease, border-color 0.3s ease;
     overflow: hidden;
   }
 
   .game-card-3d:hover {
-    box-shadow: 0 8px 28px hsl(0 0% 0% / 0.12);
-    border-color: hsl(265 55% 58% / 0.35);
-    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 36px hsl(262 60% 50% / 0.18), 0 0 0 1px hsl(262 55% 65% / 0.3);
+    border-color: hsl(262 60% 65% / 0.4);
+    transform: translateY(-6px) scale(1.02);
   }
 
   .dark .game-card-3d {
-    background: hsl(220 20% 16% / 0.95);
-    border-color: hsl(265 50% 60% / 0.2);
+    background: hsl(245 38% 14% / 0.97);
+    border-color: hsl(262 50% 60% / 0.22);
+    box-shadow: 0 6px 24px hsl(0 0% 0% / 0.35), 0 0 0 1px hsl(262 50% 50% / 0.08) inset;
   }
 
   .dark .game-card-3d:hover {
-    border-color: hsl(265 50% 60% / 0.4);
+    border-color: hsl(262 55% 65% / 0.45);
+    box-shadow: 0 12px 36px hsl(0 0% 0% / 0.5), 0 0 25px hsl(262 65% 62% / 0.12);
   }
 
   /* ═══════════════════════════════════ */
-  /* ─── BUTTONS ─── */
+  /* ─── DISNEY-QUALITY BUTTONS ─── */
   /* ═══════════════════════════════════ */
   
   .btn-kid {
     @apply font-display font-bold px-6 py-3 relative overflow-hidden;
-    border-radius: 1rem;
-    box-shadow: 0 4px 12px hsl(142 60% 40% / 0.2), inset 0 1px 0 rgba(255,255,255,0.15);
-    transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.2s ease;
+    border-radius: 1.1rem;
+    box-shadow: 0 6px 20px hsl(262 72% 55% / 0.30), 0 2px 6px hsl(0 0% 0% / 0.08), inset 0 1px 0 rgba(255,255,255,0.25);
+    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.28s ease, filter 0.22s ease;
     letter-spacing: 0.02em;
-    border: 2px solid transparent;
+    border: 1.5px solid transparent;
+  }
+
+  .btn-kid::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 60%);
+    border-radius: inherit;
+    pointer-events: none;
   }
 
   .btn-kid:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 6px 20px hsl(142 60% 40% / 0.25);
-    filter: brightness(1.05);
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 8px 28px hsl(262 72% 55% / 0.40), 0 3px 8px hsl(0 0% 0% / 0.1);
+    filter: brightness(1.06);
   }
 
   .btn-kid:active {
-    transform: translateY(0) scale(0.97);
-    filter: brightness(0.96);
+    transform: translateY(1px) scale(0.97);
+    filter: brightness(0.95);
+    box-shadow: 0 2px 8px hsl(262 72% 55% / 0.25);
   }
 
   .btn-glow {
     @apply font-display font-bold px-6 py-3 relative overflow-hidden;
-    border-radius: 0.875rem;
-    background: hsl(0 0% 100% / 0.95);
-    border: 2px solid hsl(210 70% 52% / 0.2);
-    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    border-radius: 1rem;
+    background: hsl(0 0% 100% / 0.97);
+    border: 1.5px solid hsl(262 50% 65% / 0.22);
+    box-shadow: 0 4px 14px hsl(262 50% 60% / 0.08), inset 0 1px 0 rgba(255,255,255,0.9);
+    transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
   }
 
   .btn-glow:hover {
-    border-color: hsl(210 70% 52% / 0.45);
-    box-shadow: 0 4px 16px hsl(210 70% 52% / 0.1);
+    border-color: hsl(262 55% 65% / 0.5);
+    box-shadow: 0 6px 22px hsl(262 55% 60% / 0.15), inset 0 1px 0 rgba(255,255,255,0.9);
     transform: translateY(-2px);
   }
 
   .dark .btn-glow {
-    background: hsl(220 20% 16% / 0.9);
-    border-color: hsl(210 60% 55% / 0.2);
+    background: hsl(245 38% 16% / 0.95);
+    border-color: hsl(262 50% 60% / 0.22);
+    box-shadow: 0 4px 14px hsl(0 0% 0% / 0.25);
   }
 
   /* ─── Gradients ─── */
@@ -308,6 +352,8 @@
   .gradient-grass { background: var(--gradient-grass); }
   .gradient-candy { background: var(--gradient-candy); }
   .gradient-lavender { background: var(--gradient-lavender); }
+  .gradient-royal { background: var(--gradient-royal); }
+  .gradient-magic { background: var(--gradient-magic); }
 
   .text-gradient {
     background: var(--gradient-hero);
@@ -316,17 +362,47 @@
     background-clip: text;
   }
 
+  .text-gradient-magic {
+    background: var(--gradient-magic);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
   .text-3d {
-    text-shadow: 0 2px 4px hsl(var(--foreground) / 0.06);
+    text-shadow: 0 2px 4px hsl(var(--foreground) / 0.08), 0 1px 2px hsl(var(--primary) / 0.06);
+  }
+
+  /* Disney-quality text shadow */
+  .text-disney {
+    text-shadow:
+      0 1px 0 rgba(255,255,255,0.4),
+      0 2px 4px hsl(262 60% 40% / 0.2),
+      0 4px 12px hsl(262 60% 40% / 0.1);
   }
 
   .emoji-3d {
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-    transition: transform 0.3s ease;
+    filter: drop-shadow(0 3px 6px rgba(0,0,0,0.12)) drop-shadow(0 1px 2px rgba(0,0,0,0.08));
+    transition: transform 0.3s ease, filter 0.3s ease;
   }
 
   .emoji-3d:hover {
-    transform: scale(1.1);
+    transform: scale(1.12) translateY(-2px);
+    filter: drop-shadow(0 6px 12px rgba(0,0,0,0.18)) drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+  }
+
+  /* ─── Magic glow classes ─── */
+  .glow-primary {
+    box-shadow: var(--shadow-glow-primary);
+  }
+  .glow-sunshine {
+    box-shadow: var(--shadow-glow-sunshine);
+  }
+  .glow-candy {
+    box-shadow: var(--shadow-glow-candy);
+  }
+  .glow-magic {
+    box-shadow: var(--shadow-magic);
   }
 
   /* ─── Letter Card ─── */
@@ -406,16 +482,16 @@
 
   /* ─── Header ─── */
   header {
-    backdrop-filter: blur(16px) saturate(1.2) !important;
+    backdrop-filter: blur(20px) saturate(1.4) !important;
   }
 
   .dark header {
-    background: hsl(var(--card) / 0.8) !important;
+    background: hsl(var(--card) / 0.85) !important;
     border-bottom-color: hsl(var(--border)) !important;
   }
 
   .dark .text-gradient {
-    filter: drop-shadow(0 0 12px hsl(var(--primary) / 0.2));
+    filter: drop-shadow(0 0 16px hsl(var(--primary) / 0.3));
   }
 
   /* ─── 3D Card Support ─── */
@@ -429,7 +505,7 @@
   }
 
   .animate-shimmer {
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
     background-size: 200% 100%;
     animation: shimmer 2.5s ease-in-out infinite;
   }
@@ -463,13 +539,13 @@
   }
 
   @keyframes glow-pulse {
-    0%, 100% { box-shadow: 0 0 15px hsl(var(--primary) / 0.1); }
-    50% { box-shadow: 0 0 30px hsl(var(--primary) / 0.2); }
+    0%, 100% { box-shadow: 0 0 15px hsl(var(--primary) / 0.15); }
+    50% { box-shadow: 0 0 35px hsl(var(--primary) / 0.35), 0 0 60px hsl(var(--primary) / 0.15); }
   }
 
   @keyframes sparkle {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.6; transform: scale(1.1); }
+    0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
+    50% { opacity: 0.7; transform: scale(1.12) rotate(15deg); }
   }
 
   @keyframes confetti-fall {
@@ -478,10 +554,11 @@
   }
 
   @keyframes rainbow-border {
-    0% { border-color: hsl(38, 90%, 55%); }
-    33% { border-color: hsl(210, 70%, 52%); }
-    66% { border-color: hsl(330, 70%, 55%); }
-    100% { border-color: hsl(38, 90%, 55%); }
+    0% { border-color: hsl(var(--sunshine)); }
+    25% { border-color: hsl(var(--candy)); }
+    50% { border-color: hsl(var(--sky)); }
+    75% { border-color: hsl(var(--magic)); }
+    100% { border-color: hsl(var(--sunshine)); }
   }
 
   @keyframes breathe {
@@ -497,13 +574,93 @@
 
   @keyframes pulse-glow {
     0%, 100% { opacity: 0.3; }
-    50% { opacity: 0.6; }
+    50% { opacity: 0.7; }
   }
 
   @keyframes float-rotate {
     0%, 100% { transform: translateY(0) rotate(0deg); }
     25% { transform: translateY(-8px) rotate(2deg); }
     75% { transform: translateY(-4px) rotate(-1deg); }
+  }
+
+  /* ✨ New Disney-quality animations */
+  @keyframes magic-sparkle {
+    0% { transform: scale(0) rotate(0deg); opacity: 0; }
+    40% { transform: scale(1.3) rotate(180deg); opacity: 1; }
+    70% { transform: scale(0.85) rotate(270deg); opacity: 0.8; }
+    100% { transform: scale(0) rotate(360deg); opacity: 0; }
+  }
+
+  @keyframes star-burst {
+    0% { transform: scale(1); filter: brightness(1); }
+    50% { transform: scale(1.4); filter: brightness(1.5) drop-shadow(0 0 8px hsl(var(--sunshine))); }
+    100% { transform: scale(1); filter: brightness(1); }
+  }
+
+  @keyframes magic-float {
+    0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+    33% { transform: translateY(-12px) rotate(3deg) scale(1.04); }
+    66% { transform: translateY(-6px) rotate(-2deg) scale(0.98); }
+  }
+
+  @keyframes crystal-shine {
+    0% { background-position: 200% 50%; opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { background-position: -100% 50%; opacity: 0; }
+  }
+
+  @keyframes dream-fade {
+    0%, 100% { opacity: 0.3; transform: scale(0.95); }
+    50% { opacity: 1; transform: scale(1.05); }
+  }
+
+  @keyframes rainbow-text {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  @keyframes portal-spin {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.05); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+
+  @keyframes star-trail {
+    0% { transform: translateX(-100%) translateY(0) scale(0); opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translateX(200%) translateY(-30px) scale(1.5); opacity: 0; }
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.2; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+
+  @keyframes shooting-star {
+    0% { transform: translateX(-100%) translateY(0) rotate(-30deg); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 0.8; }
+    100% { transform: translateX(120vw) translateY(40px) rotate(-30deg); opacity: 0; }
+  }
+
+  @keyframes aurora-flow {
+    0% { transform: translateX(-20%) scaleY(0.8); opacity: 0.3; }
+    33% { transform: translateX(0%) scaleY(1.1); opacity: 0.6; }
+    66% { transform: translateX(15%) scaleY(0.9); opacity: 0.4; }
+    100% { transform: translateX(-20%) scaleY(0.8); opacity: 0.3; }
+  }
+
+  @keyframes disney-bounce {
+    0% { transform: translateY(0) scaleY(1) scaleX(1); }
+    10% { transform: translateY(0) scaleY(0.9) scaleX(1.1); }
+    30% { transform: translateY(-18px) scaleY(1.1) scaleX(0.92); }
+    50% { transform: translateY(0) scaleY(0.95) scaleX(1.05); }
+    65% { transform: translateY(-6px) scaleY(1.05) scaleX(0.97); }
+    80% { transform: translateY(0) scaleY(1) scaleX(1); }
+    100% { transform: translateY(0) scaleY(1) scaleX(1); }
   }
 
   .animate-wiggle { animation: wiggle 0.5s ease-in-out; }
@@ -514,6 +671,14 @@
   .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
   .animate-breathe { animation: breathe 4s ease-in-out infinite; }
   .animate-float-rotate { animation: float-rotate 5s ease-in-out infinite; }
+  .animate-magic-sparkle { animation: magic-sparkle 1s ease-out forwards; }
+  .animate-star-burst { animation: star-burst 0.8s ease-in-out; }
+  .animate-magic-float { animation: magic-float 4s ease-in-out infinite; }
+  .animate-crystal-shine { animation: crystal-shine 3s ease-in-out infinite; }
+  .animate-dream-fade { animation: dream-fade 4s ease-in-out infinite; }
+  .animate-twinkle { animation: twinkle 2s ease-in-out infinite; }
+  .animate-disney-bounce { animation: disney-bounce 1.5s ease-in-out infinite; }
+  .animate-portal-spin { animation: portal-spin 8s linear infinite; }
 
   /* ─── Difficulty indicator ─── */
   .difficulty-badge {

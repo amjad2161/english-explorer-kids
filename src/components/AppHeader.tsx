@@ -148,35 +148,41 @@ const AppHeader = () => {
     <motion.header
       initial={{ y: -60 }}
       animate={{ y: 0 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
+      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
       className="sticky top-0 z-50"
       style={{
         paddingTop: "env(safe-area-inset-top, 0px)",
       }}
     >
-      {/* Chalkboard-style header background */}
+      {/* Disney-quality gradient header background */}
       <div
         className="absolute inset-0"
         style={{
-          background: "linear-gradient(180deg, hsl(var(--board)) 0%, hsl(var(--board)) 85%, hsl(var(--board) / 0.95) 100%)",
+          background: "linear-gradient(180deg, hsl(245 40% 12%) 0%, hsl(250 38% 14%) 85%, hsl(248 36% 12% / 0.97) 100%)",
+          backdropFilter: "blur(20px) saturate(1.6)",
         }}
       />
-      {/* Chalk dust texture overlay */}
+      {/* Magic star dust texture overlay */}
       <div
-        className="absolute inset-0 opacity-[0.04] pointer-events-none"
+        className="absolute inset-0 opacity-[0.05] pointer-events-none"
         style={{
-          backgroundImage: `radial-gradient(circle at 20% 30%, hsl(var(--chalk)) 1px, transparent 1px),
-            radial-gradient(circle at 60% 70%, hsl(var(--chalk)) 0.5px, transparent 0.5px),
-            radial-gradient(circle at 80% 20%, hsl(var(--chalk)) 0.8px, transparent 0.8px)`,
-          backgroundSize: "60px 40px, 80px 60px, 50px 50px",
+          backgroundImage: `
+            radial-gradient(circle, hsl(262 80% 72%) 0.6px, transparent 0.6px),
+            radial-gradient(circle, hsl(44 100% 68%) 0.4px, transparent 0.4px)
+          `,
+          backgroundSize: "48px 32px, 72px 56px",
+          backgroundPosition: "0 0, 24px 16px",
         }}
       />
-      {/* Bottom chalk tray strip */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-[3px]"
+      {/* Magic aurora shimmer bottom strip */}
+      <motion.div
+        className="absolute bottom-0 left-0 right-0 h-[2.5px]"
         style={{
-          background: "linear-gradient(90deg, hsl(var(--grass) / 0.5), hsl(var(--primary) / 0.7), hsl(var(--grass) / 0.5))",
+          background: "linear-gradient(90deg, hsl(262 80% 65% / 0.4), hsl(338 80% 68% / 0.7), hsl(44 100% 62% / 0.7), hsl(199 80% 65% / 0.5), hsl(262 80% 65% / 0.4))",
+          backgroundSize: "200% 100%",
         }}
+        animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
       />
 
       <div className="max-w-5xl mx-auto px-4 py-2.5 flex items-center justify-between relative" dir={dir}>
@@ -186,46 +192,66 @@ const AppHeader = () => {
           onClick={() => navigate("/")}
           onHoverStart={() => setLogoHovered(true)}
           onHoverEnd={() => setLogoHovered(false)}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.06 }}
+          whileTap={{ scale: 0.94 }}
         >
           <ChalkDustBurst active={logoHovered} />
           <div className="relative">
-            <img src={owlPixar} alt="English Fun" className="w-8 h-8 object-contain rounded-full ring-2 ring-grass/30" />
-            {/* Tiny chalk circle decoration */}
-            <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-grass border border-board" />
+            <motion.img
+              src={owlPixar}
+              alt="English Fun"
+              className="w-8 h-8 object-contain rounded-full"
+              style={{
+                boxShadow: "0 0 12px hsl(262 80% 68% / 0.35), 0 0 4px hsl(262 80% 68% / 0.5)",
+                border: "2px solid hsl(262 60% 70% / 0.3)",
+              }}
+              animate={{ scale: [1, 1.04, 1] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            />
+            {/* Magic sparkle decoration */}
+            <motion.div
+              className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full"
+              style={{
+                background: "linear-gradient(135deg, hsl(44 100% 68%), hsl(32 95% 62%))",
+                boxShadow: "0 0 6px hsl(44 100% 68% / 0.6)",
+              }}
+              animate={{ scale: [1, 1.3, 1], opacity: [0.8, 1, 0.8] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            />
           </div>
           <div className="hidden sm:block">
             <h1
               className="text-lg font-display font-extrabold leading-tight"
               style={{
-                color: "hsl(var(--chalk))",
-                textShadow: "0 1px 3px hsl(0 0% 0% / 0.3)",
+                background: "linear-gradient(135deg, hsl(262 70% 78%), hsl(338 75% 78%), hsl(44 100% 72%))",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
               }}
             >
               English Fun
             </h1>
             {/* Mini XP bar */}
             <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="text-[10px] font-display font-semibold" style={{ color: "hsl(var(--chalk) / 0.6)" }}>
+              <span className="text-[10px] font-display font-semibold" style={{ color: "hsl(262 50% 72% / 0.65)" }}>
                 {xpLevel.title.split(" ")[0]}
               </span>
-              <div className="w-16 h-1.5 rounded-full overflow-hidden" style={{ background: "hsl(var(--chalk) / 0.15)" }}>
+              <div className="w-16 h-1.5 rounded-full overflow-hidden" style={{ background: "hsl(262 40% 55% / 0.15)" }}>
                 <motion.div
                   className="h-full rounded-full"
                   style={{
-                    background: "linear-gradient(90deg, hsl(var(--grass)), hsl(var(--primary)))",
+                    background: "linear-gradient(90deg, hsl(262 80% 65%), hsl(338 80% 68%), hsl(44 100% 62%))",
                   }}
                   animate={{ width: `${Math.min((xpLevel.current / xpLevel.needed) * 100, 100)}%` }}
-                  transition={{ duration: 0.8 }}
+                  transition={{ duration: 0.9 }}
                 />
               </div>
-              <span className="text-[10px] font-display" style={{ color: "hsl(var(--chalk) / 0.5)" }}>{xpTotal}</span>
+              <span className="text-[10px] font-display" style={{ color: "hsl(262 50% 72% / 0.45)" }}>{xpTotal}</span>
             </div>
           </div>
         </motion.div>
 
-        {/* Nav - chalk style buttons */}
+        {/* Nav — Disney-quality buttons */}
         <nav className="flex items-center gap-0.5 overflow-x-auto max-w-[55vw] sm:max-w-[50vw] scrollbar-hide px-1" role="navigation" aria-label="Main navigation">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
@@ -233,26 +259,23 @@ const AppHeader = () => {
               <motion.button
                 key={item.path}
                 onClick={() => { playClickSound(); navigate(item.path); }}
-                className={`px-2 sm:px-3 py-1.5 rounded-full font-display text-xs font-semibold whitespace-nowrap relative transition-all ${
-                  isActive
-                    ? "shadow-md"
-                    : "hover:scale-105"
-                }`}
+                className={`px-2 sm:px-3 py-1.5 rounded-full font-display text-xs font-semibold whitespace-nowrap relative transition-all`}
                 style={
                   isActive
                     ? {
-                        background: "hsl(var(--grass) / 0.25)",
-                        color: "hsl(var(--chalk))",
-                        border: "1.5px solid hsl(var(--grass) / 0.4)",
+                        background: "hsl(262 65% 62% / 0.22)",
+                        color: "hsl(262 60% 84%)",
+                        border: "1.5px solid hsl(262 65% 65% / 0.35)",
+                        boxShadow: "0 0 12px hsl(262 65% 65% / 0.15)",
                       }
                     : {
-                        color: "hsl(var(--chalk) / 0.65)",
+                        color: "hsl(225 25% 75% / 0.65)",
                       }
                 }
                 whileHover={{
                   scale: 1.08,
                   y: -1,
-                  color: "hsl(var(--chalk))",
+                  color: "hsl(225 25% 90%)",
                 }}
                 whileTap={{ scale: 0.92 }}
                 aria-label={item.label}
@@ -264,7 +287,11 @@ const AppHeader = () => {
                   <motion.div
                     layoutId="nav-indicator"
                     className="absolute -bottom-1 left-1/2 w-1.5 h-1.5 rounded-full"
-                    style={{ marginLeft: "-3px", background: "hsl(var(--grass))" }}
+                    style={{
+                      marginLeft: "-3px",
+                      background: "linear-gradient(135deg, hsl(262 80% 70%), hsl(338 80% 70%))",
+                      boxShadow: "0 0 6px hsl(262 80% 70% / 0.5)",
+                    }}
                   />
                 )}
               </motion.button>
@@ -280,7 +307,7 @@ const AppHeader = () => {
             whileTap={{ scale: 0.85 }}
             onClick={toggleTheme}
             className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
-            style={{ background: "hsl(var(--chalk) / 0.1)" }}
+            style={{ background: "hsl(262 50% 60% / 0.12)" }}
             aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
           >
             <AnimatePresence mode="wait" initial={false}>
@@ -291,7 +318,7 @@ const AppHeader = () => {
                 exit={{ y: 12, opacity: 0, rotate: 90 }}
                 transition={{ duration: 0.2 }}
               >
-                {theme === "dark" ? <Sun className="w-4 h-4 text-sunshine" /> : <Moon className="w-4 h-4" style={{ color: "hsl(var(--chalk) / 0.8)" }} />}
+                {theme === "dark" ? <Sun className="w-4 h-4 text-sunshine" /> : <Moon className="w-4 h-4" style={{ color: "hsl(262 60% 78%)" }} />}
               </motion.div>
             </AnimatePresence>
           </motion.button>
@@ -302,8 +329,8 @@ const AppHeader = () => {
             onClick={toggleSound}
             className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
             style={{
-              background: soundOn ? "hsl(var(--grass) / 0.2)" : "hsl(var(--chalk) / 0.08)",
-              color: soundOn ? "hsl(var(--grass))" : "hsl(var(--chalk) / 0.5)",
+              background: soundOn ? "hsl(152 65% 48% / 0.18)" : "hsl(262 50% 60% / 0.08)",
+              color: soundOn ? "hsl(152 65% 62%)" : "hsl(225 25% 65% / 0.5)",
             }}
           >
             {soundOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
@@ -313,8 +340,8 @@ const AppHeader = () => {
             onClick={toggleMusic}
             className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
             style={{
-              background: musicOn ? "hsl(var(--sky) / 0.2)" : "hsl(var(--chalk) / 0.08)",
-              color: musicOn ? "hsl(var(--sky))" : "hsl(var(--chalk) / 0.5)",
+              background: musicOn ? "hsl(199 80% 52% / 0.18)" : "hsl(262 50% 60% / 0.08)",
+              color: musicOn ? "hsl(199 80% 68%)" : "hsl(225 25% 65% / 0.5)",
             }}
           >
             {musicOn ? <Music className="w-4 h-4" /> : <Music2 className="w-4 h-4" />}
@@ -327,8 +354,8 @@ const AppHeader = () => {
               onClick={() => setLangMenuOpen(prev => !prev)}
               className="flex items-center gap-1.5 px-2.5 py-2 rounded-full font-display text-xs font-bold transition-colors"
               style={{
-                background: "hsl(var(--chalk) / 0.1)",
-                color: "hsl(var(--chalk) / 0.8)",
+                background: "hsl(262 50% 60% / 0.12)",
+                color: "hsl(262 60% 80%)",
               }}
             >
               <span>{currentLang.flag}</span>
@@ -382,7 +409,7 @@ const AppHeader = () => {
               whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.85 }}
               onClick={() => navigate("/achievements")}
               className="flex items-center gap-1 px-2.5 py-1.5 rounded-full"
-              style={{ background: "hsl(var(--candy) / 0.15)", color: "hsl(var(--candy))" }}
+              style={{ background: "hsl(338 80% 65% / 0.15)", color: "hsl(338 75% 72%)" }}
               initial={{ scale: 0 }} animate={{ scale: 1 }}
             >
               <Trophy className="w-3.5 h-3.5" />
@@ -403,12 +430,13 @@ const AppHeader = () => {
           <motion.div
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full"
             style={{
-              background: "hsl(var(--sunshine) / 0.15)",
+              background: "hsl(44 100% 62% / 0.15)",
+              border: "1px solid hsl(44 100% 62% / 0.2)",
             }}
             whileHover={{ scale: 1.08 }}
           >
             <Star className="w-4 h-4 star-earned fill-current" />
-            <span className="font-display font-bold text-xs" style={{ color: "hsl(var(--sunshine))" }}>{stars}</span>
+            <span className="font-display font-bold text-xs" style={{ color: "hsl(44 100% 68%)" }}>{stars}</span>
           </motion.div>
         </div>
       </div>
