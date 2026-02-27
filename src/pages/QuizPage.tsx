@@ -20,6 +20,7 @@ import ComboBurst from "@/components/ComboBurst";
 import FloatingParticles from "@/components/FloatingParticles";
 import Interactive3DMascot from "@/components/Interactive3DMascot";
 import CinematicBackground from "@/components/CinematicBackground";
+import GameEntrance from "@/components/GameEntrance";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 import { RotateCcw, Zap, Target, Trophy, Sparkles } from "lucide-react";
 const optionLabels = ["A", "B", "C", "D"];
@@ -114,6 +115,7 @@ const QuizPage = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
+      <GameEntrance title={t("quick.quiz")} emoji="🎯" />
       <CinematicBackground intensity={0.6} />
       <FloatingParticles count={8} />
       <Confetti show={showConfetti} />

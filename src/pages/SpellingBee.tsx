@@ -20,6 +20,7 @@ import Interactive3DMascot from "@/components/Interactive3DMascot";
 import { Volume2, RotateCcw, Zap, Trophy } from "lucide-react";
 import BackToLevels from "@/components/BackToLevels";
 import CinematicBackground from "@/components/CinematicBackground";
+import GameEntrance from "@/components/GameEntrance";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 const shuffle = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
 
@@ -161,6 +162,7 @@ const SpellingBee = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
+      <GameEntrance title={t("quick.spelling")} emoji="🐝" />
       <CinematicBackground intensity={0.5} />
       <FloatingParticles count={8} />
       <Confetti show={showConfetti} />
