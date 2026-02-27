@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useLanguage, Language } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
 import {
@@ -14,8 +15,9 @@ import { getProgress } from "@/lib/progress";
 import FloatingParticles from "@/components/FloatingParticles";
 import {
   Volume2, VolumeX, Music, Music2, Sun, Moon, Globe, RotateCcw,
-  Trash2, Download, Shield, Info, ChevronRight, Sparkles,
+  Trash2, Download, Shield, Info, ChevronRight, Sparkles, Users,
 } from "lucide-react";
+import { getProfile } from "@/lib/ageProfile";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -34,12 +36,14 @@ const langOptions: { code: Language; flag: string; name: string; native: string 
 ];
 
 const SettingsPage = () => {
+  const navigate = useNavigate();
   const { lang, setLang, dir } = useLanguage();
   const { theme, toggleTheme } = useTheme();
   const [soundOn, setSoundOn] = useState(isSoundEnabled);
   const [musicOn, setMusicOn] = useState(isMusicEnabled);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [resetDone, setResetDone] = useState(false);
+  const profile = getProfile();
 
   const t = (texts: Record<string, string>) => texts[lang] || texts.en;
 
@@ -291,6 +295,29 @@ const SettingsPage = () => {
           </div>
         </motion.div>
 
+        {/* Parent Dashboard */}
+        <motion.div variants={itemVariants} className="card-kid mb-4">
+          <motion.button
+            whileHover={{ scale: 1.01, x: 4 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => navigate("/parent")}
+            className="w-full flex items-center justify-between p-3 rounded-xl bg-primary/5 hover:bg-primary/10 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <Users className="w-5 h-5 text-primary" />
+              <div className="text-start">
+                <span className="font-display font-bold text-sm block">
+                  {t({ he: "דשבורד הורים", ar: "لوحة الوالدين", en: "Parent Dashboard" })}
+                </span>
+                <span className="text-[10px] text-muted-foreground">
+                  {t({ he: "מעקב התקדמות ותובנות", ar: "تتبع التقدم والرؤى", en: "Track progress & insights" })}
+                </span>
+              </div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-primary" />
+          </motion.button>
+        </motion.div>
+
         {/* About */}
         <motion.div variants={itemVariants} className="card-kid">
           <h3 className="font-display font-bold text-base mb-3 flex items-center gap-2">
@@ -298,8 +325,13 @@ const SettingsPage = () => {
             {t({ he: "אודות", ar: "حول", en: "About" })}
           </h3>
           <div className="space-y-1 text-sm text-muted-foreground font-body">
-            <p>English Fun v1.0</p>
+            <p>English Fun v2.0</p>
             <p>{t({ he: "פלטפורמה חינוכית אינטראקטיבית ללימוד אנגלית", ar: "منصة تعليمية تفاعلية لتعلم الإنجليزية", en: "Interactive educational platform for learning English" })}</p>
+            <p className="pt-1 text-xs flex items-center gap-1">
+              {profile && <span>{profile.avatar}</span>}
+              {profile?.name && <span className="font-display font-bold">{profile.name}</span>}
+              {profile?.age && <span>• {t({ he: "גיל", ar: "العمر", en: "Age" })} {profile.age}</span>}
+            </p>
             <p className="pt-2 text-xs">
               {t({ he: "נבנה עם ❤️ ע״י אמג׳ד מוברשם", ar: "صُنع بـ ❤️ بواسطة أمجد مبَرشَم", en: "Built with ❤️ by Amjad Mobarsham" })}
             </p>

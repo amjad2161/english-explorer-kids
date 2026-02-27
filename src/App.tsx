@@ -31,6 +31,7 @@ import AchievementsPage from "./pages/AchievementsPage";
 import StatsPage from "./pages/StatsPage";
 import SettingsPage from "./pages/SettingsPage";
 import ProgressReport from "./pages/ProgressReport";
+import ParentDashboard from "./pages/ParentDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -78,6 +79,7 @@ const AnimatedRoutes = () => {
         <Route path="/stats" element={<PageWrapper><StatsPage /></PageWrapper>} />
         <Route path="/settings" element={<PageWrapper><SettingsPage /></PageWrapper>} />
         <Route path="/report" element={<PageWrapper><ProgressReport /></PageWrapper>} />
+        <Route path="/parent" element={<PageWrapper><ParentDashboard /></PageWrapper>} />
         <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
       </Routes>
     </AnimatePresence>
