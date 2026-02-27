@@ -64,86 +64,242 @@ const FloatingRune = ({ index }: { index: number }) => {
   );
 };
 
-/* ─── Book-opening cinematic entrance ─── */
+/* ─── Flying letters for the cinematic entrance ─── */
+const FLYING_LETTERS = [
+  "A", "B", "C", "ا", "ب", "ت", "א", "ב", "ג",
+  "D", "E", "F", "ث", "ج", "ح", "ד", "ה", "ו",
+  "G", "H", "I", "خ", "د", "ذ", "ז", "ח", "ט",
+];
+
+const FlyingLetter = ({ letter, index }: { letter: string; index: number }) => {
+  const angle = (index / FLYING_LETTERS.length) * Math.PI * 2;
+  const distance = 250 + Math.random() * 200;
+  const targetX = Math.cos(angle) * distance;
+  const targetY = Math.sin(angle) * distance;
+  const size = 14 + Math.random() * 18;
+
+  return (
+    <motion.span
+      className="absolute font-display font-bold pointer-events-none select-none"
+      style={{
+        fontSize: size,
+        left: "50%",
+        top: "50%",
+        color: `hsl(var(--library-gold) / ${0.5 + Math.random() * 0.5})`,
+        textShadow: `0 0 12px hsl(var(--library-glow) / 0.6)`,
+      }}
+      initial={{ x: 0, y: 0, opacity: 0, scale: 0, rotate: 0 }}
+      animate={{
+        x: [0, targetX * 0.3, targetX],
+        y: [0, targetY * 0.3, targetY],
+        opacity: [0, 1, 0],
+        scale: [0, 1.3, 0.6],
+        rotate: [0, (Math.random() - 0.5) * 180],
+      }}
+      transition={{
+        duration: 1.8,
+        delay: 0.8 + index * 0.03,
+        ease: [0.25, 0.46, 0.45, 0.94],
+      }}
+    >
+      {letter}
+    </motion.span>
+  );
+};
+
+/* ─── Cinematic book-opening entrance ─── */
 const BookOpenEntrance = ({ onComplete }: { onComplete: () => void }) => {
+  const [phase, setPhase] = useState(0); // 0=book, 1=letters, 2=fade
+
   useEffect(() => {
-    const timer = setTimeout(onComplete, 2200);
-    return () => clearTimeout(timer);
+    const t1 = setTimeout(() => setPhase(1), 600);
+    const t2 = setTimeout(() => setPhase(2), 2200);
+    const t3 = setTimeout(onComplete, 3200);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, [onComplete]);
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center"
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden"
       style={{ background: "hsl(20 30% 4%)" }}
-      initial={{ opacity: 1 }}
-      animate={{ opacity: 0 }}
-      transition={{ duration: 0.8, delay: 1.4 }}
+      animate={phase >= 2 ? { opacity: 0 } : { opacity: 1 }}
+      transition={{ duration: 0.9, ease: "easeInOut" }}
     >
-      {/* Central light burst */}
+      {/* ── Ambient warm particles ── */}
+      {Array.from({ length: 20 }).map((_, i) => (
+        <motion.div
+          key={`p-${i}`}
+          className="absolute rounded-full"
+          style={{
+            width: 2 + Math.random() * 3,
+            height: 2 + Math.random() * 3,
+            left: `${10 + Math.random() * 80}%`,
+            top: `${10 + Math.random() * 80}%`,
+            background: `hsl(var(--library-gold) / ${0.1 + Math.random() * 0.2})`,
+          }}
+          animate={{
+            y: [0, -30 - Math.random() * 40],
+            opacity: [0, 0.6, 0],
+          }}
+          transition={{ duration: 2 + Math.random() * 2, delay: 0.5 + i * 0.1, ease: "easeOut" }}
+        />
+      ))}
+
+      {/* ── Book body with 3D perspective ── */}
+      <div className="relative" style={{ perspective: "800px" }}>
+        {/* Book cover — left side */}
+        <motion.div
+          className="absolute origin-right"
+          style={{
+            width: 160,
+            height: 220,
+            right: "50%",
+            top: -110,
+            background: `linear-gradient(100deg, hsl(25 40% 22%), hsl(28 35% 28%), hsl(25 30% 18%))`,
+            borderRadius: "4px 0 0 4px",
+            boxShadow: "inset -2px 0 6px hsl(20 30% 10% / 0.5), -4px 4px 12px hsl(0 0% 0% / 0.4)",
+          }}
+          initial={{ rotateY: 0 }}
+          animate={{ rotateY: -75 }}
+          transition={{ duration: 1.2, ease: [0.33, 1, 0.68, 1], delay: 0.15 }}
+        >
+          {/* Cover texture lines */}
+          <div className="absolute inset-2 rounded-sm border border-amber-600/20" />
+          <div className="absolute inset-4 rounded-sm border border-amber-600/10" />
+          {/* Gold emboss on cover */}
+          <motion.div
+            className="absolute inset-0 flex items-center justify-center font-display font-extrabold text-3xl"
+            style={{
+              color: `hsl(var(--library-gold) / 0.4)`,
+              textShadow: `0 0 10px hsl(var(--library-glow) / 0.3)`,
+            }}
+            initial={{ opacity: 0.4 }}
+            animate={{ opacity: [0.4, 0] }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
+            ✦
+          </motion.div>
+        </motion.div>
+
+        {/* Book cover — right side */}
+        <motion.div
+          className="absolute origin-left"
+          style={{
+            width: 160,
+            height: 220,
+            left: "50%",
+            top: -110,
+            background: `linear-gradient(-100deg, hsl(25 40% 22%), hsl(28 35% 28%), hsl(25 30% 18%))`,
+            borderRadius: "0 4px 4px 0",
+            boxShadow: "inset 2px 0 6px hsl(20 30% 10% / 0.5), 4px 4px 12px hsl(0 0% 0% / 0.4)",
+          }}
+          initial={{ rotateY: 0 }}
+          animate={{ rotateY: 75 }}
+          transition={{ duration: 1.2, ease: [0.33, 1, 0.68, 1], delay: 0.15 }}
+        >
+          <div className="absolute inset-2 rounded-sm border border-amber-600/20" />
+          <div className="absolute inset-4 rounded-sm border border-amber-600/10" />
+        </motion.div>
+
+        {/* Inner pages glow */}
+        <motion.div
+          className="absolute"
+          style={{
+            width: 300,
+            height: 200,
+            left: -150,
+            top: -100,
+            background: `radial-gradient(ellipse, hsl(35 40% 80% / 0.15), transparent 60%)`,
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 1, 0.3] }}
+          transition={{ duration: 1.5, delay: 0.4 }}
+        />
+
+        {/* Spine */}
+        <motion.div
+          className="absolute w-1 rounded-full"
+          style={{
+            height: 220,
+            left: -0.5,
+            top: -110,
+            background: `linear-gradient(180deg, hsl(25 40% 30%), hsl(var(--library-gold-dim)), hsl(25 40% 30%))`,
+            boxShadow: `0 0 8px hsl(var(--library-glow) / 0.3)`,
+          }}
+          initial={{ scaleY: 0, opacity: 0 }}
+          animate={{ scaleY: 1, opacity: [0, 1, 0.5] }}
+          transition={{ duration: 1.4, ease: "easeOut" }}
+        />
+      </div>
+
+      {/* ── Central expanding light burst ── */}
       <motion.div
         className="absolute rounded-full"
         style={{
-          width: 10,
-          height: 10,
-          background: "radial-gradient(circle, hsl(var(--library-gold)), hsl(var(--library-gold-dim)), transparent)",
+          background: `radial-gradient(circle, hsl(var(--library-gold) / 0.8), hsl(var(--library-gold-dim) / 0.4), transparent 70%)`,
         }}
+        initial={{ width: 0, height: 0, opacity: 0 }}
         animate={{
-          width: [10, 800],
-          height: [10, 800],
-          opacity: [1, 0.6, 0],
+          width: [0, 60, 1200],
+          height: [0, 60, 1200],
+          opacity: [0, 0.9, 0],
         }}
-        transition={{ duration: 1.6, ease: "easeOut", delay: 0.3 }}
+        transition={{ duration: 2, delay: 0.7, ease: "easeOut" }}
       />
 
-      {/* Book spine lines */}
-      <motion.div
-        className="absolute w-px h-32"
-        style={{ background: `linear-gradient(180deg, transparent, hsl(var(--library-gold)), transparent)` }}
-        initial={{ scaleY: 0, opacity: 0 }}
-        animate={{ scaleY: [0, 1, 1], opacity: [0, 1, 0] }}
-        transition={{ duration: 1.2, ease: "easeOut" }}
-      />
+      {/* ── Secondary light rings ── */}
+      {[0, 1, 2].map(i => (
+        <motion.div
+          key={`ring-${i}`}
+          className="absolute rounded-full border"
+          style={{
+            borderColor: `hsl(var(--library-gold) / ${0.3 - i * 0.08})`,
+          }}
+          initial={{ width: 0, height: 0, opacity: 0 }}
+          animate={{
+            width: [0, 400 + i * 200],
+            height: [0, 400 + i * 200],
+            opacity: [0, 0.5, 0],
+          }}
+          transition={{ duration: 1.5, delay: 0.9 + i * 0.2, ease: "easeOut" }}
+        />
+      ))}
 
-      {/* Left page */}
-      <motion.div
-        className="absolute w-40 h-52 rounded-sm origin-right"
-        style={{
-          background: `linear-gradient(90deg, hsl(35 30% 85%), hsl(35 20% 75%))`,
-          boxShadow: "inset -4px 0 8px hsl(25 30% 20% / 0.2)",
-          right: "50%",
-        }}
-        initial={{ rotateY: 0 }}
-        animate={{ rotateY: -80 }}
-        transition={{ duration: 1, ease: [0.33, 1, 0.68, 1], delay: 0.2 }}
-      />
-      {/* Right page */}
-      <motion.div
-        className="absolute w-40 h-52 rounded-sm origin-left"
-        style={{
-          background: `linear-gradient(-90deg, hsl(35 30% 85%), hsl(35 20% 75%))`,
-          boxShadow: "inset 4px 0 8px hsl(25 30% 20% / 0.2)",
-          left: "50%",
-        }}
-        initial={{ rotateY: 0 }}
-        animate={{ rotateY: 80 }}
-        transition={{ duration: 1, ease: [0.33, 1, 0.68, 1], delay: 0.2 }}
-      />
+      {/* ── Flying letters explosion ── */}
+      {phase >= 1 && FLYING_LETTERS.map((letter, i) => (
+        <FlyingLetter key={`fl-${i}`} letter={letter} index={i} />
+      ))}
 
-      {/* Title reveal */}
-      <motion.span
-        className="relative font-display font-extrabold text-2xl sm:text-3xl"
-        style={{
-          background: "var(--gradient-gold)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          backgroundClip: "text",
-        }}
-        initial={{ opacity: 0, scale: 0.7 }}
-        animate={{ opacity: [0, 1, 1, 0], scale: [0.7, 1, 1, 1.05] }}
-        transition={{ duration: 1.8, times: [0, 0.3, 0.7, 1], delay: 0.4 }}
+      {/* ── Title text reveal ── */}
+      <motion.div
+        className="absolute flex flex-col items-center gap-2"
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={phase >= 1 ? {
+          opacity: [0, 1, 1, 0],
+          scale: [0.5, 1, 1, 1.08],
+          y: [20, 0, 0, -10],
+        } : {}}
+        transition={{ duration: 2, times: [0, 0.2, 0.7, 1], delay: 0.2 }}
       >
-        ✦
-      </motion.span>
+        <span
+          className="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-center"
+          style={{
+            background: "var(--gradient-gold)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+            filter: `drop-shadow(0 0 20px hsl(var(--library-glow) / 0.5))`,
+          }}
+        >
+          ✦ אגדת הספר הגדול ✦
+        </span>
+        <span
+          className="font-display text-sm sm:text-base"
+          style={{ color: `hsl(var(--library-text) / 0.7)` }}
+        >
+          The Saga of the Grand Codex
+        </span>
+      </motion.div>
     </motion.div>
   );
 };
