@@ -111,14 +111,16 @@ const Interactive3DMascot = ({ mood = "idle", size = "md", onClick }: Interactiv
           transition={{ duration: 4, repeat: Infinity }}
         />
 
-        {/* Mascot image - no background, blends naturally */}
+        {/* Mascot image - blended into background, no visible box */}
         <motion.img
           src={mascotImg}
           alt="Owl mascot"
-          className={`${sizes[size]} relative z-10 select-none`}
+          className={`${sizes[size]} relative z-10 select-none dark:mix-blend-lighten`}
           style={{
             filter: "drop-shadow(0 20px 40px hsl(var(--primary) / 0.2)) drop-shadow(0 8px 16px hsl(var(--foreground) / 0.1))",
             transform: "translateZ(40px)",
+            maskImage: "radial-gradient(ellipse 78% 80% at 50% 46%, black 45%, transparent 70%)",
+            WebkitMaskImage: "radial-gradient(ellipse 78% 80% at 50% 46%, black 45%, transparent 70%)",
           }}
           animate={isPoking ? { scale: [1, 1.2, 0.95, 1.05, 1], rotate: [0, -15, 15, -5, 0] } : moodAnimation}
           transition={{
