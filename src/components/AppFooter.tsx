@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useLanguage } from "@/lib/i18n";
 import { Heart, BookOpen, Pencil, Star } from "lucide-react";
 import { Link } from "react-router-dom";
-import owlPixar from "@/assets/owl-pixar.png";
+import Interactive3DMascot from "@/components/Interactive3DMascot";
 
 const ChalkDoodle = ({ children, x, y, delay = 0 }: { children: React.ReactNode; x: string; y: string; delay?: number }) => (
   <motion.span
@@ -86,18 +86,8 @@ const AppFooter = () => {
             className="flex items-center gap-3"
             whileHover={{ scale: 1.05 }}
           >
-            <motion.div className="relative">
-              <motion.img
-                src={owlPixar}
-                alt="English Fun Owl"
-                className="w-12 h-12 object-contain rounded-full"
-                style={{
-                  boxShadow: "0 0 16px hsl(var(--grass) / 0.2), 0 0 4px hsl(var(--grass) / 0.3)",
-                  border: "2px solid hsl(var(--grass) / 0.25)",
-                }}
-                animate={{ y: [0, -3, 0] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              />
+            <div className="relative">
+              <Interactive3DMascot mood="idle" size={48} enableEyeTracking={false} enableParticleEffects={false} />
               {/* Tiny chalk circle */}
               <div
                 className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full"
@@ -106,7 +96,7 @@ const AppFooter = () => {
                   border: "2px solid hsl(var(--board))",
                 }}
               />
-            </motion.div>
+            </div>
             <div>
               <span
                 className="font-display font-extrabold text-xl block"
