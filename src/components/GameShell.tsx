@@ -13,7 +13,7 @@ import { useLanguage } from "@/lib/i18n";
 import { dispatchCharacterEvent } from "@/lib/characterStore";
 import CharacterProxy from "@/components/character/CharacterProxy";
 import type { CharacterMood } from "@/lib/characterStore";
-import { X, Pause, Play, Lightbulb, ArrowLeft } from "lucide-react";
+import { Pause, Play, Lightbulb, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
@@ -228,17 +228,6 @@ const GameShell = ({
           {children}
         </main>
       </ErrorBoundary>
-
-      {/* ── Quit icon shortcut ── */}
-      <button
-        type="button"
-        onClick={handleQuitRequest}
-        className="fixed top-3 end-3 z-50 p-2 rounded-full bg-muted/80 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-        aria-label={t("game.quit") || "Quit"}
-        style={{ display: "none" }} // accessible via header arrow; shortcut hidden
-      >
-        <X className="w-4 h-4" />
-      </button>
     </div>
   );
 };
