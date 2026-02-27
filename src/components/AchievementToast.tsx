@@ -13,7 +13,7 @@ interface AchievementToastProps {
 const isRareTier = (tier: string) => tier === "gold" || tier === "diamond";
 
 const RareParticleRing = ({ tier }: { tier: string }) => {
-  const color = tier === "diamond" ? "hsl(195, 85%, 55%)" : "hsl(45, 100%, 55%)";
+  const color = tier === "diamond" ? "hsl(var(--sky))" : "hsl(var(--sunshine))";
   return (
     <>
       {[...Array(12)].map((_, i) => {
@@ -41,8 +41,8 @@ const RareParticleRing = ({ tier }: { tier: string }) => {
 
 const ShimmerOverlay = ({ tier }: { tier: string }) => {
   const colors = tier === "diamond"
-    ? "from-transparent via-cyan-300/30 to-transparent"
-    : "from-transparent via-yellow-300/30 to-transparent";
+    ? "from-transparent via-sky/30 to-transparent"
+    : "from-transparent via-sunshine/30 to-transparent";
   return (
     <motion.div
       className={`absolute inset-0 rounded-3xl bg-gradient-to-r ${colors} pointer-events-none`}
@@ -75,15 +75,15 @@ const AchievementToast = ({ achievement, onDone }: AchievementToastProps) => {
   }, [achievement, onDone, rare]);
 
   const tierBg: Record<string, string> = {
-    bronze: "border-amber-500/50 shadow-amber-500/20",
-    silver: "border-slate-400/50 shadow-slate-400/20",
-    gold: "border-yellow-400/60 shadow-yellow-500/40",
-    diamond: "border-cyan-400/60 shadow-cyan-400/40",
+    bronze: "border-accent/50 shadow-accent/20",
+    silver: "border-muted-foreground/50 shadow-muted-foreground/20",
+    gold: "border-sunshine/60 shadow-sunshine/40",
+    diamond: "border-sky/60 shadow-sky/40",
   };
 
   const tierGlow: Record<string, string> = {
-    gold: "0 0 40px hsl(45, 100%, 55%, 0.4), 0 0 80px hsl(45, 100%, 55%, 0.15)",
-    diamond: "0 0 40px hsl(195, 85%, 55%, 0.4), 0 0 80px hsl(195, 85%, 55%, 0.15)",
+    gold: "0 0 40px hsl(var(--sunshine) / 0.4), 0 0 80px hsl(var(--sunshine) / 0.15)",
+    diamond: "0 0 40px hsl(var(--sky) / 0.4), 0 0 80px hsl(var(--sky) / 0.15)",
   };
 
   return (
@@ -119,8 +119,8 @@ const AchievementToast = ({ achievement, onDone }: AchievementToastProps) => {
               animate={rare ? { boxShadow: [
                 tierGlow[achievement.tier] || "",
                 (achievement.tier === "diamond"
-                  ? "0 0 60px hsl(195, 85%, 55%, 0.6), 0 0 120px hsl(195, 85%, 55%, 0.2)"
-                  : "0 0 60px hsl(45, 100%, 55%, 0.6), 0 0 120px hsl(45, 100%, 55%, 0.2)"),
+                  ? "0 0 60px hsl(var(--sky) / 0.6), 0 0 120px hsl(var(--sky) / 0.2)"
+                  : "0 0 60px hsl(var(--sunshine) / 0.6), 0 0 120px hsl(var(--sunshine) / 0.2)"),
                 tierGlow[achievement.tier] || "",
               ]} : {}}
               transition={{ duration: 2, repeat: Infinity }}
@@ -153,8 +153,8 @@ const AchievementToast = ({ achievement, onDone }: AchievementToastProps) => {
                     transition={{ delay: 0.4, type: "spring" }}
                     className={`inline-block px-3 py-1 rounded-full text-xs font-display font-bold mb-2 ${
                       achievement.tier === "diamond"
-                        ? "bg-cyan-400/20 text-cyan-600"
-                        : "bg-yellow-400/20 text-yellow-600"
+                        ? "bg-sky/20 text-sky"
+                        : "bg-sunshine/20 text-sunshine-foreground"
                     }`}
                   >
                     {achievement.tier === "diamond" ? "💎 DIAMOND" : "🥇 GOLD"}

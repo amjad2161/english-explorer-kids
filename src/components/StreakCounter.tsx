@@ -24,8 +24,8 @@ const StreakCounter = ({ streak, bestStreak }: Props) => {
             exit={{ scale: 0, rotate: 30, y: -20 }}
             transition={{ type: "spring", stiffness: 500, damping: 20 }}
             className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full font-display font-bold text-sm relative overflow-hidden ${
-              isLegendary ? "bg-gradient-to-r from-amber-500/25 to-orange-600/25 text-amber-600 shadow-lg shadow-amber-500/15" :
-              isOnFire ? "bg-gradient-to-r from-orange-500/20 to-red-500/20 text-orange-600 shadow-md shadow-orange-500/10" :
+              isLegendary ? "bg-sunshine/25 text-sunshine-foreground shadow-lg shadow-sunshine/15" :
+              isOnFire ? "bg-accent/20 text-accent shadow-md shadow-accent/10" :
               isHot ? "bg-destructive/15 text-destructive" : "bg-accent/15 text-accent"
             }`}
           >
@@ -35,8 +35,8 @@ const StreakCounter = ({ streak, bestStreak }: Props) => {
                 className="absolute inset-0 rounded-full"
                 style={{
                   background: isLegendary
-                    ? "radial-gradient(circle, hsl(45, 100%, 60%, 0.15), transparent)"
-                    : "radial-gradient(circle, hsl(25, 95%, 55%, 0.1), transparent)",
+                    ? "radial-gradient(circle, hsl(var(--sunshine) / 0.15), transparent)"
+                    : "radial-gradient(circle, hsl(var(--accent) / 0.1), transparent)",
                 }}
                 animate={{
                   opacity: [0.3, 0.7, 0.3],
@@ -62,7 +62,7 @@ const StreakCounter = ({ streak, bestStreak }: Props) => {
             <motion.span
               className="relative z-10 tabular-nums"
               animate={isLegendary ? {
-                color: ["hsl(45, 100%, 45%)", "hsl(25, 95%, 55%)", "hsl(45, 100%, 45%)"],
+                color: ["hsl(var(--sunshine))", "hsl(var(--accent))", "hsl(var(--sunshine))"],
               } : {}}
               transition={{ duration: 1, repeat: Infinity }}
             >
@@ -75,7 +75,7 @@ const StreakCounter = ({ streak, bestStreak }: Props) => {
                 {[...Array(4)].map((_, i) => (
                   <motion.div
                     key={i}
-                    className="absolute w-1 h-1 rounded-full bg-amber-400"
+                    className="absolute w-1 h-1 rounded-full bg-sunshine"
                     animate={{
                       x: [0, Math.cos(i * Math.PI / 2) * 25],
                       y: [0, Math.sin(i * Math.PI / 2) * 12],
