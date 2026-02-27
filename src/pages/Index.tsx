@@ -8,6 +8,7 @@ import { getXP, getLevel, getDailyChallenge } from "@/lib/xp";
 import { playClickSound } from "@/lib/sounds";
 import FloatingParticles from "@/components/FloatingParticles";
 import Card3D from "@/components/Card3D";
+import GameCard3D from "@/components/GameCard3D";
 import DailyChallengeCard from "@/components/DailyChallengeCard";
 import WordOfTheDay from "@/components/WordOfTheDay";
 import { getSmartRecommendations, getMotivationalMessage, Recommendation } from "@/lib/recommendations";
@@ -330,27 +331,20 @@ const Index = () => {
 
         {/* ── GAMES GRID ── */}
         <motion.section variants={item} className="mb-8 sm:mb-10">
-          <h3 className="font-display text-lg sm:text-xl font-bold mb-4 text-center flex items-center gap-2 justify-center">
+          <h3 className="font-display text-lg sm:text-xl font-bold mb-5 text-center flex items-center gap-2 justify-center">
             <Gamepad2 className="w-5 h-5 text-primary" />
             {t("home.freePlay")}
           </h3>
-          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3">
+          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
             {gameCards.map((card, i) => (
-              <motion.button
+              <GameCard3D
                 key={card.path}
-                whileHover={{ y: -5, scale: 1.04 }}
-                whileTap={{ scale: 0.93 }}
+                emoji={card.emoji}
+                title={t(card.titleKey)}
+                color={card.color}
+                index={i}
                 onClick={() => { playClickSound(); navigate(card.path); }}
-                className={`${card.color} rounded-xl p-3 sm:p-4 text-center border border-transparent hover:border-primary/20 transition-all duration-300 hover:shadow-[var(--shadow-card-hover)] group`}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15 + i * 0.03, duration: 0.3 }}
-              >
-                <span className="text-2xl sm:text-3xl block mb-1 group-hover:scale-110 transition-transform duration-200">
-                  {card.emoji}
-                </span>
-                <span className="font-display text-[10px] sm:text-xs font-bold block leading-tight">{t(card.titleKey)}</span>
-              </motion.button>
+              />
             ))}
           </div>
         </motion.section>
