@@ -34,8 +34,8 @@ const LibraryBookworm = () => {
         className="w-full h-full object-contain select-none pointer-events-none relative z-10"
         style={{
           filter: "drop-shadow(0 6px 16px hsl(20 30% 8% / 0.5))",
-          WebkitMaskImage: "radial-gradient(ellipse 68% 72% at 50% 45%, black 40%, rgba(0,0,0,0.8) 58%, rgba(0,0,0,0.3) 75%, transparent 95%)",
-          maskImage: "radial-gradient(ellipse 68% 72% at 50% 45%, black 40%, rgba(0,0,0,0.8) 58%, rgba(0,0,0,0.3) 75%, transparent 95%)",
+          WebkitMaskImage: "radial-gradient(ellipse 42% 48% at 50% 44%, black 50%, rgba(0,0,0,0.5) 65%, transparent 72%)",
+          maskImage: "radial-gradient(ellipse 42% 48% at 50% 44%, black 50%, rgba(0,0,0,0.5) 65%, transparent 72%)",
         }}
         animate={{ y: [0, -3, 0], rotate: [0, 1, -1, 0] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
