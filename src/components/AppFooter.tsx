@@ -62,7 +62,11 @@ const AppFooter = () => {
                 >
                   <Heart className="w-3.5 h-3.5 text-candy fill-candy" />
                 </motion.span>
+                {t({ he: "ע״י", ar: "بواسطة", en: "by" })}
               </span>
+            </p>
+            <p className="text-sm font-display font-bold text-foreground/80">
+              {t({ he: "אמג׳ד מוברשם", ar: "أمجد مبَرشَم", en: "Amjad Mobarsham" })}
             </p>
             <p className="text-xs text-muted-foreground/70 font-body">
               {t({
