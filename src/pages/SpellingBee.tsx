@@ -51,7 +51,7 @@ const SpellingBee = () => {
   const [xpAmount, setXpAmount] = useState(0);
   const [owlMood, setOwlMood] = useState<"idle" | "celebrate" | "sad" | "surprised">("idle");
   const { popups, addPopup } = useScorePopups();
-  const { speech, triggerByMood } = useOwlEncouragement();
+  const { speech, triggerByMood } = useOwlEncouragement(lang);
 
   useEffect(() => {
     const all = shuffle(getSpellingWords(adaptive.maxWordLength));

@@ -50,7 +50,7 @@ const MemoryGame = () => {
   const [xpAmount, setXpAmount] = useState(0);
   const [lastMatchWord, setLastMatchWord] = useState<string | null>(null);
   const [owlMood, setOwlMood] = useState<"idle" | "celebrate" | "sad" | "surprised">("idle");
-  const { speech, triggerByMood } = useOwlEncouragement();
+  const { speech, triggerByMood } = useOwlEncouragement(lang);
 
   const startGame = useCallback((catIndex: number) => {
     playClickSound();

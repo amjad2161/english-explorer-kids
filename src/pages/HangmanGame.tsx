@@ -106,7 +106,7 @@ const HangmanGame = () => {
   const [xpAmount, setXpAmount] = useState(0);
   const [owlMood, setOwlMood] = useState<"idle" | "surprised" | "sad" | "celebrate">("idle");
   const { popups, addPopup } = useScorePopups();
-  const { speech, triggerByMood } = useOwlEncouragement();
+  const { speech, triggerByMood } = useOwlEncouragement(lang);
 
   useEffect(() => {
     const maxLen = adaptive.maxWordLength;
