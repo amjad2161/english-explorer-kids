@@ -11,6 +11,8 @@ import XPReward from "@/components/XPReward";
 import FloatingParticles from "@/components/FloatingParticles";
 import { Volume2, ArrowRight, BookOpen, Sparkles } from "lucide-react";
 import BackToLevels from "@/components/BackToLevels";
+import InteractiveHeroImage from "@/components/InteractiveHeroImage";
+import wordsHero from "@/assets/words-hero.png";
 
 const categoryGradients: Record<string, string> = {
   grass: "from-grass to-grass/70", candy: "from-candy to-candy/70", sky: "from-sky to-sky/70",
@@ -90,6 +92,15 @@ const WordsPage = () => {
       
       <div className="max-w-5xl mx-auto px-4 py-8 relative z-10">
         <BackToLevels />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6 }}
+          className="max-w-2xl mx-auto mb-6"
+        >
+          <InteractiveHeroImage src={wordsHero} alt="Words hero" glowColor="--accent" className="h-40 md:h-52" />
+        </motion.div>
+
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">{t("words.title")}</h1>
           <p className="text-muted-foreground font-body">{t("words.subtitle")}</p>
