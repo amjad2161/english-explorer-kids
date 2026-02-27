@@ -152,6 +152,7 @@ const translations: Record<string, Record<Language, string>> = {
   "quick.spelling": { he: "איות", ar: "تهجئة", en: "Spelling" },
   "quick.scramble": { he: "בלבול", ar: "خلط", en: "Scramble" },
   "quick.hangman": { he: "ניחוש", ar: "تخمين", en: "Guess" },
+  "quick.pattern": { he: "דפוסים", ar: "أنماط", en: "Patterns" },
 
   // Fun facts
   "home.funFact1": { he: "השפה האנגלית היא השפה הנפוצה ביותר בעולם! יותר ממיליארד אנשים מדברים אנגלית ברחבי העולם 🌍", ar: "اللغة الإنجليزية هي اللغة الأكثر انتشاراً في العالم! أكثر من مليار شخص يتحدثون الإنجليزية حول العالم 🌍", en: "English is the most widely spoken language in the world! Over a billion people speak English globally 🌍" },
