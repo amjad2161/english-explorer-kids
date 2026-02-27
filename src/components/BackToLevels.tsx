@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useLanguage } from "@/lib/i18n";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Home } from "lucide-react";
 
 const BackToLevels = () => {
   const [searchParams] = useSearchParams();
@@ -9,20 +9,50 @@ const BackToLevels = () => {
   const navigate = useNavigate();
   const { t, isRTL } = useLanguage();
 
-  if (!stageId) return null;
+  const ArrowIcon = isRTL ? ArrowRight : ArrowLeft;
 
   return (
-    <motion.button
+    <motion.div
       initial={{ opacity: 0, x: isRTL ? 20 : -20 }}
       animate={{ opacity: 1, x: 0 }}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      onClick={() => navigate("/levels")}
-      className="mb-4 flex items-center gap-2 font-display font-bold text-sm text-primary hover:text-primary/80 transition-colors bg-primary/10 rounded-full px-4 py-2"
+      className="mb-4 flex items-center gap-2"
     >
-      {isRTL ? <ArrowRight className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4" />}
-      {t("nav.backToLevels")}
-    </motion.button>
+      {/* Back button */}
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-1.5 font-display font-bold text-sm text-primary hover:text-primary/80 transition-colors bg-primary/10 rounded-full px-3 py-2"
+        aria-label="Go back"
+      >
+        <ArrowIcon className="w-4 h-4" />
+        <span className="hidden sm:inline">{isRTL ? "חזרה" : "Back"}</span>
+      </motion.button>
+
+      {/* Home button */}
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => navigate("/")}
+        className="flex items-center gap-1.5 font-display font-bold text-sm text-muted-foreground hover:text-foreground transition-colors bg-muted/40 rounded-full px-3 py-2"
+        aria-label="Go home"
+      >
+        <Home className="w-4 h-4" />
+        <span className="hidden sm:inline">{isRTL ? "בית" : "Home"}</span>
+      </motion.button>
+
+      {/* Levels button if from a stage */}
+      {stageId && (
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => navigate("/levels")}
+          className="flex items-center gap-1.5 font-display font-bold text-sm text-accent hover:text-accent/80 transition-colors bg-accent/10 rounded-full px-3 py-2"
+        >
+          🗺️ <span className="hidden sm:inline">{t("nav.backToLevels")}</span>
+        </motion.button>
+      )}
+    </motion.div>
   );
 };
 

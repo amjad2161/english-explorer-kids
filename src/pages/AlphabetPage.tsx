@@ -12,6 +12,7 @@ import BackToLevels from "@/components/BackToLevels";
 import PhoneticGuide from "@/components/PhoneticGuide";
 import Card3D from "@/components/Card3D";
 import XPReward from "@/components/XPReward";
+import Interactive3DMascot from "@/components/Interactive3DMascot";
 import { ChevronRight, ChevronLeft, Volume2, BookOpen, Sparkles } from "lucide-react";
 
 const letterGradients = [
@@ -86,6 +87,7 @@ const AlphabetPage = () => {
           transition={{ duration: 0.4 }}
           className="text-center mb-8"
         >
+          <Interactive3DMascot mood="idle" size="sm" />
           <div className="inline-flex items-center gap-2 bg-primary/10 rounded-full px-4 py-1.5 mb-3">
             <BookOpen className="w-4 h-4 text-primary" />
             <span className="font-display font-bold text-sm text-primary">

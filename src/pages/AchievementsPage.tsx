@@ -8,6 +8,8 @@ import {
 import { playClickSound } from "@/lib/sounds";
 import { Lock, X } from "lucide-react";
 import FloatingParticles from "@/components/FloatingParticles";
+import Interactive3DMascot from "@/components/Interactive3DMascot";
+import BackToLevels from "@/components/BackToLevels";
 
 const isRareTier = (tier: string) => tier === "gold" || tier === "diamond";
 
@@ -165,7 +167,9 @@ const AchievementsPage = () => {
       </AnimatePresence>
 
       <div className="max-w-3xl mx-auto px-4 py-8 relative z-10">
+        <BackToLevels />
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
+          <Interactive3DMascot mood="idle" size="sm" />
           <div className="text-6xl mb-3">🏅</div>
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">
             {lang === "he" ? "הישגים ותגים" : lang === "ar" ? "إنجازات وشارات" : "Achievements & Badges"}

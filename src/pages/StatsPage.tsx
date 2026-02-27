@@ -7,6 +7,8 @@ import { getStatsHistory, getLastNDays, getWeeklySummary } from "@/lib/statsTrac
 import { getTotalEarnedStars } from "@/lib/levels";
 import { getUnlockedAchievements } from "@/lib/achievements";
 import FloatingParticles from "@/components/FloatingParticles";
+import Interactive3DMascot from "@/components/Interactive3DMascot";
+import BackToLevels from "@/components/BackToLevels";
 import StreakCalendar from "@/components/StreakCalendar";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -90,12 +92,14 @@ const StatsPage = () => {
       <FloatingParticles count={8} />
       
       <div className="max-w-4xl mx-auto px-4 py-8 relative z-10">
+        <BackToLevels />
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
+          <Interactive3DMascot mood="idle" size="sm" />
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">
             {t({ he: "📊 הסטטיסטיקות שלי", ar: "📊 إحصائياتي", en: "📊 My Stats" })}
           </h1>

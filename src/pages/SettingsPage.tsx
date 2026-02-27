@@ -13,6 +13,8 @@ import { getTotalEarnedStars } from "@/lib/levels";
 import { getUnlockedAchievements } from "@/lib/achievements";
 import { getProgress } from "@/lib/progress";
 import FloatingParticles from "@/components/FloatingParticles";
+import Interactive3DMascot from "@/components/Interactive3DMascot";
+import BackToLevels from "@/components/BackToLevels";
 import {
   Volume2, VolumeX, Music, Music2, Sun, Moon, Globe, RotateCcw,
   Trash2, Download, Shield, Info, ChevronRight, Sparkles, Users,
@@ -102,8 +104,10 @@ const SettingsPage = () => {
         animate="visible"
         className="max-w-2xl mx-auto px-4 py-8 relative z-10"
       >
+        <BackToLevels />
         {/* Header */}
         <motion.div variants={itemVariants} className="text-center mb-8">
+          <Interactive3DMascot mood="idle" size="sm" />
           <motion.span
             className="text-5xl block mb-3"
             animate={{ rotate: [0, 5, -5, 0] }}
