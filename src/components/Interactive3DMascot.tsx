@@ -90,17 +90,19 @@ const Interactive3DMascot = ({ mood = "idle", size = "md", onClick }: Interactiv
           transition={{ duration: 4, repeat: Infinity }}
         />
 
-        {/* The owl image */}
+        {/* The owl image — edge-masked to blend seamlessly into background */}
         <motion.img
           src={owlImage}
           alt="Owl mascot"
           className="relative z-20 select-none pointer-events-none"
           draggable={false}
           style={{
-            width: dim,
-            height: dim,
+            width: dim * 1.3,
+            height: dim * 1.3,
             objectFit: "contain",
-            filter: "drop-shadow(0 10px 25px hsl(var(--primary) / 0.2)) drop-shadow(0 4px 8px rgba(0,0,0,0.15))",
+            WebkitMaskImage: "radial-gradient(ellipse 48% 50% at 50% 48%, black 55%, transparent 80%)",
+            maskImage: "radial-gradient(ellipse 48% 50% at 50% 48%, black 55%, transparent 80%)",
+            filter: "drop-shadow(0 8px 25px hsl(var(--primary) / 0.2))",
             transform: "translateZ(40px)",
           }}
           animate={isPoking
