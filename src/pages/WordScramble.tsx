@@ -14,6 +14,7 @@ import GameTimer from "@/components/GameTimer";
 import StreakCounter from "@/components/StreakCounter";
 import ScorePopup, { useScorePopups } from "@/components/ScorePopup";
 import XPReward from "@/components/XPReward";
+import Interactive3DMascot from "@/components/Interactive3DMascot";
 import { Volume2, RotateCcw, Shuffle, Zap, Trophy } from "lucide-react";
 import BackToLevels from "@/components/BackToLevels";
 
@@ -41,6 +42,7 @@ const WordScramble = () => {
   const [timerRunning, setTimerRunning] = useState(true);
   const [showXP, setShowXP] = useState(false);
   const [xpAmount, setXpAmount] = useState(0);
+  const [owlMood, setOwlMood] = useState<"idle" | "surprised" | "sad" | "celebrate">("idle");
   const { popups, addPopup } = useScorePopups();
 
   useEffect(() => {
@@ -64,6 +66,7 @@ const WordScramble = () => {
     setHintRevealed(0);
     setTimerKey(k => k + 1);
     setTimerRunning(true);
+    setOwlMood("idle");
     setTimeout(() => speakEnglish(words[currentIndex].english), 300);
   };
 
@@ -92,6 +95,7 @@ const WordScramble = () => {
       setResult("correct");
       setScore(s => s + points);
       setStreak(newStreak);
+      setOwlMood("surprised");
       setBestStreak(b => { const best = Math.max(b, newStreak); saveBestStreak(best); return best; });
       if (newStreak >= 3) playComboSound(newStreak); else playCorrectSound();
       addPopup(points, newStreak >= 3 ? `×${newStreak}` : "✓");
@@ -100,22 +104,25 @@ const WordScramble = () => {
     } else {
       setResult("wrong");
       setStreak(0);
+      setOwlMood("sad");
       playWrongSound();
     }
-    setTimeout(() => advance(), 1500);
+    setTimeout(() => { setOwlMood("idle"); advance(); }, 1500);
   };
 
   const handleTimeUp = useCallback(() => {
     if (result) return;
     setResult("wrong");
     setStreak(0);
+    setOwlMood("sad");
     playWrongSound();
-    setTimeout(() => advance(), 1200);
+    setTimeout(() => { setOwlMood("idle"); advance(); }, 1200);
   }, [result, currentIndex]);
 
   const advance = () => {
     if (currentIndex + 1 >= words.length) {
       setFinished(true);
+      setOwlMood("celebrate");
       playVictoryFanfare();
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 100);
@@ -135,11 +142,8 @@ const WordScramble = () => {
     const medium = shuffleArray(getSpellingWords(7).filter(w => w.english.length > 4)).slice(0, 3);
     const long = shuffleArray(getSpellingWords(9).filter(w => w.english.length > 6)).slice(0, 2);
     setWords(shuffleArray([...short, ...medium, ...long]).slice(0, TOTAL_ROUNDS));
-    setCurrentIndex(0);
-    setScore(0);
-    setStreak(0);
-    setBestStreak(0);
-    setFinished(false);
+    setCurrentIndex(0); setScore(0); setStreak(0); setBestStreak(0);
+    setFinished(false); setOwlMood("idle");
   };
 
   const currentWord = words[currentIndex];
@@ -162,7 +166,7 @@ const WordScramble = () => {
           transition={{ duration: 0.4 }}
           className="text-center mb-6"
         >
-          <span className="text-5xl mb-3 block">🔀</span>
+          <Interactive3DMascot mood={owlMood} size="sm" />
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">{t("scramble.title")}</h1>
           <p className="text-muted-foreground font-body">{t("scramble.subtitle")}</p>
         </motion.div>
@@ -270,7 +274,7 @@ const WordScramble = () => {
           <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.4 }}
             className="card-kid text-center">
-            <span className="text-7xl mb-4 block">🔀</span>
+            <Interactive3DMascot mood="celebrate" size="md" />
             <h2 className="text-3xl font-display font-bold text-gradient mb-2">{t("spelling.finished")}</h2>
             <div className="flex justify-center gap-4 mb-4">
               <div className="bg-primary/10 rounded-2xl px-4 py-2 flex items-center gap-2">

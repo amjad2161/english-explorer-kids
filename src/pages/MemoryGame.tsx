@@ -43,7 +43,7 @@ const MemoryGame = () => {
   const [showXP, setShowXP] = useState(false);
   const [xpAmount, setXpAmount] = useState(0);
   const [lastMatchWord, setLastMatchWord] = useState<string | null>(null);
-  const [owlMood, setOwlMood] = useState<"idle" | "celebrate" | "sad">("idle");
+  const [owlMood, setOwlMood] = useState<"idle" | "celebrate" | "sad" | "surprised">("idle");
 
   const startGame = useCallback((catIndex: number) => {
     playClickSound();
@@ -78,7 +78,7 @@ const MemoryGame = () => {
           playMatchSound();
           speakEnglish(card1.matchId);
           setLastMatchWord(card1.matchId);
-          setOwlMood("celebrate");
+          setOwlMood("surprised");
           setTimeout(() => { setLastMatchWord(null); setOwlMood("idle"); }, 1500);
           const newMatched = [...matched, newFlipped[0], newFlipped[1]];
           setMatched(newMatched); setFlipped([]); setIsChecking(false);

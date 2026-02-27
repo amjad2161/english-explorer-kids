@@ -44,7 +44,7 @@ const SpellingBee = () => {
   const [timerRunning, setTimerRunning] = useState(true);
   const [showXP, setShowXP] = useState(false);
   const [xpAmount, setXpAmount] = useState(0);
-  const [owlMood, setOwlMood] = useState<"idle" | "celebrate" | "sad">("idle");
+  const [owlMood, setOwlMood] = useState<"idle" | "celebrate" | "sad" | "surprised">("idle");
   const { popups, addPopup } = useScorePopups();
 
   useEffect(() => {
@@ -97,7 +97,7 @@ const SpellingBee = () => {
       setResult("correct");
       setScore(s => s + points);
       setStreak(newStreak);
-      setOwlMood("celebrate");
+      setOwlMood("surprised");
       setBestStreak(b => { const best = Math.max(b, newStreak); saveBestStreak(best); return best; });
       if (newStreak >= 3) {
         playComboSound(newStreak);
