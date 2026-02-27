@@ -1,11 +1,11 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useLanguage } from "@/lib/i18n";
 import { wordCategories, WordCard, getCategoryName, getWordTranslation } from "@/data/learningData";
 import { speakEnglish, playClickSound, playStarSound } from "@/lib/sounds";
 import { addCompletedWord } from "@/lib/progress";
-import { saveStageProgress } from "@/lib/levels";
+import { saveStageProgress, levels } from "@/lib/levels";
 import Confetti from "@/components/Confetti";
 import { Volume2, ArrowRight } from "lucide-react";
 
@@ -22,7 +22,30 @@ const WordsPage = () => {
   const [searchParams] = useSearchParams();
   const stageId = searchParams.get("stage");
   const { t, lang, dir } = useLanguage();
+
+  // Find the stage config to get categoryIndices
+  const stageConfig = useMemo(() => {
+    if (!stageId) return null;
+    for (const level of levels) {
+      for (const stage of level.stages) {
+        if (stage.id === stageId) return stage;
+      }
+    }
+    return null;
+  }, [stageId]);
+
+  // Filter categories based on stage config
+  const filteredCategories = useMemo(() => {
+    if (stageConfig?.categoryIndices) {
+      return stageConfig.categoryIndices.map(i => ({ index: i, cat: wordCategories[i] })).filter(x => x.cat);
+    }
+    return wordCategories.map((cat, index) => ({ index, cat }));
+  }, [stageConfig]);
+
+  const autoSelected = filteredCategories.length === 1;
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const activeCategory = autoSelected ? filteredCategories[0].index : selectedCategory;
+
   const [flippedCards, setFlippedCards] = useState<Set<string>>(new Set());
   const [learnedWords, setLearnedWords] = useState<Set<string>>(() => {
     try {
@@ -65,13 +88,13 @@ const WordsPage = () => {
         </motion.div>
 
         <AnimatePresence mode="wait">
-          {selectedCategory === null ? (
+          {activeCategory === null ? (
             <motion.div key="categories" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {wordCategories.map((cat, index) => (
+              {filteredCategories.map(({ index, cat }, i) => (
                 <motion.button key={cat.nameEn}
                   initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: index * 0.1, type: "spring" }}
+                  transition={{ delay: i * 0.1, type: "spring" }}
                   whileHover={{ y: -6, scale: 1.05 }} whileTap={{ scale: 0.95 }}
                   onClick={() => { playClickSound(); setSelectedCategory(index); }}
                   className="card-kid text-center">
@@ -86,19 +109,21 @@ const WordsPage = () => {
             </motion.div>
           ) : (
             <motion.div key="words" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
-              <motion.button onClick={() => { setSelectedCategory(null); setFlippedCards(new Set()); }}
-                className="flex items-center gap-2 mb-6 font-display font-semibold text-primary hover:text-primary/80 transition-colors" whileHover={{ x: 4 }}>
-                <ArrowRight className="w-4 h-4" />{t("words.backToCategories")}
-              </motion.button>
+              {!autoSelected && (
+                <motion.button onClick={() => { setSelectedCategory(null); setFlippedCards(new Set()); }}
+                  className="flex items-center gap-2 mb-6 font-display font-semibold text-primary hover:text-primary/80 transition-colors" whileHover={{ x: 4 }}>
+                  <ArrowRight className="w-4 h-4" />{t("words.backToCategories")}
+                </motion.button>
+              )}
               <div className="text-center mb-6">
-                <span className="text-4xl mb-2 block">{wordCategories[selectedCategory].emoji}</span>
-                <h2 className="font-display text-2xl font-bold">{getCategoryName(wordCategories[selectedCategory], lang)}</h2>
+                <span className="text-4xl mb-2 block">{wordCategories[activeCategory].emoji}</span>
+                <h2 className="font-display text-2xl font-bold">{getCategoryName(wordCategories[activeCategory], lang)}</h2>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {wordCategories[selectedCategory].words.map((word, index) => {
+                {wordCategories[activeCategory].words.map((word, index) => {
                   const isFlipped = flippedCards.has(word.english);
                   const isLearned = learnedWords.has(word.english);
-                  const colorClass = categoryBgs[wordCategories[selectedCategory].color];
+                  const colorClass = categoryBgs[wordCategories[activeCategory].color];
                   return (
                     <motion.div key={word.english}
                       initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
