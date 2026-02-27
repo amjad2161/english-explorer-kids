@@ -191,7 +191,7 @@ const SpellingBee = () => {
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gradient mb-1">{t("spelling.title")}</h1>
           <p className="text-muted-foreground font-body text-sm sm:text-base">{t("spelling.subtitle")}</p>
-          <CompanionAvatars size="xs" className="justify-center mt-2" />
+          <CompanionAvatars size="xs" className="justify-center mt-2" mood={owlMood} />
         </motion.div>
 
         {!finished ? (

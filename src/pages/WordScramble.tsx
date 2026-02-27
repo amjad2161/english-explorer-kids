@@ -202,7 +202,7 @@ const WordScramble = () => {
           </div>
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">{t("scramble.title")}</h1>
           <p className="text-muted-foreground font-body">{t("scramble.subtitle")}</p>
-          <CompanionAvatars size="xs" className="justify-center mt-2" />
+          <CompanionAvatars size="xs" className="justify-center mt-2" mood={owlMood} />
         </motion.div>
 
         {!finished ? (
