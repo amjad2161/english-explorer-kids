@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { LanguageProvider, useLanguage, Language } from "@/lib/i18n";
 import { ThemeProvider } from "@/lib/theme";
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { EraserTransitionProvider } from "@/components/ChalkEraserTransition";
 import AppHeader from "@/components/AppHeader";
@@ -36,6 +36,18 @@ import SettingsPage from "./pages/SettingsPage";
 import ProgressReport from "./pages/ProgressReport";
 import ParentDashboard from "./pages/ParentDashboard";
 import NotFound from "./pages/NotFound";
+
+const StoryPage = React.lazy(() => import("./pages/StoryPage"));
+const LearningPathPage = React.lazy(() => import("./pages/LearningPathPage"));
+const PhonicsGame = React.lazy(() => import("./pages/PhonicsGame"));
+const GrammarBuilder = React.lazy(() => import("./pages/GrammarBuilder"));
+const TPRPage = React.lazy(() => import("./pages/TPRPage"));
+
+const LazyFallback = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="text-4xl animate-bounce">🦉</div>
+  </div>
+);
 
 const queryClient = new QueryClient();
 
@@ -84,6 +96,11 @@ const AnimatedRoutes = () => {
         <Route path="/settings" element={<PageWrapper><SettingsPage /></PageWrapper>} />
         <Route path="/report" element={<PageWrapper><ProgressReport /></PageWrapper>} />
         <Route path="/parent" element={<PageWrapper><ParentDashboard /></PageWrapper>} />
+        <Route path="/story" element={<Suspense fallback={<LazyFallback />}><PageWrapper><StoryPage /></PageWrapper></Suspense>} />
+        <Route path="/learn" element={<Suspense fallback={<LazyFallback />}><PageWrapper><LearningPathPage /></PageWrapper></Suspense>} />
+        <Route path="/phonics" element={<Suspense fallback={<LazyFallback />}><PageWrapper><PhonicsGame /></PageWrapper></Suspense>} />
+        <Route path="/grammar" element={<Suspense fallback={<LazyFallback />}><PageWrapper><GrammarBuilder /></PageWrapper></Suspense>} />
+        <Route path="/tpr" element={<Suspense fallback={<LazyFallback />}><PageWrapper><TPRPage /></PageWrapper></Suspense>} />
         <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
       </Routes>
     </AnimatePresence>
