@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { playOwlSpeechSound } from "@/lib/sounds";
 
 /**
  * Hebrew encouragement lines by mood context.
@@ -64,22 +65,24 @@ export function useOwlEncouragement() {
   }, []);
 
   const triggerByMood = useCallback((mood: OwlMood, streak?: number) => {
-    // Avoid repeating for same mood
     const key = `${mood}-${Date.now()}`;
     if (lastMoodRef.current === key) return;
     lastMoodRef.current = key;
 
     if (mood === "surprised") {
-      // Correct answer
       if (streak && streak >= 3) {
         showSpeech(pick(LINES.combo));
+        playOwlSpeechSound('combo');
       } else {
         showSpeech(pick(LINES.correct));
+        playOwlSpeechSound('correct');
       }
     } else if (mood === "sad") {
       showSpeech(pick(LINES.wrong));
+      playOwlSpeechSound('wrong');
     } else if (mood === "celebrate") {
       showSpeech(pick(LINES.celebrate), 3000);
+      playOwlSpeechSound('celebrate');
     }
   }, [showSpeech]);
 

@@ -185,14 +185,14 @@ const ProxyCharacter = ({ mood, animationKey }: ProxyCharacterProps) => {
       </mesh>
 
       {/* Left wing */}
-      <mesh ref={leftWingRef} position={[-0.42, -0.18, 0]} rotation={[0, 0, -0.1]}>
-        <ellipseGeometry args={[0.18, 0.28, 14]} />
+      <mesh ref={leftWingRef} position={[-0.42, -0.18, 0]} rotation={[0, 0, -0.1]} scale={[0.36, 0.56, 1]}>
+        <circleGeometry args={[0.5, 14]} />
         <meshStandardMaterial color={wingColor} roughness={0.75} side={THREE.DoubleSide} />
       </mesh>
 
       {/* Right wing */}
-      <mesh ref={rightWingRef} position={[0.42, -0.18, 0]} rotation={[0, 0, 0.1]}>
-        <ellipseGeometry args={[0.18, 0.28, 14]} />
+      <mesh ref={rightWingRef} position={[0.42, -0.18, 0]} rotation={[0, 0, 0.1]} scale={[0.36, 0.56, 1]}>
+        <circleGeometry args={[0.5, 14]} />
         <meshStandardMaterial color={wingColor} roughness={0.75} side={THREE.DoubleSide} />
       </mesh>
 
