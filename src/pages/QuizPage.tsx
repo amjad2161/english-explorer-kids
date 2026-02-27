@@ -50,7 +50,7 @@ const QuizPage = () => {
   const [wrongWords, setWrongWords] = useState<string[]>([]);
   const [correctWords, setCorrectWords] = useState<string[]>([]);
   const { popups, addPopup } = useScorePopups();
-  const { speech, triggerByMood } = useOwlEncouragement();
+  const { speech, triggerByMood } = useOwlEncouragement(lang);
 
   const shuffledQuestions = useMemo(
     () => generateDynamicQuiz(QUIZ_SIZE, lang),
