@@ -131,8 +131,19 @@
     @apply bg-background text-foreground font-body;
     background: var(--gradient-bg);
     min-height: 100vh;
+    min-height: 100dvh;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
     transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s ease;
+    /* Safe area padding for notched devices */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
 
   /* Mesh gradient overlay */
@@ -742,4 +753,175 @@
 .game-card-3d:focus-within {
   outline: 2px solid hsl(var(--primary));
   outline-offset: 2px;
+}
+
+/* ═══════════════════════════════════════════════ */
+/* ─── RESPONSIVE & CROSS-BROWSER ─── */
+/* ═══════════════════════════════════════════════ */
+
+/* Touch-friendly targets */
+@media (pointer: coarse) {
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .btn-kid {
+    min-height: 48px;
+    @apply px-7 py-4;
+  }
+
+  nav button {
+    min-height: 40px;
+    min-width: 36px;
+  }
+}
+
+/* Small mobile (< 375px) */
+@media (max-width: 374px) {
+  html {
+    font-size: 14px;
+  }
+
+  .card-kid, .card-glass {
+    @apply p-3;
+    border-radius: 1rem;
+  }
+
+  .game-card-3d {
+    @apply p-2;
+    border-radius: 1rem;
+  }
+
+  .btn-kid {
+    @apply px-4 py-2.5 text-sm;
+  }
+}
+
+/* Standard mobile (375px - 640px) */
+@media (min-width: 375px) and (max-width: 639px) {
+  .card-kid, .card-glass {
+    @apply p-4;
+  }
+}
+
+/* Tablet landscape & small desktop */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .max-w-5xl {
+    max-width: 90vw;
+  }
+}
+
+/* Large desktop */
+@media (min-width: 1400px) {
+  .max-w-5xl {
+    max-width: 72rem;
+  }
+}
+
+/* Ultra-wide */
+@media (min-width: 2000px) {
+  html {
+    font-size: 18px;
+  }
+}
+
+/* Landscape mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  header {
+    padding-top: 0.25rem !important;
+    padding-bottom: 0.25rem !important;
+  }
+
+  .card-kid, .card-glass {
+    @apply p-3;
+  }
+}
+
+/* iOS specific fixes */
+@supports (-webkit-touch-callout: none) {
+  body {
+    /* Fix iOS 100vh issue */
+    min-height: -webkit-fill-available;
+  }
+
+  /* Prevent iOS zoom on input focus */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  /* Fix iOS sticky header */
+  header {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+}
+
+/* Firefox fixes */
+@-moz-document url-prefix() {
+  .card-glass, .card-kid {
+    background-clip: padding-box;
+  }
+
+  /* Firefox scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--primary) / 0.15) transparent;
+  }
+}
+
+/* Safari backdrop-filter fallback */
+@supports not (backdrop-filter: blur(1px)) {
+  .card-glass, .card-kid, header {
+    background: hsl(var(--card) / 0.95) !important;
+  }
+}
+
+/* RTL support adjustments */
+[dir="rtl"] {
+  .section-title::after {
+    left: 25%;
+    right: 25%;
+  }
+}
+
+/* Hover only for non-touch */
+@media (hover: none) {
+  .card-kid:hover,
+  .game-card-3d:hover,
+  .letter-card:hover {
+    transform: none;
+    box-shadow: var(--shadow-card);
+  }
+
+  .card-kid:hover::before,
+  .game-card-3d:hover::after,
+  .letter-card:hover::after {
+    opacity: 0;
+  }
+
+  /* Active states for touch */
+  .card-kid:active {
+    transform: scale(0.98);
+  }
+
+  .game-card-3d:active {
+    transform: scale(0.96);
+  }
+
+  .btn-kid:active {
+    transform: scale(0.95);
+  }
+}
+
+/* Notched device safe areas */
+@supports (padding: max(0px)) {
+  header {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+
+  footer {
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  }
 }

@@ -91,6 +91,7 @@ const AppHeader = () => {
       className="sticky top-0 z-50 backdrop-blur-2xl bg-card/60 dark:bg-card/50 border-b border-border/30"
       style={{
         boxShadow: "0 4px 30px -10px hsl(var(--primary) / 0.06)",
+        paddingTop: "env(safe-area-inset-top, 0px)",
       }}
     >
       {/* Flowing gradient line at bottom */}
