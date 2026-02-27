@@ -9,6 +9,8 @@ import { playClickSound } from "@/lib/sounds";
 import FloatingParticles from "@/components/FloatingParticles";
 import Card3D from "@/components/Card3D";
 import DailyChallengeCard from "@/components/DailyChallengeCard";
+import WordOfTheDay from "@/components/WordOfTheDay";
+import { getSmartRecommendations, getMotivationalMessage, Recommendation } from "@/lib/recommendations";
 import mascotImg from "@/assets/mascot.png";
 
 const containerVariants = {
@@ -41,6 +43,8 @@ const Index = () => {
   const [dailyChallenge, setDailyChallenge] = useState(getDailyChallenge());
   const [mascotMood, setMascotMood] = useState<"idle" | "wave" | "celebrate">("idle");
   const [refreshKey, setRefreshKey] = useState(0);
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+  const [motivation, setMotivation] = useState(getMotivationalMessage(lang));
 
   useEffect(() => {
     setTotalStars(getTotalEarnedStars());
@@ -48,11 +52,13 @@ const Index = () => {
     setBadgeCount(getUnlockedAchievements().length);
     setXpState(getXP());
     setDailyChallenge(getDailyChallenge());
+    setRecommendations(getSmartRecommendations(lang));
+    setMotivation(getMotivationalMessage(lang));
     
     const t1 = setTimeout(() => setMascotMood("wave"), 800);
     const t2 = setTimeout(() => setMascotMood("idle"), 2500);
     return () => { clearTimeout(t1); clearTimeout(t2); };
-  }, []);
+  }, [lang]);
 
   const level = levels[currentLevel - 1];
   const levelProgress = getLevelProgress(level);
@@ -228,6 +234,49 @@ const Index = () => {
         <motion.div variants={itemVariants} className="max-w-lg mx-auto mb-6">
           <DailyChallengeCard key={refreshKey} challenge={dailyChallenge} onUpdate={refreshStats} />
         </motion.div>
+
+        {/* ── WORD OF THE DAY ── */}
+        <motion.div variants={itemVariants} className="max-w-lg mx-auto mb-6">
+          <WordOfTheDay />
+        </motion.div>
+
+        {/* ── MOTIVATIONAL MESSAGE ── */}
+        <motion.div variants={itemVariants} className="max-w-lg mx-auto mb-4">
+          <div className="flex items-center gap-2 justify-center text-sm text-muted-foreground font-display">
+            <span className="text-lg">{motivation.emoji}</span>
+            <span className="font-semibold">{motivation.text}</span>
+          </div>
+        </motion.div>
+
+        {/* ── SMART RECOMMENDATIONS ── */}
+        {recommendations.length > 0 && (
+          <motion.div variants={itemVariants} className="max-w-lg mx-auto mb-6">
+            <h3 className="font-display text-sm font-bold mb-2 text-center text-muted-foreground">
+              {lang === "he" ? "💡 מומלץ עבורך" : lang === "ar" ? "💡 مُوصى لك" : "💡 Recommended for You"}
+            </h3>
+            <div className="space-y-2">
+              {recommendations.map((rec, i) => (
+                <motion.button
+                  key={rec.reason}
+                  whileHover={{ scale: 1.02, x: 4 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => { playClickSound(); navigate(rec.path); }}
+                  className="w-full flex items-center gap-3 p-3 rounded-xl bg-muted/20 hover:bg-muted/40 transition-colors text-start"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.5 + i * 0.1 }}
+                >
+                  <span className="text-xl">{rec.emoji}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-display font-bold text-sm">{rec.title[lang] || rec.title.en}</p>
+                    <p className="text-xs text-muted-foreground font-body truncate">{rec.description[lang] || rec.description.en}</p>
+                  </div>
+                  <span className="text-muted-foreground text-sm">{dir === "rtl" ? "◀" : "▶"}</span>
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+        )}
 
         {/* ── STATS ROW ── */}
         <motion.div variants={itemVariants} className="flex justify-center gap-2 sm:gap-3 mb-6 flex-wrap">

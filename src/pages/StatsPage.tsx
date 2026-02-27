@@ -7,6 +7,7 @@ import { getStatsHistory, getLastNDays, getWeeklySummary } from "@/lib/statsTrac
 import { getTotalEarnedStars } from "@/lib/levels";
 import { getUnlockedAchievements } from "@/lib/achievements";
 import FloatingParticles from "@/components/FloatingParticles";
+import StreakCalendar from "@/components/StreakCalendar";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   AreaChart, Area, PieChart, Pie, Cell,
@@ -336,6 +337,16 @@ const StatsPage = () => {
             </div>
           </motion.div>
         )}
+
+        {/* Streak Calendar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.65 }}
+          className="card-kid mb-6"
+        >
+          <StreakCalendar days={28} />
+        </motion.div>
 
         {/* Milestones / achievements progress */}
         <motion.div

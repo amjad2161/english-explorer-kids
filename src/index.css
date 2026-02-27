@@ -515,3 +515,100 @@
     filter: drop-shadow(0 0 20px hsl(var(--primary) / 0.3));
   }
 }
+
+/* ═══════════════════════════════════════════════ */
+/* ─── REDUCED MOTION SUPPORT ─── */
+/* ═══════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .bg-particles::before,
+  .bg-particles::after {
+    animation: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════ */
+/* ─── PRINT STYLES ─── */
+/* ═══════════════════════════════════════════════ */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt;
+  }
+
+  header, footer, .bg-particles,
+  nav, .fixed, button:not(.print-visible) {
+    display: none !important;
+  }
+
+  .card-kid, .card-glass, .game-card-3d {
+    background: white !important;
+    backdrop-filter: none !important;
+    box-shadow: 0 0 1px #ccc !important;
+    border: 1px solid #ddd !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .progress-bar {
+    background: #eee !important;
+  }
+
+  .progress-bar-fill {
+    background: #333 !important;
+  }
+
+  .progress-bar-fill::after {
+    display: none !important;
+  }
+
+  .text-gradient {
+    background: none !important;
+    -webkit-text-fill-color: #333 !important;
+    color: #333 !important;
+    filter: none !important;
+  }
+
+  .dark .text-gradient {
+    filter: none !important;
+  }
+
+  /* Ensure charts print well */
+  .recharts-wrapper {
+    page-break-inside: avoid;
+  }
+
+  @page {
+    margin: 1.5cm;
+    size: A4;
+  }
+}
+
+/* ═══════════════════════════════════════════════ */
+/* ─── HIGH CONTRAST MODE ─── */
+/* ═══════════════════════════════════════════════ */
+@media (forced-colors: active) {
+  .card-kid, .card-glass, .game-card-3d {
+    border: 2px solid CanvasText;
+  }
+  
+  .btn-kid {
+    border: 2px solid ButtonText;
+  }
+}
+
+/* ═══════════════════════════════════════════════ */
+/* ─── FOCUS-WITHIN FOR CARDS ─── */
+/* ═══════════════════════════════════════════════ */
+.card-kid:focus-within,
+.game-card-3d:focus-within {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
