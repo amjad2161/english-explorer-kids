@@ -19,8 +19,9 @@ import BackToLevels from "@/components/BackToLevels";
 import {
   Volume2, VolumeX, Music, Music2, Sun, Moon, Globe, RotateCcw,
   Trash2, Download, Shield, Info, ChevronRight, Sparkles, Users,
+  Pencil, Check,
 } from "lucide-react";
-import { getProfile, saveProfile, AVATAR_OPTIONS } from "@/lib/ageProfile";
+import { getProfile, saveProfile, AVATAR_OPTIONS, getAgeGroup, AGE_GROUPS } from "@/lib/ageProfile";
 import UserAvatar from "@/components/UserAvatar";
 
 const containerVariants = {
@@ -49,6 +50,29 @@ const SettingsPage = () => {
   const [resetDone, setResetDone] = useState(false);
   const [profile, setProfileState] = useState(getProfile());
   const [selectedAvatar, setSelectedAvatar] = useState(profile?.avatar || "🦉");
+  const [editingName, setEditingName] = useState(false);
+  const [editingAge, setEditingAge] = useState(false);
+  const [nameInput, setNameInput] = useState(profile?.name || "");
+  const [ageInput, setAgeInput] = useState(profile?.age?.toString() || "");
+
+  const saveName = () => {
+    if (profile && nameInput.trim().length <= 30) {
+      const updated = { ...profile, name: nameInput.trim() };
+      saveProfile(updated);
+      setProfileState(updated);
+    }
+    setEditingName(false);
+  };
+
+  const saveAge = () => {
+    const age = parseInt(ageInput);
+    if (profile && age >= 0 && age <= 18) {
+      const updated = { ...profile, age, ageGroup: getAgeGroup(age) };
+      saveProfile(updated);
+      setProfileState(updated);
+    }
+    setEditingAge(false);
+  };
 
   const t = (texts: Record<string, string>) => texts[lang] || texts.en;
 
@@ -131,11 +155,63 @@ const SettingsPage = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-sunshine/5 pointer-events-none" />
           <div className="relative flex items-center gap-4">
             <UserAvatar size="lg" showOwl />
-            <div className="flex-1">
-              {profile?.name && <h2 className="font-display font-bold text-lg">{profile.name}</h2>}
-              <p className="text-sm text-muted-foreground font-display">
-                {t({ he: `רמה ${level.level}`, ar: `مستوى ${level.level}`, en: `Level ${level.level}` })} • {xp.totalXP} XP • ⭐ {getTotalEarnedStars()}
-              </p>
+            <div className="flex-1 space-y-2">
+              {/* Editable Name */}
+              <div className="flex items-center gap-2">
+                {editingName ? (
+                  <div className="flex items-center gap-2 flex-1">
+                    <input
+                      type="text"
+                      value={nameInput}
+                      onChange={(e) => setNameInput(e.target.value.slice(0, 30))}
+                      onKeyDown={(e) => e.key === "Enter" && saveName()}
+                      autoFocus
+                      className="bg-muted/50 border border-border rounded-lg px-3 py-1.5 font-display font-bold text-base w-full outline-none focus:border-primary/50"
+                      placeholder={t({ he: "השם שלך", ar: "اسمك", en: "Your name" })}
+                    />
+                    <motion.button whileTap={{ scale: 0.9 }} onClick={saveName} className="p-1.5 rounded-lg bg-primary/15 text-primary">
+                      <Check className="w-4 h-4" />
+                    </motion.button>
+                  </div>
+                ) : (
+                  <>
+                    <h2 className="font-display font-bold text-lg">{profile?.name || t({ he: "ללא שם", ar: "بدون اسم", en: "No name" })}</h2>
+                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => setEditingName(true)} className="p-1 rounded-lg hover:bg-muted/50 text-muted-foreground">
+                      <Pencil className="w-3.5 h-3.5" />
+                    </motion.button>
+                  </>
+                )}
+              </div>
+              {/* Editable Age */}
+              <div className="flex items-center gap-2">
+                {editingAge ? (
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      min={0}
+                      max={18}
+                      value={ageInput}
+                      onChange={(e) => setAgeInput(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && saveAge()}
+                      autoFocus
+                      className="bg-muted/50 border border-border rounded-lg px-3 py-1.5 font-display font-bold text-sm w-20 outline-none focus:border-primary/50"
+                    />
+                    <motion.button whileTap={{ scale: 0.9 }} onClick={saveAge} className="p-1.5 rounded-lg bg-primary/15 text-primary">
+                      <Check className="w-4 h-4" />
+                    </motion.button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm text-muted-foreground font-display">
+                      {t({ he: `רמה ${level.level}`, ar: `مستوى ${level.level}`, en: `Level ${level.level}` })} • {xp.totalXP} XP • ⭐ {getTotalEarnedStars()}
+                      {profile?.age != null && ` • ${t({ he: "גיל", ar: "العمر", en: "Age" })} ${profile.age}`}
+                    </p>
+                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => setEditingAge(true)} className="p-1 rounded-lg hover:bg-muted/50 text-muted-foreground">
+                      <Pencil className="w-3.5 h-3.5" />
+                    </motion.button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </motion.div>
