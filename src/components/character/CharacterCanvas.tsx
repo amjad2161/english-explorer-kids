@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState, useCallback } from "react";
-import { motion, useSpring, useMotionValue, AnimatePresence } from "framer-motion";
+import { motion, useSpring, useMotionValue, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import professorOwl from "@/assets/professor-owl.png";
 import type { CharacterMood } from "@/lib/characterStore";
@@ -98,6 +98,13 @@ const CharacterCanvas = ({
   const mouseY = useMotionValue(0);
   const eyeX = useSpring(mouseX, { stiffness: 150, damping: 20 });
   const eyeY = useSpring(mouseY, { stiffness: 150, damping: 20 });
+
+  // Parallax on scroll — subtle vertical shift
+  const { scrollY } = useScroll();
+  const parallaxY = useTransform(scrollY, [0, 600], [0, -18]);
+  const parallaxRotate = useTransform(scrollY, [0, 600], [0, -3]);
+  const smoothParallaxY = useSpring(parallaxY, { stiffness: 80, damping: 20 });
+  const smoothParallaxRotate = useSpring(parallaxRotate, { stiffness: 80, damping: 20 });
 
   // Track mouse for eye following
   const handleMouseMove = useCallback(
@@ -236,21 +243,26 @@ const CharacterCanvas = ({
           }}
         />
 
-        {/* Main owl image with mood animation */}
-        <motion.img
-          src={professorOwl}
-          alt=""
-          draggable={false}
-          className="absolute inset-0 w-full h-full object-contain select-none"
-          style={{
-            filter: mood === "sad" 
-              ? "saturate(0.7) brightness(0.9)" 
-              : mood === "celebrate" 
-                ? "saturate(1.2) brightness(1.05)" 
-                : "saturate(1) brightness(1)",
-          }}
-          animate={getMoodAnimation()}
-        />
+        {/* Main owl image with mood + parallax animation */}
+        <motion.div
+          className="absolute inset-0"
+          style={{ y: smoothParallaxY, rotate: smoothParallaxRotate }}
+        >
+          <motion.img
+            src={professorOwl}
+            alt=""
+            draggable={false}
+            className="w-full h-full object-contain select-none"
+            style={{
+              filter: mood === "sad" 
+                ? "saturate(0.7) brightness(0.9)" 
+                : mood === "celebrate" 
+                  ? "saturate(1.2) brightness(1.05)" 
+                  : "saturate(1) brightness(1)",
+            }}
+            animate={getMoodAnimation()}
+          />
+        </motion.div>
 
         {/* Ground shadow */}
         <motion.div
