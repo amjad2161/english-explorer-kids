@@ -1,8 +1,8 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/lib/i18n";
 import { wordCategories } from "@/data/learningData";
-import { speakEnglish } from "@/lib/sounds";
+import { speakEnglish, playChalkWriteSound } from "@/lib/sounds";
 
 const WordOfTheDay = () => {
   const { lang, dir } = useLanguage();
@@ -24,12 +24,20 @@ const WordOfTheDay = () => {
     speakEnglish(word.english);
   };
 
+  const hasPlayed = useRef(false);
+
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}
       className="card-glass rounded-2xl p-4 cursor-pointer"
       onClick={speakWord}
       dir={dir}
+      onViewportEnter={() => {
+        if (!hasPlayed.current) {
+          hasPlayed.current = true;
+          playChalkWriteSound(600);
+        }
+      }}
     >
       <div className="flex items-center gap-3">
         <motion.span
