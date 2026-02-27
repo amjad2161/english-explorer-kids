@@ -9,6 +9,7 @@ import { useLanguage, Language } from "@/lib/i18n";
 import { useState, useEffect, useRef, useCallback } from "react";
 import owlPixar from "@/assets/owl-pixar.png";
 import { getProfile } from "@/lib/ageProfile";
+import UserAvatar from "@/components/UserAvatar";
 import {
   isSoundEnabled, setSoundEnabled,
   isMusicEnabled, setMusicEnabled,
@@ -391,18 +392,11 @@ const AppHeader = () => {
 
           {/* Profile avatar */}
           {profile && (
-            <motion.button
-              whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.85 }}
+            <UserAvatar
+              size="xs"
+              showOwl
               onClick={() => navigate("/parent")}
-              className="w-8 h-8 rounded-full flex items-center justify-center text-lg transition-colors"
-              style={{
-                background: "hsl(var(--grass) / 0.15)",
-                border: "2px solid hsl(var(--grass) / 0.3)",
-              }}
-              title={profile.name}
-            >
-              {profile.avatar}
-            </motion.button>
+            />
           )}
 
           {/* Stars */}
