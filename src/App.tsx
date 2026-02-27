@@ -19,6 +19,7 @@ import OfflineIndicator from "@/components/OfflineIndicator";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import BreakReminder from "@/components/BreakReminder";
 import KeyboardShortcuts from "@/components/KeyboardShortcuts";
+import OwlPageEntrance from "@/components/OwlPageEntrance";
 import Index from "./pages/Index";
 import AlphabetPage from "./pages/AlphabetPage";
 import WordsPage from "./pages/WordsPage";
@@ -98,6 +99,7 @@ const AppRoutes = () => (
     <OfflineIndicator />
     <PWAInstallPrompt />
     <main role="main" aria-label="Main content">
+      <OwlPageEntrance />
       <AnimatedRoutes />
     </main>
     <AppFooter />
