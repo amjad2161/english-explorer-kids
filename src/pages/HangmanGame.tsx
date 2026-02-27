@@ -108,7 +108,9 @@ const HangmanGame = () => {
   useEffect(() => {
     const maxLen = adaptive.maxWordLength;
     const all = shuffleArray(getSpellingWords(maxLen));
-    setWords(all.slice(0, TOTAL_ROUNDS));
+    const selected = all.slice(0, TOTAL_ROUNDS);
+    selected.sort((a, b) => a.english.length - b.english.length);
+    setWords(selected);
   }, []);
 
   useEffect(() => {
@@ -182,7 +184,9 @@ const HangmanGame = () => {
   const restart = () => {
     const maxLen = adaptive.maxWordLength;
     const all = shuffleArray(getSpellingWords(maxLen));
-    setWords(all.slice(0, TOTAL_ROUNDS));
+    const selected = all.slice(0, TOTAL_ROUNDS);
+    selected.sort((a, b) => a.english.length - b.english.length);
+    setWords(selected);
     setCurrentIndex(0); setScore(0); setStreak(0); setBestStreak(0);
     setFinished(false); setOwlMood("idle");
   };
