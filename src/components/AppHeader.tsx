@@ -59,6 +59,8 @@ const AppHeader = () => {
     { path: "/hangman", label: t("nav.hangman"), icon: "🎭", mobileOnly: true },
     { path: "/achievements", label: "🏅", icon: "🏅", mobileOnly: true },
     { path: "/stats", label: "📊", icon: "📊", mobileOnly: true },
+    { path: "/report", label: "📋", icon: "📋", mobileOnly: true },
+    { path: "/settings", label: "⚙️", icon: "⚙️", mobileOnly: true },
   ];
 
   useEffect(() => {

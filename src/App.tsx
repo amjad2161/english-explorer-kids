@@ -24,6 +24,8 @@ import WordScramble from "./pages/WordScramble";
 import HangmanGame from "./pages/HangmanGame";
 import AchievementsPage from "./pages/AchievementsPage";
 import StatsPage from "./pages/StatsPage";
+import SettingsPage from "./pages/SettingsPage";
+import ProgressReport from "./pages/ProgressReport";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -69,6 +71,8 @@ const AnimatedRoutes = () => {
         <Route path="/hangman" element={<PageWrapper><HangmanGame /></PageWrapper>} />
         <Route path="/achievements" element={<PageWrapper><AchievementsPage /></PageWrapper>} />
         <Route path="/stats" element={<PageWrapper><StatsPage /></PageWrapper>} />
+        <Route path="/settings" element={<PageWrapper><SettingsPage /></PageWrapper>} />
+        <Route path="/report" element={<PageWrapper><ProgressReport /></PageWrapper>} />
         <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
       </Routes>
     </AnimatePresence>

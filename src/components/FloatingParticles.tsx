@@ -34,8 +34,8 @@ const FloatingParticles = ({ count = 18 }: { count?: number }) => {
       {particles.map(p => (
         <motion.div
           key={p.id}
-          className="absolute select-none"
-          style={{ left: `${p.x}%`, top: `${p.y}%`, fontSize: p.size }}
+          className="absolute select-none will-change-transform"
+          style={{ left: `${p.x}%`, top: `${p.y}%`, fontSize: p.size, transform: "translateZ(0)" }}
           animate={{
             y: [0, -50, 15, -35, 0],
             x: [0, 25, -15, 12, 0],
