@@ -6,7 +6,7 @@ import type { CharacterMood } from "@/lib/characterStore";
 import { useCharacterStore } from "@/lib/characterStore";
 import { playOwlSpeechSound } from "@/lib/sounds";
 import OwlBodyAnimations from "./OwlBodyAnimations";
-import OwlEyes from "./OwlEyes";
+
 
 interface CharacterCanvasProps {
   mood: CharacterMood;
@@ -281,8 +281,6 @@ const CharacterCanvas = ({
         aria-label="Click the owl for a tip"
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleOwlClick(); }}
       >
-        {/* Realistic eye tracking */}
-        <OwlEyes width={width} mood={mood} containerRef={containerRef} />
 
         {/* Main owl image with mood + parallax animation */}
         <motion.div
