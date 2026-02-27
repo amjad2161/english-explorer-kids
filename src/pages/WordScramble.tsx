@@ -15,12 +15,34 @@ import StreakCounter from "@/components/StreakCounter";
 import ScorePopup, { useScorePopups } from "@/components/ScorePopup";
 import XPReward from "@/components/XPReward";
 import Interactive3DMascot from "@/components/Interactive3DMascot";
+import FloatingParticles from "@/components/FloatingParticles";
 import { Volume2, RotateCcw, Shuffle, Zap, Trophy } from "lucide-react";
 import BackToLevels from "@/components/BackToLevels";
 
 const TOTAL_ROUNDS = 8;
 const TIME_PER_ROUND = 25;
 const shuffleArray = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
+
+/* ─── Draggable scrambled letter tile ─── */
+const ScrambledTile = ({ letter, index, total }: { letter: string; index: number; total: number }) => (
+  <motion.div
+    initial={{ opacity: 0, y: -20, rotateX: -90 }}
+    animate={{ opacity: 1, y: 0, rotateX: 0 }}
+    transition={{
+      type: "spring",
+      stiffness: 300,
+      damping: 18,
+      delay: index * 0.05,
+    }}
+    whileHover={{ y: -4, scale: 1.08, rotateZ: [-2, 2, 0] }}
+    className="w-12 h-14 rounded-xl bg-candy/15 border-2 border-candy/30 flex items-center justify-center text-2xl font-display font-bold text-foreground shadow-sm relative overflow-hidden cursor-default"
+    style={{ perspective: "400px" }}
+  >
+    {/* Shine effect */}
+    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
+    {letter}
+  </motion.div>
+);
 
 const WordScramble = () => {
   const [searchParams] = useSearchParams();
@@ -153,17 +175,18 @@ const WordScramble = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
+      <FloatingParticles count={6} />
       <Confetti show={showConfetti} />
       <ScorePopup popups={popups} />
       <XPReward amount={xpAmount} show={showXP} gameType="scramble" onComplete={() => setShowXP(false)} />
-      
+
       <div className="max-w-2xl mx-auto px-4 py-8 relative z-10">
         <BackToLevels />
 
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
+          transition={{ duration: 0.5 }}
           className="text-center mb-6"
         >
           <Interactive3DMascot mood={owlMood} size="sm" />
@@ -173,7 +196,13 @@ const WordScramble = () => {
 
         {!finished ? (
           <>
-            <div className="card-glass mb-4 flex items-center justify-between flex-wrap gap-2">
+            {/* Stats bar */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="card-glass mb-4 flex items-center justify-between flex-wrap gap-2"
+            >
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-1.5 bg-muted/50 rounded-full px-3 py-1">
                   <span className="font-display font-bold text-sm">{currentIndex + 1}/{words.length}</span>
@@ -184,7 +213,7 @@ const WordScramble = () => {
                 </div>
               </div>
               <StreakCounter streak={streak} bestStreak={bestStreak} />
-            </div>
+            </motion.div>
 
             <div className="mb-4">
               <GameTimer key={timerKey} seconds={TIME_PER_ROUND} running={timerRunning} onTimeUp={handleTimeUp} />
@@ -193,107 +222,124 @@ const WordScramble = () => {
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
-                initial={{ opacity: 0, x: 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -40 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-                className="card-kid text-center mb-6"
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: -20 }}
+                transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+                className="card-kid text-center mb-6 relative overflow-hidden"
               >
-                <span className="text-6xl mb-3 block">{currentWord.emoji}</span>
-                <p className="font-display text-lg text-muted-foreground mb-1">{getWordTranslation(currentWord, lang)}</p>
-                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                  onClick={() => speakEnglish(currentWord.english)}
-                  className="inline-flex items-center gap-1.5 text-primary font-display text-sm mb-4 bg-primary/10 px-3 py-1.5 rounded-full hover:bg-primary/15 transition-colors">
-                  <Volume2 className="w-4 h-4" /> {t("spelling.listen")}
-                </motion.button>
+                {/* Ambient gradient */}
+                <div className="absolute inset-0 pointer-events-none" style={{
+                  background: result === "correct"
+                    ? "radial-gradient(circle at 50% 30%, hsl(var(--accent) / 0.06), transparent 60%)"
+                    : result === "wrong"
+                    ? "radial-gradient(circle at 50% 30%, hsl(var(--destructive) / 0.06), transparent 60%)"
+                    : "radial-gradient(circle at 50% 30%, hsl(var(--candy) / 0.04), transparent 60%)"
+                }} />
 
-                {/* Scrambled letters */}
-                <div className="flex justify-center gap-2 mb-5 flex-wrap">
-                  {scrambled.split("").map((letter, i) => (
-                    <motion.div
-                      key={`${i}-${letter}-${scrambled}`}
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.04, duration: 0.25 }}
-                      className="w-12 h-14 rounded-xl bg-candy/15 border-2 border-candy/30 flex items-center justify-center text-2xl font-display font-bold text-foreground shadow-sm"
-                    >
-                      {letter}
-                    </motion.div>
-                  ))}
-                </div>
-
-                {/* Input */}
-                <div className="flex justify-center gap-2 mb-4">
-                  <input
-                    type="text"
-                    value={userInput}
-                    onChange={e => setUserInput(e.target.value.toUpperCase())}
-                    onKeyDown={e => e.key === "Enter" && handleSubmit()}
-                    maxLength={currentWord.english.length}
-                    className={`text-center text-2xl font-display font-bold tracking-[0.3em] w-full max-w-xs px-4 py-3 rounded-xl border-2 bg-card focus:outline-none transition-all ${
-                      result === "correct" ? "border-accent bg-accent/10 shadow-md" :
-                      result === "wrong" ? "border-destructive bg-destructive/10" :
-                      "border-primary/30 focus:border-primary focus:shadow-md"
-                    }`}
-                    placeholder={currentWord.english.replace(/./g, "_ ").trim()}
-                    disabled={!!result}
-                    dir="ltr"
-                  />
-                </div>
-
-                <AnimatePresence>
-                  {result && (
-                    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                      className={`text-lg font-display font-bold mb-3 ${result === "correct" ? "text-accent" : "text-destructive"}`}>
-                      {result === "correct" ? t("quiz.correct") : `${t("quiz.wrong")} → ${currentWord.english}`}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                <div className="flex justify-center gap-3">
-                  <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                    onClick={reshuffle} disabled={!!result}
-                    className="btn-kid gradient-sky text-secondary-foreground flex items-center gap-1 text-sm">
-                    <Shuffle className="w-4 h-4" /> {t("scramble.reshuffle")}
+                <div className="relative">
+                  <motion.span className="text-6xl mb-3 block" whileHover={{ scale: 1.15 }}>{currentWord.emoji}</motion.span>
+                  <p className="font-display text-lg text-muted-foreground mb-1">{getWordTranslation(currentWord, lang)}</p>
+                  <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                    onClick={() => speakEnglish(currentWord.english)}
+                    className="inline-flex items-center gap-1.5 text-primary font-display text-sm mb-4 bg-primary/10 px-3 py-1.5 rounded-full hover:bg-primary/15 transition-colors">
+                    <Volume2 className="w-4 h-4" /> {t("spelling.listen")}
                   </motion.button>
-                  <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                    onClick={revealHint} disabled={!!result || hintRevealed >= currentWord.english.length - 1}
-                    className="btn-kid bg-muted text-foreground text-sm">
-                    💡 {t("scramble.hint")}
-                  </motion.button>
-                  <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                    onClick={handleSubmit} disabled={!!result || !userInput}
-                    className="btn-kid gradient-primary text-primary-foreground text-sm">
-                    ✓ {t("scramble.check")}
-                  </motion.button>
+
+                  {/* Scrambled letters - premium tiles */}
+                  <div className="flex justify-center gap-2 mb-5 flex-wrap">
+                    {scrambled.split("").map((letter, i) => (
+                      <ScrambledTile key={`${i}-${letter}-${scrambled}`} letter={letter} index={i} total={scrambled.length} />
+                    ))}
+                  </div>
+
+                  {/* Input */}
+                  <div className="flex justify-center gap-2 mb-4">
+                    <motion.input
+                      type="text"
+                      value={userInput}
+                      onChange={e => setUserInput(e.target.value.toUpperCase())}
+                      onKeyDown={e => e.key === "Enter" && handleSubmit()}
+                      maxLength={currentWord.english.length}
+                      className={`text-center text-2xl font-display font-bold tracking-[0.3em] w-full max-w-xs px-4 py-3 rounded-xl border-2 bg-card focus:outline-none transition-all duration-300 ${
+                        result === "correct" ? "border-accent bg-accent/10 shadow-lg shadow-accent/10" :
+                        result === "wrong" ? "border-destructive bg-destructive/10 shadow-lg shadow-destructive/10" :
+                        "border-primary/30 focus:border-primary focus:shadow-lg focus:shadow-primary/10"
+                      }`}
+                      placeholder={currentWord.english.replace(/./g, "_ ").trim()}
+                      disabled={!!result}
+                      dir="ltr"
+                      animate={result === "wrong" ? { x: [0, -8, 8, -6, 6, 0] } : {}}
+                      transition={{ duration: 0.4 }}
+                    />
+                  </div>
+
+                  <AnimatePresence>
+                    {result && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        className={`text-lg font-display font-bold mb-3 ${result === "correct" ? "text-accent" : "text-destructive"}`}
+                      >
+                        {result === "correct" ? `${t("quiz.correct")} 🎉` : `${t("quiz.wrong")} → ${currentWord.english}`}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <div className="flex justify-center gap-3 flex-wrap">
+                    <motion.button whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.96 }}
+                      onClick={reshuffle} disabled={!!result}
+                      className="btn-kid gradient-sky text-secondary-foreground flex items-center gap-1 text-sm">
+                      <Shuffle className="w-4 h-4" /> {t("scramble.reshuffle")}
+                    </motion.button>
+                    <motion.button whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.96 }}
+                      onClick={revealHint} disabled={!!result || hintRevealed >= currentWord.english.length - 1}
+                      className="btn-kid bg-muted text-foreground text-sm">
+                      💡 {t("scramble.hint")}
+                    </motion.button>
+                    <motion.button whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.96 }}
+                      onClick={handleSubmit} disabled={!!result || !userInput}
+                      className="btn-kid gradient-primary text-primary-foreground text-sm">
+                      ✓ {t("scramble.check")}
+                    </motion.button>
+                  </div>
                 </div>
               </motion.div>
             </AnimatePresence>
           </>
         ) : (
-          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.4 }}
-            className="card-kid text-center">
-            <Interactive3DMascot mood="celebrate" size="md" />
-            <h2 className="text-3xl font-display font-bold text-gradient mb-2">{t("spelling.finished")}</h2>
-            <div className="flex justify-center gap-4 mb-4">
-              <div className="bg-primary/10 rounded-2xl px-4 py-2 flex items-center gap-2">
-                <Zap className="w-5 h-5 text-primary" />
-                <span className="font-display font-bold text-lg">{score}</span>
+          <motion.div
+            initial={{ scale: 0.85, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 180, damping: 18 }}
+            className="card-kid text-center relative overflow-hidden"
+          >
+            <div className="absolute inset-0 pointer-events-none" style={{
+              background: "radial-gradient(circle at 50% 20%, hsl(var(--sunshine) / 0.08), transparent 60%)"
+            }} />
+            <div className="relative">
+              <Interactive3DMascot mood="celebrate" size="md" />
+              <h2 className="text-3xl font-display font-bold text-gradient mb-2">{t("spelling.finished")}</h2>
+              <div className="flex justify-center gap-4 mb-4">
+                <motion.div whileHover={{ scale: 1.05 }} className="bg-primary/10 rounded-2xl px-4 py-2 flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-primary" />
+                  <span className="font-display font-bold text-lg">{score}</span>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.05 }} className="bg-accent/10 rounded-2xl px-4 py-2 flex items-center gap-2">
+                  <Trophy className="w-5 h-5 text-accent" />
+                  <span className="font-display font-bold text-lg">{bestStreak}</span>
+                </motion.div>
               </div>
-              <div className="bg-accent/10 rounded-2xl px-4 py-2 flex items-center gap-2">
-                <Trophy className="w-5 h-5 text-accent" />
-                <span className="font-display font-bold text-lg">{bestStreak}</span>
-              </div>
+              <div className="my-4"><StarRating earned={stars} total={5} size={32} /></div>
+              <p className="font-display text-lg font-semibold text-primary mb-4">
+                {stars >= 4 ? t("quiz.amazing") : stars >= 2 ? t("quiz.wellDone") : t("quiz.keepTrying")}
+              </p>
+              <motion.button whileHover={{ scale: 1.04, y: -3 }} whileTap={{ scale: 0.96 }}
+                onClick={restart} className="btn-kid gradient-primary text-primary-foreground flex items-center gap-2 mx-auto">
+                <RotateCcw className="w-5 h-5" /> {t("quiz.playAgain")}
+              </motion.button>
             </div>
-            <div className="my-4"><StarRating earned={stars} total={5} size={32} /></div>
-            <p className="font-display text-lg font-semibold text-primary mb-4">
-              {stars >= 4 ? t("quiz.amazing") : stars >= 2 ? t("quiz.wellDone") : t("quiz.keepTrying")}
-            </p>
-            <motion.button whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }}
-              onClick={restart} className="btn-kid gradient-primary text-primary-foreground flex items-center gap-2 mx-auto">
-              <RotateCcw className="w-5 h-5" /> {t("quiz.playAgain")}
-            </motion.button>
           </motion.div>
         )}
       </div>
