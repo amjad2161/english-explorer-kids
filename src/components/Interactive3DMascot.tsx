@@ -45,17 +45,42 @@ const Interactive3DMascot = ({ mood = "idle", size = "md", onClick }: Interactiv
 
   return (
     <div className="relative inline-block" ref={ref}>
-      {/* Soft ambient glow */}
+      {/* Mood-reactive glow */}
       <motion.div
         className="absolute rounded-full pointer-events-none"
         style={{
-          background: "radial-gradient(circle, hsl(var(--primary) / 0.08), hsl(var(--sunshine) / 0.04), transparent 60%)",
-          filter: "blur(30px)",
           width: "200%", height: "200%", left: "-50%", top: "-50%",
+          background: mood === "celebrate"
+            ? "radial-gradient(circle, hsl(var(--sunshine) / 0.18), hsl(var(--candy) / 0.1), transparent 60%)"
+            : mood === "wave"
+            ? "radial-gradient(circle, hsl(var(--sky) / 0.15), hsl(var(--primary) / 0.08), transparent 60%)"
+            : "radial-gradient(circle, hsl(var(--primary) / 0.1), hsl(var(--lavender) / 0.05), transparent 60%)",
+          filter: mood === "celebrate" ? "blur(25px)" : "blur(30px)",
         }}
-        animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        animate={mood === "celebrate"
+          ? { scale: [1, 1.25, 1.05, 1.2, 1], opacity: [0.4, 0.8, 0.5, 0.75, 0.4] }
+          : mood === "wave"
+          ? { scale: [1, 1.15, 1], opacity: [0.35, 0.6, 0.35] }
+          : { scale: [1, 1.08, 1], opacity: [0.25, 0.4, 0.25] }
+        }
+        transition={{
+          duration: mood === "celebrate" ? 1.5 : mood === "wave" ? 3 : 5,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
       />
+      {/* Secondary pulse ring for celebrate */}
+      {mood === "celebrate" && (
+        <motion.div
+          className="absolute rounded-full pointer-events-none border-2"
+          style={{
+            width: "140%", height: "140%", left: "-20%", top: "-20%",
+            borderColor: "hsl(var(--sunshine) / 0.2)",
+          }}
+          animate={{ scale: [0.8, 1.3, 0.8], opacity: [0.3, 0, 0.3] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
+        />
+      )}
 
       {/* 3D interactive container */}
       <motion.div
