@@ -3,6 +3,13 @@
 const SOUND_KEY = "english-fun-sound-enabled";
 const MUSIC_KEY = "english-fun-music-enabled";
 
+// Extend the Window type to include the webkit-prefixed AudioContext (Safari legacy)
+declare global {
+  interface Window {
+    webkitAudioContext?: typeof AudioContext;
+  }
+}
+
 export const isSoundEnabled = (): boolean => localStorage.getItem(SOUND_KEY) !== "false";
 export const isMusicEnabled = (): boolean => localStorage.getItem(MUSIC_KEY) !== "false";
 export const setSoundEnabled = (v: boolean) => localStorage.setItem(SOUND_KEY, String(v));
@@ -106,7 +113,7 @@ export const speakSpelling = (letter: string) => {
 };
 
 // ─── Audio Context ───
-const audioCtx = typeof window !== 'undefined' ? new (window.AudioContext || (window as any).webkitAudioContext)() : null;
+const audioCtx = typeof window !== 'undefined' ? new (window.AudioContext || window.webkitAudioContext!)() : null;
 
 const ensureContext = () => {
   if (audioCtx?.state === 'suspended') audioCtx.resume();

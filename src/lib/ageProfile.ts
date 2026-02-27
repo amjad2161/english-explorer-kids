@@ -123,7 +123,7 @@ export const getProfile = (): LearnerProfile | null => {
   try {
     const raw = localStorage.getItem(PROFILE_KEY);
     if (raw) return JSON.parse(raw);
-  } catch {}
+  } catch { /* intentional */ }
   return null;
 };
 
@@ -167,7 +167,7 @@ export const getSessions = (): SessionRecord[] => {
   try {
     const raw = localStorage.getItem(SESSION_KEY);
     if (raw) return JSON.parse(raw);
-  } catch {}
+  } catch { /* intentional */ }
   return [];
 };
 
