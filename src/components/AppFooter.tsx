@@ -41,7 +41,7 @@ const AppFooter = () => {
               src={owlPixar}
               alt="English Fun Owl"
               className="w-10 h-10 object-contain"
-              style={{ filter: "drop-shadow(0 3px 6px rgba(0,0,0,0.15))" }}
+              style={{ WebkitMaskImage: "radial-gradient(ellipse 52% 56% at 50% 46%, black 50%, rgba(0,0,0,0.9) 60%, rgba(0,0,0,0.5) 72%, transparent 85%)", maskImage: "radial-gradient(ellipse 52% 56% at 50% 46%, black 50%, rgba(0,0,0,0.9) 60%, rgba(0,0,0,0.5) 72%, transparent 85%)" }}
               animate={{ y: [0, -4, 0], rotate: [0, 3, -3, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             />
