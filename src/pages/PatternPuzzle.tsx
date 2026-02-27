@@ -1,0 +1,624 @@
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useLanguage } from "@/lib/i18n";
+import { playCorrectSound, playWrongSound, playComboSound, playVictoryFanfare } from "@/lib/sounds";
+import { updateDailyProgress } from "@/lib/xp";
+import { trackGamePlayed } from "@/lib/statsTracker";
+import StarRating from "@/components/StarRating";
+import Confetti from "@/components/Confetti";
+import StreakCounter from "@/components/StreakCounter";
+import ScorePopup, { useScorePopups } from "@/components/ScorePopup";
+import XPReward from "@/components/XPReward";
+import ComboBurst from "@/components/ComboBurst";
+import FloatingParticles from "@/components/FloatingParticles";
+import Interactive3DMascot from "@/components/Interactive3DMascot";
+import CinematicBackground from "@/components/CinematicBackground";
+import GameEntrance from "@/components/GameEntrance";
+import BackToLevels from "@/components/BackToLevels";
+import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
+import { Zap, Trophy, RotateCcw, Lightbulb } from "lucide-react";
+
+/* ─── Pattern Types ─── */
+type PatternType = "letter-sequence" | "number-sequence" | "shape-pattern" | "mirror-pattern" | "color-word";
+
+interface Puzzle {
+  type: PatternType;
+  sequence: string[];
+  missingIndex: number;
+  answer: string;
+  options: string[];
+  hint: string;
+}
+
+/* ─── Puzzle Generators ─── */
+const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+const generateLetterSequence = (): Puzzle => {
+  const startIdx = Math.floor(Math.random() * 20);
+  const length = 5;
+  const seq = Array.from({ length }, (_, i) => ALPHABET[startIdx + i]);
+  const missingIndex = 1 + Math.floor(Math.random() * (length - 2));
+  const answer = seq[missingIndex];
+  const distractors = new Set<string>();
+  while (distractors.size < 3) {
+    const r = ALPHABET[Math.floor(Math.random() * 26)];
+    if (r !== answer) distractors.add(r);
+  }
+  const options = [...distractors, answer].sort(() => Math.random() - 0.5);
+  return {
+    type: "letter-sequence",
+    sequence: seq.map((s, i) => (i === missingIndex ? "?" : s)),
+    missingIndex,
+    answer,
+    options,
+    hint: `Think about the alphabet order starting from ${seq[0]}`,
+  };
+};
+
+const generateNumberSequence = (): Puzzle => {
+  const patterns = [
+    { start: Math.floor(Math.random() * 10), step: 2 + Math.floor(Math.random() * 4) },
+    { start: Math.floor(Math.random() * 5), step: 3 },
+    { start: 1 + Math.floor(Math.random() * 5), step: 5 },
+  ];
+  const p = patterns[Math.floor(Math.random() * patterns.length)];
+  const length = 5;
+  const seq = Array.from({ length }, (_, i) => String(p.start + i * p.step));
+  const missingIndex = 1 + Math.floor(Math.random() * (length - 2));
+  const answer = seq[missingIndex];
+  const distractors = new Set<string>();
+  while (distractors.size < 3) {
+    const offset = (Math.random() > 0.5 ? 1 : -1) * (1 + Math.floor(Math.random() * 3));
+    const r = String(Number(answer) + offset);
+    if (r !== answer) distractors.add(r);
+  }
+  const options = [...distractors, answer].sort(() => Math.random() - 0.5);
+  return {
+    type: "number-sequence",
+    sequence: seq.map((s, i) => (i === missingIndex ? "?" : s)),
+    missingIndex,
+    answer,
+    options,
+    hint: `Each number increases by ${p.step}`,
+  };
+};
+
+const SHAPES = ["●", "■", "▲", "◆", "★", "⬟", "⬡"];
+
+const generateShapePattern = (): Puzzle => {
+  const patternLen = 2 + Math.floor(Math.random() * 2);
+  const pattern = Array.from({ length: patternLen }, () => SHAPES[Math.floor(Math.random() * SHAPES.length)]);
+  const fullLen = patternLen * 2 + Math.floor(Math.random() * 2);
+  const seq = Array.from({ length: fullLen }, (_, i) => pattern[i % patternLen]);
+  const missingIndex = patternLen + Math.floor(Math.random() * (fullLen - patternLen));
+  const answer = seq[missingIndex];
+  const distractors = new Set<string>();
+  while (distractors.size < 3) {
+    const r = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+    if (r !== answer) distractors.add(r);
+  }
+  const options = [...distractors, answer].sort(() => Math.random() - 0.5);
+  return {
+    type: "shape-pattern",
+    sequence: seq.map((s, i) => (i === missingIndex ? "?" : s)),
+    missingIndex,
+    answer,
+    options,
+    hint: `The pattern repeats every ${patternLen} shapes`,
+  };
+};
+
+const MIRROR_PAIRS: [string, string][] = [
+  ["d", "b"], ["p", "q"], ["A", "A"], ["M", "M"], ["W", "W"],
+];
+
+const generateMirrorPattern = (): Puzzle => {
+  const pairCount = 3;
+  const seq: string[] = [];
+  const usedPairs: [string, string][] = [];
+  for (let i = 0; i < pairCount; i++) {
+    const pair = MIRROR_PAIRS[Math.floor(Math.random() * MIRROR_PAIRS.length)];
+    seq.push(pair[0], pair[1]);
+    usedPairs.push(pair);
+  }
+  const missingIndex = Math.floor(Math.random() * pairCount) * 2 + 1;
+  const answer = seq[missingIndex];
+  const distractors = new Set<string>();
+  const allLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split("");
+  while (distractors.size < 3) {
+    const r = allLetters[Math.floor(Math.random() * allLetters.length)];
+    if (r !== answer) distractors.add(r);
+  }
+  const options = [...distractors, answer].sort(() => Math.random() - 0.5);
+  return {
+    type: "mirror-pattern",
+    sequence: seq.map((s, i) => (i === missingIndex ? "?" : s)),
+    missingIndex,
+    answer,
+    options,
+    hint: `Look at the letter before "?" — what's its mirror?`,
+  };
+};
+
+const COLOR_WORDS: { word: string; color: string }[] = [
+  { word: "RED", color: "hsl(0 75% 50%)" },
+  { word: "BLUE", color: "hsl(220 80% 50%)" },
+  { word: "GREEN", color: "hsl(140 60% 40%)" },
+  { word: "YELLOW", color: "hsl(50 90% 50%)" },
+  { word: "PINK", color: "hsl(330 70% 60%)" },
+  { word: "ORANGE", color: "hsl(30 90% 55%)" },
+];
+
+const generateColorWordPattern = (): Puzzle => {
+  const shuffled = [...COLOR_WORDS].sort(() => Math.random() - 0.5);
+  const selected = shuffled.slice(0, 4);
+  const missingIndex = Math.floor(Math.random() * 4);
+  const answer = selected[missingIndex].word;
+  const remaining = COLOR_WORDS.filter(c => c.word !== answer);
+  const distractors = remaining.sort(() => Math.random() - 0.5).slice(0, 3).map(c => c.word);
+  const options = [...distractors, answer].sort(() => Math.random() - 0.5);
+  return {
+    type: "color-word",
+    sequence: selected.map((c, i) => (i === missingIndex ? "?" : c.word)),
+    missingIndex,
+    answer,
+    options,
+    hint: `Which color is missing from the pattern?`,
+  };
+};
+
+const GENERATORS = [
+  generateLetterSequence,
+  generateNumberSequence,
+  generateShapePattern,
+  generateMirrorPattern,
+  generateColorWordPattern,
+];
+
+const generatePuzzles = (count: number): Puzzle[] => {
+  const puzzles: Puzzle[] = [];
+  for (let i = 0; i < count; i++) {
+    const gen = GENERATORS[i % GENERATORS.length];
+    puzzles.push(gen());
+  }
+  return puzzles.sort(() => Math.random() - 0.5);
+};
+
+const TYPE_LABELS: Record<PatternType, Record<string, string>> = {
+  "letter-sequence": { he: "סדרת אותיות", ar: "تسلسل حروف", en: "Letter Sequence" },
+  "number-sequence": { he: "סדרת מספרים", ar: "تسلسل أرقام", en: "Number Sequence" },
+  "shape-pattern": { he: "דפוס צורות", ar: "نمط أشكال", en: "Shape Pattern" },
+  "mirror-pattern": { he: "דפוס מראה", ar: "نمط مرآة", en: "Mirror Pattern" },
+  "color-word": { he: "מילות צבע", ar: "كلمات ألوان", en: "Color Words" },
+};
+
+const TYPE_EMOJIS: Record<PatternType, string> = {
+  "letter-sequence": "🔤",
+  "number-sequence": "🔢",
+  "shape-pattern": "🔷",
+  "mirror-pattern": "🪞",
+  "color-word": "🎨",
+};
+
+/* ─── Sequence cell ─── */
+const SequenceCell = ({ value, isMissing, isRevealed, revealedAnswer, type }: {
+  value: string; isMissing: boolean; isRevealed: boolean; revealedAnswer?: string; type: PatternType;
+}) => {
+  const colorInfo = type === "color-word" ? COLOR_WORDS.find(c => c.word === (isRevealed ? revealedAnswer : value)) : null;
+
+  return (
+    <motion.div
+      layout
+      className={`w-12 h-14 sm:w-14 sm:h-16 rounded-xl flex items-center justify-center font-display font-extrabold text-lg sm:text-xl border-2 transition-all ${
+        isMissing
+          ? isRevealed
+            ? "border-accent"
+            : "border-primary/50 animate-pulse"
+          : "border-border/40"
+      }`}
+      style={{
+        background: isMissing
+          ? isRevealed
+            ? "hsl(var(--accent) / 0.15)"
+            : "hsl(var(--primary) / 0.08)"
+          : "hsl(var(--card) / 0.7)",
+        boxShadow: isMissing ? "0 0 16px hsl(var(--primary) / 0.15)" : "var(--shadow-card)",
+        color: colorInfo?.color || undefined,
+      }}
+      whileHover={isMissing && !isRevealed ? { scale: 1.08 } : {}}
+    >
+      {isMissing ? (
+        isRevealed ? (
+          <motion.span
+            initial={{ scale: 0, rotate: -20 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 12 }}
+          >
+            {revealedAnswer}
+          </motion.span>
+        ) : (
+          <span className="text-primary/60 text-2xl">?</span>
+        )
+      ) : (
+        value
+      )}
+    </motion.div>
+  );
+};
+
+/* ═══ MAIN COMPONENT ═══ */
+const PatternPuzzle = () => {
+  const { t, lang, dir } = useLanguage();
+  const adaptive = useAgeAdaptive();
+  const TOTAL_ROUNDS = 10;
+
+  const [puzzles, setPuzzles] = useState<Puzzle[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selected, setSelected] = useState<string | null>(null);
+  const [result, setResult] = useState<"correct" | "wrong" | null>(null);
+  const [score, setScore] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [bestStreak, setBestStreak] = useState(0);
+  const [finished, setFinished] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [showCombo, setShowCombo] = useState(false);
+  const [showHint, setShowHint] = useState(false);
+  const [hintsUsed, setHintsUsed] = useState(0);
+  const [showXP, setShowXP] = useState(false);
+  const [xpAmount, setXpAmount] = useState(0);
+  const [owlMood, setOwlMood] = useState<"idle" | "celebrate" | "sad" | "surprised">("idle");
+  const { popups, addPopup } = useScorePopups();
+
+  useEffect(() => {
+    setPuzzles(generatePuzzles(TOTAL_ROUNDS));
+  }, []);
+
+  const puzzle = puzzles[currentIndex];
+  const progress = puzzles.length > 0 ? ((currentIndex + 1) / puzzles.length) * 100 : 0;
+
+  const handleSelect = useCallback((option: string) => {
+    if (result || !puzzle) return;
+    setSelected(option);
+
+    if (option === puzzle.answer) {
+      const newStreak = streak + 1;
+      const bonus = Math.min(newStreak, 5);
+      const hintPenalty = showHint ? 5 : 0;
+      const points = Math.max(5, 15 + bonus * 5 - hintPenalty);
+      setResult("correct");
+      setScore(s => s + points);
+      setStreak(newStreak);
+      setOwlMood("surprised");
+      setBestStreak(b => Math.max(b, newStreak));
+      if (newStreak >= 3) {
+        playComboSound(newStreak);
+        setShowCombo(true);
+        setTimeout(() => setShowCombo(false), 1200);
+      } else {
+        playCorrectSound();
+      }
+      addPopup(points, newStreak >= 3 ? `×${newStreak}` : "✓");
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 100);
+    } else {
+      setResult("wrong");
+      setStreak(0);
+      setOwlMood("sad");
+      playWrongSound();
+    }
+
+    setTimeout(() => {
+      setOwlMood("idle");
+      advance();
+    }, 1500);
+  }, [result, puzzle, streak, showHint]);
+
+  const advance = () => {
+    if (currentIndex + 1 >= puzzles.length) {
+      setFinished(true);
+      setOwlMood("celebrate");
+      playVictoryFanfare();
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 100);
+      const xp = Math.max(10, score);
+      setXpAmount(xp);
+      setShowXP(true);
+      const correctCount = Math.round(score / 20);
+      trackGamePlayed("pattern", correctCount, TOTAL_ROUNDS - correctCount, xp);
+      updateDailyProgress("pattern");
+    } else {
+      setCurrentIndex(i => i + 1);
+      setSelected(null);
+      setResult(null);
+      setShowHint(false);
+    }
+  };
+
+  const restart = () => {
+    setPuzzles(generatePuzzles(TOTAL_ROUNDS));
+    setCurrentIndex(0);
+    setScore(0);
+    setStreak(0);
+    setBestStreak(0);
+    setFinished(false);
+    setSelected(null);
+    setResult(null);
+    setShowHint(false);
+    setHintsUsed(0);
+    setOwlMood("idle");
+  };
+
+  const useHint = () => {
+    if (!showHint) {
+      setShowHint(true);
+      setHintsUsed(h => h + 1);
+    }
+  };
+
+  const stars = puzzles.length > 0 ? Math.ceil((score / (TOTAL_ROUNDS * 30)) * 5) : 0;
+
+  if (puzzles.length === 0) return null;
+
+  return (
+    <div className="min-h-screen relative" dir={dir}>
+      <GameEntrance title={lang === "he" ? "חידת דפוסים" : lang === "ar" ? "لغز الأنماط" : "Pattern Puzzle"} emoji="🧩" />
+      <CinematicBackground intensity={0.5} />
+      <FloatingParticles count={8} />
+      <Confetti show={showConfetti} />
+      <ScorePopup popups={popups} />
+      <ComboBurst combo={streak} show={showCombo} />
+      <XPReward amount={xpAmount} show={showXP} gameType="pattern" onComplete={() => setShowXP(false)} />
+
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10 relative z-10">
+        <BackToLevels />
+
+        {/* Hero header */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-6"
+        >
+          <Interactive3DMascot mood={owlMood} size="sm" />
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gradient mb-1">
+            {lang === "he" ? "🧩 חידת דפוסים" : lang === "ar" ? "🧩 لغز الأنماط" : "🧩 Pattern Puzzle"}
+          </h1>
+          <p className="text-muted-foreground font-body text-sm sm:text-base">
+            {lang === "he" ? "מצא את הדפוס והשלם את הסדרה!" : lang === "ar" ? "اكتشف النمط وأكمل السلسلة!" : "Find the pattern and complete the sequence!"}
+          </p>
+        </motion.div>
+
+        {!finished ? (
+          <>
+            {/* Stats bar */}
+            <div className="card-glass rounded-2xl p-3 mb-4 flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-1.5 bg-muted/40 rounded-full px-3 py-1.5 border border-border">
+                  <span className="font-display font-bold text-sm">{currentIndex + 1}/{puzzles.length}</span>
+                </div>
+                <div className="flex items-center gap-1.5 rounded-full px-3 py-1.5 border border-primary/20" style={{ background: "hsl(var(--primary) / 0.08)" }}>
+                  <Zap className="w-3.5 h-3.5 text-primary" />
+                  <span className="font-display font-bold text-sm text-primary">{score}</span>
+                </div>
+              </div>
+              <StreakCounter streak={streak} bestStreak={bestStreak} />
+            </div>
+
+            {/* Progress bar */}
+            <div className="mb-5">
+              <div className="h-2.5 rounded-full bg-muted/50 overflow-hidden border border-border backdrop-blur-sm">
+                <motion.div
+                  className="h-full rounded-full relative overflow-hidden"
+                  style={{ background: "linear-gradient(90deg, hsl(var(--sky)), hsl(var(--primary)))" }}
+                  animate={{ width: `${progress}%` }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                >
+                  <div className="absolute inset-0 animate-shimmer" />
+                </motion.div>
+              </div>
+            </div>
+
+            <AnimatePresence mode="wait">
+              {puzzle && (
+                <motion.div
+                  key={currentIndex}
+                  initial={{ opacity: 0, x: 40 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -40 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  className="card-glass rounded-3xl p-6 sm:p-8 text-center relative overflow-hidden"
+                >
+                  {/* Decorative gradient */}
+                  <div className="absolute -top-16 -end-16 w-40 h-40 rounded-full opacity-10 blur-3xl pointer-events-none"
+                    style={{ background: "linear-gradient(135deg, hsl(var(--sky)), hsl(var(--primary)))" }}
+                  />
+
+                  {/* Type badge */}
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full mb-5 text-xs font-display font-semibold border"
+                    style={{ background: "hsl(var(--primary) / 0.08)", borderColor: "hsl(var(--primary) / 0.2)", color: "hsl(var(--primary))" }}
+                  >
+                    <span>{TYPE_EMOJIS[puzzle.type]}</span>
+                    {TYPE_LABELS[puzzle.type][lang] || TYPE_LABELS[puzzle.type].en}
+                  </motion.div>
+
+                  {/* Sequence display */}
+                  <div className="flex items-center justify-center gap-2 sm:gap-3 mb-6 flex-wrap">
+                    {puzzle.sequence.map((val, i) => (
+                      <SequenceCell
+                        key={i}
+                        value={val}
+                        isMissing={i === puzzle.missingIndex}
+                        isRevealed={result === "correct" && i === puzzle.missingIndex}
+                        revealedAnswer={puzzle.answer}
+                        type={puzzle.type}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Hint */}
+                  <AnimatePresence>
+                    {showHint && (
+                      <motion.p
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="text-sm text-muted-foreground font-body mb-4 px-4 py-2 rounded-xl border border-border/40 inline-block"
+                        style={{ background: "hsl(var(--muted) / 0.3)" }}
+                      >
+                        💡 {puzzle.hint}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Options */}
+                  <div className="grid grid-cols-2 gap-3 mb-5 max-w-xs mx-auto">
+                    {puzzle.options.map((option, i) => {
+                      const isSelected = selected === option;
+                      const isCorrectAnswer = result && option === puzzle.answer;
+                      const isWrong = result === "wrong" && isSelected;
+
+                      return (
+                        <motion.button
+                          key={`${currentIndex}-${i}`}
+                          initial={{ opacity: 0, scale: 0.85 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: i * 0.06, type: "spring", stiffness: 250 }}
+                          whileHover={!result ? { scale: 1.06, y: -3 } : {}}
+                          whileTap={!result ? { scale: 0.92 } : {}}
+                          onClick={() => handleSelect(option)}
+                          disabled={!!result}
+                          className={`relative h-14 sm:h-16 rounded-xl font-display font-bold text-xl border-2 transition-all overflow-hidden ${
+                            isCorrectAnswer
+                              ? "border-accent text-accent"
+                              : isWrong
+                              ? "border-destructive text-destructive"
+                              : "border-border/50 text-foreground hover:border-primary/40"
+                          }`}
+                          style={
+                            isCorrectAnswer
+                              ? { background: "hsl(var(--accent) / 0.12)", boxShadow: "0 0 16px hsl(var(--accent) / 0.2)" }
+                              : isWrong
+                              ? { background: "hsl(var(--destructive) / 0.1)" }
+                              : { background: "hsl(var(--card) / 0.8)", boxShadow: "var(--shadow-card)" }
+                          }
+                        >
+                          <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity pointer-events-none"
+                            style={{ background: "linear-gradient(135deg, hsl(var(--primary) / 0.06), transparent 60%)" }}
+                          />
+                          <span className="relative z-10">{option}</span>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Result feedback */}
+                  <AnimatePresence>
+                    {result && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8, scale: 0.9 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        className={`text-lg font-display font-bold py-2.5 px-5 rounded-2xl inline-block backdrop-blur-sm ${
+                          result === "correct"
+                            ? "text-accent border border-accent/25"
+                            : "text-destructive border border-destructive/25"
+                        }`}
+                        style={result === "correct"
+                          ? { background: "hsl(var(--accent) / 0.1)", boxShadow: "0 0 20px hsl(var(--accent) / 0.1)" }
+                          : { background: "hsl(var(--destructive) / 0.1)" }
+                        }
+                      >
+                        {result === "correct"
+                          ? `🎉 ${t("quiz.correct")}`
+                          : `😅 ${lang === "he" ? "התשובה:" : lang === "ar" ? "الإجابة:" : "Answer:"} ${puzzle.answer}`
+                        }
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Hint button */}
+                  {!result && !showHint && (
+                    <motion.button
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 1 }}
+                      onClick={useHint}
+                      className="mt-3 inline-flex items-center gap-1.5 text-muted-foreground font-display text-sm px-4 py-2 rounded-full border border-border/40 hover:border-primary/30 transition-all"
+                      style={{ background: "hsl(var(--muted) / 0.2)" }}
+                    >
+                      <Lightbulb className="w-3.5 h-3.5" />
+                      {lang === "he" ? "רמז" : lang === "ar" ? "تلميح" : "Hint"}
+                    </motion.button>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </>
+        ) : (
+          /* ═══ Results ═══ */
+          <motion.div
+            initial={{ scale: 0.85, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 180, damping: 18 }}
+            className="card-glass rounded-3xl p-8 sm:p-10 text-center relative overflow-hidden"
+          >
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full opacity-15 blur-3xl" style={{ background: "var(--gradient-hero)" }} />
+            </div>
+            <div className="relative z-10">
+              <Interactive3DMascot mood="celebrate" size="md" />
+              <h2 className="text-3xl sm:text-4xl font-display font-extrabold text-gradient mb-4">
+                {lang === "he" ? "!סיימת את החידות" : lang === "ar" ? "!أنهيت الألغاز" : "Puzzles Complete!"}
+              </h2>
+              <div className="flex justify-center gap-3 mb-5 flex-wrap">
+                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: "spring" }}
+                  className="rounded-2xl px-5 py-2.5 flex items-center gap-2 border border-primary/25"
+                  style={{ background: "hsl(var(--primary) / 0.1)" }}>
+                  <Zap className="w-5 h-5 text-primary" />
+                  <span className="font-display font-bold text-xl">{score}</span>
+                  <span className="text-xs text-muted-foreground font-display">XP</span>
+                </motion.div>
+                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.3, type: "spring" }}
+                  className="rounded-2xl px-5 py-2.5 flex items-center gap-2 border border-accent/25"
+                  style={{ background: "hsl(var(--accent) / 0.1)" }}>
+                  <Trophy className="w-5 h-5 text-accent" />
+                  <span className="font-display font-bold text-xl">{bestStreak}</span>
+                  <span className="text-xs text-muted-foreground font-display">
+                    {lang === "he" ? "רצף" : lang === "ar" ? "سلسلة" : "streak"}
+                  </span>
+                </motion.div>
+              </div>
+              <div className="flex justify-center mb-6">
+                <StarRating earned={Math.min(stars, 5)} total={5} size={32} />
+              </div>
+              <p className="text-muted-foreground font-body text-sm mb-6">
+                {stars >= 4
+                  ? (lang === "he" ? "!מדהים! אתה גאון דפוסים ⭐" : lang === "ar" ? "!مذهل! أنت عبقري أنماط ⭐" : "Amazing! You're a pattern genius ⭐!")
+                  : stars >= 2
+                  ? (lang === "he" ? "!כל הכבוד! המשך לתרגל 👏" : lang === "ar" ? "!أحسنت! واصل التمرين 👏" : "Well done! Keep practicing 👏!")
+                  : (lang === "he" ? "!לא נורא, תרגול עושה מושלם 💪" : lang === "ar" ? "!لا بأس، التمرين يصنع الكمال 💪" : "Don't give up, practice makes perfect 💪!")
+                }
+              </p>
+              <div className="flex justify-center gap-3">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={restart}
+                  className="px-6 py-3 rounded-2xl font-display font-bold text-sm inline-flex items-center gap-2 border border-primary/30 text-primary"
+                  style={{ background: "hsl(var(--primary) / 0.1)" }}
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  {t("quiz.playAgain")}
+                </motion.button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default PatternPuzzle;

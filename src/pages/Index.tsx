@@ -312,6 +312,7 @@ const gameCards = [
   { titleKey: "quick.spelling", emoji: "🐝", path: "/spelling", color: "bg-sunshine/10 dark:bg-sunshine/15" },
   { titleKey: "quick.scramble", emoji: "🔀", path: "/scramble", color: "bg-candy/10 dark:bg-candy/15" },
   { titleKey: "quick.hangman", emoji: "🎭", path: "/hangman", color: "bg-sky/10 dark:bg-sky/15" },
+  { titleKey: "quick.pattern", emoji: "🧩", path: "/pattern", color: "bg-lavender/10 dark:bg-lavender/15" },
 ];
 
 /* ─── Ornate divider ─── */

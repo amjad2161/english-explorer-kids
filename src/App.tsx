@@ -27,6 +27,7 @@ import LevelsPage from "./pages/LevelsPage";
 import SpellingBee from "./pages/SpellingBee";
 import WordScramble from "./pages/WordScramble";
 import HangmanGame from "./pages/HangmanGame";
+import PatternPuzzle from "./pages/PatternPuzzle";
 import AchievementsPage from "./pages/AchievementsPage";
 import StatsPage from "./pages/StatsPage";
 import SettingsPage from "./pages/SettingsPage";
@@ -75,6 +76,7 @@ const AnimatedRoutes = () => {
         <Route path="/spelling" element={<PageWrapper><SpellingBee /></PageWrapper>} />
         <Route path="/scramble" element={<PageWrapper><WordScramble /></PageWrapper>} />
         <Route path="/hangman" element={<PageWrapper><HangmanGame /></PageWrapper>} />
+        <Route path="/pattern" element={<PageWrapper><PatternPuzzle /></PageWrapper>} />
         <Route path="/achievements" element={<PageWrapper><AchievementsPage /></PageWrapper>} />
         <Route path="/stats" element={<PageWrapper><StatsPage /></PageWrapper>} />
         <Route path="/settings" element={<PageWrapper><SettingsPage /></PageWrapper>} />
