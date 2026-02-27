@@ -11,6 +11,7 @@ import Confetti from "@/components/Confetti";
 import StreakCounter from "@/components/StreakCounter";
 import ScorePopup, { useScorePopups } from "@/components/ScorePopup";
 import { Volume2, RotateCcw } from "lucide-react";
+import BackToLevels from "@/components/BackToLevels";
 
 const TOTAL_ROUNDS = 8;
 const MAX_WRONG = 6;
@@ -127,6 +128,7 @@ const HangmanGame = () => {
       <Confetti show={showConfetti} />
       <ScorePopup popups={popups} />
       <div className="max-w-2xl mx-auto px-4 py-8 relative z-10">
+        <BackToLevels />
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-6">
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">{t("hangman.title")}</h1>
           <p className="text-muted-foreground font-body">{t("hangman.subtitle")}</p>

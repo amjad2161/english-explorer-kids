@@ -25,6 +25,7 @@ const translations: Record<string, Record<Language, string>> = {
   "nav.words": { he: "📝 מילים", ar: "📝 كلمات", en: "📝 Words" },
   "nav.memory": { he: "🧩 התאמה", ar: "🧩 تطابق", en: "🧩 Match" },
   "nav.quiz": { he: "🎯 חידון", ar: "🎯 اختبار", en: "🎯 Quiz" },
+  "nav.backToLevels": { he: "חזרה לרמות", ar: "العودة للمستويات", en: "Back to Levels" },
 
   // Home
   "home.myProgress": { he: "ההתקדמות שלי", ar: "تقدمي", en: "My Progress" },

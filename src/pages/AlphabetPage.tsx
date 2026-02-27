@@ -8,6 +8,7 @@ import { addCompletedLetter } from "@/lib/progress";
 import { saveStageProgress } from "@/lib/levels";
 import StarRating from "@/components/StarRating";
 import Confetti from "@/components/Confetti";
+import BackToLevels from "@/components/BackToLevels";
 import { ChevronRight, ChevronLeft, Volume2 } from "lucide-react";
 
 const letterColors = [
@@ -63,6 +64,7 @@ const AlphabetPage = () => {
       <div className="bg-particles" />
       <Confetti show={showConfetti} />
       <div className="max-w-5xl mx-auto px-4 py-8 relative z-10">
+        <BackToLevels />
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">{t("alphabet.title")}</h1>
           <p className="text-muted-foreground font-body">{t("alphabet.subtitle")}</p>

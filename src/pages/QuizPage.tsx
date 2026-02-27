@@ -12,6 +12,7 @@ import StarRating from "@/components/StarRating";
 import Confetti from "@/components/Confetti";
 import StreakCounter from "@/components/StreakCounter";
 import ScorePopup, { useScorePopups } from "@/components/ScorePopup";
+import BackToLevels from "@/components/BackToLevels";
 import { RotateCcw } from "lucide-react";
 
 const QUIZ_SIZE = 8;
@@ -94,6 +95,7 @@ const QuizPage = () => {
       <Confetti show={showConfetti} />
       <ScorePopup popups={popups} />
       <div className="max-w-2xl mx-auto px-4 py-8 relative z-10">
+        <BackToLevels />
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">{t("quiz.title")}</h1>
           <p className="text-muted-foreground font-body">{t("quiz.subtitle")}</p>
