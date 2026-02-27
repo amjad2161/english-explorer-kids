@@ -149,14 +149,14 @@ const StatsPage = () => {
         {/* Quick stats grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
           {[
-            { icon: <Zap className="w-5 h-5" />, value: xpState.totalXP, label: t({ he: "XP כולל", ar: "XP إجمالي", en: "Total XP" }), color: "bg-primary/10 text-primary" },
-            { icon: <Star className="w-5 h-5" />, value: totalStars, label: t({ he: "כוכבים", ar: "نجوم", en: "Stars" }), color: "bg-sunshine/15 text-sunshine-foreground" },
-            { icon: <Trophy className="w-5 h-5" />, value: achievements.length, label: t({ he: "הישגים", ar: "إنجازات", en: "Achievements" }), color: "bg-accent/10 text-accent" },
-            { icon: <Flame className="w-5 h-5" />, value: stats.longestDayStreak, label: t({ he: "רצף שיא (ימים)", ar: "أطول سلسلة (أيام)", en: "Best Streak (days)" }), color: "bg-candy/10 text-candy" },
-            { icon: <Target className="w-5 h-5" />, value: `${accuracy}%`, label: t({ he: "דיוק", ar: "دقة", en: "Accuracy" }), color: "bg-accent/10 text-accent" },
-            { icon: <BookOpen className="w-5 h-5" />, value: progress.completedWords.length, label: t({ he: "מילים נלמדו", ar: "كلمات تعلمتها", en: "Words Learned" }), color: "bg-sky/10 text-sky" },
-            { icon: <TrendingUp className="w-5 h-5" />, value: stats.totalGamesPlayed, label: t({ he: "משחקים שוחקו", ar: "ألعاب لُعبت", en: "Games Played" }), color: "bg-lavender/10 text-lavender" },
-            { icon: <Award className="w-5 h-5" />, value: `${progress.completedLetters.length}/26`, label: t({ he: "אותיות נלמדו", ar: "حروف تعلمتها", en: "Letters Learned" }), color: "bg-grass/10 text-grass" },
+            { icon: <Zap className="w-5 h-5" />, value: xpState.totalXP, label: t({ he: "XP כולל", ar: "XP إجمالي", en: "Total XP" }), color: "bg-primary/10 text-primary", gradient: "from-primary/8 to-transparent" },
+            { icon: <Star className="w-5 h-5" />, value: totalStars, label: t({ he: "כוכבים", ar: "نجوم", en: "Stars" }), color: "bg-sunshine/15 text-sunshine-foreground", gradient: "from-sunshine/10 to-transparent" },
+            { icon: <Trophy className="w-5 h-5" />, value: achievements.length, label: t({ he: "הישגים", ar: "إنجازات", en: "Achievements" }), color: "bg-accent/10 text-accent", gradient: "from-accent/8 to-transparent" },
+            { icon: <Flame className="w-5 h-5" />, value: stats.longestDayStreak, label: t({ he: "רצף שיא (ימים)", ar: "أطول سلسلة (أيام)", en: "Best Streak (days)" }), color: "bg-candy/10 text-candy", gradient: "from-candy/8 to-transparent" },
+            { icon: <Target className="w-5 h-5" />, value: `${accuracy}%`, label: t({ he: "דיוק", ar: "دقة", en: "Accuracy" }), color: "bg-accent/10 text-accent", gradient: "from-accent/8 to-transparent" },
+            { icon: <BookOpen className="w-5 h-5" />, value: progress.completedWords.length, label: t({ he: "מילים נלמדו", ar: "كلمات تعلمتها", en: "Words Learned" }), color: "bg-sky/10 text-sky", gradient: "from-sky/8 to-transparent" },
+            { icon: <TrendingUp className="w-5 h-5" />, value: stats.totalGamesPlayed, label: t({ he: "משחקים שוחקו", ar: "ألعاب لُعبت", en: "Games Played" }), color: "bg-lavender/10 text-lavender", gradient: "from-lavender/8 to-transparent" },
+            { icon: <Award className="w-5 h-5" />, value: `${progress.completedLetters.length}/26`, label: t({ he: "אותיות נלמדו", ar: "حروف تعلمتها", en: "Letters Learned" }), color: "bg-grass/10 text-grass", gradient: "from-grass/8 to-transparent" },
           ].map((stat, i) => (
             <motion.div
               key={i}
@@ -166,7 +166,7 @@ const StatsPage = () => {
               whileHover={{ scale: 1.04, y: -3 }}
               className="card-kid text-center relative overflow-hidden"
             >
-              <div className={`absolute inset-0 bg-gradient-to-br ${stat.color.replace("bg-", "from-").replace("/10", "/8").replace("/15", "/10")} to-transparent pointer-events-none`} />
+              <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} pointer-events-none`} />
               <div className={`w-10 h-10 rounded-xl ${stat.color} flex items-center justify-center mx-auto mb-2 relative z-10`}>
                 {stat.icon}
               </div>
