@@ -91,6 +91,7 @@ const StatsPage = () => {
   return (
     <div className="min-h-screen relative" dir={dir}>
       <ClassroomBackground />
+      <FloatingParticles count={8} />
       
       <div className="max-w-4xl mx-auto px-4 py-8 relative z-10">
         <BackToLevels />
@@ -162,13 +163,15 @@ const StatsPage = () => {
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.15 + i * 0.05, type: "spring" }}
-              className="card-kid text-center"
+              whileHover={{ scale: 1.04, y: -3 }}
+              className="card-kid text-center relative overflow-hidden"
             >
-              <div className={`w-10 h-10 rounded-xl ${stat.color} flex items-center justify-center mx-auto mb-2`}>
+              <div className={`absolute inset-0 bg-gradient-to-br ${stat.color.replace("bg-", "from-").replace("/10", "/8").replace("/15", "/10")} to-transparent pointer-events-none`} />
+              <div className={`w-10 h-10 rounded-xl ${stat.color} flex items-center justify-center mx-auto mb-2 relative z-10`}>
                 {stat.icon}
               </div>
-              <p className="font-display text-2xl font-bold">{stat.value}</p>
-              <p className="text-xs text-muted-foreground font-body">{stat.label}</p>
+              <p className="font-display text-2xl font-bold relative z-10">{stat.value}</p>
+              <p className="text-xs text-muted-foreground font-body relative z-10">{stat.label}</p>
             </motion.div>
           ))}
         </div>
@@ -186,15 +189,15 @@ const StatsPage = () => {
             {t({ he: "סיכום שבועי", ar: "ملخص أسبوعي", en: "Weekly Summary" })}
           </h3>
           <div className="grid grid-cols-3 gap-4 relative z-10">
-            <div className="text-center">
+            <div className="text-center bg-primary/5 rounded-xl p-3">
               <p className="font-display text-3xl font-bold text-primary">{weekly.totalXP}</p>
               <p className="text-xs text-muted-foreground">XP</p>
             </div>
-            <div className="text-center">
+            <div className="text-center bg-accent/5 rounded-xl p-3">
               <p className="font-display text-3xl font-bold text-accent">{weekly.activeDays}/7</p>
               <p className="text-xs text-muted-foreground">{t({ he: "ימים פעילים", ar: "أيام نشطة", en: "Active Days" })}</p>
             </div>
-            <div className="text-center">
+            <div className="text-center bg-sky/5 rounded-xl p-3">
               <p className="font-display text-3xl font-bold text-sky">{weekly.avgAccuracy}%</p>
               <p className="text-xs text-muted-foreground">{t({ he: "דיוק", ar: "دقة", en: "Accuracy" })}</p>
             </div>
@@ -332,11 +335,15 @@ const StatsPage = () => {
               </div>
               <div className="flex flex-wrap gap-3 justify-center">
                 {gameBreakdown.map((item, i) => (
-                  <div key={i} className="flex items-center gap-2 bg-muted/40 rounded-lg px-3 py-1.5">
+                  <motion.div
+                    key={i}
+                    whileHover={{ scale: 1.05 }}
+                    className="flex items-center gap-2 bg-card/60 backdrop-blur-sm rounded-lg px-3 py-1.5 border border-border/30 shadow-sm"
+                  >
                     <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
                     <span className="text-sm font-display font-semibold">{item.name}</span>
                     <span className="text-xs text-muted-foreground">({item.value})</span>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>

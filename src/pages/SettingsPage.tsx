@@ -98,6 +98,7 @@ const SettingsPage = () => {
   return (
     <div className="min-h-screen relative" dir={dir}>
       <ClassroomBackground />
+      <FloatingParticles count={6} />
       
       <motion.div
         variants={containerVariants}
@@ -188,8 +189,8 @@ const SettingsPage = () => {
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={toggleTheme}
-              className={`w-14 h-7 rounded-full relative transition-colors ${
-                theme === "dark" ? "bg-lavender/30" : "bg-sunshine/30"
+              className={`w-14 h-7 rounded-full relative transition-all ${
+                theme === "dark" ? "bg-lavender/30 shadow-[0_0_8px_hsl(var(--lavender)/0.3)]" : "bg-sunshine/30 shadow-[0_0_8px_hsl(var(--sunshine)/0.3)]"
               }`}
             >
               <motion.div
@@ -221,8 +222,8 @@ const SettingsPage = () => {
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={toggleSound}
-                className={`w-14 h-7 rounded-full relative transition-colors ${
-                  soundOn ? "bg-primary/30" : "bg-muted/50"
+                className={`w-14 h-7 rounded-full relative transition-all ${
+                  soundOn ? "bg-primary/30 shadow-[0_0_8px_hsl(var(--primary)/0.3)]" : "bg-muted/50"
                 }`}
               >
                 <motion.div
@@ -245,8 +246,8 @@ const SettingsPage = () => {
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={toggleMusic}
-                className={`w-14 h-7 rounded-full relative transition-colors ${
-                  musicOn ? "bg-accent/30" : "bg-muted/50"
+                className={`w-14 h-7 rounded-full relative transition-all ${
+                  musicOn ? "bg-accent/30 shadow-[0_0_8px_hsl(var(--accent)/0.3)]" : "bg-muted/50"
                 }`}
               >
                 <motion.div
@@ -357,9 +358,10 @@ const SettingsPage = () => {
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.8, opacity: 0 }}
-                className="card-kid max-w-sm w-full text-center"
+                className="card-kid max-w-sm w-full text-center relative overflow-hidden"
                 onClick={e => e.stopPropagation()}
               >
+                <div className="absolute inset-0 bg-gradient-to-br from-destructive/5 via-transparent to-candy/5 pointer-events-none" />
                 {resetDone ? (
                   <>
                     <motion.span

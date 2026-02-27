@@ -128,6 +128,7 @@ const ProgressReport = () => {
   return (
     <div className="min-h-screen relative" dir={dir}>
       <ClassroomBackground />
+      <FloatingParticles count={8} />
       
       <motion.div
         ref={reportRef}
@@ -199,25 +200,27 @@ const ProgressReport = () => {
         {/* Key Metrics */}
         <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
           {[
-            { icon: <Star className="w-5 h-5" />, value: totalStars, label: t({ he: "כוכבים", ar: "نجوم", en: "Stars" }), color: "bg-sunshine/15 text-sunshine-foreground" },
-            { icon: <Zap className="w-5 h-5" />, value: xpState.totalXP, label: "XP", color: "bg-primary/10 text-primary" },
-            { icon: <BookOpen className="w-5 h-5" />, value: progress.completedWords.length, label: t({ he: "מילים", ar: "كلمات", en: "Words" }), color: "bg-accent/10 text-accent" },
-            { icon: <Target className="w-5 h-5" />, value: `${accuracy}%`, label: t({ he: "דיוק", ar: "دقة", en: "Accuracy" }), color: "bg-sky/10 text-sky" },
-            { icon: <Brain className="w-5 h-5" />, value: `${progress.completedLetters.length}/26`, label: t({ he: "אותיות", ar: "حروف", en: "Letters" }), color: "bg-lavender/10 text-lavender" },
-            { icon: <Trophy className="w-5 h-5" />, value: achievements.length, label: t({ he: "הישגים", ar: "إنجازات", en: "Badges" }), color: "bg-candy/10 text-candy" },
+            { icon: <Star className="w-5 h-5" />, value: totalStars, label: t({ he: "כוכבים", ar: "نجوم", en: "Stars" }), color: "bg-sunshine/15 text-sunshine-foreground", gradient: "from-sunshine/8 to-sunshine/3" },
+            { icon: <Zap className="w-5 h-5" />, value: xpState.totalXP, label: "XP", color: "bg-primary/10 text-primary", gradient: "from-primary/8 to-primary/3" },
+            { icon: <BookOpen className="w-5 h-5" />, value: progress.completedWords.length, label: t({ he: "מילים", ar: "كلمات", en: "Words" }), color: "bg-accent/10 text-accent", gradient: "from-accent/8 to-accent/3" },
+            { icon: <Target className="w-5 h-5" />, value: `${accuracy}%`, label: t({ he: "דיוק", ar: "دقة", en: "Accuracy" }), color: "bg-sky/10 text-sky", gradient: "from-sky/8 to-sky/3" },
+            { icon: <Brain className="w-5 h-5" />, value: `${progress.completedLetters.length}/26`, label: t({ he: "אותיות", ar: "حروف", en: "Letters" }), color: "bg-lavender/10 text-lavender", gradient: "from-lavender/8 to-lavender/3" },
+            { icon: <Trophy className="w-5 h-5" />, value: achievements.length, label: t({ he: "הישגים", ar: "إنجازات", en: "Badges" }), color: "bg-candy/10 text-candy", gradient: "from-candy/8 to-candy/3" },
           ].map((stat, i) => (
             <motion.div
               key={i}
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2 + i * 0.05, type: "spring" }}
-              className="card-kid text-center p-4"
+              whileHover={{ scale: 1.04, y: -2 }}
+              className="card-kid text-center p-4 relative overflow-hidden"
             >
-              <div className={`w-10 h-10 rounded-xl ${stat.color} flex items-center justify-center mx-auto mb-2`}>
+              <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} pointer-events-none`} />
+              <div className={`w-10 h-10 rounded-xl ${stat.color} flex items-center justify-center mx-auto mb-2 relative z-10`}>
                 {stat.icon}
               </div>
-              <p className="font-display text-2xl font-bold">{stat.value}</p>
-              <p className="text-xs text-muted-foreground font-body">{stat.label}</p>
+              <p className="font-display text-2xl font-bold relative z-10">{stat.value}</p>
+              <p className="text-xs text-muted-foreground font-body relative z-10">{stat.label}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -253,15 +256,15 @@ const ProgressReport = () => {
             {t({ he: "פעילות שבועית", ar: "النشاط الأسبوعي", en: "Weekly Activity" })}
           </h3>
           <div className="grid grid-cols-3 gap-4 mb-4">
-            <div className="text-center">
+            <div className="text-center bg-primary/5 rounded-xl p-3">
               <p className="font-display text-2xl font-bold text-primary">{weekly.totalXP}</p>
               <p className="text-xs text-muted-foreground">XP</p>
             </div>
-            <div className="text-center">
+            <div className="text-center bg-accent/5 rounded-xl p-3">
               <p className="font-display text-2xl font-bold text-accent">{weekly.activeDays}/7</p>
               <p className="text-xs text-muted-foreground">{t({ he: "ימים פעילים", ar: "أيام نشطة", en: "Active Days" })}</p>
             </div>
-            <div className="text-center">
+            <div className="text-center bg-sky/5 rounded-xl p-3">
               <p className="font-display text-2xl font-bold text-sky">{weekly.avgAccuracy}%</p>
               <p className="text-xs text-muted-foreground">{t({ he: "דיוק", ar: "دقة", en: "Accuracy" })}</p>
             </div>
@@ -328,8 +331,8 @@ const ProgressReport = () => {
                 return (
                   <motion.div
                     key={a.id}
-                    whileHover={{ scale: 1.05 }}
-                    className="bg-muted/30 rounded-xl px-3 py-2 flex items-center gap-2"
+                    whileHover={{ scale: 1.08, y: -2 }}
+                    className="bg-gradient-to-br from-sunshine/10 to-candy/10 border border-sunshine/20 rounded-xl px-3 py-2 flex items-center gap-2 shadow-sm"
                   >
                     <span className="text-lg">🏅</span>
                     <span className="font-display font-semibold text-xs">

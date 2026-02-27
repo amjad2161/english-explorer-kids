@@ -43,17 +43,26 @@ const ParentDashboard = () => {
   if (!unlocked) {
     return (
       <div className="min-h-screen flex items-center justify-center relative" dir={dir}>
-        <FloatingParticles count={4} />
+        <ClassroomBackground />
+        <FloatingParticles count={8} />
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="card-kid max-w-sm w-full mx-4 text-center relative z-10"
+          transition={{ type: "spring", stiffness: 200, damping: 20 }}
+          className="card-kid max-w-sm w-full mx-4 text-center relative z-10 overflow-hidden"
         >
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-lavender/5 pointer-events-none" />
           <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent pointer-events-none"
+            animate={{ x: ["-100%", "200%"] }}
+            transition={{ duration: 4, repeat: Infinity, repeatDelay: 3, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="relative z-10"
             animate={{ rotate: [0, 3, -3, 0] }}
             transition={{ duration: 4, repeat: Infinity }}
           >
-            <Shield className="w-16 h-16 mx-auto mb-4 text-primary" />
+            <Shield className="w-16 h-16 mx-auto mb-4 text-primary drop-shadow-lg" />
           </motion.div>
           <h1 className="text-2xl font-display font-bold mb-2">
             {t({ he: "פינת ההורים", ar: "ركن الوالدين", en: "Parent Zone" })}
@@ -201,16 +210,24 @@ const ParentDashboard = () => {
           className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6"
         >
           {[
-            { icon: <Zap className="w-5 h-5 text-primary" />, value: xp.totalXP, label: "Total XP", color: "primary" },
-            { icon: <Star className="w-5 h-5 text-sunshine fill-sunshine" />, value: totalStars, label: t({ he: "כוכבים", ar: "نجوم", en: "Stars" }), color: "sunshine" },
-            { icon: <Trophy className="w-5 h-5 text-accent" />, value: badges.length, label: t({ he: "הישגים", ar: "إنجازات", en: "Badges" }), color: "accent" },
-            { icon: <TrendingUp className="w-5 h-5 text-grass" />, value: xp.streak, label: t({ he: "רצף", ar: "سلسلة", en: "Streak" }), color: "grass" },
+            { icon: <Zap className="w-5 h-5 text-primary" />, value: xp.totalXP, label: "Total XP", gradient: "from-primary/8 to-primary/3" },
+            { icon: <Star className="w-5 h-5 text-sunshine fill-sunshine" />, value: totalStars, label: t({ he: "כוכבים", ar: "نجوم", en: "Stars" }), gradient: "from-sunshine/10 to-sunshine/3" },
+            { icon: <Trophy className="w-5 h-5 text-accent" />, value: badges.length, label: t({ he: "הישגים", ar: "إنجازات", en: "Badges" }), gradient: "from-accent/8 to-accent/3" },
+            { icon: <TrendingUp className="w-5 h-5 text-grass" />, value: xp.streak, label: t({ he: "רצף", ar: "سلسلة", en: "Streak" }), gradient: "from-grass/8 to-grass/3" },
           ].map((stat, i) => (
-            <div key={i} className="bg-card rounded-2xl p-3 text-center border border-border shadow-sm">
-              <div className="flex justify-center mb-1">{stat.icon}</div>
-              <p className="font-display font-extrabold text-xl">{stat.value}</p>
-              <p className="text-[10px] text-muted-foreground font-semibold">{stat.label}</p>
-            </div>
+            <motion.div
+              key={i}
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2 + i * 0.06, type: "spring", stiffness: 250 }}
+              whileHover={{ scale: 1.04, y: -2 }}
+              className={`bg-card/90 backdrop-blur-sm rounded-2xl p-3 text-center border border-border/50 shadow-md relative overflow-hidden`}
+            >
+              <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} pointer-events-none`} />
+              <div className="flex justify-center mb-1 relative z-10">{stat.icon}</div>
+              <p className="font-display font-extrabold text-xl relative z-10">{stat.value}</p>
+              <p className="text-[10px] text-muted-foreground font-semibold relative z-10">{stat.label}</p>
+            </motion.div>
           ))}
         </motion.div>
 
@@ -228,17 +245,17 @@ const ParentDashboard = () => {
 
           {/* Weekly summary */}
           <div className="grid grid-cols-3 gap-3 mb-5">
-            <div className="bg-muted/30 rounded-xl p-2.5 text-center">
+            <div className="bg-sky/8 backdrop-blur-sm rounded-xl p-2.5 text-center border border-sky/10">
               <Clock className="w-4 h-4 mx-auto mb-1 text-sky" />
               <p className="font-display font-bold text-sm">{weeklyStats.totalMinutes}m</p>
               <p className="text-[10px] text-muted-foreground">{t({ he: "זמן למידה", ar: "وقت التعلم", en: "Study time" })}</p>
             </div>
-            <div className="bg-muted/30 rounded-xl p-2.5 text-center">
+            <div className="bg-candy/8 backdrop-blur-sm rounded-xl p-2.5 text-center border border-candy/10">
               <Gamepad2 className="w-4 h-4 mx-auto mb-1 text-candy" />
               <p className="font-display font-bold text-sm">{weeklyStats.totalGames}</p>
               <p className="text-[10px] text-muted-foreground">{t({ he: "משחקים", ar: "ألعاب", en: "Games" })}</p>
             </div>
-            <div className="bg-muted/30 rounded-xl p-2.5 text-center">
+            <div className="bg-grass/8 backdrop-blur-sm rounded-xl p-2.5 text-center border border-grass/10">
               <Calendar className="w-4 h-4 mx-auto mb-1 text-grass" />
               <p className="font-display font-bold text-sm">{weeklyStats.daysActive}/7</p>
               <p className="text-[10px] text-muted-foreground">{t({ he: "ימים פעילים", ar: "أيام نشطة", en: "Active days" })}</p>
@@ -296,6 +313,7 @@ const ParentDashboard = () => {
                   ar: `${level.title} - مستوى ${level.level}. جمع ${xp.totalXP} نقطة XP و ${totalStars} نجوم.`,
                   en: `${level.title} - Level ${level.level}. Earned ${xp.totalXP} XP and ${totalStars} stars.`,
                 }),
+                gradient: "from-primary/5 to-sky/5",
               },
               {
                 emoji: "🏅",
@@ -305,6 +323,7 @@ const ParentDashboard = () => {
                   ar: `فتح ${badges.length} من أصل 28 إنجازاً. ${badges.length < 10 ? "هناك الكثير لاكتشافه!" : "تقدم ممتاز!"}`,
                   en: `Unlocked ${badges.length} of 28 achievements. ${badges.length < 10 ? "Lots more to discover!" : "Excellent progress!"}`,
                 }),
+                gradient: "from-sunshine/5 to-candy/5",
               },
               {
                 emoji: "🔥",
@@ -316,15 +335,20 @@ const ParentDashboard = () => {
                       en: `Current streak: ${xp.streak} days! ${xp.streak >= 7 ? "Impressive!" : "Keep going!"}`,
                     })
                   : t({ he: "עדיין לא התחיל רצף. עודדו את הילד להיכנס כל יום!", ar: "لم تبدأ سلسلة بعد. شجعوا الطفل على الدخول يوميًا!", en: "No streak yet. Encourage daily practice!" }),
+                gradient: "from-candy/5 to-lavender/5",
               },
             ].map((insight, i) => (
-              <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-muted/20">
+              <motion.div
+                key={i}
+                whileHover={{ scale: 1.01, x: dir === "rtl" ? -3 : 3 }}
+                className={`flex items-start gap-3 p-3 rounded-xl bg-gradient-to-br ${insight.gradient} border border-border/30`}
+              >
                 <span className="text-xl">{insight.emoji}</span>
                 <div>
                   <p className="font-display font-bold text-sm">{insight.title}</p>
                   <p className="text-xs text-muted-foreground font-body leading-relaxed">{insight.desc}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </motion.div>
