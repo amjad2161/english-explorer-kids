@@ -19,6 +19,7 @@ import ClassroomBackground from "@/components/ClassroomBackground";
 import GameEntrance from "@/components/GameEntrance";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 import UserAvatar, { CompanionAvatars } from "@/components/UserAvatar";
+import { useOwlEncouragement } from "@/hooks/useOwlEncouragement";
 
 interface MemoryCard {
   id: string;
@@ -49,6 +50,7 @@ const MemoryGame = () => {
   const [xpAmount, setXpAmount] = useState(0);
   const [lastMatchWord, setLastMatchWord] = useState<string | null>(null);
   const [owlMood, setOwlMood] = useState<"idle" | "celebrate" | "sad" | "surprised">("idle");
+  const { speech, triggerByMood } = useOwlEncouragement();
 
   const startGame = useCallback((catIndex: number) => {
     playClickSound();
@@ -86,6 +88,7 @@ const MemoryGame = () => {
           speakEnglish(card1.matchId);
           setLastMatchWord(card1.matchId);
           setOwlMood("surprised");
+          triggerByMood("surprised");
           setTimeout(() => { setLastMatchWord(null); setOwlMood("idle"); }, 1500);
           const newMatched = [...matched, newFlipped[0], newFlipped[1]];
           setMatched(newMatched); setFlipped([]); setIsChecking(false);
@@ -96,6 +99,7 @@ const MemoryGame = () => {
             if (stageId) saveStageProgress(stageId, stars);
             playVictoryFanfare(); setShowConfetti(true); setGameComplete(true);
             setOwlMood("celebrate");
+            triggerByMood("celebrate");
             setXpAmount(stars * 15 + 10);
             setShowXP(true);
             trackGamePlayed("memory", cards.length / 2, 0, stars * 15 + 10);
@@ -107,6 +111,7 @@ const MemoryGame = () => {
         setTimeout(() => {
           playWrongSound();
           setOwlMood("sad");
+          triggerByMood("sad");
           setFlipped([]); setIsChecking(false);
           setTimeout(() => setOwlMood("idle"), 1000);
         }, 800);
@@ -150,7 +155,7 @@ const MemoryGame = () => {
           className="text-center mb-6"
         >
           <div className="flex items-center justify-center gap-3 mb-2">
-            <Interactive3DMascot mood={owlMood} size="sm" />
+            <Interactive3DMascot mood={owlMood} size="sm" showSpeechBubble={speech || undefined} />
             <UserAvatar size="md" showOwl />
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gradient mb-1">{t("memory.title")}</h1>

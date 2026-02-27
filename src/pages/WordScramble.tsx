@@ -22,6 +22,7 @@ import ClassroomBackground from "@/components/ClassroomBackground";
 import GameEntrance from "@/components/GameEntrance";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 import UserAvatar, { CompanionAvatars } from "@/components/UserAvatar";
+import { useOwlEncouragement } from "@/hooks/useOwlEncouragement";
 const shuffleArray = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
 
 /* ─── Draggable scrambled letter tile ─── */
@@ -70,6 +71,7 @@ const WordScramble = () => {
   const [xpAmount, setXpAmount] = useState(0);
   const [owlMood, setOwlMood] = useState<"idle" | "surprised" | "sad" | "celebrate">("idle");
   const { popups, addPopup } = useScorePopups();
+  const { speech, triggerByMood } = useOwlEncouragement();
 
   useEffect(() => {
     const all = shuffleArray(getSpellingWords(adaptive.maxWordLength));
@@ -123,6 +125,7 @@ const WordScramble = () => {
       setScore(s => s + points);
       setStreak(newStreak);
       setOwlMood("surprised");
+      triggerByMood("surprised", newStreak);
       setBestStreak(b => { const best = Math.max(b, newStreak); saveBestStreak(best); return best; });
       if (newStreak >= 3) playComboSound(newStreak); else playCorrectSound();
       addPopup(points, newStreak >= 3 ? `×${newStreak}` : "✓");
@@ -132,6 +135,7 @@ const WordScramble = () => {
       setResult("wrong");
       setStreak(0);
       setOwlMood("sad");
+      triggerByMood("sad");
       playWrongSound();
     }
     setTimeout(() => { setOwlMood("idle"); advance(); }, 1500);
@@ -141,7 +145,8 @@ const WordScramble = () => {
     if (result) return;
     setResult("wrong");
     setStreak(0);
-    setOwlMood("sad");
+      setOwlMood("sad");
+      triggerByMood("sad");
     playWrongSound();
     setTimeout(() => { setOwlMood("idle"); advance(); }, 1200);
   }, [result, currentIndex]);
@@ -150,6 +155,7 @@ const WordScramble = () => {
     if (currentIndex + 1 >= words.length) {
       setFinished(true);
       setOwlMood("celebrate");
+      triggerByMood("celebrate");
       playVictoryFanfare();
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 100);
@@ -197,7 +203,7 @@ const WordScramble = () => {
           className="text-center mb-6"
         >
           <div className="flex items-center justify-center gap-3 mb-2">
-            <Interactive3DMascot mood={owlMood} size="sm" />
+            <Interactive3DMascot mood={owlMood} size="sm" showSpeechBubble={speech || undefined} />
             <UserAvatar size="md" showOwl />
           </div>
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">{t("scramble.title")}</h1>
