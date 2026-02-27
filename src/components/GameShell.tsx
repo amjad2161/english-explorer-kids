@@ -150,13 +150,15 @@ export default function GameShell({
               className="text-center"
             >
               <Pause className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-              <p className="text-xl font-display font-bold">{t("quiz.title")}</p>
+              <p className="text-xl font-display font-bold">
+                {dir === "rtl" ? "המשחק מושהה" : "Game Paused"}
+              </p>
               <button
                 onClick={handlePause}
                 className="mt-4 btn-kid gradient-primary text-white px-8 py-3"
               >
                 <Play className="w-5 h-5 inline mr-2" />
-                {t("quiz.playAgain")}
+                {dir === "rtl" ? "המשך" : "Resume"}
               </button>
             </motion.div>
           </div>

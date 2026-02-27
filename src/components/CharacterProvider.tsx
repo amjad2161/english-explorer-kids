@@ -77,7 +77,7 @@ export function CharacterProvider({ children }: CharacterProviderProps) {
   // Log missing character assets in development
   useEffect(() => {
     if (!loaded && visible) {
-      console.error("MISSING_CHARACTER_ASSET: No 3D character asset loaded. Using proxy.");
+      console.error("MISSING_CHARACTER_ASSET: No 3D character asset loaded.");
     }
   }, [loaded, visible]);
 
