@@ -8,7 +8,9 @@ interface ConfettiPiece {
   delay: number;
   rotation: number;
   size: number;
-  shape: "circle" | "square" | "star";
+  shape: "circle" | "square" | "star" | "triangle";
+  drift: number;
+  wobble: number;
 }
 
 const colors = [
@@ -20,6 +22,8 @@ const colors = [
   "hsl(270, 70%, 65%)",
   "hsl(0, 85%, 60%)",
   "hsl(60, 100%, 55%)",
+  "hsl(180, 70%, 50%)",
+  "hsl(300, 80%, 65%)",
 ];
 
 const Confetti = ({ show }: { show: boolean }) => {
@@ -27,20 +31,31 @@ const Confetti = ({ show }: { show: boolean }) => {
 
   useEffect(() => {
     if (show) {
-      const newPieces: ConfettiPiece[] = Array.from({ length: 45 }, (_, i) => ({
+      const newPieces: ConfettiPiece[] = Array.from({ length: 60 }, (_, i) => ({
         id: i,
         x: Math.random() * 100,
         color: colors[Math.floor(Math.random() * colors.length)],
-        delay: Math.random() * 0.6,
-        rotation: Math.random() * 1080 - 540,
-        size: 6 + Math.random() * 10,
-        shape: (["circle", "square", "star"] as const)[Math.floor(Math.random() * 3)],
+        delay: Math.random() * 0.8,
+        rotation: Math.random() * 1440 - 720,
+        size: 5 + Math.random() * 12,
+        shape: (["circle", "square", "star", "triangle"] as const)[Math.floor(Math.random() * 4)],
+        drift: (Math.random() - 0.5) * 150,
+        wobble: Math.random() * 30,
       }));
       setPieces(newPieces);
-      const timer = setTimeout(() => setPieces([]), 3000);
+      const timer = setTimeout(() => setPieces([]), 3500);
       return () => clearTimeout(timer);
     }
   }, [show]);
+
+  const getShape = (shape: ConfettiPiece["shape"]) => {
+    switch (shape) {
+      case "circle": return "50%";
+      case "star": return "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)";
+      case "triangle": return "polygon(50% 0%, 0% 100%, 100% 100%)";
+      default: return "3px";
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -52,28 +67,29 @@ const Confetti = ({ show }: { show: boolean }) => {
             left: `${piece.x}%`,
             opacity: 1,
             rotate: 0,
-            scale: 1,
+            scale: 0,
           }}
           animate={{
-            top: "110%",
-            opacity: 0,
+            top: "115%",
+            opacity: [1, 1, 0.8, 0],
             rotate: piece.rotation,
-            scale: [1, 1.2, 0.5],
-            x: [0, (Math.random() - 0.5) * 80],
+            scale: [0, 1.4, 1, 0.6],
+            x: [0, piece.drift * 0.3, piece.drift, piece.drift * 1.2],
           }}
           exit={{ opacity: 0 }}
           transition={{
-            duration: 2.5,
+            duration: 3,
             delay: piece.delay,
-            ease: [0.25, 0.46, 0.45, 0.94],
+            ease: [0.22, 0.61, 0.36, 1],
           }}
           className="fixed z-50 pointer-events-none"
           style={{
             width: `${piece.size}px`,
             height: `${piece.size}px`,
-            borderRadius: piece.shape === "circle" ? "50%" : piece.shape === "star" ? "2px" : "3px",
+            clipPath: piece.shape !== "circle" ? getShape(piece.shape) : undefined,
+            borderRadius: piece.shape === "circle" ? "50%" : piece.shape === "square" ? "3px" : undefined,
             backgroundColor: piece.color,
-            boxShadow: `0 0 6px ${piece.color}`,
+            boxShadow: `0 0 8px ${piece.color}`,
           }}
         />
       ))}

@@ -15,6 +15,7 @@ import ScorePopup, { useScorePopups } from "@/components/ScorePopup";
 import BackToLevels from "@/components/BackToLevels";
 import XPReward from "@/components/XPReward";
 import FloatingParticles from "@/components/FloatingParticles";
+import ComboBurst from "@/components/ComboBurst";
 import { RotateCcw, Zap, Target, Trophy } from "lucide-react";
 
 const QUIZ_SIZE = 8;
@@ -33,6 +34,7 @@ const QuizPage = () => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [isFinished, setIsFinished] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [showCombo, setShowCombo] = useState(false);
   const [quizKey, setQuizKey] = useState(0);
   const [showXP, setShowXP] = useState(false);
   const [xpAmount, setXpAmount] = useState(0);
@@ -56,7 +58,11 @@ const QuizPage = () => {
       setScore(s => s + points);
       setStreak(newStreak);
       setBestStreak(b => { const best = Math.max(b, newStreak); saveBestStreak(best); return best; });
-      if (newStreak >= 3) playComboSound(newStreak); else playCorrectSound();
+      if (newStreak >= 3) {
+        playComboSound(newStreak);
+        setShowCombo(true);
+        setTimeout(() => setShowCombo(false), 1200);
+      } else playCorrectSound();
       addPopup(points, newStreak >= 3 ? `×${newStreak}` : "✓");
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 100);
@@ -105,6 +111,7 @@ const QuizPage = () => {
       <FloatingParticles count={10} />
       <Confetti show={showConfetti} />
       <ScorePopup popups={popups} />
+      <ComboBurst combo={streak} show={showCombo} />
       <XPReward amount={xpAmount} show={showXP} gameType="quiz" onComplete={() => setShowXP(false)} />
       
       <div className="max-w-2xl mx-auto px-4 py-8 relative z-10">
