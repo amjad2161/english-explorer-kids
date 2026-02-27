@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { createContext, useContext, useCallback, useState, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
+import { playEraserSound } from "@/lib/sounds";
 
 interface EraserContextType {
   navigateWithEraser: (to: string | number) => void;
@@ -123,6 +124,7 @@ export const EraserTransitionProvider = ({ children }: { children: ReactNode }) 
   const navigateWithEraser = useCallback((to: string | number) => {
     setTarget(to);
     setActive(true);
+    playEraserSound(900);
     // Navigate at the midpoint of the wipe so content switches behind the eraser
     setTimeout(() => {
       if (typeof to === "number") navigate(to as number);
