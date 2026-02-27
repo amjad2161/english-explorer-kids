@@ -6,124 +6,171 @@ import { getCurrentLevel, getTotalEarnedStars, levels, getLevelProgress } from "
 import { getUnlockedAchievements } from "@/lib/achievements";
 import { getXP, getLevel, getDailyChallenge } from "@/lib/xp";
 import { playClickSound } from "@/lib/sounds";
-import CinematicBackground from "@/components/CinematicBackground";
+import MagicalLibraryBackground from "@/components/MagicalLibraryBackground";
 import PremiumGameCard from "@/components/PremiumGameCard";
 import AnimatedSection from "@/components/AnimatedSection";
 import Card3D from "@/components/Card3D";
 import DailyChallengeCard from "@/components/DailyChallengeCard";
 import WordOfTheDay from "@/components/WordOfTheDay";
 import { getSmartRecommendations, getMotivationalMessage, Recommendation } from "@/lib/recommendations";
-import Interactive3DMascot from "@/components/Interactive3DMascot";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
-import { Zap, Trophy, ArrowRight, Map, Star, BookOpen, Gamepad2, Sparkles } from "lucide-react";
+import { Zap, Trophy, ArrowRight, Map, Star, Gamepad2, Sparkles, BookOpen, Shield } from "lucide-react";
 
 const container = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.06, delayChildren: 0.15 } },
+  visible: { opacity: 1, transition: { staggerChildren: 0.07, delayChildren: 0.2 } },
 };
 
 const item = {
-  hidden: { y: 20, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] } },
+  hidden: { y: 24, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] } },
 };
 
 const gameCards = [
-  { titleKey: "quick.alphabet", emoji: "🔤", path: "/alphabet", color: "bg-sky/10 dark:bg-sky/15", iconColor: "text-sky" },
-  { titleKey: "quick.words", emoji: "📝", path: "/words", color: "bg-grass/10 dark:bg-grass/15", iconColor: "text-grass" },
-  { titleKey: "quick.match", emoji: "🧩", path: "/memory", color: "bg-lavender/10 dark:bg-lavender/15", iconColor: "text-lavender" },
-  { titleKey: "quick.quiz", emoji: "🎯", path: "/quiz", color: "bg-accent/10 dark:bg-accent/15", iconColor: "text-accent" },
-  { titleKey: "quick.spelling", emoji: "🐝", path: "/spelling", color: "bg-sunshine/10 dark:bg-sunshine/15", iconColor: "text-sunshine" },
-  { titleKey: "quick.scramble", emoji: "🔀", path: "/scramble", color: "bg-candy/10 dark:bg-candy/15", iconColor: "text-candy" },
-  { titleKey: "quick.hangman", emoji: "🎭", path: "/hangman", color: "bg-sky/10 dark:bg-sky/15", iconColor: "text-sky" },
+  { titleKey: "quick.alphabet", emoji: "🔤", path: "/alphabet", color: "bg-sky/10 dark:bg-sky/15" },
+  { titleKey: "quick.words", emoji: "📝", path: "/words", color: "bg-grass/10 dark:bg-grass/15" },
+  { titleKey: "quick.match", emoji: "🧩", path: "/memory", color: "bg-lavender/10 dark:bg-lavender/15" },
+  { titleKey: "quick.quiz", emoji: "🎯", path: "/quiz", color: "bg-accent/10 dark:bg-accent/15" },
+  { titleKey: "quick.spelling", emoji: "🐝", path: "/spelling", color: "bg-sunshine/10 dark:bg-sunshine/15" },
+  { titleKey: "quick.scramble", emoji: "🔀", path: "/scramble", color: "bg-candy/10 dark:bg-candy/15" },
+  { titleKey: "quick.hangman", emoji: "🎭", path: "/hangman", color: "bg-sky/10 dark:bg-sky/15" },
 ];
 
-/* ─── Cinematic typing effect ─── */
-const TypingText = ({ text, delay = 0 }: { text: string; delay?: number }) => {
-  const [displayed, setDisplayed] = useState("");
-  const [started, setStarted] = useState(false);
+/* ─── Ornate divider for that AAA library feel ─── */
+const OrnateDivider = () => (
+  <div className="flex items-center justify-center gap-3 my-6 sm:my-8 opacity-40">
+    <div className="h-px flex-1 max-w-16 bg-gradient-to-r from-transparent to-primary/40" />
+    <motion.div
+      animate={{ rotate: [0, 360] }}
+      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+      className="text-primary/60 text-xs"
+    >
+      ✦
+    </motion.div>
+    <div className="h-px flex-1 max-w-16 bg-gradient-to-l from-transparent to-primary/40" />
+  </div>
+);
 
-  useEffect(() => {
-    const t = setTimeout(() => setStarted(true), delay);
-    return () => clearTimeout(t);
-  }, [delay]);
+/* ─── Magical stat card — clean, no images ─── */
+const MagicStatCard = ({
+  icon,
+  value,
+  label,
+  delay,
+  glowColor = "var(--primary)",
+}: {
+  icon: React.ReactNode;
+  value: string | number;
+  label: string;
+  delay: number;
+  glowColor?: string;
+}) => (
+  <motion.div
+    initial={{ opacity: 0, y: 24, scale: 0.88 }}
+    animate={{ opacity: 1, y: 0, scale: 1 }}
+    transition={{ type: "spring", stiffness: 180, damping: 18, delay }}
+    whileHover={{ y: -5, scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    className="relative rounded-2xl p-4 sm:p-5 text-center cursor-default overflow-hidden group"
+    style={{
+      background: "hsl(25 25% 10% / 0.6)",
+      border: "1px solid hsl(35 40% 25% / 0.3)",
+      boxShadow: `0 4px 20px hsl(25 30% 8% / 0.4), inset 0 1px 0 hsl(40 50% 30% / 0.1)`,
+      backdropFilter: "blur(12px)",
+    }}
+  >
+    {/* Hover glow */}
+    <div
+      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-600 pointer-events-none rounded-2xl"
+      style={{ background: `radial-gradient(circle at 50% 50%, hsl(${glowColor} / 0.1), transparent 70%)` }}
+    />
+    <div className="flex justify-center mb-2 relative">{icon}</div>
+    <p className="font-display font-extrabold text-2xl sm:text-3xl leading-none relative text-amber-100/90">
+      {value}
+    </p>
+    <p className="text-[10px] sm:text-xs font-display font-semibold mt-1 relative text-amber-200/50">
+      {label}
+    </p>
+  </motion.div>
+);
 
-  useEffect(() => {
-    if (!started) return;
-    setDisplayed("");
-    let i = 0;
-    const interval = setInterval(() => {
-      i++;
-      setDisplayed(text.slice(0, i));
-      if (i >= text.length) clearInterval(interval);
-    }, 50);
-    return () => clearInterval(interval);
-  }, [text, started]);
-
+/* ─── Cinematic XP progress bar ─── */
+const XPProgressBar = ({
+  current,
+  needed,
+  level,
+  title,
+  lang,
+}: {
+  current: number;
+  needed: number;
+  level: number;
+  title: string;
+  lang: string;
+}) => {
+  const percent = Math.min((current / needed) * 100, 100);
   return (
-    <span>
-      {displayed}
-      {started && displayed.length < text.length && (
-        <motion.span
-          animate={{ opacity: [1, 0] }}
-          transition={{ duration: 0.5, repeat: Infinity }}
-          className="inline-block w-[3px] h-[1em] bg-primary align-middle ms-0.5 rounded-full"
-        />
-      )}
-    </span>
-  );
-};
-
-/* ─── Hero burst particles ─── */
-const HeroBurst = ({ show }: { show: boolean }) => {
-  if (!show) return null;
-  const particles = Array.from({ length: 20 }, (_, i) => ({
-    angle: (i * 360) / 20,
-    distance: 50 + Math.random() * 100,
-    size: 3 + Math.random() * 5,
-    color: ["hsl(var(--primary))", "hsl(var(--sunshine))", "hsl(var(--candy))", "hsl(var(--sky))", "hsl(var(--accent))"][i % 5],
-    delay: Math.random() * 0.2,
-  }));
-
-  return (
-    <div className="absolute inset-0 pointer-events-none z-0 flex items-center justify-center">
-      {particles.map((p, i) => (
+    <div
+      className="rounded-2xl p-4 relative overflow-hidden"
+      style={{
+        background: "hsl(25 25% 10% / 0.5)",
+        border: "1px solid hsl(35 40% 25% / 0.25)",
+        backdropFilter: "blur(12px)",
+      }}
+    >
+      {/* Shimmer sweep */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
         <motion.div
-          key={i}
-          className="absolute rounded-full"
-          style={{ width: p.size, height: p.size, background: p.color, boxShadow: `0 0 ${p.size * 2}px ${p.color}` }}
-          initial={{ opacity: 1, scale: 0, x: 0, y: 0 }}
-          animate={{
-            opacity: [1, 1, 0],
-            scale: [0, 1.8, 0.3],
-            x: Math.cos((p.angle * Math.PI) / 180) * p.distance,
-            y: Math.sin((p.angle * Math.PI) / 180) * p.distance,
-          }}
-          transition={{ duration: 1, ease: "easeOut", delay: 0.3 + p.delay }}
+          className="w-1/3 h-full skew-x-12"
+          style={{ background: "linear-gradient(90deg, transparent, hsl(40 60% 50% / 0.04), transparent)" }}
+          animate={{ x: ["-100%", "400%"] }}
+          transition={{ duration: 5, repeat: Infinity, repeatDelay: 4 }}
         />
-      ))}
+      </div>
+
+      <div className="flex items-center justify-between mb-2.5 relative">
+        <div className="flex items-center gap-2.5">
+          <motion.div
+            className="w-9 h-9 rounded-xl flex items-center justify-center text-base shadow-lg"
+            style={{
+              background: "linear-gradient(135deg, hsl(38 70% 40%), hsl(25 60% 35%))",
+              boxShadow: "0 0 12px hsl(38 70% 40% / 0.3)",
+            }}
+            whileHover={{ scale: 1.12, rotate: 8 }}
+          >
+            {title.split(" ")[0]}
+          </motion.div>
+          <span className="font-display font-bold text-sm text-amber-100/80">
+            {lang === "he" ? "רמה" : lang === "ar" ? "المستوى" : "Level"} {level}
+          </span>
+        </div>
+        <span className="text-xs font-display font-semibold text-amber-200/50">
+          {current}/{needed} XP
+        </span>
+      </div>
+
+      <div className="h-3 rounded-full overflow-hidden relative" style={{ background: "hsl(25 20% 15% / 0.6)" }}>
+        <motion.div
+          className="h-full rounded-full relative overflow-hidden"
+          style={{
+            background: "linear-gradient(90deg, hsl(38 70% 40%), hsl(30 80% 50%), hsl(40 90% 55%))",
+            boxShadow: "0 0 10px hsl(38 70% 45% / 0.4)",
+          }}
+          initial={{ width: 0 }}
+          animate={{ width: `${percent}%` }}
+          transition={{ duration: 1.4, ease: "easeOut", delay: 0.5 }}
+        >
+          <motion.div
+            className="absolute inset-0"
+            style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)" }}
+            animate={{ x: ["-100%", "200%"] }}
+            transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 2 }}
+          />
+        </motion.div>
+      </div>
     </div>
   );
 };
-
-/* ─── Premium stat card ─── */
-const StatCard = ({ icon, value, label, delay }: { icon: React.ReactNode; value: string | number; label: string; delay: number }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20, scale: 0.9 }}
-    animate={{ opacity: 1, y: 0, scale: 1 }}
-    transition={{ type: "spring", stiffness: 200, damping: 18, delay }}
-    whileHover={{ y: -4, scale: 1.04 }}
-    whileTap={{ scale: 0.96 }}
-    className="bg-card rounded-2xl p-3.5 sm:p-4 text-center border border-border hover:border-primary/20 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] transition-[border-color] duration-300 cursor-default relative overflow-hidden group"
-  >
-    {/* Hover glow */}
-    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-      style={{ background: "radial-gradient(circle at 50% 50%, hsl(var(--primary) / 0.06), transparent 70%)" }}
-    />
-    <div className="flex justify-center mb-1.5 relative">{icon}</div>
-    <p className="font-display font-extrabold text-xl sm:text-2xl leading-none relative">{value}</p>
-    <p className="text-[10px] sm:text-xs text-muted-foreground font-semibold mt-0.5 relative">{label}</p>
-  </motion.div>
-);
 
 const Index = () => {
   const navigate = useNavigate();
@@ -133,12 +180,9 @@ const Index = () => {
   const [badgeCount, setBadgeCount] = useState(0);
   const [xpState, setXpState] = useState(getXP());
   const [dailyChallenge, setDailyChallenge] = useState(getDailyChallenge());
-  const [mascotMood, setMascotMood] = useState<"idle" | "wave" | "celebrate" | "surprised">("idle");
-  const [speechBubble, setSpeechBubble] = useState<string | undefined>();
   const [refreshKey, setRefreshKey] = useState(0);
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [motivation, setMotivation] = useState(getMotivationalMessage(lang));
-  const [heroReady, setHeroReady] = useState(false);
   const adaptive = useAgeAdaptive();
 
   useEffect(() => {
@@ -149,25 +193,6 @@ const Index = () => {
     setDailyChallenge(getDailyChallenge());
     setRecommendations(getSmartRecommendations(lang));
     setMotivation(getMotivationalMessage(lang));
-
-    const t0 = setTimeout(() => setHeroReady(true), 200);
-    const t1 = setTimeout(() => {
-      setMascotMood("wave");
-      const greetings = adaptive.displayName
-        ? {
-            he: `!${adaptive.displayName} שלום 👋`,
-            ar: `!مرحباً ${adaptive.displayName} 👋`,
-            en: `Hello ${adaptive.displayName}! 👋`,
-          }
-        : {
-            he: "!שלום 👋",
-            ar: "!مرحباً 👋",
-            en: "Hello! 👋",
-          };
-      setSpeechBubble(greetings[lang] || greetings.en);
-    }, 800);
-    const t2 = setTimeout(() => { setMascotMood("idle"); setSpeechBubble(undefined); }, 3000);
-    return () => { clearTimeout(t0); clearTimeout(t1); clearTimeout(t2); };
   }, [lang]);
 
   const level = levels[currentLevel - 1];
@@ -182,180 +207,190 @@ const Index = () => {
     setRefreshKey(k => k + 1);
   }, []);
 
-  const handleMascotClick = () => {
-    playClickSound();
-    setMascotMood("celebrate");
-    const celebrations = {
-      he: "!יאללה 🎉",
-      ar: "!هيّا 🎉",
-      en: "Let's go! 🎉",
-    };
-    setSpeechBubble(celebrations[lang] || celebrations.en);
-    setTimeout(() => { setMascotMood("idle"); setSpeechBubble(undefined); }, 2000);
-  };
-
-  const xpPercent = Math.min((xpLevel.current / xpLevel.needed) * 100, 100);
   const levelPercent = (levelProgress.completed / levelProgress.total) * 100;
 
   return (
     <div className="min-h-screen relative" dir={dir}>
-      <CinematicBackground />
+      <MagicalLibraryBackground />
 
       <motion.div
         variants={container}
         initial="hidden"
         animate="visible"
-        className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 relative z-10"
+        className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 relative z-10"
       >
-        {/* ── CINEMATIC HERO ── */}
-        <motion.section variants={item} className="text-center mb-8 sm:mb-12 relative">
-          <HeroBurst show={heroReady} />
-
+        {/* ═══════════════════════════════════ */}
+        {/* ── CINEMATIC TITLE — "The Saga of the Grand Codex" ── */}
+        {/* ═══════════════════════════════════ */}
+        <motion.section variants={item} className="text-center mb-6 sm:mb-10 relative">
+          {/* Decorative glow behind title */}
           <motion.div
-            initial={{ scale: 0.2, opacity: 0, y: 50 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            transition={{ type: "spring", stiffness: 160, damping: 16, delay: 0.1 }}
-            className="inline-block mb-3 relative z-10"
-          >
-            <Interactive3DMascot
-              mood={mascotMood}
-              size="lg"
-              onClick={handleMascotClick}
-              showSpeechBubble={speechBubble}
-            />
-          </motion.div>
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-40 rounded-full pointer-events-none"
+            style={{
+              background: "radial-gradient(ellipse, hsl(38 70% 40% / 0.08), transparent 70%)",
+              filter: "blur(30px)",
+            }}
+            animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          />
 
+          {/* Main title — stylized 3D art text */}
           <motion.h1
-            initial={{ opacity: 0, y: 25, scale: 0.9 }}
+            initial={{ opacity: 0, y: 30, scale: 0.92 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="text-4xl sm:text-5xl md:text-6xl font-display font-extrabold mb-2 text-gradient leading-tight"
+            transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="relative font-display font-extrabold leading-tight mb-3"
           >
-            <TypingText text={t("app.subtitle")} delay={600} />
+            <span
+              className="block text-3xl sm:text-4xl md:text-5xl"
+              style={{
+                background: "linear-gradient(135deg, hsl(40 80% 65%), hsl(35 70% 50%), hsl(30 60% 40%))",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                filter: "drop-shadow(0 2px 8px hsl(35 60% 30% / 0.4))",
+              }}
+            >
+              {lang === "ar" ? "أسطورة المخطوطة الكبرى" : lang === "he" ? "אגדת הספר הגדול" : "The Saga of the Grand Codex"}
+            </span>
           </motion.h1>
 
+          {/* Subtitle */}
           <motion.p
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.7 }}
-            className="text-base sm:text-lg text-muted-foreground font-body max-w-md mx-auto"
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="font-display text-sm sm:text-base max-w-md mx-auto"
+            style={{ color: "hsl(35 30% 55%)" }}
           >
-            {t("app.description")} <span className="inline-block">🌟</span>
+            {lang === "ar" ? "رحلة تعلّم الإنجليزية السحرية" : lang === "he" ? "מסע קסום ללימוד אנגלית" : "A Magical English Learning Journey"} ✨
           </motion.p>
+
+          {/* Personalized greeting */}
+          {adaptive.displayName && (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.9 }}
+              className="font-display text-xs mt-2"
+              style={{ color: "hsl(40 40% 50%)" }}
+            >
+              {adaptive.avatar}{" "}
+              {lang === "he" ? `שלום ${adaptive.displayName}` : lang === "ar" ? `مرحباً ${adaptive.displayName}` : `Hello ${adaptive.displayName}`}
+            </motion.p>
+          )}
         </motion.section>
 
-        {/* ── STATS ROW (Premium cards) ── */}
+        {/* ═══ XP PROGRESS BAR — 0/50 XP ═══ */}
+        <motion.section variants={item} className="max-w-lg mx-auto mb-6 sm:mb-8">
+          <XPProgressBar
+            current={xpLevel.current}
+            needed={xpLevel.needed}
+            level={xpLevel.level}
+            title={xpLevel.title}
+            lang={lang}
+          />
+        </motion.section>
+
+        {/* ═══ STAT CARDS — XP, Achievements, Stars (clean, no images) ═══ */}
         <motion.section variants={item} className="grid grid-cols-3 gap-2.5 sm:gap-3 mb-6 sm:mb-8 max-w-lg mx-auto">
-          <StatCard
-            icon={<Star className="w-5 h-5 text-sunshine fill-sunshine" />}
-            value={totalStars}
-            label={t("home.stars")}
-            delay={0.3}
-          />
-          <StatCard
-            icon={<Trophy className="w-5 h-5 text-accent" />}
-            value={badgeCount}
-            label={lang === "he" ? "הישגים" : lang === "ar" ? "إنجازات" : "Badges"}
-            delay={0.4}
-          />
-          <StatCard
-            icon={<Zap className="w-5 h-5 text-primary" />}
-            value={`${xpState.totalXP}`}
+          <MagicStatCard
+            icon={<Zap className="w-6 h-6" style={{ color: "hsl(40 80% 55%)" }} />}
+            value={xpState.totalXP}
             label="XP"
+            delay={0.3}
+            glowColor="40 80% 50%"
+          />
+          <MagicStatCard
+            icon={<Shield className="w-6 h-6" style={{ color: "hsl(25 70% 50%)" }} />}
+            value={badgeCount}
+            label={lang === "he" ? "הישגים" : lang === "ar" ? "إنجازات" : "Achievements"}
+            delay={0.4}
+            glowColor="25 70% 50%"
+          />
+          <MagicStatCard
+            icon={<Star className="w-6 h-6" style={{ color: "hsl(45 90% 55%)" }} />}
+            value={totalStars}
+            label={lang === "he" ? "כוכבים" : lang === "ar" ? "نجوم" : "Stars"}
             delay={0.5}
+            glowColor="45 90% 55%"
           />
         </motion.section>
 
-        {/* ── XP + LEVEL PROGRESS ── */}
-        <AnimatedSection className="max-w-lg mx-auto mb-6 sm:mb-8 space-y-3" delay={0.1}>
-          <div className="bg-card rounded-2xl p-4 border border-border shadow-[var(--shadow-card)] relative overflow-hidden">
-            {/* Shimmer effect */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
-              <motion.div
-                className="w-1/3 h-full bg-gradient-to-r from-transparent via-primary/[0.03] to-transparent skew-x-12"
-                animate={{ x: ["-100%", "400%"] }}
-                transition={{ duration: 4, repeat: Infinity, repeatDelay: 3 }}
-              />
-            </div>
-
-            <div className="flex items-center justify-between mb-2 relative">
-              <div className="flex items-center gap-2">
-                <motion.div
-                  className="w-9 h-9 rounded-xl flex items-center justify-center text-lg shadow-md"
-                  style={{ background: "var(--gradient-hero)" }}
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                >
-                  {xpLevel.title.split(" ")[0]}
-                </motion.div>
-                <span className="font-display font-bold text-sm">
-                  {lang === "he" ? "רמה" : lang === "ar" ? "المستوى" : "Level"} {xpLevel.level}
-                </span>
-              </div>
-              <span className="text-xs text-muted-foreground font-display font-semibold">
-                {xpLevel.current}/{xpLevel.needed} XP
-              </span>
-            </div>
-            <div className="h-2.5 rounded-full bg-muted overflow-hidden relative">
-              <motion.div
-                className="h-full rounded-full relative overflow-hidden"
-                style={{ background: "var(--gradient-hero)" }}
-                initial={{ width: 0 }}
-                animate={{ width: `${xpPercent}%` }}
-                transition={{ duration: 1.2, ease: "easeOut", delay: 0.4 }}
-              >
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent"
-                  animate={{ x: ["-100%", "200%"] }}
-                  transition={{ duration: 2, repeat: Infinity, repeatDelay: 1.5 }}
-                />
-              </motion.div>
-            </div>
-          </div>
-
-          {xpState.streak > 0 && (
+        {/* ═══ STREAK ═══ */}
+        {xpState.streak > 0 && (
+          <motion.div
+            variants={item}
+            className="max-w-lg mx-auto mb-5 flex justify-center"
+          >
             <motion.div
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              className="flex items-center gap-2 px-3.5 py-2 bg-accent/8 dark:bg-accent/12 rounded-xl w-fit border border-accent/10"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl"
+              style={{
+                background: "hsl(20 50% 12% / 0.5)",
+                border: "1px solid hsl(25 60% 30% / 0.3)",
+              }}
             >
               <span className="text-sm">🔥</span>
-              <span className="font-display font-bold text-xs text-accent">
+              <span className="font-display font-bold text-xs" style={{ color: "hsl(30 80% 55%)" }}>
                 {xpState.streak} {lang === "he" ? "ימים ברצף" : lang === "ar" ? "أيام متتالية" : "day streak"}
               </span>
             </motion.div>
-          )}
-        </AnimatedSection>
+          </motion.div>
+        )}
 
-        {/* ── DAILY + WORD ── */}
+        <OrnateDivider />
+
+        {/* ═══ DAILY + WORD OF THE DAY ═══ */}
         <AnimatedSection className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 max-w-3xl mx-auto mb-6 sm:mb-8" delay={0.15}>
           <DailyChallengeCard key={refreshKey} challenge={dailyChallenge} onUpdate={refreshStats} />
           <WordOfTheDay />
         </AnimatedSection>
 
-        {/* ── MOTIVATION ── */}
+        {/* ═══ MOTIVATION — ANCIENT WISDOM ═══ */}
         <AnimatedSection className="max-w-lg mx-auto mb-6 sm:mb-8" delay={0.1}>
           <motion.div
             whileHover={{ scale: 1.02 }}
-            className="flex items-center gap-3 justify-center py-3 px-5 bg-primary/5 dark:bg-primary/10 rounded-2xl border border-primary/10 relative overflow-hidden"
+            className="flex items-center gap-3 justify-center py-3.5 px-5 rounded-2xl relative overflow-hidden"
+            style={{
+              background: "hsl(25 25% 10% / 0.45)",
+              border: "1px solid hsl(35 40% 25% / 0.2)",
+              backdropFilter: "blur(8px)",
+            }}
           >
             <span className="text-xl relative">{motivation.emoji}</span>
-            <span className="font-display font-bold text-sm text-foreground relative">{motivation.text}</span>
+            <span className="font-display font-bold text-sm relative" style={{ color: "hsl(35 30% 65%)" }}>
+              {motivation.text}
+            </span>
           </motion.div>
         </AnimatedSection>
 
-        {/* ── CURRENT LEVEL (Premium Card) ── */}
+        {/* ═══ CURRENT LEVEL — Ancient Scroll Card ═══ */}
         <AnimatedSection className="max-w-lg mx-auto mb-8 sm:mb-10" delay={0.15}>
           <Card3D onClick={() => { playClickSound(); navigate("/levels"); }}>
-            <div className="bg-card rounded-2xl p-4 sm:p-5 border border-border shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] hover:border-primary/25 transition-[border-color,box-shadow] duration-300 cursor-pointer group relative overflow-hidden">
-              {/* Ambient glow */}
-              <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
-                style={{ background: "radial-gradient(circle, hsl(var(--primary) / 0.08), transparent 70%)" }}
+            <div
+              className="rounded-2xl p-4 sm:p-5 cursor-pointer group relative overflow-hidden transition-all duration-300"
+              style={{
+                background: "hsl(25 25% 10% / 0.55)",
+                border: "1px solid hsl(35 40% 25% / 0.25)",
+                backdropFilter: "blur(12px)",
+                boxShadow: "0 4px 20px hsl(25 30% 8% / 0.3)",
+              }}
+            >
+              {/* Hover glow */}
+              <div
+                className="absolute -top-12 -right-12 w-32 h-32 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
+                style={{ background: "radial-gradient(circle, hsl(38 70% 40% / 0.12), transparent 70%)" }}
               />
 
               <div className="flex items-center gap-3 sm:gap-4 relative">
                 <motion.div
-                  className="w-13 h-13 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center text-2xl sm:text-3xl shrink-0 shadow-md"
-                  style={{ background: "var(--gradient-hero)" }}
+                  className="w-13 h-13 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center text-2xl sm:text-3xl shrink-0 shadow-lg"
+                  style={{
+                    background: "linear-gradient(135deg, hsl(38 70% 40%), hsl(25 60% 35%))",
+                    boxShadow: "0 0 15px hsl(38 70% 40% / 0.25)",
+                  }}
                   whileHover={{ scale: 1.1, rotate: [0, -5, 5, 0] }}
                   transition={{ type: "spring", stiffness: 300, damping: 15 }}
                 >
@@ -363,41 +398,46 @@ const Index = () => {
                 </motion.div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 mb-0.5">
-                    <Map className="w-3.5 h-3.5 text-muted-foreground" />
-                    <p className="text-xs text-muted-foreground font-display font-semibold">{t("home.currentLevel")}</p>
+                    <Map className="w-3.5 h-3.5" style={{ color: "hsl(35 30% 50%)" }} />
+                    <p className="text-xs font-display font-semibold" style={{ color: "hsl(35 30% 50%)" }}>{t("home.currentLevel")}</p>
                   </div>
-                  <h2 className="font-display text-base sm:text-lg font-bold truncate">
+                  <h2 className="font-display text-base sm:text-lg font-bold truncate text-amber-100/90">
                     {t("home.level")} {level.id}: {t(`level.${level.id}`)}
                   </h2>
-                  <div className="h-2.5 mt-2 rounded-full bg-muted overflow-hidden relative">
+                  <div className="h-2.5 mt-2 rounded-full overflow-hidden relative" style={{ background: "hsl(25 20% 15% / 0.6)" }}>
                     <motion.div
-                      className="h-full rounded-full bg-primary relative overflow-hidden"
+                      className="h-full rounded-full relative overflow-hidden"
+                      style={{
+                        background: "linear-gradient(90deg, hsl(38 70% 40%), hsl(40 80% 50%))",
+                        boxShadow: "0 0 8px hsl(38 70% 45% / 0.3)",
+                      }}
                       initial={{ width: 0 }}
                       animate={{ width: `${levelPercent}%` }}
                       transition={{ duration: 1, ease: "easeOut", delay: 0.6 }}
                     >
                       <motion.div
-                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                        className="absolute inset-0"
+                        style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)" }}
                         animate={{ x: ["-100%", "200%"] }}
                         transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 2 }}
                       />
                     </motion.div>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1.5 font-display">
+                  <p className="text-xs mt-1.5 font-display" style={{ color: "hsl(35 30% 50%)" }}>
                     {levelProgress.completed}/{levelProgress.total} {t("home.stagesCompleted")}
                     {nextLevel && ` · ${Math.max(0, nextLevel.starsToUnlock - totalStars)} ${t("home.moreToNext")}`}
                   </p>
                 </div>
-                <ArrowRight className={`w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors ${dir === "rtl" ? "rotate-180" : ""}`} />
+                <ArrowRight className={`w-5 h-5 transition-colors ${dir === "rtl" ? "rotate-180" : ""}`} style={{ color: "hsl(35 30% 50%)" }} />
               </div>
             </div>
           </Card3D>
         </AnimatedSection>
 
-        {/* ── RECOMMENDATIONS ── */}
+        {/* ═══ RECOMMENDATIONS ═══ */}
         {recommendations.length > 0 && (
           <AnimatedSection className="max-w-lg mx-auto mb-8 sm:mb-10" delay={0.1}>
-            <h3 className="font-display text-sm font-bold mb-3 text-muted-foreground flex items-center gap-1.5 justify-center">
+            <h3 className="font-display text-sm font-bold mb-3 flex items-center gap-1.5 justify-center" style={{ color: "hsl(35 30% 55%)" }}>
               <Sparkles className="w-4 h-4" />
               {lang === "he" ? "מומלץ עבורך" : lang === "ar" ? "مُوصى لك" : "Recommended for You"}
             </h3>
@@ -409,27 +449,44 @@ const Index = () => {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.1 + i * 0.08 }}
                   onClick={() => { playClickSound(); navigate(rec.path); }}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl bg-card border border-border hover:border-primary/25 text-start transition-[border-color,box-shadow] duration-300 hover:shadow-[var(--shadow-card-hover)] group"
+                  className="w-full flex items-center gap-3 p-3 rounded-xl text-start transition-all duration-300 group"
+                  style={{
+                    background: "hsl(25 25% 10% / 0.4)",
+                    border: "1px solid hsl(35 40% 25% / 0.2)",
+                  }}
                 >
                   <motion.span className="text-2xl" whileHover={{ scale: 1.2, rotate: [-5, 5, 0] }}>
                     {rec.emoji}
                   </motion.span>
                   <div className="flex-1 min-w-0">
-                    <p className="font-display font-bold text-sm">{rec.title[lang] || rec.title.en}</p>
-                    <p className="text-xs text-muted-foreground truncate">{rec.description[lang] || rec.description.en}</p>
+                    <p className="font-display font-bold text-sm text-amber-100/85">{rec.title[lang] || rec.title.en}</p>
+                    <p className="text-xs truncate" style={{ color: "hsl(35 30% 50%)" }}>{rec.description[lang] || rec.description.en}</p>
                   </div>
-                  <ArrowRight className={`w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0 ${dir === "rtl" ? "rotate-180" : ""}`} />
+                  <ArrowRight className={`w-4 h-4 shrink-0 transition-colors ${dir === "rtl" ? "rotate-180" : ""}`} style={{ color: "hsl(35 30% 50%)" }} />
                 </motion.button>
               ))}
             </div>
           </AnimatedSection>
         )}
 
-        {/* ── GAMES GRID (Premium Cards) ── */}
-        <AnimatedSection className="mb-8 sm:mb-10" delay={0.1}>
-          <h3 className="font-display text-lg sm:text-xl font-bold mb-5 text-center flex items-center gap-2 justify-center">
-            <Gamepad2 className="w-5 h-5 text-primary" />
-            {t("home.freePlay")}
+        <OrnateDivider />
+
+        {/* ═══════════════════════════════════ */}
+        {/* ── WORD GUARDIANS — "حراس الكلمات" ── */}
+        {/* ═══════════════════════════════════ */}
+        <AnimatedSection className="mb-8 sm:mb-10" delay={0.12}>
+          <h3 className="font-display text-lg sm:text-xl font-bold mb-5 text-center flex items-center gap-2.5 justify-center">
+            <BookOpen className="w-5 h-5" style={{ color: "hsl(40 70% 55%)" }} />
+            <span
+              style={{
+                background: "linear-gradient(135deg, hsl(40 75% 60%), hsl(30 65% 45%))",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              {lang === "ar" ? "حُراس الكلمات" : lang === "he" ? "שומרי המילים" : "Word Guardians"}
+            </span>
           </h3>
           <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
             {gameCards.map((card, i) => (
@@ -445,13 +502,18 @@ const Index = () => {
           </div>
         </AnimatedSection>
 
-        {/* ── CTA BUTTONS ── */}
+        {/* ═══ CTA BUTTONS ═══ */}
         <AnimatedSection className="text-center mb-8 sm:mb-10 flex gap-2 sm:gap-3 justify-center flex-wrap" delay={0.1}>
           <motion.button
             whileHover={{ y: -3, scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
             onClick={() => { playClickSound(); navigate("/levels"); }}
-            className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-display font-bold text-sm sm:text-base px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl shadow-[var(--shadow-button)] hover:shadow-[var(--shadow-button-hover)] transition-shadow duration-300"
+            className="inline-flex items-center gap-2 font-display font-bold text-sm sm:text-base px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl transition-shadow duration-300"
+            style={{
+              background: "linear-gradient(135deg, hsl(38 70% 40%), hsl(30 60% 35%))",
+              color: "hsl(40 90% 90%)",
+              boxShadow: "0 4px 16px hsl(38 70% 30% / 0.35), 0 0 20px hsl(38 70% 40% / 0.15)",
+            }}
           >
             <Map className="w-4 h-4 sm:w-5 sm:h-5" />
             {t("home.myJourney")}
@@ -468,7 +530,12 @@ const Index = () => {
               whileHover={{ y: -2, scale: 1.03 }}
               whileTap={{ scale: 0.96 }}
               onClick={() => { playClickSound(); navigate(btn.path); }}
-              className="inline-flex items-center gap-1.5 bg-card text-foreground font-display font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl border border-border hover:border-primary/25 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] transition-[border-color,box-shadow] duration-300"
+              className="inline-flex items-center gap-1.5 font-display font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl transition-all duration-300"
+              style={{
+                background: "hsl(25 25% 10% / 0.5)",
+                color: "hsl(35 30% 65%)",
+                border: "1px solid hsl(35 40% 25% / 0.2)",
+              }}
             >
               {typeof btn.icon === "string" ? <span>{btn.icon}</span> : btn.icon}
               {btn.label}
@@ -476,15 +543,22 @@ const Index = () => {
           ))}
         </AnimatedSection>
 
-        {/* ── FUN FACT ── */}
+        {/* ═══ FUN FACT — Ancient Knowledge ═══ */}
         <AnimatedSection className="max-w-lg mx-auto" delay={0.1}>
-          <div className="bg-card rounded-2xl p-5 sm:p-6 border border-border shadow-[var(--shadow-card)] text-center relative overflow-hidden">
+          <div
+            className="rounded-2xl p-5 sm:p-6 text-center relative overflow-hidden"
+            style={{
+              background: "hsl(25 25% 10% / 0.45)",
+              border: "1px solid hsl(35 40% 25% / 0.2)",
+              backdropFilter: "blur(8px)",
+            }}
+          >
             <div className="absolute inset-0 pointer-events-none" style={{
-              background: "radial-gradient(circle at 50% 0%, hsl(var(--sunshine) / 0.04), transparent 60%)"
+              background: "radial-gradient(circle at 50% 0%, hsl(40 60% 35% / 0.06), transparent 60%)"
             }} />
             <span className="text-3xl sm:text-4xl block mb-2 relative">💡</span>
-            <h3 className="font-display text-base sm:text-lg font-bold mb-1.5 relative">{t("home.didYouKnow")}</h3>
-            <p className="text-muted-foreground text-sm leading-relaxed relative">{t(`home.funFact${funFactIndex}`)}</p>
+            <h3 className="font-display text-base sm:text-lg font-bold mb-1.5 relative text-amber-100/85">{t("home.didYouKnow")}</h3>
+            <p className="text-sm leading-relaxed relative" style={{ color: "hsl(35 30% 55%)" }}>{t(`home.funFact${funFactIndex}`)}</p>
           </div>
         </AnimatedSection>
 
