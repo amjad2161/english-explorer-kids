@@ -315,13 +315,45 @@ export function validateStorySafety(story: Story): boolean {
     /http/i, /www\./i, /\.com/i,
   ];
 
-  const allText = story.scenes
-    .flatMap((s) => [
-      s.narration,
-      ...s.dialogues.map((d) => d.text),
-      s.activity?.instruction || "",
-    ])
-    .join(" ");
+  const titleTexts: string[] = [
+    story.title,
+    ...(story.titleScaffolding ? Object.values(story.titleScaffolding) : []),
+  ];
 
+  const sceneTexts: string[] = story.scenes.flatMap((s) => {
+    const texts: string[] = [];
+
+    // Narration (learning content)
+    texts.push(s.narration);
+
+    // Scene-level scaffolding/translations
+    if (s.scaffolding) {
+      texts.push(s.scaffolding.he, s.scaffolding.ar);
+    }
+
+    // Dialogue text and scaffolding
+    for (const d of s.dialogues) {
+      texts.push(d.text);
+      if (d.scaffolding) {
+        texts.push(d.scaffolding.he, d.scaffolding.ar);
+      }
+    }
+
+    // Activity instruction and scaffolding (if present)
+    if (s.activity) {
+      if (s.activity.instruction) {
+        texts.push(s.activity.instruction);
+      }
+      if ((s.activity as any).scaffolding) {
+        const scaff = (s.activity as any).scaffolding as { he?: string; ar?: string };
+        if (scaff.he) texts.push(scaff.he);
+        if (scaff.ar) texts.push(scaff.ar);
+      }
+    }
+
+    return texts;
+  });
+
+  const allText = [...titleTexts, ...sceneTexts].join(" ");
   return !UNSAFE_PATTERNS.some((pattern) => pattern.test(allText));
 }
