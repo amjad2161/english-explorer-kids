@@ -14,34 +14,56 @@ const sizeMap = { sm: 120, md: 180, lg: 260 };
 
 /* ─── Contextual speech lines by mood ─── */
 const speechByMood: Record<string, string[]> = {
-  idle: ["🤔", "✨", "📚", "👋"],
-  celebrate: ["🎉", "⭐", "🏆", "💪"],
-  surprised: ["😮", "❗", "👏", "✅"],
-  sad: ["💙", "🔄", "📖", "😊"],
-  wave: ["👋", "🌟", "😄", "🎈"],
+  idle: ["🤔 Thinking...", "✨ Learn!", "📚 Study!", "👋 Hi!"],
+  celebrate: ["🎉 Amazing!", "⭐ Super!", "🏆 Yes!", "💪 Great!"],
+  surprised: ["😮 Wow!", "❗ Whoa!", "👏 Bravo!", "✅ Done!"],
+  sad: ["💙 Try again", "🔄 Retry", "📖 Keep going", "😊 You got this"],
+  wave: ["👋 Hello!", "🌟 Hi there!", "😄 Welcome!", "🎈 Let's go!"],
 };
 
-/* ─── Sparkle particle for celebrations ─── */
+/* ─── Disney-quality sparkle particle ─── */
 const Sparkle = ({ delay, dim }: { delay: number; dim: number }) => {
   const angle = Math.random() * 360;
-  const distance = dim * 0.35 + Math.random() * dim * 0.2;
+  const distance = dim * 0.4 + Math.random() * dim * 0.25;
   const x = Math.cos((angle * Math.PI) / 180) * distance;
   const y = Math.sin((angle * Math.PI) / 180) * distance;
-  const sparkleEmojis = ["✨", "⭐", "🌟", "💫"];
-  const emoji = sparkleEmojis[Math.floor(Math.random() * sparkleEmojis.length)];
+  const emojis = ["✨", "⭐", "🌟", "💫", "⚡"];
+  const emoji = emojis[Math.floor(Math.random() * emojis.length)];
 
   return (
     <motion.span
       className="absolute pointer-events-none z-30"
-      style={{ left: "50%", top: "50%", fontSize: Math.max(10, dim / 12) }}
-      initial={{ opacity: 0, x: 0, y: 0, scale: 0 }}
-      animate={{ opacity: [0, 1, 1, 0], x, y: y - 10, scale: [0, 1.2, 1, 0.5], rotate: [0, 180] }}
-      transition={{ duration: 1.2, delay, ease: "easeOut" }}
+      style={{ left: "50%", top: "50%", fontSize: Math.max(12, dim / 10) }}
+      initial={{ opacity: 0, x: 0, y: 0, scale: 0, rotate: 0 }}
+      animate={{
+        opacity: [0, 1, 1, 0],
+        x, y: y - 12,
+        scale: [0, 1.4, 1, 0.4],
+        rotate: [0, 180, 360],
+      }}
+      transition={{ duration: 1.1, delay, ease: "easeOut" }}
     >
       {emoji}
     </motion.span>
   );
 };
+
+/* ─── Magic ring burst ─── */
+const MagicRingBurst = ({ dim }: { dim: number }) => (
+  <motion.div
+    className="absolute rounded-full pointer-events-none z-5"
+    style={{
+      width: dim * 1.5, height: dim * 1.5,
+      left: "50%", top: "50%",
+      marginLeft: -(dim * 0.75), marginTop: -(dim * 0.75),
+      border: "2px solid hsl(262 80% 72% / 0.5)",
+      boxShadow: "0 0 20px hsl(262 80% 72% / 0.2), inset 0 0 12px hsl(262 80% 72% / 0.1)",
+    }}
+    initial={{ opacity: 0, scale: 0.5 }}
+    animate={{ opacity: [0, 0.8, 0], scale: [0.5, 1.4, 1.8] }}
+    transition={{ duration: 0.9, ease: "easeOut" }}
+  />
+);
 
 const Interactive3DMascot = ({
   mood = "idle",
@@ -55,30 +77,33 @@ const Interactive3DMascot = ({
   const [tapCount, setTapCount] = useState(0);
   const [autoSpeech, setAutoSpeech] = useState<string | null>(null);
   const [showSparkles, setShowSparkles] = useState(false);
+  const [showRing, setShowRing] = useState(false);
   const prevMoodRef = useRef(mood);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  // Parallax tilt from mouse
-  const rotateY = useTransform(mouseX, [-200, 200], [-8, 8]);
-  const rotateX = useTransform(mouseY, [-200, 200], [5, -5]);
+  // Parallax tilt from mouse — more responsive for Disney feel
+  const rotateY = useTransform(mouseX, [-200, 200], [-10, 10]);
+  const rotateX = useTransform(mouseY, [-200, 200], [6, -6]);
 
   // Blinking at random intervals
   useEffect(() => {
     if (mood === "sad") return;
     const blink = () => {
       setIsBlinking(true);
-      setTimeout(() => setIsBlinking(false), 150);
+      setTimeout(() => setIsBlinking(false), 140);
     };
-    const interval = setInterval(blink, 2500 + Math.random() * 3000);
+    const interval = setInterval(blink, 2200 + Math.random() * 2800);
     return () => clearInterval(interval);
   }, [mood]);
 
-  // Sparkles on mood change to celebrate/surprised
+  // Sparkles + ring on mood change to celebrate/surprised
   useEffect(() => {
     if ((mood === "celebrate" || mood === "surprised") && prevMoodRef.current !== mood) {
       setShowSparkles(true);
-      setTimeout(() => setShowSparkles(false), 1500);
+      setShowRing(true);
+      setTimeout(() => setShowSparkles(false), 1400);
+      setTimeout(() => setShowRing(false), 900);
     }
     prevMoodRef.current = mood;
   }, [mood]);
@@ -108,52 +133,85 @@ const Interactive3DMascot = ({
     setTapCount((c) => c + 1);
     const lines = speechByMood[mood] || speechByMood.idle;
     setAutoSpeech(lines[Math.floor(Math.random() * lines.length)]);
-    setTimeout(() => setAutoSpeech(null), 1800);
+    setShowSparkles(true);
+    setShowRing(true);
+    setTimeout(() => setAutoSpeech(null), 2000);
+    setTimeout(() => setShowSparkles(false), 1200);
+    setTimeout(() => setShowRing(false), 800);
     onClick?.();
   }, [mood, onClick]);
 
-  // ─── Animation configs by mood ───
+  // ─── Disney-quality animation configs by mood ───
   const bodyAnimate =
     mood === "wave"
-      ? { y: [0, -10, 0, -7, 0], rotate: [0, -5, 5, -3, 0], scale: [1, 1.03, 1, 1.02, 1], scaleX: [1, 1.02, 0.98, 1.01, 1], scaleY: [1, 0.98, 1.03, 0.99, 1] }
+      ? {
+          y: [0, -12, 2, -9, 0],
+          rotate: [0, -6, 6, -4, 0],
+          scale: [1, 1.04, 0.97, 1.02, 1],
+          scaleX: [1, 1.03, 0.97, 1.01, 1],
+          scaleY: [1, 0.97, 1.04, 0.99, 1],
+        }
       : mood === "celebrate"
-      ? { y: [0, -18, 2, -14, 0], rotate: [0, -8, 8, -5, 0], scale: [1, 1.1, 0.94, 1.06, 1], scaleX: [1, 0.92, 1.08, 0.97, 1], scaleY: [1, 1.08, 0.92, 1.03, 1] }
+      ? {
+          y: [0, -22, 3, -16, 0],
+          rotate: [0, -10, 10, -6, 0],
+          scale: [1, 1.12, 0.93, 1.08, 1],
+          scaleX: [1, 0.90, 1.10, 0.96, 1],
+          scaleY: [1, 1.10, 0.90, 1.05, 1],
+        }
       : mood === "surprised"
-      ? { y: [0, -12, 0], scale: [1, 1.14, 1.02, 1], scaleX: [1, 0.9, 1.05, 1], scaleY: [1, 1.1, 0.96, 1], rotate: [0, 3, -2, 0] }
+      ? {
+          y: [0, -14, 2, 0],
+          scale: [1, 1.18, 1.03, 1],
+          scaleX: [1, 0.88, 1.06, 1],
+          scaleY: [1, 1.12, 0.95, 1],
+          rotate: [0, 4, -3, 0],
+        }
       : mood === "sad"
-      ? { y: [0, 4, 0], rotate: [0, -2, 0], scale: [1, 0.96, 1], scaleY: [1, 0.97, 1] }
-      : { y: [0, -5, 0], rotate: [0, -1, 1, 0], scale: [1, 1.012, 1], scaleY: [1, 1.006, 0.997, 1] };
+      ? {
+          y: [0, 5, 0],
+          rotate: [0, -3, 0],
+          scale: [1, 0.95, 1],
+          scaleY: [1, 0.96, 1],
+        }
+      : {
+          y: [0, -6, 1, -4, 0],
+          rotate: [0, -1.5, 1.5, 0],
+          scale: [1, 1.014, 0.998, 1],
+          scaleY: [1, 1.007, 0.997, 1],
+        };
 
   const bodyTransition =
     mood === "idle"
-      ? { duration: 3.5, repeat: Infinity, ease: "easeInOut" as const }
-      : mood === "wave"
-      ? { duration: 1.8, repeat: Infinity, ease: "easeInOut" as const }
-      : mood === "celebrate"
-      ? { duration: 1.2, repeat: Infinity, ease: "easeInOut" as const }
-      : mood === "sad"
       ? { duration: 4, repeat: Infinity, ease: "easeInOut" as const }
-      : { duration: 0.7, repeat: 0, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] };
+      : mood === "wave"
+      ? { duration: 1.6, repeat: Infinity, ease: "easeInOut" as const }
+      : mood === "celebrate"
+      ? { duration: 1.1, repeat: Infinity, ease: "easeInOut" as const }
+      : mood === "sad"
+      ? { duration: 4.5, repeat: Infinity, ease: "easeInOut" as const }
+      : { duration: 0.65, repeat: 0, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] };
 
+  // ─── Disney-quality mood shadows ───
   const shadowByMood =
     mood === "celebrate"
-      ? "drop-shadow(0 10px 24px hsl(var(--sunshine) / 0.35)) drop-shadow(0 3px 8px hsl(var(--foreground) / 0.12))"
+      ? "drop-shadow(0 12px 28px hsl(44 100% 60% / 0.45)) drop-shadow(0 4px 10px hsl(262 80% 68% / 0.2))"
       : mood === "surprised"
-      ? "drop-shadow(0 8px 18px hsl(var(--primary) / 0.25)) drop-shadow(0 2px 6px hsl(var(--foreground) / 0.1))"
+      ? "drop-shadow(0 10px 22px hsl(262 80% 65% / 0.35)) drop-shadow(0 3px 8px rgba(0,0,0,0.12))"
       : mood === "wave"
-      ? "drop-shadow(0 6px 16px hsl(var(--primary) / 0.2)) drop-shadow(0 2px 5px hsl(var(--foreground) / 0.08))"
+      ? "drop-shadow(0 8px 18px hsl(262 70% 65% / 0.28)) drop-shadow(0 2px 6px rgba(0,0,0,0.1))"
       : mood === "sad"
-      ? "drop-shadow(0 3px 10px hsl(var(--foreground) / 0.18)) brightness(0.92)"
-      : "drop-shadow(0 5px 14px hsl(var(--foreground) / 0.14)) drop-shadow(0 1px 4px hsl(var(--foreground) / 0.06))";
+      ? "drop-shadow(0 4px 12px rgba(0,0,0,0.25)) brightness(0.9)"
+      : "drop-shadow(0 6px 16px rgba(0,0,0,0.18)) drop-shadow(0 2px 5px rgba(0,0,0,0.08))";
 
   const glowColor =
     mood === "celebrate"
-      ? "hsl(var(--sunshine) / 0.2)"
+      ? "hsl(44 100% 62% / 0.28)"
       : mood === "surprised"
-      ? "hsl(var(--primary) / 0.15)"
+      ? "hsl(262 80% 68% / 0.22)"
       : mood === "sad"
-      ? "hsl(var(--muted-foreground) / 0.08)"
-      : "hsl(var(--primary) / 0.08)";
+      ? "hsl(200 40% 50% / 0.1)"
+      : "hsl(262 70% 65% / 0.12)";
 
   const bubbleText = showSpeechBubble || autoSpeech;
 
@@ -164,34 +222,35 @@ const Interactive3DMascot = ({
       onPointerMove={handlePointerMove}
       onPointerLeave={() => { mouseX.set(0); mouseY.set(0); }}
       className="relative inline-flex items-center justify-center p-0 border-0 bg-transparent"
-      style={{ width: dim, height: dim, perspective: 600 }}
+      style={{ width: dim, height: dim, perspective: 700 }}
       whileTap={{
-        scale: [1, 0.86, 1.08, 0.97, 1],
-        scaleY: [1, 0.88, 1.08, 0.98, 1],
-        transition: { duration: 0.5, ease: "easeOut" },
+        scale: [1, 0.84, 1.1, 0.96, 1],
+        scaleY: [1, 0.86, 1.1, 0.97, 1],
+        transition: { duration: 0.55, ease: "easeOut" },
       }}
       aria-label="Interactive Owl Mascot"
     >
-      {/* Ambient glow ring */}
+      {/* ── Ambient magic glow ring ── */}
       <motion.div
         className="absolute rounded-full pointer-events-none"
         style={{
-          width: dim * 0.7,
-          height: dim * 0.4,
+          width: dim * 0.75,
+          height: dim * 0.45,
           left: "50%",
-          bottom: "0%",
+          bottom: "2%",
           transform: "translateX(-50%)",
           background: `radial-gradient(ellipse, ${glowColor}, transparent 70%)`,
-          filter: "blur(12px)",
+          filter: "blur(14px)",
         }}
         animate={{
-          opacity: mood === "celebrate" ? [0.5, 0.9, 0.5] : [0.2, 0.45, 0.2],
-          scale: mood === "celebrate" ? [1, 1.15, 1] : [1, 1.04, 1],
+          opacity: mood === "celebrate" ? [0.6, 1.0, 0.6] : [0.25, 0.55, 0.25],
+          scale: mood === "celebrate" ? [1, 1.2, 1] : [1, 1.06, 1],
+          scaleX: mood === "celebrate" ? [1, 1.3, 1] : [1, 1.1, 1],
         }}
-        transition={{ duration: mood === "celebrate" ? 1.2 : 3, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: mood === "celebrate" ? 1.1 : 3.5, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* 3D perspective wrapper */}
+      {/* ── 3D perspective wrapper ── */}
       <motion.div
         className="relative w-full h-full"
         style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
@@ -207,7 +266,7 @@ const Interactive3DMascot = ({
           transition={bodyTransition}
         />
 
-        {/* Blink overlay — subtle squint effect */}
+        {/* Blink overlay */}
         <AnimatePresence>
           {isBlinking && (
             <motion.div
@@ -215,58 +274,68 @@ const Interactive3DMascot = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.08 }}
+              transition={{ duration: 0.07 }}
               style={{
-                background: "linear-gradient(180deg, transparent 30%, hsl(var(--foreground) / 0.04) 42%, transparent 55%)",
+                background: "linear-gradient(180deg, transparent 28%, hsl(var(--foreground) / 0.05) 40%, transparent 54%)",
               }}
             />
           )}
         </AnimatePresence>
       </motion.div>
 
-      {/* Celebration sparkles */}
+      {/* ── Celebration sparkles ── */}
       <AnimatePresence>
         {showSparkles && (
           <>
-            {Array.from({ length: 6 }).map((_, i) => (
-              <Sparkle key={`sparkle-${tapCount}-${i}`} delay={i * 0.1} dim={dim} />
+            {Array.from({ length: 8 }).map((_, i) => (
+              <Sparkle key={`sparkle-${tapCount}-${i}`} delay={i * 0.08} dim={dim} />
             ))}
           </>
         )}
       </AnimatePresence>
 
-      {/* Mood indicator ring */}
+      {/* ── Magic ring burst ── */}
+      <AnimatePresence>
+        {showRing && <MagicRingBurst key={`ring-${tapCount}`} dim={dim} />}
+      </AnimatePresence>
+
+      {/* ── Mood indicator ring ── */}
       {mood !== "idle" && (
         <motion.div
           className="absolute inset-0 rounded-full pointer-events-none z-5"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: [0, 0.3, 0], scale: [0.8, 1.3, 1.5] }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
+          initial={{ opacity: 0, scale: 0.75 }}
+          animate={{ opacity: [0, 0.4, 0], scale: [0.75, 1.4, 1.7] }}
+          transition={{ duration: 1.4, ease: "easeOut" }}
           style={{
             border: `2px solid ${
               mood === "celebrate"
-                ? "hsl(var(--sunshine) / 0.4)"
+                ? "hsl(44 100% 65% / 0.5)"
                 : mood === "surprised"
-                ? "hsl(var(--primary) / 0.4)"
+                ? "hsl(262 80% 70% / 0.5)"
                 : mood === "sad"
-                ? "hsl(var(--muted-foreground) / 0.3)"
-                : "hsl(var(--primary) / 0.3)"
+                ? "hsl(200 40% 55% / 0.3)"
+                : "hsl(262 70% 68% / 0.4)"
             }`,
           }}
-          key={`ring-${mood}-${Date.now()}`}
+          key={`ring-mood-${mood}-${Date.now()}`}
         />
       )}
 
-      {/* Speech bubble */}
+      {/* ── Speech bubble ── */}
       <AnimatePresence>
         {bubbleText && (
           <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.7 }}
+            initial={{ opacity: 0, y: 12, scale: 0.65 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, scale: 0.85 }}
-            transition={{ type: "spring", stiffness: 350, damping: 18 }}
-            className="absolute -top-2 left-1/2 -translate-x-1/2 bg-card border border-border rounded-2xl px-3 py-1.5 shadow-lg z-30 whitespace-nowrap"
-            style={{ fontSize: Math.max(12, dim / 14) }}
+            exit={{ opacity: 0, y: -10, scale: 0.82 }}
+            transition={{ type: "spring", stiffness: 380, damping: 20 }}
+            className="absolute left-1/2 -translate-x-1/2 bg-card rounded-2xl px-3 py-1.5 shadow-lg z-30 whitespace-nowrap"
+            style={{
+              top: "-6px",
+              fontSize: Math.max(11, dim / 15),
+              border: "1.5px solid hsl(262 60% 70% / 0.2)",
+              boxShadow: "0 4px 16px hsl(262 60% 55% / 0.12), 0 2px 6px rgba(0,0,0,0.08)",
+            }}
           >
             <span className="font-display font-bold text-foreground">{bubbleText}</span>
             <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-card border-r border-b border-border rotate-45" />
