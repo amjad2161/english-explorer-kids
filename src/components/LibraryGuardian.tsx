@@ -153,8 +153,6 @@ const LibraryGuardian = () => {
         className="w-full h-full object-contain select-none pointer-events-none relative z-10"
         style={{
           filter: "drop-shadow(0 8px 20px hsl(20 40% 8% / 0.6))",
-          WebkitMaskImage: "radial-gradient(ellipse 48% 50% at 50% 48%, black 50%, rgba(0,0,0,0.8) 65%, rgba(0,0,0,0.3) 80%, transparent 92%)",
-          maskImage: "radial-gradient(ellipse 48% 50% at 50% 48%, black 50%, rgba(0,0,0,0.8) 65%, rgba(0,0,0,0.3) 80%, transparent 92%)",
         }}
         animate={bouncing ? { y: [0, -8, 0], rotate: [0, -3, 2, 0] } : { y: [0, -3, 0] }}
         transition={bouncing ? { duration: 0.5, ease: "easeOut" } : { duration: 3.5, repeat: Infinity, ease: "easeInOut" }}

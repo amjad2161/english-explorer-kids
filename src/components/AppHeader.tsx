@@ -106,7 +106,7 @@ const AppHeader = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <img src={owlPixar} alt="English Fun" className="w-8 h-8 object-contain" style={{ WebkitMaskImage: "radial-gradient(ellipse 48% 50% at 50% 46%, black 50%, rgba(0,0,0,0.85) 62%, rgba(0,0,0,0.4) 75%, transparent 88%)", maskImage: "radial-gradient(ellipse 48% 50% at 50% 46%, black 50%, rgba(0,0,0,0.85) 62%, rgba(0,0,0,0.4) 75%, transparent 88%)" }} />
+          <img src={owlPixar} alt="English Fun" className="w-8 h-8 object-contain" />
           <div className="hidden sm:block">
             <h1 className="text-lg font-display font-extrabold text-gradient leading-tight">
               English Fun
