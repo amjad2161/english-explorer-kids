@@ -1,5 +1,6 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useMemo, useRef } from "react";
+import LibraryGuardian from "./LibraryGuardian";
 
 /**
  * Magical Library Background
@@ -255,6 +256,9 @@ const MagicalLibraryBackground = () => {
         }}
         transition={{ duration: 15, repeat: Infinity, delay: 3, ease: "easeInOut" }}
       />
+
+      {/* ═══ LIBRARY GUARDIAN — mystical fox spirit ═══ */}
+      <LibraryGuardian />
     </div>
   );
 };
