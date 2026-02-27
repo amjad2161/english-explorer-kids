@@ -13,17 +13,13 @@ import Confetti from "@/components/Confetti";
 import StreakCounter from "@/components/StreakCounter";
 import ScorePopup, { useScorePopups } from "@/components/ScorePopup";
 import XPReward from "@/components/XPReward";
-import FloatingParticles from "@/components/FloatingParticles";
 import { Volume2, RotateCcw, Zap, Trophy, Heart } from "lucide-react";
 import BackToLevels from "@/components/BackToLevels";
 
 const TOTAL_ROUNDS = 8;
 const MAX_WRONG = 6;
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-
-// Animated character states with progressive emotion
 const characterStages = ["😊", "😐", "😟", "😰", "😱", "😵", "💀"];
-
 const shuffleArray = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
 
 const HangmanGame = () => {
@@ -131,37 +127,20 @@ const HangmanGame = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
-      <FloatingParticles count={10} />
       <Confetti show={showConfetti} />
       <ScorePopup popups={popups} />
       <XPReward amount={xpAmount} show={showXP} gameType="hangman" onComplete={() => setShowXP(false)} />
       
       <div className="max-w-2xl mx-auto px-4 py-8 relative z-10">
         <BackToLevels />
-        {/* 3D Hangman Hero */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="flex justify-center items-center gap-3 md:gap-5 mb-4 py-3"
-        >
-          {["🎭", "🔠", "💬"].map((emoji, i) => (
-            <motion.span
-              key={i}
-              className="text-3xl md:text-5xl select-none"
-              style={{ filter: "drop-shadow(0 6px 12px rgba(0,0,0,0.2))" }}
-              animate={{
-                y: [0, -10 - i * 2, 0],
-                rotate: [0, (i % 2 === 0 ? 8 : -8), 0],
-                scale: [1, 1.15, 1],
-              }}
-              transition={{ duration: 3 + i * 0.3, repeat: Infinity, ease: "easeInOut", delay: i * 0.2 }}
-            >
-              {emoji}
-            </motion.span>
-          ))}
-        </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-6">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="text-center mb-6"
+        >
+          <span className="text-5xl mb-3 block">🎭</span>
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">{t("hangman.title")}</h1>
           <p className="text-muted-foreground font-body">{t("hangman.subtitle")}</p>
         </motion.div>
@@ -184,55 +163,42 @@ const HangmanGame = () => {
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
-                initial={{ scale: 0.85, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.85, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 200 }}
-                className="card-kid text-center mb-6 relative overflow-hidden"
+                initial={{ opacity: 0, x: 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -40 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="card-kid text-center mb-6"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-lavender/3 to-primary/3 pointer-events-none" />
-                
                 {/* Character & lives */}
-                <div className="flex items-center justify-center gap-6 mb-5 relative z-10">
+                <div className="flex items-center justify-center gap-6 mb-5">
                   <motion.div
                     key={wrongCount}
-                    initial={{ scale: 2, rotate: -10 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                    className="text-7xl drop-shadow-lg"
+                    initial={{ scale: 1.3 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                    className="text-6xl"
                   >
                     {characterStages[wrongCount]}
                   </motion.div>
                   <div className="flex gap-1.5">
                     {Array.from({ length: MAX_WRONG }).map((_, i) => (
-                      <motion.div
+                      <Heart
                         key={i}
-                        className="relative"
-                        animate={i < wrongCount ? { scale: [1, 0.5, 0] } : {}}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <Heart
-                          className={`w-5 h-5 transition-all ${
-                            i < wrongCount
-                              ? "text-destructive/30 fill-destructive/30"
-                              : "text-destructive fill-destructive drop-shadow-sm"
-                          }`}
-                        />
-                      </motion.div>
+                        className={`w-5 h-5 transition-all duration-300 ${
+                          i < wrongCount
+                            ? "text-destructive/30 fill-destructive/30"
+                            : "text-destructive fill-destructive"
+                        }`}
+                      />
                     ))}
                   </div>
                 </div>
 
                 {/* Hint */}
-                <div className="flex items-center justify-center gap-3 mb-5 relative z-10">
-                  <motion.div className="text-5xl drop-shadow-md"
-                    animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                  >
-                    {currentWord.emoji}
-                  </motion.div>
+                <div className="flex items-center justify-center gap-3 mb-5">
+                  <span className="text-5xl">{currentWord.emoji}</span>
                   <p className="font-display text-lg text-muted-foreground">{getWordTranslation(currentWord, lang)}</p>
-                  <motion.button whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.9 }}
+                  <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                     onClick={() => speakEnglish(currentWord.english)}
                     className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary hover:bg-primary/20 transition-colors">
                     <Volume2 className="w-4.5 h-4.5" />
@@ -240,7 +206,7 @@ const HangmanGame = () => {
                 </div>
 
                 {/* Word display */}
-                <div className="flex justify-center gap-2.5 mb-6 flex-wrap relative z-10" dir="ltr">
+                <div className="flex justify-center gap-2.5 mb-6 flex-wrap" dir="ltr">
                   {wordLetters.map((letter, i) => {
                     const revealed = guessedLetters.has(letter) || result === "lost";
                     return (
@@ -254,20 +220,17 @@ const HangmanGame = () => {
                           "border-muted/60 bg-muted/20"
                         }`}
                       >
-                        <AnimatePresence mode="wait">
-                          {revealed ? (
-                            <motion.span
-                              key="letter"
-                              initial={{ rotateX: 90, opacity: 0 }}
-                              animate={{ rotateX: 0, opacity: 1 }}
-                              transition={{ type: "spring", stiffness: 300 }}
-                            >
-                              {letter}
-                            </motion.span>
-                          ) : (
-                            <motion.span key="blank" className="text-muted-foreground/40">_</motion.span>
-                          )}
-                        </AnimatePresence>
+                        {revealed ? (
+                          <motion.span
+                            initial={{ opacity: 0, y: -8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.25 }}
+                          >
+                            {letter}
+                          </motion.span>
+                        ) : (
+                          <span className="text-muted-foreground/40">_</span>
+                        )}
                       </motion.div>
                     );
                   })}
@@ -276,31 +239,28 @@ const HangmanGame = () => {
                 {/* Result */}
                 <AnimatePresence>
                   {result && (
-                    <motion.div initial={{ scale: 0, y: 10 }} animate={{ scale: 1, y: 0 }}
-                      className={`text-lg font-display font-bold mb-4 relative z-10 ${result === "won" ? "text-accent" : "text-destructive"}`}>
+                    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                      className={`text-lg font-display font-bold mb-4 ${result === "won" ? "text-accent" : "text-destructive"}`}>
                       {result === "won" ? t("quiz.correct") : `${t("hangman.lost")} → ${currentWord.english}`}
                     </motion.div>
                   )}
                 </AnimatePresence>
 
-                {/* Keyboard with wave animation */}
-                <div className="flex flex-wrap justify-center gap-1.5 max-w-md mx-auto relative z-10" dir="ltr">
-                  {ALPHABET.map((letter, i) => {
+                {/* Keyboard */}
+                <div className="flex flex-wrap justify-center gap-1.5 max-w-md mx-auto" dir="ltr">
+                  {ALPHABET.map((letter) => {
                     const guessed = guessedLetters.has(letter);
                     const isCorrectGuess = guessed && wordLetters.includes(letter);
                     const isWrongGuess = guessed && !wordLetters.includes(letter);
                     return (
                       <motion.button
                         key={letter}
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: i * 0.02, type: "spring" }}
-                        whileHover={!guessed && !result ? { scale: 1.25, y: -4 } : {}}
-                        whileTap={!guessed && !result ? { scale: 0.85 } : {}}
+                        whileHover={!guessed && !result ? { scale: 1.15, y: -2 } : {}}
+                        whileTap={!guessed && !result ? { scale: 0.9 } : {}}
                         onClick={() => handleGuess(letter)}
                         disabled={guessed || !!result}
                         className={`w-9 h-10 rounded-lg font-display font-bold text-sm transition-all shadow-sm ${
-                          isCorrectGuess ? "bg-accent text-accent-foreground shadow-accent/20" :
+                          isCorrectGuess ? "bg-accent text-accent-foreground" :
                           isWrongGuess ? "bg-destructive/15 text-destructive/60 line-through" :
                           "bg-muted hover:bg-primary/15 hover:shadow-md text-foreground"
                         } ${guessed || result ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
@@ -314,13 +274,12 @@ const HangmanGame = () => {
             </AnimatePresence>
           </>
         ) : (
-          <motion.div initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-            className="card-kid text-center relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-lavender/5 to-primary/5 pointer-events-none" />
-            <motion.div animate={{ scale: [1, 1.15, 1] }} transition={{ duration: 2, repeat: Infinity }}
-              className="text-8xl mb-4 relative z-10 drop-shadow-xl">🎭</motion.div>
-            <h2 className="text-3xl font-display font-bold text-gradient mb-2 relative z-10">{t("spelling.finished")}</h2>
-            <div className="flex justify-center gap-4 mb-4 relative z-10">
+          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.4 }}
+            className="card-kid text-center">
+            <span className="text-7xl mb-4 block">🎭</span>
+            <h2 className="text-3xl font-display font-bold text-gradient mb-2">{t("spelling.finished")}</h2>
+            <div className="flex justify-center gap-4 mb-4">
               <div className="bg-primary/10 rounded-2xl px-4 py-2 flex items-center gap-2">
                 <Zap className="w-5 h-5 text-primary" />
                 <span className="font-display font-bold text-lg">{score}</span>
@@ -330,12 +289,12 @@ const HangmanGame = () => {
                 <span className="font-display font-bold text-lg">{bestStreak}</span>
               </div>
             </div>
-            <div className="my-4 relative z-10"><StarRating earned={stars} total={5} size={32} /></div>
-            <p className="font-display text-lg font-semibold text-primary mb-4 relative z-10">
+            <div className="my-4"><StarRating earned={stars} total={5} size={32} /></div>
+            <p className="font-display text-lg font-semibold text-primary mb-4">
               {stars >= 4 ? t("quiz.amazing") : stars >= 2 ? t("quiz.wellDone") : t("quiz.keepTrying")}
             </p>
-            <motion.button whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}
-              onClick={restart} className="btn-kid gradient-primary text-primary-foreground flex items-center gap-2 mx-auto relative z-10">
+            <motion.button whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }}
+              onClick={restart} className="btn-kid gradient-primary text-primary-foreground flex items-center gap-2 mx-auto">
               <RotateCcw className="w-5 h-5" /> {t("quiz.playAgain")}
             </motion.button>
           </motion.div>

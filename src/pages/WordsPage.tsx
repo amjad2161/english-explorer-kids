@@ -8,7 +8,6 @@ import { addCompletedWord } from "@/lib/progress";
 import { saveStageProgress, levels } from "@/lib/levels";
 import Confetti from "@/components/Confetti";
 import XPReward from "@/components/XPReward";
-import FloatingParticles from "@/components/FloatingParticles";
 import { Volume2, ArrowRight, BookOpen, Sparkles } from "lucide-react";
 import BackToLevels from "@/components/BackToLevels";
 
@@ -84,38 +83,19 @@ const WordsPage = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
-      <FloatingParticles count={10} />
       <Confetti show={showConfetti} />
       <XPReward amount={xpAmount} show={showXP} gameType="words" onComplete={() => setShowXP(false)} />
       
       <div className="max-w-5xl mx-auto px-4 py-8 relative z-10">
         <BackToLevels />
-        {/* 3D Words Hero Scene */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="flex justify-center items-center gap-3 md:gap-5 mb-6 py-3"
-        >
-          {["🐱", "🌳", "🏠", "🍎", "☀️"].map((emoji, i) => (
-            <motion.span
-              key={i}
-              className="text-3xl md:text-5xl select-none"
-              style={{
-                filter: "drop-shadow(0 6px 12px rgba(0,0,0,0.2))",
-              }}
-              animate={{
-                y: [0, -10 - i * 2, 0],
-                rotate: [0, (i % 2 === 0 ? 8 : -8), 0],
-                scale: [1, 1.15, 1],
-              }}
-              transition={{ duration: 3 + i * 0.3, repeat: Infinity, ease: "easeInOut", delay: i * 0.2 }}
-            >
-              {emoji}
-            </motion.span>
-          ))}
-        </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="text-center mb-8"
+        >
+          <span className="text-5xl mb-3 block">📝</span>
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">{t("words.title")}</h1>
           <p className="text-muted-foreground font-body">{t("words.subtitle")}</p>
         </motion.div>
@@ -128,18 +108,16 @@ const WordsPage = () => {
                 const catLearned = cat.words.filter(w => learnedWords.has(w.english)).length;
                 return (
                   <motion.button key={cat.nameEn}
-                    initial={{ scale: 0, opacity: 0, rotateY: -15 }}
-                    animate={{ scale: 1, opacity: 1, rotateY: 0 }}
-                    transition={{ delay: i * 0.08, type: "spring" }}
-                    whileHover={{ y: -8, scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05, duration: 0.3 }}
+                    whileHover={{ y: -4, scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
                     onClick={() => { playClickSound(); setSelectedCategory(index); }}
-                    className="card-kid text-center group relative overflow-hidden"
+                    className="card-kid text-center group"
                   >
-                    <div className={`bg-gradient-to-br ${categoryGradients[cat.color]} w-20 h-20 rounded-2xl mx-auto mb-3 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow`}>
-                      <motion.span className="text-4xl" whileHover={{ scale: 1.2, rotate: [0, -10, 10, 0] }}>
-                        {cat.emoji}
-                      </motion.span>
+                    <div className={`bg-gradient-to-br ${categoryGradients[cat.color]} w-20 h-20 rounded-2xl mx-auto mb-3 flex items-center justify-center shadow-lg`}>
+                      <span className="text-4xl">{cat.emoji}</span>
                     </div>
                     <h3 className="font-display text-lg font-bold">{getCategoryName(cat, lang)}</h3>
                     <p className="text-sm text-muted-foreground">{cat.nameEn}</p>
@@ -153,30 +131,25 @@ const WordsPage = () => {
                           className="h-full rounded-full bg-accent"
                           initial={{ width: 0 }}
                           animate={{ width: `${(catLearned / cat.words.length) * 100}%` }}
-                          transition={{ duration: 0.8, delay: i * 0.08 + 0.3 }}
+                          transition={{ duration: 0.6, delay: i * 0.05 + 0.2 }}
                         />
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-2xl" />
                   </motion.button>
                 );
               })}
             </motion.div>
           ) : (
-            <motion.div key="words" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
+            <motion.div key="words" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               {!autoSelected && (
                 <motion.button onClick={() => { setSelectedCategory(null); setFlippedCards(new Set()); }}
-                  className="flex items-center gap-2 mb-6 font-display font-semibold text-primary hover:text-primary/80 transition-colors" whileHover={{ x: dir === "rtl" ? -4 : 4 }}>
+                  className="flex items-center gap-2 mb-6 font-display font-semibold text-primary hover:text-primary/80 transition-colors"
+                  whileHover={{ x: dir === "rtl" ? -3 : 3 }}>
                   <ArrowRight className="w-4 h-4" />{t("words.backToCategories")}
                 </motion.button>
               )}
               <div className="text-center mb-6">
-                <motion.span className="text-5xl mb-2 block drop-shadow-md"
-                  animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                >
-                  {wordCategories[activeCategory].emoji}
-                </motion.span>
+                <span className="text-5xl mb-2 block">{wordCategories[activeCategory].emoji}</span>
                 <h2 className="font-display text-2xl font-bold">{getCategoryName(wordCategories[activeCategory], lang)}</h2>
                 <div className="flex items-center justify-center gap-1.5 mt-2">
                   <Sparkles className="w-3.5 h-3.5 text-primary" />
@@ -192,24 +165,19 @@ const WordsPage = () => {
                   const colorClass = categoryBgs[wordCategories[activeCategory].color];
                   return (
                     <motion.div key={word.english}
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ delay: index * 0.04, type: "spring" }}>
-                      <motion.div whileHover={{ y: -5, scale: 1.02 }} whileTap={{ scale: 0.97 }}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.03, duration: 0.3 }}>
+                      <motion.div whileHover={{ y: -3, scale: 1.01 }} whileTap={{ scale: 0.98 }}
                         onClick={() => handleCardFlip(word)}
                         className={`card-kid cursor-pointer text-center relative overflow-hidden ${colorClass} ${
                           isLearned ? "border-2 border-accent/30" : ""
                         }`}>
-                        {isLearned && <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} className="absolute top-2 start-2 text-lg drop-shadow-sm">⭐</motion.span>}
-                        <motion.span className="text-5xl mb-3 block drop-shadow-md"
-                          animate={isFlipped ? { scale: [1, 1.1, 1] } : {}}
-                          transition={{ duration: 1, repeat: Infinity }}
-                        >
-                          {word.emoji}
-                        </motion.span>
+                        {isLearned && <span className="absolute top-2 start-2 text-lg">⭐</span>}
+                        <span className="text-5xl mb-3 block">{word.emoji}</span>
                         <AnimatePresence mode="wait">
                           {isFlipped ? (
-                            <motion.div key="english" initial={{ rotateY: 90 }} animate={{ rotateY: 0 }} exit={{ rotateY: -90 }} transition={{ duration: 0.2 }}>
+                            <motion.div key="english" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
                               <p className="font-display text-2xl font-bold mb-1">{word.english}</p>
                               <p className="text-sm text-muted-foreground">{getWordTranslation(word, lang)}</p>
                               <div className="flex gap-2 mt-3 justify-center">
@@ -226,7 +194,7 @@ const WordsPage = () => {
                               </div>
                             </motion.div>
                           ) : (
-                            <motion.div key="native" initial={{ rotateY: -90 }} animate={{ rotateY: 0 }} exit={{ rotateY: 90 }} transition={{ duration: 0.2 }}>
+                            <motion.div key="native" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
                               <p className="font-display text-xl font-bold">{getWordTranslation(word, lang)}</p>
                               <p className="text-xs text-muted-foreground mt-1">{t("words.tapToReveal")}</p>
                             </motion.div>
