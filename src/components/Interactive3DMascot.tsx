@@ -211,18 +211,14 @@ const Interactive3DMascot = ({ mood = "idle", size = "md", onClick }: Interactiv
 
           {/* === BODY - layered for depth === */}
           {/* Outer feather edge */}
-          <motion.ellipse
+          <ellipse
             cx="100" cy="155" rx="58" ry="62"
             fill="hsl(25, 42%, 28%)"
-            animate={{ rx: [58, 59, 58], ry: [62, 63, 62] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           />
           {/* Main body */}
-          <motion.ellipse
+          <ellipse
             cx="100" cy="152" rx="53" ry="58"
             fill="url(#bodyGrad)"
-            animate={{ ry: [58, 59, 58] }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
           />
           {/* Body feather rows - scalloped pattern */}
           {[0, 1, 2, 3].map(row => (
@@ -242,11 +238,9 @@ const Interactive3DMascot = ({ mood = "idle", size = "md", onClick }: Interactiv
           ))}
 
           {/* Belly - soft warm patch */}
-          <motion.ellipse
+          <ellipse
             cx="100" cy="162" rx="34" ry="40"
             fill="url(#bellyGrad)"
-            animate={{ ry: [40, 41, 40] }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
           />
           {/* Belly chevron feather markings */}
           {[0, 1, 2, 3, 4, 5].map(i => (
@@ -339,16 +333,8 @@ const Interactive3DMascot = ({ mood = "idle", size = "md", onClick }: Interactiv
           ))}
 
           {/* === HEAD === */}
-          <motion.circle
-            cx="100" cy="88" r="47"
-            fill="hsl(25, 42%, 28%)"
-          />
-          <motion.circle
-            cx="100" cy="87" r="45"
-            fill="url(#headGrad)"
-            animate={{ r: [45, 46, 45] }}
-            transition={{ duration: 2.5, repeat: Infinity }}
-          />
+          <circle cx="100" cy="88" r="47" fill="hsl(25, 42%, 28%)" />
+          <circle cx="100" cy="87" r="45" fill="url(#headGrad)" />
           {/* Head feather texture - subtle arcs */}
           {[0, 1, 2].map(i => (
             <path
@@ -411,82 +397,42 @@ const Interactive3DMascot = ({ mood = "idle", size = "md", onClick }: Interactiv
           <circle cx="120" cy="84" r="17" fill="url(#eyeWhite)" />
 
           {/* Iris - complex layered */}
-          <motion.g>
+          <g>
             {/* Iris base */}
-            <motion.circle
-              cx={80 + eyeTarget.x}
-              cy={84 + eyeTarget.y}
-              r="11"
-              fill="url(#irisGrad)"
-            />
-            <motion.circle
-              cx={120 + eyeTarget.x}
-              cy={84 + eyeTarget.y}
-              r="11"
-              fill="url(#irisGrad)"
-            />
+            <circle cx={80 + eyeTarget.x} cy={84 + eyeTarget.y} r="11" fill="url(#irisGrad)" />
+            <circle cx={120 + eyeTarget.x} cy={84 + eyeTarget.y} r="11" fill="url(#irisGrad)" />
             {/* Iris ring detail */}
-            <motion.circle
-              cx={80 + eyeTarget.x}
-              cy={84 + eyeTarget.y}
-              r="9"
-              fill="none"
-              stroke="hsl(28, 80%, 38%)"
-              strokeWidth="0.8"
-              opacity="0.5"
-            />
-            <motion.circle
-              cx={120 + eyeTarget.x}
-              cy={84 + eyeTarget.y}
-              r="9"
-              fill="none"
-              stroke="hsl(28, 80%, 38%)"
-              strokeWidth="0.8"
-              opacity="0.5"
-            />
+            <circle cx={80 + eyeTarget.x} cy={84 + eyeTarget.y} r="9" fill="none" stroke="hsl(28, 80%, 38%)" strokeWidth="0.8" opacity="0.5" />
+            <circle cx={120 + eyeTarget.x} cy={84 + eyeTarget.y} r="9" fill="none" stroke="hsl(28, 80%, 38%)" strokeWidth="0.8" opacity="0.5" />
             {/* Iris radial lines */}
             {[0, 45, 90, 135, 180, 225, 270, 315].map(angle => (
               <g key={`iris-${angle}`} opacity="0.15">
-                <motion.line
+                <line
                   x1={80 + eyeTarget.x + Math.cos(angle * Math.PI / 180) * 4}
                   y1={84 + eyeTarget.y + Math.sin(angle * Math.PI / 180) * 4}
                   x2={80 + eyeTarget.x + Math.cos(angle * Math.PI / 180) * 10}
                   y2={84 + eyeTarget.y + Math.sin(angle * Math.PI / 180) * 10}
-                  stroke="hsl(20, 70%, 25%)"
-                  strokeWidth="0.6"
+                  stroke="hsl(20, 70%, 25%)" strokeWidth="0.6"
                 />
-                <motion.line
+                <line
                   x1={120 + eyeTarget.x + Math.cos(angle * Math.PI / 180) * 4}
                   y1={84 + eyeTarget.y + Math.sin(angle * Math.PI / 180) * 4}
                   x2={120 + eyeTarget.x + Math.cos(angle * Math.PI / 180) * 10}
                   y2={84 + eyeTarget.y + Math.sin(angle * Math.PI / 180) * 10}
-                  stroke="hsl(20, 70%, 25%)"
-                  strokeWidth="0.6"
+                  stroke="hsl(20, 70%, 25%)" strokeWidth="0.6"
                 />
               </g>
             ))}
-
             {/* Pupils */}
-            <motion.circle
-              cx={80 + eyeTarget.x * 1.2}
-              cy={84 + eyeTarget.y * 1.2}
-              r="5.5"
-              fill="hsl(220, 25%, 8%)"
-            />
-            <motion.circle
-              cx={120 + eyeTarget.x * 1.2}
-              cy={84 + eyeTarget.y * 1.2}
-              r="5.5"
-              fill="hsl(220, 25%, 8%)"
-            />
-
+            <circle cx={80 + eyeTarget.x * 1.2} cy={84 + eyeTarget.y * 1.2} r="5.5" fill="hsl(220, 25%, 8%)" />
+            <circle cx={120 + eyeTarget.x * 1.2} cy={84 + eyeTarget.y * 1.2} r="5.5" fill="hsl(220, 25%, 8%)" />
             {/* Eye shine - primary highlight */}
             <circle cx={77 + eyeTarget.x * 0.4} cy={80 + eyeTarget.y * 0.4} r="3.5" fill="white" opacity="0.95" />
             <circle cx={117 + eyeTarget.x * 0.4} cy={80 + eyeTarget.y * 0.4} r="3.5" fill="white" opacity="0.95" />
             {/* Eye shine - secondary smaller */}
             <circle cx={83 + eyeTarget.x * 0.6} cy={88 + eyeTarget.y * 0.6} r="1.8" fill="white" opacity="0.6" />
             <circle cx={123 + eyeTarget.x * 0.6} cy={88 + eyeTarget.y * 0.6} r="1.8" fill="white" opacity="0.6" />
-          </motion.g>
+          </g>
 
           {/* Eyelids (blink) */}
           <AnimatePresence>

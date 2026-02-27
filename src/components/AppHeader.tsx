@@ -85,25 +85,15 @@ const AppHeader = () => {
 
   return (
     <motion.header
-      initial={{ y: -80 }}
+      initial={{ y: -60 }}
       animate={{ y: 0 }}
-      transition={{ type: "spring", stiffness: 180, damping: 22 }}
-      className="sticky top-0 z-50 backdrop-blur-2xl bg-card/60 dark:bg-card/50 border-b border-border/30"
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="sticky top-0 z-50 backdrop-blur-xl bg-card/80 dark:bg-card/70 border-b border-border"
       style={{
-        boxShadow: "0 4px 30px -10px hsl(var(--primary) / 0.06)",
+        boxShadow: "0 1px 4px hsl(var(--foreground) / 0.04)",
         paddingTop: "env(safe-area-inset-top, 0px)",
       }}
     >
-      {/* Flowing gradient line at bottom */}
-      <motion.div 
-        className="absolute bottom-0 left-0 right-0 h-[2px]"
-        style={{
-          background: "linear-gradient(90deg, transparent, hsl(var(--primary) / 0.3), hsl(var(--candy) / 0.3), hsl(var(--lavender) / 0.2), transparent)",
-          backgroundSize: "200% 100%",
-        }}
-        animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-      />
 
       <div className="max-w-5xl mx-auto px-4 py-2.5 flex items-center justify-between" dir={dir}>
         {/* Logo */}
@@ -113,14 +103,7 @@ const AppHeader = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <motion.span
-            className="text-3xl"
-            style={{ filter: "drop-shadow(0 3px 6px rgba(0,0,0,0.15))" }}
-            animate={{ rotate: [0, 8, -8, 0], scale: [1, 1.05, 1] }}
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-          >
-            🦉
-          </motion.span>
+          <span className="text-2xl">🦉</span>
           <div className="hidden sm:block">
             <h1 className="text-lg font-display font-extrabold text-gradient leading-tight">
               English Fun
