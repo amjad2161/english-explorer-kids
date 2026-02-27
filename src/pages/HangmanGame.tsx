@@ -14,6 +14,7 @@ import StreakCounter from "@/components/StreakCounter";
 import ScorePopup, { useScorePopups } from "@/components/ScorePopup";
 import XPReward from "@/components/XPReward";
 import Interactive3DMascot from "@/components/Interactive3DMascot";
+import FloatingParticles from "@/components/FloatingParticles";
 import { Volume2, RotateCcw, Zap, Trophy, Heart } from "lucide-react";
 import BackToLevels from "@/components/BackToLevels";
 
@@ -21,6 +22,64 @@ const TOTAL_ROUNDS = 8;
 const MAX_WRONG = 6;
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const shuffleArray = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
+
+/* Hangman figure stages */
+const HangmanFigure = ({ wrongCount }: { wrongCount: number }) => {
+  const parts = [
+    // Head
+    <motion.circle key="head" cx="50" cy="25" r="10" fill="none" stroke="hsl(var(--foreground))" strokeWidth="2.5"
+      initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ duration: 0.4 }} />,
+    // Body
+    <motion.line key="body" x1="50" y1="35" x2="50" y2="60" stroke="hsl(var(--foreground))" strokeWidth="2.5" strokeLinecap="round"
+      initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.3 }} />,
+    // Left arm
+    <motion.line key="larm" x1="50" y1="42" x2="35" y2="52" stroke="hsl(var(--foreground))" strokeWidth="2.5" strokeLinecap="round"
+      initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.3 }} />,
+    // Right arm
+    <motion.line key="rarm" x1="50" y1="42" x2="65" y2="52" stroke="hsl(var(--foreground))" strokeWidth="2.5" strokeLinecap="round"
+      initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.3 }} />,
+    // Left leg
+    <motion.line key="lleg" x1="50" y1="60" x2="38" y2="75" stroke="hsl(var(--foreground))" strokeWidth="2.5" strokeLinecap="round"
+      initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.3 }} />,
+    // Right leg
+    <motion.line key="rleg" x1="50" y1="60" x2="62" y2="75" stroke="hsl(var(--foreground))" strokeWidth="2.5" strokeLinecap="round"
+      initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.3 }} />,
+  ];
+
+  return (
+    <svg viewBox="0 0 100 85" className="w-28 h-28 sm:w-32 sm:h-32 mx-auto">
+      {/* Gallows */}
+      <line x1="15" y1="82" x2="85" y2="82" stroke="hsl(var(--muted-foreground) / 0.3)" strokeWidth="2" />
+      <line x1="30" y1="82" x2="30" y2="5" stroke="hsl(var(--muted-foreground) / 0.3)" strokeWidth="2" />
+      <line x1="30" y1="5" x2="50" y2="5" stroke="hsl(var(--muted-foreground) / 0.3)" strokeWidth="2" />
+      <line x1="50" y1="5" x2="50" y2="15" stroke="hsl(var(--muted-foreground) / 0.3)" strokeWidth="2" />
+      {/* Body parts */}
+      <AnimatePresence>
+        {parts.slice(0, wrongCount)}
+      </AnimatePresence>
+      {/* Face expressions */}
+      {wrongCount > 0 && wrongCount < MAX_WRONG && (
+        <>
+          <circle cx="46" cy="23" r="1.5" fill="hsl(var(--foreground))" />
+          <circle cx="54" cy="23" r="1.5" fill="hsl(var(--foreground))" />
+          {wrongCount >= 4 ? (
+            <path d="M 45 30 Q 50 27 55 30" fill="none" stroke="hsl(var(--foreground))" strokeWidth="1.5" />
+          ) : (
+            <line x1="46" y1="29" x2="54" y2="29" stroke="hsl(var(--foreground))" strokeWidth="1.5" />
+          )}
+        </>
+      )}
+      {wrongCount >= MAX_WRONG && (
+        <>
+          <motion.text x="43" y="27" fontSize="8" fill="hsl(var(--destructive))"
+            initial={{ scale: 0 }} animate={{ scale: 1 }}>✕</motion.text>
+          <motion.text x="51" y="27" fontSize="8" fill="hsl(var(--destructive))"
+            initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.1 }}>✕</motion.text>
+        </>
+      )}
+    </svg>
+  );
+};
 
 const HangmanGame = () => {
   const [searchParams] = useSearchParams();
@@ -131,17 +190,18 @@ const HangmanGame = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
+      <FloatingParticles count={6} />
       <Confetti show={showConfetti} />
       <ScorePopup popups={popups} />
       <XPReward amount={xpAmount} show={showXP} gameType="hangman" onComplete={() => setShowXP(false)} />
-      
+
       <div className="max-w-2xl mx-auto px-4 py-8 relative z-10">
         <BackToLevels />
 
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
+          transition={{ duration: 0.5 }}
           className="text-center mb-6"
         >
           <Interactive3DMascot mood={owlMood} size="sm" />
@@ -151,7 +211,13 @@ const HangmanGame = () => {
 
         {!finished ? (
           <>
-            <div className="card-glass mb-4 flex items-center justify-between flex-wrap gap-2">
+            {/* Stats bar */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="card-glass mb-4 flex items-center justify-between flex-wrap gap-2"
+            >
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-1.5 bg-muted/50 rounded-full px-3 py-1">
                   <span className="font-display font-bold text-sm">{currentIndex + 1}/{words.length}</span>
@@ -162,45 +228,50 @@ const HangmanGame = () => {
                 </div>
               </div>
               <StreakCounter streak={streak} bestStreak={bestStreak} />
-            </div>
+            </motion.div>
 
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
-                initial={{ opacity: 0, x: 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -40 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-                className="card-kid text-center mb-6"
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: -20 }}
+                transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+                className="card-kid text-center mb-6 relative overflow-hidden"
               >
-                {/* Character & lives */}
-                <div className="flex items-center justify-center gap-6 mb-5">
-                  <motion.div
-                    key={wrongCount}
-                    initial={{ scale: 1.3 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 0.3 }}
-                    className="text-6xl"
-                  >
-                    {["😊", "😐", "😟", "😰", "😱", "😵", "💀"][wrongCount]}
-                  </motion.div>
-                  <div className="flex gap-1.5">
+                {/* Ambient gradient */}
+                <div className="absolute inset-0 pointer-events-none" style={{
+                  background: result === "won"
+                    ? "radial-gradient(circle at 50% 30%, hsl(var(--accent) / 0.06), transparent 60%)"
+                    : result === "lost"
+                    ? "radial-gradient(circle at 50% 30%, hsl(var(--destructive) / 0.06), transparent 60%)"
+                    : "radial-gradient(circle at 50% 30%, hsl(var(--primary) / 0.03), transparent 60%)"
+                }} />
+
+                {/* Hangman figure + lives */}
+                <div className="flex items-center justify-center gap-6 mb-4 relative">
+                  <HangmanFigure wrongCount={wrongCount} />
+                  <div className="flex flex-col gap-1">
                     {Array.from({ length: MAX_WRONG }).map((_, i) => (
-                      <Heart
-                        key={i}
-                        className={`w-5 h-5 transition-all duration-300 ${
-                          i < wrongCount
-                            ? "text-destructive/30 fill-destructive/30"
-                            : "text-destructive fill-destructive"
-                        }`}
-                      />
+                      <motion.div key={i}
+                        animate={i === wrongCount - 1 ? { scale: [1, 1.4, 1], opacity: [1, 0.5, 0.3] } : {}}
+                        transition={{ duration: 0.4 }}
+                      >
+                        <Heart
+                          className={`w-5 h-5 transition-all duration-300 ${
+                            i < wrongCount
+                              ? "text-destructive/25 fill-destructive/25"
+                              : "text-destructive fill-destructive"
+                          }`}
+                        />
+                      </motion.div>
                     ))}
                   </div>
                 </div>
 
                 {/* Hint */}
-                <div className="flex items-center justify-center gap-3 mb-5">
-                  <span className="text-5xl">{currentWord.emoji}</span>
+                <div className="flex items-center justify-center gap-3 mb-5 relative">
+                  <motion.span className="text-5xl" whileHover={{ scale: 1.15 }}>{currentWord.emoji}</motion.span>
                   <p className="font-display text-lg text-muted-foreground">{getWordTranslation(currentWord, lang)}</p>
                   <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                     onClick={() => speakEnglish(currentWord.english)}
@@ -217,7 +288,10 @@ const HangmanGame = () => {
                       <motion.div
                         key={i}
                         layout
-                        className={`w-12 h-14 rounded-xl flex items-center justify-center text-2xl font-display font-bold border-b-4 shadow-sm ${
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: i * 0.03 }}
+                        className={`w-12 h-14 rounded-xl flex items-center justify-center text-2xl font-display font-bold border-b-4 shadow-sm transition-colors duration-300 ${
                           result === "won" ? "border-accent bg-accent/10 text-accent" :
                           result === "lost" && !guessedLetters.has(letter) ? "border-destructive bg-destructive/10 text-destructive" :
                           revealed ? "border-primary bg-primary/10 text-foreground" :
@@ -225,7 +299,11 @@ const HangmanGame = () => {
                         }`}
                       >
                         {revealed ? (
-                          <motion.span initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
+                          <motion.span
+                            initial={{ opacity: 0, y: -12, scale: 0.5 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                          >
                             {letter}
                           </motion.span>
                         ) : (
@@ -239,15 +317,19 @@ const HangmanGame = () => {
                 {/* Result */}
                 <AnimatePresence>
                   {result && (
-                    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                      className={`text-lg font-display font-bold mb-4 ${result === "won" ? "text-accent" : "text-destructive"}`}>
-                      {result === "won" ? t("quiz.correct") : `${t("hangman.lost")} → ${currentWord.english}`}
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      className={`text-lg font-display font-bold mb-4 ${result === "won" ? "text-accent" : "text-destructive"}`}
+                    >
+                      {result === "won" ? `${t("quiz.correct")} 🎉` : `${t("hangman.lost")} → ${currentWord.english}`}
                     </motion.div>
                   )}
                 </AnimatePresence>
 
                 {/* Keyboard */}
-                <div className="flex flex-wrap justify-center gap-1.5 max-w-md mx-auto" dir="ltr">
+                <div className="flex flex-wrap justify-center gap-1.5 max-w-md mx-auto relative" dir="ltr">
                   {ALPHABET.map((letter) => {
                     const guessed = guessedLetters.has(letter);
                     const isCorrectGuess = guessed && wordLetters.includes(letter);
@@ -255,15 +337,15 @@ const HangmanGame = () => {
                     return (
                       <motion.button
                         key={letter}
-                        whileHover={!guessed && !result ? { scale: 1.15, y: -2 } : {}}
-                        whileTap={!guessed && !result ? { scale: 0.9 } : {}}
+                        whileHover={!guessed && !result ? { scale: 1.18, y: -3 } : {}}
+                        whileTap={!guessed && !result ? { scale: 0.85 } : {}}
                         onClick={() => handleGuess(letter)}
                         disabled={guessed || !!result}
-                        className={`w-9 h-10 rounded-lg font-display font-bold text-sm transition-all shadow-sm ${
-                          isCorrectGuess ? "bg-accent text-accent-foreground" :
-                          isWrongGuess ? "bg-destructive/15 text-destructive/60 line-through" :
+                        className={`w-9 h-10 rounded-lg font-display font-bold text-sm shadow-sm transition-all duration-200 ${
+                          isCorrectGuess ? "bg-accent text-accent-foreground shadow-md" :
+                          isWrongGuess ? "bg-destructive/15 text-destructive/50 line-through" :
                           "bg-muted hover:bg-primary/15 hover:shadow-md text-foreground"
-                        } ${guessed || result ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                        } ${guessed || result ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
                       >
                         {letter}
                       </motion.button>
@@ -274,29 +356,37 @@ const HangmanGame = () => {
             </AnimatePresence>
           </>
         ) : (
-          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.4 }}
-            className="card-kid text-center">
-            <Interactive3DMascot mood="celebrate" size="md" />
-            <h2 className="text-3xl font-display font-bold text-gradient mb-2">{t("spelling.finished")}</h2>
-            <div className="flex justify-center gap-4 mb-4">
-              <div className="bg-primary/10 rounded-2xl px-4 py-2 flex items-center gap-2">
-                <Zap className="w-5 h-5 text-primary" />
-                <span className="font-display font-bold text-lg">{score}</span>
+          <motion.div
+            initial={{ scale: 0.85, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 180, damping: 18 }}
+            className="card-kid text-center relative overflow-hidden"
+          >
+            <div className="absolute inset-0 pointer-events-none" style={{
+              background: "radial-gradient(circle at 50% 20%, hsl(var(--sunshine) / 0.08), transparent 60%)"
+            }} />
+            <div className="relative">
+              <Interactive3DMascot mood="celebrate" size="md" />
+              <h2 className="text-3xl font-display font-bold text-gradient mb-2">{t("spelling.finished")}</h2>
+              <div className="flex justify-center gap-4 mb-4">
+                <motion.div whileHover={{ scale: 1.05 }} className="bg-primary/10 rounded-2xl px-4 py-2 flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-primary" />
+                  <span className="font-display font-bold text-lg">{score}</span>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.05 }} className="bg-accent/10 rounded-2xl px-4 py-2 flex items-center gap-2">
+                  <Trophy className="w-5 h-5 text-accent" />
+                  <span className="font-display font-bold text-lg">{bestStreak}</span>
+                </motion.div>
               </div>
-              <div className="bg-accent/10 rounded-2xl px-4 py-2 flex items-center gap-2">
-                <Trophy className="w-5 h-5 text-accent" />
-                <span className="font-display font-bold text-lg">{bestStreak}</span>
-              </div>
+              <div className="my-4"><StarRating earned={stars} total={5} size={32} /></div>
+              <p className="font-display text-lg font-semibold text-primary mb-4">
+                {stars >= 4 ? t("quiz.amazing") : stars >= 2 ? t("quiz.wellDone") : t("quiz.keepTrying")}
+              </p>
+              <motion.button whileHover={{ scale: 1.04, y: -3 }} whileTap={{ scale: 0.96 }}
+                onClick={restart} className="btn-kid gradient-primary text-primary-foreground flex items-center gap-2 mx-auto">
+                <RotateCcw className="w-5 h-5" /> {t("quiz.playAgain")}
+              </motion.button>
             </div>
-            <div className="my-4"><StarRating earned={stars} total={5} size={32} /></div>
-            <p className="font-display text-lg font-semibold text-primary mb-4">
-              {stars >= 4 ? t("quiz.amazing") : stars >= 2 ? t("quiz.wellDone") : t("quiz.keepTrying")}
-            </p>
-            <motion.button whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }}
-              onClick={restart} className="btn-kid gradient-primary text-primary-foreground flex items-center gap-2 mx-auto">
-              <RotateCcw className="w-5 h-5" /> {t("quiz.playAgain")}
-            </motion.button>
           </motion.div>
         )}
       </div>
