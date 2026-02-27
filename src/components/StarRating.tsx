@@ -7,6 +7,9 @@ interface StarRatingProps {
   size?: number;
 }
 
+const GLOW_PADDING = 4;
+const GLOW_OFFSET = -2;
+
 const StarRating = ({ earned, total, size = 24 }: StarRatingProps) => {
   return (
     <div className="flex items-center gap-1.5">
@@ -25,9 +28,9 @@ const StarRating = ({ earned, total, size = 24 }: StarRatingProps) => {
               className="absolute inset-0 rounded-full blur-sm"
               style={{
                 background: "hsl(var(--sunshine) / 0.3)",
-                width: size + 4,
-                height: size + 4,
-                margin: -2,
+                width: size + GLOW_PADDING,
+                height: size + GLOW_PADDING,
+                margin: GLOW_OFFSET,
               }}
               animate={{ opacity: [0.3, 0.6, 0.3] }}
               transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }}

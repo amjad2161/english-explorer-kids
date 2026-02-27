@@ -22,6 +22,10 @@ const categoryBgs: Record<string, string> = {
   grass: "bg-grass/8", candy: "bg-candy/8", sky: "bg-sky/8",
   sunshine: "bg-sunshine/8", lavender: "bg-lavender/8",
 };
+const categoryCardOverlays: Record<string, string> = {
+  grass: "from-grass/5", candy: "from-candy/5", sky: "from-sky/5",
+  sunshine: "from-sunshine/5", lavender: "from-lavender/5",
+};
 
 const WordsPage = () => {
   const [searchParams] = useSearchParams();
@@ -123,7 +127,7 @@ const WordsPage = () => {
                     className="card-kid text-center group relative overflow-hidden"
                   >
                     {/* Premium gradient overlay */}
-                    <div className={`absolute inset-0 bg-gradient-to-br ${categoryGradients[cat.color].replace('from-', 'from-').split(' ')[0]}/5 to-transparent pointer-events-none opacity-60`} />
+                    <div className={`absolute inset-0 bg-gradient-to-br ${categoryCardOverlays[cat.color] || "from-primary/5"} to-transparent pointer-events-none opacity-60`} />
                     <div className={`bg-gradient-to-br ${categoryGradients[cat.color]} w-20 h-20 rounded-2xl mx-auto mb-3 flex items-center justify-center shadow-lg`}>
                       <span className="text-4xl">{cat.emoji}</span>
                     </div>
