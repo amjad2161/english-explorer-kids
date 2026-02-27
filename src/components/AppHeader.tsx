@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Star, Globe, Trophy, RotateCcw, Volume2, VolumeX, Music, Music2 } from "lucide-react";
+import { Star, Globe, Trophy, RotateCcw, Volume2, VolumeX, Music, Music2, Sun, Moon } from "lucide-react";
+import { useTheme } from "@/lib/theme";
 import { getTotalEarnedStars } from "@/lib/levels";
 import { getUnlockedAchievements } from "@/lib/achievements";
 import { getXP, getLevel } from "@/lib/xp";
@@ -30,6 +31,7 @@ const AppHeader = () => {
   const [xpLevel, setXpLevel] = useState(getLevel(getXP().totalXP));
   const [xpTotal, setXpTotal] = useState(getXP().totalXP);
   const menuRef = useRef<HTMLDivElement>(null);
+  const { theme, toggleTheme } = useTheme();
 
   const toggleSound = () => {
     const next = !soundOn;
@@ -154,6 +156,27 @@ const AppHeader = () => {
 
         {/* Actions */}
         <div className="flex items-center gap-1">
+          {/* Dark mode toggle */}
+          <motion.button
+            whileHover={{ scale: 1.1, rotate: 15 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={toggleTheme}
+            className="w-7 h-7 rounded-full flex items-center justify-center transition-colors bg-muted/60 text-foreground hover:bg-primary/15"
+            aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={theme}
+                initial={{ y: -12, opacity: 0, rotate: -90 }}
+                animate={{ y: 0, opacity: 1, rotate: 0 }}
+                exit={{ y: 12, opacity: 0, rotate: 90 }}
+                transition={{ duration: 0.2 }}
+              >
+                {theme === "dark" ? <Sun className="w-3.5 h-3.5 text-sunshine" /> : <Moon className="w-3.5 h-3.5" />}
+              </motion.div>
+            </AnimatePresence>
+          </motion.button>
+
           {/* Sound & Music */}
           <motion.button
             whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}

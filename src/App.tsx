@@ -4,10 +4,13 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { LanguageProvider, useLanguage, Language } from "@/lib/i18n";
+import { ThemeProvider } from "@/lib/theme";
 import { useState, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import AppHeader from "@/components/AppHeader";
 import AppFooter from "@/components/AppFooter";
 import AchievementToast from "@/components/AchievementToast";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import WelcomeScreen, { hasCompletedOnboarding } from "@/components/WelcomeScreen";
 import { useAchievementChecker } from "@/hooks/useAchievementChecker";
 import Index from "./pages/Index";
@@ -25,11 +28,22 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+const pageVariants = {
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" as const } },
+  exit: { opacity: 0, y: -8, transition: { duration: 0.2, ease: "easeIn" as const } },
+};
+
+const PageWrapper = ({ children }: { children: React.ReactNode }) => (
+  <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit">
+    {children}
+  </motion.div>
+);
+
 const AchievementWatcher = () => {
   const location = useLocation();
   const { current, dismiss, runCheck } = useAchievementChecker();
 
-  // Check achievements on every route change
   useEffect(() => {
     const timer = setTimeout(runCheck, 500);
     return () => clearTimeout(timer);
@@ -38,24 +52,36 @@ const AchievementWatcher = () => {
   return <AchievementToast achievement={current} onDone={dismiss} />;
 };
 
+const AnimatedRoutes = () => {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<PageWrapper><Index /></PageWrapper>} />
+        <Route path="/alphabet" element={<PageWrapper><AlphabetPage /></PageWrapper>} />
+        <Route path="/words" element={<PageWrapper><WordsPage /></PageWrapper>} />
+        <Route path="/quiz" element={<PageWrapper><QuizPage /></PageWrapper>} />
+        <Route path="/memory" element={<PageWrapper><MemoryGame /></PageWrapper>} />
+        <Route path="/levels" element={<PageWrapper><LevelsPage /></PageWrapper>} />
+        <Route path="/spelling" element={<PageWrapper><SpellingBee /></PageWrapper>} />
+        <Route path="/scramble" element={<PageWrapper><WordScramble /></PageWrapper>} />
+        <Route path="/hangman" element={<PageWrapper><HangmanGame /></PageWrapper>} />
+        <Route path="/achievements" element={<PageWrapper><AchievementsPage /></PageWrapper>} />
+        <Route path="/stats" element={<PageWrapper><StatsPage /></PageWrapper>} />
+        <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
+      </Routes>
+    </AnimatePresence>
+  );
+};
+
 const AppRoutes = () => (
   <>
     <AppHeader />
     <AchievementWatcher />
-    <Routes>
-      <Route path="/" element={<Index />} />
-      <Route path="/alphabet" element={<AlphabetPage />} />
-      <Route path="/words" element={<WordsPage />} />
-      <Route path="/quiz" element={<QuizPage />} />
-      <Route path="/memory" element={<MemoryGame />} />
-      <Route path="/levels" element={<LevelsPage />} />
-      <Route path="/spelling" element={<SpellingBee />} />
-      <Route path="/scramble" element={<WordScramble />} />
-      <Route path="/hangman" element={<HangmanGame />} />
-      <Route path="/achievements" element={<AchievementsPage />} />
-      <Route path="/stats" element={<StatsPage />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <main role="main" aria-label="Main content">
+      <AnimatedRoutes />
+    </main>
     <AppFooter />
   </>
 );
@@ -85,11 +111,15 @@ const AppContent = () => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <LanguageProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <AppContent />
-      </TooltipProvider>
+      <ThemeProvider>
+        <TooltipProvider>
+          <ErrorBoundary>
+            <Toaster />
+            <Sonner />
+            <AppContent />
+          </ErrorBoundary>
+        </TooltipProvider>
+      </ThemeProvider>
     </LanguageProvider>
   </QueryClientProvider>
 );
