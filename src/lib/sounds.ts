@@ -641,3 +641,42 @@ export const playEraserSound = (durationMs: number = 900) => {
     osc.stop(t + delay + dur / 4);
   }
 };
+
+// 🦉 Owl speech chirp — short cheerful chirp when the owl speaks
+export const playOwlSpeechSound = (mood: 'correct' | 'wrong' | 'combo' | 'celebrate' | 'idle' = 'correct') => {
+  if (!audioCtx || !isSoundEnabled()) return;
+  ensureContext();
+  const t = audioCtx.currentTime;
+
+  switch (mood) {
+    case 'correct':
+    case 'combo': {
+      // Happy chirp — quick ascending tweet
+      playTone(800, t, 0.06, 0.12, 'triangle');
+      playTone(1100, t + 0.05, 0.06, 0.14, 'triangle');
+      playTone(1400, t + 0.1, 0.08, 0.1, 'sine');
+      break;
+    }
+    case 'wrong': {
+      // Gentle sympathetic coo — soft descending
+      playTone(600, t, 0.08, 0.08, 'sine');
+      playTone(480, t + 0.08, 0.1, 0.06, 'sine');
+      break;
+    }
+    case 'celebrate': {
+      // Triumphant hoot — owl-like "hoo-hoo!"
+      playTone(520, t, 0.1, 0.15, 'triangle');
+      playTone(420, t + 0.12, 0.08, 0.1, 'triangle');
+      playTone(520, t + 0.22, 0.1, 0.15, 'triangle');
+      playTone(660, t + 0.32, 0.12, 0.12, 'sine');
+      playSparkleTrail(t + 0.35, 3, 0.03);
+      break;
+    }
+    default: {
+      // Neutral chirp
+      playTone(700, t, 0.06, 0.08, 'triangle');
+      playTone(900, t + 0.06, 0.06, 0.06, 'sine');
+      break;
+    }
+  }
+};
