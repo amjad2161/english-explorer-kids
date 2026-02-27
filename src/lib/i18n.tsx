@@ -204,6 +204,54 @@ const translations: Record<string, Record<Language, string>> = {
   "path.review": { he: "חזרה", ar: "مراجعة", en: "Review" },
   "path.reward": { he: "פרס", ar: "جائزة", en: "Reward" },
   "path.dailyPlan": { he: "תכנית היומית שלי", ar: "خطتي اليومية", en: "My Daily Plan" },
+
+  // Phonics
+  "phonics.title": { he: "🔡 לימוד פוניקס", ar: "🔡 تعلم الصوتيات", en: "🔡 Phonics Learning" },
+  "phonics.subtitle": { he: "למד אותיות וצלילים!", ar: "تعلم الحروف والأصوات!", en: "Learn letters and sounds!" },
+  "phonics.learnedAll": { he: "!למדת את כל האותיות", ar: "!تعلمت كل الحروف", en: "You learned all letters!" },
+  "phonics.markLearned": { he: "✅ למדתי", ar: "✅ تعلمت", en: "✅ Mark Learned" },
+  "phonics.hearIt": { he: "🔊 שמע", ar: "🔊 استمع", en: "🔊 Hear It!" },
+  "phonics.traceIt": { he: "✏️ עקוב", ar: "✏️ تتبع", en: "✏️ Trace It" },
+  "phonics.progress": { he: "אותיות שנלמדו", ar: "حروف تم تعلمها", en: "Letters Learned" },
+
+  // Grammar
+  "grammar.title": { he: "🏗️ בנאי משפטים", ar: "🏗️ باني الجمل", en: "🏗️ Grammar Builder" },
+  "grammar.subtitle": { he: "בנה משפטים נכונים!", ar: "ابنِ جملاً صحيحة!", en: "Build correct sentences!" },
+  "grammar.beginner": { he: "🌱 מתחיל", ar: "🌱 مبتدئ", en: "🌱 Beginner" },
+  "grammar.intermediate": { he: "🌿 בינוני", ar: "🌿 متوسط", en: "🌿 Intermediate" },
+  "grammar.advanced": { he: "🌳 מתקדם", ar: "🌳 متقدم", en: "🌳 Advanced" },
+  "grammar.check": { he: "✓ בדוק", ar: "✓ تحقق", en: "✓ Check" },
+  "grammar.correct": { he: "!מצוין", ar: "!ممتاز", en: "Excellent!" },
+  "grammar.wrong": { he: "נסה שוב", ar: "حاول مرة أخرى", en: "Try again!" },
+  "grammar.hint": { he: "💡 רמז", ar: "💡 تلميح", en: "💡 Hint" },
+  "grammar.complete": { he: "!סיימת את הרמה", ar: "!أنهيت المستوى", en: "Level Complete!" },
+
+  // TPR
+  "tpr.title": { he: "🏃 תרגול פיזי", ar: "🏃 التمرين الجسدي", en: "🏃 TPR - Move & Learn" },
+  "tpr.subtitle": { he: "הקשב לפקודה ובצע אותה!", ar: "استمع للأمر ونفذه!", en: "Listen to the command and do it!" },
+  "tpr.didIt": { he: "!עשיתי!", ar: "!فعلت!", en: "I Did It!" },
+  "tpr.next": { he: "הבא →", ar: "→ التالي", en: "Next →" },
+  "tpr.autoPlay": { he: "▶ הפעלה אוטומטית", ar: "▶ تشغيل تلقائي", en: "▶ Auto Play" },
+  "tpr.speed": { he: "מהירות", ar: "السرعة", en: "Speed" },
+  "tpr.allDone": { he: "!עשית הכל", ar: "!أنجزت كل شيء", en: "You did it all!" },
+
+  // Learning Path
+  "learn.title": { he: "🗺️ מסלול הלמידה שלי", ar: "🗺️ مسار تعلمي", en: "🗺️ My Learning Path" },
+  "learn.subtitle": { he: "מסע הלמידה האישי שלך", ar: "رحلة التعلم الشخصية", en: "Your personal learning journey" },
+  "learn.selectAge": { he: "בחר גיל", ar: "اختر العمر", en: "Select Age" },
+  "learn.dailyPlan": { he: "התכנית היומית", ar: "الخطة اليومية", en: "Today's Plan" },
+  "learn.skills": { he: "המיומנויות שלי", ar: "مهاراتي", en: "My Skills" },
+  "learn.start": { he: "התחל →", ar: "→ ابدأ", en: "Start →" },
+  "learn.goal": { he: "מטרה", ar: "هدف", en: "Goal" },
+  "learn.overallLevel": { he: "רמה כוללת", ar: "المستوى العام", en: "Overall Level" },
+
+  // Story Page
+  "story.selectTheme": { he: "בחר נושא לסיפור", ar: "اختر موضوع القصة", en: "Choose a Story Theme" },
+  "story.of": { he: "מתוך", ar: "من", en: "of" },
+  "story.hearStory": { he: "🔊 שמע", ar: "🔊 استمع", en: "🔊 Listen" },
+  "story.checkAnswer": { he: "בדוק", ar: "تحقق", en: "Check" },
+  "story.playAgain": { he: "שחק שוב", ar: "العب مرة أخرى", en: "Play Again" },
+  "story.backToThemes": { he: "חזרה לנושאים", ar: "العودة للمواضيع", en: "Back to Themes" },
 };
 
 const LanguageContext = createContext<LanguageContextType | null>(null);

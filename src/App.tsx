@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { LanguageProvider, useLanguage, Language } from "@/lib/i18n";
 import { ThemeProvider } from "@/lib/theme";
-import React, { useState, useEffect, useCallback, Suspense } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { EraserTransitionProvider } from "@/components/ChalkEraserTransition";
 import AppHeader from "@/components/AppHeader";
@@ -20,23 +20,22 @@ import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import BreakReminder from "@/components/BreakReminder";
 import KeyboardShortcuts from "@/components/KeyboardShortcuts";
 import CharacterStage from "@/components/character/CharacterStage";
-import Index from "./pages/Index";
-import AlphabetPage from "./pages/AlphabetPage";
-import WordsPage from "./pages/WordsPage";
-import QuizPage from "./pages/QuizPage";
-import MemoryGame from "./pages/MemoryGame";
-import LevelsPage from "./pages/LevelsPage";
-import SpellingBee from "./pages/SpellingBee";
-import WordScramble from "./pages/WordScramble";
-import HangmanGame from "./pages/HangmanGame";
-import PatternPuzzle from "./pages/PatternPuzzle";
-import AchievementsPage from "./pages/AchievementsPage";
-import StatsPage from "./pages/StatsPage";
-import SettingsPage from "./pages/SettingsPage";
-import ProgressReport from "./pages/ProgressReport";
-import ParentDashboard from "./pages/ParentDashboard";
-import NotFound from "./pages/NotFound";
-
+const Index = React.lazy(() => import("./pages/Index"));
+const AlphabetPage = React.lazy(() => import("./pages/AlphabetPage"));
+const WordsPage = React.lazy(() => import("./pages/WordsPage"));
+const QuizPage = React.lazy(() => import("./pages/QuizPage"));
+const MemoryGame = React.lazy(() => import("./pages/MemoryGame"));
+const LevelsPage = React.lazy(() => import("./pages/LevelsPage"));
+const SpellingBee = React.lazy(() => import("./pages/SpellingBee"));
+const WordScramble = React.lazy(() => import("./pages/WordScramble"));
+const HangmanGame = React.lazy(() => import("./pages/HangmanGame"));
+const PatternPuzzle = React.lazy(() => import("./pages/PatternPuzzle"));
+const AchievementsPage = React.lazy(() => import("./pages/AchievementsPage"));
+const StatsPage = React.lazy(() => import("./pages/StatsPage"));
+const SettingsPage = React.lazy(() => import("./pages/SettingsPage"));
+const ProgressReport = React.lazy(() => import("./pages/ProgressReport"));
+const ParentDashboard = React.lazy(() => import("./pages/ParentDashboard"));
+const NotFound = React.lazy(() => import("./pages/NotFound"));
 const StoryPage = React.lazy(() => import("./pages/StoryPage"));
 const LearningPathPage = React.lazy(() => import("./pages/LearningPathPage"));
 const PhonicsGame = React.lazy(() => import("./pages/PhonicsGame"));
@@ -44,9 +43,7 @@ const GrammarBuilder = React.lazy(() => import("./pages/GrammarBuilder"));
 const TPRPage = React.lazy(() => import("./pages/TPRPage"));
 
 const LazyFallback = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div className="text-4xl animate-bounce">🦉</div>
-  </div>
+  <div className="flex items-center justify-center min-h-screen text-4xl animate-bounce">🦉</div>
 );
 
 const queryClient = new QueryClient();
@@ -81,27 +78,27 @@ const AnimatedRoutes = () => {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<PageWrapper><Index /></PageWrapper>} />
-        <Route path="/alphabet" element={<PageWrapper><AlphabetPage /></PageWrapper>} />
-        <Route path="/words" element={<PageWrapper><WordsPage /></PageWrapper>} />
-        <Route path="/quiz" element={<PageWrapper><QuizPage /></PageWrapper>} />
-        <Route path="/memory" element={<PageWrapper><MemoryGame /></PageWrapper>} />
-        <Route path="/levels" element={<PageWrapper><LevelsPage /></PageWrapper>} />
-        <Route path="/spelling" element={<PageWrapper><SpellingBee /></PageWrapper>} />
-        <Route path="/scramble" element={<PageWrapper><WordScramble /></PageWrapper>} />
-        <Route path="/hangman" element={<PageWrapper><HangmanGame /></PageWrapper>} />
-        <Route path="/pattern" element={<PageWrapper><PatternPuzzle /></PageWrapper>} />
-        <Route path="/achievements" element={<PageWrapper><AchievementsPage /></PageWrapper>} />
-        <Route path="/stats" element={<PageWrapper><StatsPage /></PageWrapper>} />
-        <Route path="/settings" element={<PageWrapper><SettingsPage /></PageWrapper>} />
-        <Route path="/report" element={<PageWrapper><ProgressReport /></PageWrapper>} />
-        <Route path="/parent" element={<PageWrapper><ParentDashboard /></PageWrapper>} />
-        <Route path="/story" element={<Suspense fallback={<LazyFallback />}><PageWrapper><StoryPage /></PageWrapper></Suspense>} />
-        <Route path="/learn" element={<Suspense fallback={<LazyFallback />}><PageWrapper><LearningPathPage /></PageWrapper></Suspense>} />
-        <Route path="/phonics" element={<Suspense fallback={<LazyFallback />}><PageWrapper><PhonicsGame /></PageWrapper></Suspense>} />
-        <Route path="/grammar" element={<Suspense fallback={<LazyFallback />}><PageWrapper><GrammarBuilder /></PageWrapper></Suspense>} />
-        <Route path="/tpr" element={<Suspense fallback={<LazyFallback />}><PageWrapper><TPRPage /></PageWrapper></Suspense>} />
-        <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
+        <Route path="/" element={<React.Suspense fallback={<LazyFallback />}><PageWrapper><Index /></PageWrapper></React.Suspense>} />
+        <Route path="/alphabet" element={<React.Suspense fallback={<LazyFallback />}><PageWrapper><AlphabetPage /></PageWrapper></React.Suspense>} />
+        <Route path="/words" element={<React.Suspense fallback={<LazyFallback />}><PageWrapper><WordsPage /></PageWrapper></React.Suspense>} />
+        <Route path="/quiz" element={<React.Suspense fallback={<LazyFallback />}><PageWrapper><QuizPage /></PageWrapper></React.Suspense>} />
+        <Route path="/memory" element={<React.Suspense fallback={<LazyFallback />}><PageWrapper><MemoryGame /></PageWrapper></React.Suspense>} />
+        <Route path="/levels" element={<React.Suspense fallback={<LazyFallback />}><PageWrapper><LevelsPage /></PageWrapper></React.Suspense>} />
+        <Route path="/spelling" element={<React.Suspense fallback={<LazyFallback />}><PageWrapper><SpellingBee /></PageWrapper></React.Suspense>} />
+        <Route path="/scramble" element={<React.Suspense fallback={<LazyFallback />}><PageWrapper><WordScramble /></PageWrapper></React.Suspense>} />
+        <Route path="/hangman" element={<React.Suspense fallback={<LazyFallback />}><PageWrapper><HangmanGame /></PageWrapper></React.Suspense>} />
+        <Route path="/pattern" element={<React.Suspense fallback={<LazyFallback />}><PageWrapper><PatternPuzzle /></PageWrapper></React.Suspense>} />
+        <Route path="/achievements" element={<React.Suspense fallback={<LazyFallback />}><PageWrapper><AchievementsPage /></PageWrapper></React.Suspense>} />
+        <Route path="/stats" element={<React.Suspense fallback={<LazyFallback />}><PageWrapper><StatsPage /></PageWrapper></React.Suspense>} />
+        <Route path="/settings" element={<React.Suspense fallback={<LazyFallback />}><PageWrapper><SettingsPage /></PageWrapper></React.Suspense>} />
+        <Route path="/report" element={<React.Suspense fallback={<LazyFallback />}><PageWrapper><ProgressReport /></PageWrapper></React.Suspense>} />
+        <Route path="/parent" element={<React.Suspense fallback={<LazyFallback />}><PageWrapper><ParentDashboard /></PageWrapper></React.Suspense>} />
+        <Route path="/story" element={<React.Suspense fallback={<LazyFallback />}><PageWrapper><StoryPage /></PageWrapper></React.Suspense>} />
+        <Route path="/learn" element={<React.Suspense fallback={<LazyFallback />}><PageWrapper><LearningPathPage /></PageWrapper></React.Suspense>} />
+        <Route path="/phonics" element={<React.Suspense fallback={<LazyFallback />}><PageWrapper><PhonicsGame /></PageWrapper></React.Suspense>} />
+        <Route path="/grammar" element={<React.Suspense fallback={<LazyFallback />}><PageWrapper><GrammarBuilder /></PageWrapper></React.Suspense>} />
+        <Route path="/tpr" element={<React.Suspense fallback={<LazyFallback />}><PageWrapper><TPRPage /></PageWrapper></React.Suspense>} />
+        <Route path="*" element={<React.Suspense fallback={<LazyFallback />}><PageWrapper><NotFound /></PageWrapper></React.Suspense>} />
       </Routes>
     </AnimatePresence>
   );
