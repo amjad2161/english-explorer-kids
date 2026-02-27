@@ -11,7 +11,7 @@ import Card3D from "@/components/Card3D";
 import DailyChallengeCard from "@/components/DailyChallengeCard";
 import WordOfTheDay from "@/components/WordOfTheDay";
 import { getSmartRecommendations, getMotivationalMessage, Recommendation } from "@/lib/recommendations";
-import mascotImg from "@/assets/mascot.png";
+import Interactive3DMascot from "@/components/Interactive3DMascot";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -107,40 +107,14 @@ const Index = () => {
         {/* ── HERO SECTION ── */}
         <motion.div variants={itemVariants} className="text-center mb-8 relative">
           <div className="relative inline-block mb-4">
-            {/* Multi-layer glow */}
-            <motion.div
-              className="absolute inset-0 rounded-full"
-              style={{
-                background: "radial-gradient(circle, hsl(var(--primary) / 0.25), hsl(var(--sunshine) / 0.12), transparent 65%)",
-                filter: "blur(50px)",
-                width: "250%", height: "250%", left: "-75%", top: "-75%",
+            <Interactive3DMascot
+              mood={mascotMood}
+              size="md"
+              onClick={() => {
+                playClickSound();
+                setMascotMood("celebrate");
+                setTimeout(() => setMascotMood("idle"), 2000);
               }}
-              animate={{ scale: [1, 1.15, 1], rotate: [0, 3, -3, 0] }}
-              transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-            />
-            {/* Secondary glow for dark mode */}
-            <motion.div
-              className="absolute inset-0 rounded-full hidden dark:block"
-              style={{
-                background: "radial-gradient(circle, hsl(var(--candy) / 0.1), transparent 60%)",
-                filter: "blur(60px)",
-                width: "300%", height: "300%", left: "-100%", top: "-100%",
-              }}
-              animate={{ scale: [0.8, 1.1, 0.8] }}
-              transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: -4 }}
-            />
-            <motion.img
-              src={mascotImg}
-              alt="Owl mascot"
-              className="w-28 h-28 md:w-36 md:h-36 relative z-10 drop-shadow-2xl"
-              animate={
-                mascotMood === "wave"
-                  ? { y: [0, -15, 0], rotate: [0, -8, 8, 0], scale: [1, 1.1, 1] }
-                  : mascotMood === "celebrate"
-                  ? { y: [0, -25, 0], scale: [1, 1.2, 1] }
-                  : { y: [0, -6, 0] }
-              }
-              transition={{ duration: mascotMood === "idle" ? 4 : 1.5, repeat: mascotMood === "idle" ? Infinity : 0, ease: "easeInOut" }}
             />
             {/* Speech bubble */}
             <AnimatePresence>

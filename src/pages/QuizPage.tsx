@@ -19,6 +19,8 @@ import XPReward from "@/components/XPReward";
 import FloatingParticles from "@/components/FloatingParticles";
 import ComboBurst from "@/components/ComboBurst";
 import { RotateCcw, Zap, Target, Trophy } from "lucide-react";
+import InteractiveHeroImage from "@/components/InteractiveHeroImage";
+import quizHero from "@/assets/quiz-hero.png";
 
 const QUIZ_SIZE = 8;
 
@@ -123,6 +125,15 @@ const QuizPage = () => {
       <div className="max-w-2xl mx-auto px-4 py-8 relative z-10">
         <BackToLevels />
         
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6 }}
+          className="mb-4"
+        >
+          <InteractiveHeroImage src={quizHero} alt="Quiz hero" glowColor="--lavender" className="h-36 md:h-48" />
+        </motion.div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

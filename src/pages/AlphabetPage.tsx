@@ -14,6 +14,8 @@ import Card3D from "@/components/Card3D";
 import XPReward from "@/components/XPReward";
 import FloatingParticles from "@/components/FloatingParticles";
 import { ChevronRight, ChevronLeft, Volume2, BookOpen, Sparkles } from "lucide-react";
+import InteractiveHeroImage from "@/components/InteractiveHeroImage";
+import alphabetHero from "@/assets/alphabet-hero.png";
 
 const letterGradients = [
   { bg: "from-sky to-sky/70", light: "bg-sky/10", text: "text-sky" },
@@ -82,6 +84,16 @@ const AlphabetPage = () => {
       <div className="max-w-5xl mx-auto px-4 py-8 relative z-10">
         <BackToLevels />
         
+        {/* Hero image - blended into background */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6 }}
+          className="max-w-2xl mx-auto mb-6"
+        >
+          <InteractiveHeroImage src={alphabetHero} alt="Alphabet hero" glowColor="--secondary" className="h-40 md:h-52" />
+        </motion.div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
