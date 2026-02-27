@@ -121,7 +121,7 @@ const Interactive3DMascot = ({ mood = "idle", size = "md", onClick, showSpeechBu
         transition={{ duration: mood === "celebrate" ? 1.5 : 3, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Main owl image with mask and animations */}
+      {/* Main owl image with aggressive mask to eliminate background */}
       <motion.img
         src={owlPixar}
         alt="Pixar-style owl mascot"
@@ -129,8 +129,8 @@ const Interactive3DMascot = ({ mood = "idle", size = "md", onClick, showSpeechBu
         className="w-full h-full object-contain select-none pointer-events-none relative z-10"
         style={{
           filter: shadowByMood,
-          WebkitMaskImage: "radial-gradient(ellipse 52% 56% at 50% 46%, black 50%, rgba(0,0,0,0.9) 60%, rgba(0,0,0,0.5) 72%, transparent 85%)",
-          maskImage: "radial-gradient(ellipse 52% 56% at 50% 46%, black 50%, rgba(0,0,0,0.9) 60%, rgba(0,0,0,0.5) 72%, transparent 85%)",
+          WebkitMaskImage: "radial-gradient(ellipse 42% 48% at 50% 45%, black 35%, rgba(0,0,0,0.7) 48%, rgba(0,0,0,0.2) 60%, transparent 68%)",
+          maskImage: "radial-gradient(ellipse 42% 48% at 50% 45%, black 35%, rgba(0,0,0,0.7) 48%, rgba(0,0,0,0.2) 60%, transparent 68%)",
         }}
         animate={animateByMood}
         transition={transitionByMood}
