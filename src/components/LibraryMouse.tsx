@@ -40,8 +40,6 @@ const LibraryMouse = () => {
         className="w-full h-full object-contain select-none pointer-events-none relative z-10"
         style={{
           filter: "drop-shadow(0 5px 14px hsl(20 30% 8% / 0.5))",
-          WebkitMaskImage: "radial-gradient(ellipse 46% 48% at 50% 48%, black 50%, rgba(0,0,0,0.8) 65%, rgba(0,0,0,0.3) 80%, transparent 92%)",
-          maskImage: "radial-gradient(ellipse 46% 48% at 50% 48%, black 50%, rgba(0,0,0,0.8) 65%, rgba(0,0,0,0.3) 80%, transparent 92%)",
         }}
         animate={{ y: [0, -2, 0], x: [0, 1, 0] }}
         transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
