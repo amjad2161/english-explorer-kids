@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/lib/i18n";
 import { wordCategories } from "@/data/learningData";
+import { speakEnglish } from "@/lib/sounds";
 
 const WordOfTheDay = () => {
   const { lang, dir } = useLanguage();
@@ -20,13 +21,7 @@ const WordOfTheDay = () => {
   }, []);
 
   const speakWord = () => {
-    if (!("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(word.english);
-    u.lang = "en-US";
-    u.rate = 0.75;
-    u.pitch = 1.3;
-    window.speechSynthesis.speak(u);
+    speakEnglish(word.english);
   };
 
   return (

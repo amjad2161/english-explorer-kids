@@ -1,4 +1,5 @@
-// Advanced Sound System with Web Speech API & Rich Audio
+// 🎵 Cartoon-Grade Sound System for Kids
+// Looney Tunes-inspired, age-appropriate, magnetic & interactive
 const SOUND_KEY = "english-fun-sound-enabled";
 const MUSIC_KEY = "english-fun-music-enabled";
 
@@ -10,284 +11,495 @@ export const setMusicEnabled = (v: boolean) => {
   if (!v) stopBgMusic();
 };
 
+// ─── Smart Voice Selection ───
+// Finds the most kid-friendly, cartoon-like voice available on the platform
+const getKidVoice = (lang: string): SpeechSynthesisVoice | null => {
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices.length) return null;
+
+  // Priority keywords for kid-friendly voices (ordered by preference)
+  const kidKeywords = ['child', 'kid', 'junior', 'samantha', 'karen', 'zira', 'google us english'];
+  const hebrewKeywords = ['carmit', 'he-il', 'he_il', 'hebrew'];
+  const arabicKeywords = ['ar-sa', 'ar_sa', 'arabic', 'maged'];
+
+  const langVoices = voices.filter(v => v.lang.startsWith(lang.slice(0, 2)));
+
+  // Try kid-specific voices first
+  for (const kw of kidKeywords) {
+    const match = langVoices.find(v => v.name.toLowerCase().includes(kw));
+    if (match) return match;
+  }
+
+  // For Hebrew/Arabic, find any matching voice
+  if (lang.startsWith('he')) {
+    for (const kw of hebrewKeywords) {
+      const match = voices.find(v => v.name.toLowerCase().includes(kw) || v.lang.toLowerCase().includes(kw));
+      if (match) return match;
+    }
+  }
+  if (lang.startsWith('ar')) {
+    for (const kw of arabicKeywords) {
+      const match = voices.find(v => v.name.toLowerCase().includes(kw) || v.lang.toLowerCase().includes(kw));
+      if (match) return match;
+    }
+  }
+
+  // Prefer female voices (generally sound friendlier for kids)
+  const femaleVoice = langVoices.find(v =>
+    /female|woman|girl/i.test(v.name) || /samantha|victoria|alex|karen|moira|tessa|fiona/i.test(v.name)
+  );
+  if (femaleVoice) return femaleVoice;
+
+  return langVoices[0] || null;
+};
+
 // ─── Speech ───
-export const speak = (text: string, lang: string = 'en-US', rate: number = 0.8) => {
+// Cartoon-character voice: high pitch, slightly slow for clarity, warm & bouncy
+export const speak = (text: string, lang: string = 'en-US', rate: number = 0.78) => {
   if (!('speechSynthesis' in window) || !isSoundEnabled()) return;
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = lang;
   utterance.rate = rate;
-  utterance.pitch = 1.4;
+  utterance.pitch = 1.5; // Higher pitch = more cartoon-like, kid-friendly
   utterance.volume = 1;
-  const voices = window.speechSynthesis.getVoices();
-  const preferredVoice = voices.find(v =>
-    v.name.toLowerCase().includes('child') ||
-    v.name.toLowerCase().includes('samantha') ||
-    (lang === 'he-IL' && v.lang.startsWith('he'))
-  );
-  if (preferredVoice) utterance.voice = preferredVoice;
+
+  const voice = getKidVoice(lang);
+  if (voice) utterance.voice = voice;
+
   window.speechSynthesis.speak(utterance);
 };
 
-export const speakEnglish = (text: string) => speak(text, 'en-US', 0.75);
-export const speakHebrew = (text: string) => speak(text, 'he-IL', 0.85);
+// English: Slow, clear, enthusiastic - like a friendly cartoon teacher
+export const speakEnglish = (text: string) => speak(text, 'en-US', 0.72);
+// Hebrew: Slightly faster, warm
+export const speakHebrew = (text: string) => speak(text, 'he-IL', 0.82);
+// Arabic: Clear and warm
+export const speakArabic = (text: string) => speak(text, 'ar-SA', 0.80);
+
+// Speak with extra enthusiasm (for celebrations, correct answers)
+export const speakExcited = (text: string) => {
+  if (!('speechSynthesis' in window) || !isSoundEnabled()) return;
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'en-US';
+  utterance.rate = 0.85;
+  utterance.pitch = 1.7; // Extra high for excitement
+  utterance.volume = 1;
+  const voice = getKidVoice('en-US');
+  if (voice) utterance.voice = voice;
+  window.speechSynthesis.speak(utterance);
+};
+
+// Letter-by-letter spelling voice (slower, more deliberate)
+export const speakSpelling = (letter: string) => {
+  if (!('speechSynthesis' in window) || !isSoundEnabled()) return;
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(letter);
+  utterance.lang = 'en-US';
+  utterance.rate = 0.6; // Very slow for letter clarity
+  utterance.pitch = 1.4;
+  utterance.volume = 1;
+  const voice = getKidVoice('en-US');
+  if (voice) utterance.voice = voice;
+  window.speechSynthesis.speak(utterance);
+};
 
 // ─── Audio Context ───
 const audioCtx = typeof window !== 'undefined' ? new (window.AudioContext || (window as any).webkitAudioContext)() : null;
 
+const ensureContext = () => {
+  if (audioCtx?.state === 'suspended') audioCtx.resume();
+};
+
 const playTone = (freq: number, start: number, dur: number, vol = 0.3, type: OscillatorType = 'sine') => {
   if (!audioCtx || !isSoundEnabled()) return;
+  ensureContext();
   const osc = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
   osc.connect(gain);
   gain.connect(audioCtx.destination);
   osc.type = type;
   osc.frequency.setValueAtTime(freq, start);
-  gain.gain.setValueAtTime(vol, start);
+  // Smooth envelope for cartoon-like warmth (no harsh attacks)
+  gain.gain.setValueAtTime(0, start);
+  gain.gain.linearRampToValueAtTime(vol, start + 0.01);
   gain.gain.exponentialRampToValueAtTime(0.01, start + dur);
   osc.start(start);
   osc.stop(start + dur);
 };
 
-// Rich chord helper
+// Rich chord for magical moments
 const playChord = (freqs: number[], start: number, dur: number, vol = 0.12) => {
   freqs.forEach(f => playTone(f, start, dur, vol));
 };
 
+// Cartoon "boing" effect - wobbling pitch for playful feel
+const playBoing = (baseFreq: number, start: number, vol = 0.15) => {
+  if (!audioCtx || !isSoundEnabled()) return;
+  ensureContext();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.type = 'sine';
+  // Pitch swoops up then settles - classic cartoon boing
+  osc.frequency.setValueAtTime(baseFreq * 0.5, start);
+  osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.5, start + 0.06);
+  osc.frequency.exponentialRampToValueAtTime(baseFreq, start + 0.15);
+  gain.gain.setValueAtTime(vol, start);
+  gain.gain.exponentialRampToValueAtTime(0.01, start + 0.25);
+  osc.start(start);
+  osc.stop(start + 0.25);
+};
+
+// Cartoon sparkle/twinkle trail
+const playSparkleTrail = (start: number, count = 5, vol = 0.04) => {
+  for (let i = 0; i < count; i++) {
+    playTone(2000 + i * 400, start + i * 0.04, 0.08, vol, 'triangle');
+  }
+};
+
+// ─── Sound Effects (Cartoon-Grade) ───
+
+// ✅ Correct answer - triumphant "TA-DA!" with sparkles
 export const playCorrectSound = () => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
-  // Rich major chord with sparkle cascade
-  playTone(523, t, 0.15, 0.2);
-  playTone(659, t + 0.06, 0.15, 0.2);
-  playTone(784, t + 0.12, 0.2, 0.25);
-  playTone(1047, t + 0.18, 0.15, 0.15);
+  // Bright ascending major triad - like a cartoon "correct!" jingle
+  playTone(523, t, 0.12, 0.2);       // C5
+  playTone(659, t + 0.05, 0.12, 0.2); // E5
+  playTone(784, t + 0.1, 0.18, 0.25); // G5
+  playTone(1047, t + 0.15, 0.2, 0.2); // C6 - triumphant top
+  // Boing on the top note for cartoon feel
+  playBoing(1047, t + 0.18, 0.1);
   // Sparkle cascade
-  playTone(1568, t + 0.2, 0.1, 0.06, 'triangle');
-  playTone(2093, t + 0.25, 0.08, 0.04, 'triangle');
-  playTone(2637, t + 0.3, 0.06, 0.03, 'triangle');
+  playSparkleTrail(t + 0.25, 4, 0.05);
 };
 
+// ❌ Wrong answer - gentle cartoon "womp womp" (not scary!)
 export const playWrongSound = () => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
-  playTone(220, t, 0.12, 0.15, 'sawtooth');
-  playTone(180, t + 0.1, 0.12, 0.12, 'sawtooth');
-  playTone(150, t + 0.2, 0.2, 0.1, 'square');
+  // Descending minor - sad trombone style but cute
+  playTone(350, t, 0.15, 0.12, 'triangle');
+  playTone(300, t + 0.12, 0.15, 0.1, 'triangle');
+  playTone(260, t + 0.24, 0.2, 0.08, 'triangle');
+  // Gentle wobble at the end
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(220, t + 0.36);
+  // Vibrato for cartoon "sad" effect
+  const lfo = audioCtx.createOscillator();
+  const lfoGain = audioCtx.createGain();
+  lfo.type = 'sine';
+  lfo.frequency.setValueAtTime(6, t + 0.36);
+  lfoGain.gain.setValueAtTime(15, t + 0.36);
+  lfo.connect(lfoGain);
+  lfoGain.connect(osc.frequency);
+  lfo.start(t + 0.36);
+  lfo.stop(t + 0.7);
+  gain.gain.setValueAtTime(0.08, t + 0.36);
+  gain.gain.exponentialRampToValueAtTime(0.01, t + 0.7);
+  osc.start(t + 0.36);
+  osc.stop(t + 0.7);
 };
 
+// 🖱️ Click/tap - cartoon "pop" bubble
 export const playClickSound = () => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
-  playTone(880, t, 0.04, 0.1);
-  playTone(1320, t + 0.02, 0.03, 0.05, 'triangle');
+  // Quick pitch-up pop like a bubble
+  playBoing(900, t, 0.08);
 };
 
+// ⭐ Star earned - magical Disney-like ascending sparkle
 export const playStarSound = () => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
-  const scale = [523, 659, 784, 1047, 1319];
+  // Magical ascending pentatonic scale
+  const scale = [523, 659, 784, 988, 1175, 1319];
   scale.forEach((freq, i) => {
-    playTone(freq, t + i * 0.08, 0.25, 0.12);
-    playTone(freq * 2, t + i * 0.08, 0.12, 0.04, 'triangle');
+    playTone(freq, t + i * 0.07, 0.3, 0.12);
+    playTone(freq * 2, t + i * 0.07 + 0.02, 0.12, 0.04, 'triangle');
   });
-  // Final shimmer
-  playChord([1047, 1319, 1568], t + scale.length * 0.08, 0.5, 0.06);
+  // Grand sparkle chord at top
+  playChord([1047, 1319, 1568, 2093], t + scale.length * 0.07, 0.6, 0.06);
+  // Twinkling trail
+  playSparkleTrail(t + scale.length * 0.07 + 0.2, 6, 0.03);
 };
 
+// 🔥 Combo streak - increasingly epic cartoon power-up
 export const playComboSound = (combo: number) => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
-  const baseFreq = 400 + combo * 80;
-  // Ascending arpeggio based on combo level
-  [0, 0.05, 0.1, 0.15, 0.2].forEach((delay, i) => {
-    playTone(baseFreq + i * 150, t + delay, 0.1, 0.18);
-  });
-  // Power chord on high combos
-  if (combo >= 3) {
-    playChord([baseFreq * 2, baseFreq * 2.5, baseFreq * 3], t + 0.22, 0.2, 0.08);
-    // Sparkle sweep
-    for (let i = 0; i < 4; i++) {
-      playTone(2000 + i * 300, t + 0.25 + i * 0.03, 0.06, 0.03, 'triangle');
-    }
+  const baseFreq = 400 + combo * 100;
+  // Fast ascending arpeggio - gets higher with each combo
+  for (let i = 0; i < Math.min(combo + 2, 6); i++) {
+    playTone(baseFreq + i * 180, t + i * 0.04, 0.1, 0.15);
   }
+  // Cartoon "boing" bounce at combo 3+
+  if (combo >= 3) {
+    playBoing(baseFreq * 2, t + 0.2, 0.1);
+    playChord([baseFreq * 2, baseFreq * 2.5, baseFreq * 3], t + 0.28, 0.2, 0.06);
+  }
+  // Power-up "whoosh" at combo 5+
   if (combo >= 5) {
-    // Epic power-up sound
-    playTone(baseFreq * 4, t + 0.3, 0.3, 0.05, 'sine');
+    playSparkleTrail(t + 0.3, 8, 0.04);
+    // Rising "power beam"
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(baseFreq * 2, t + 0.35);
+    osc.frequency.exponentialRampToValueAtTime(baseFreq * 6, t + 0.55);
+    gain.gain.setValueAtTime(0.06, t + 0.35);
+    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.55);
+    osc.start(t + 0.35);
+    osc.stop(t + 0.55);
   }
 };
 
+// ⏱️ Timer tick - gentle metronome
 export const playTickSound = () => {
   if (!audioCtx) return;
-  playTone(1200, audioCtx.currentTime, 0.03, 0.06);
+  playTone(1200, audioCtx.currentTime, 0.03, 0.05);
 };
 
+// ⚠️ Timer warning - urgent but not scary
 export const playTimerWarning = () => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
-  playTone(600, t, 0.08, 0.2);
-  playTone(400, t + 0.1, 0.12, 0.2);
-  playTone(300, t + 0.22, 0.15, 0.15);
+  playTone(600, t, 0.08, 0.15);
+  playTone(500, t + 0.1, 0.08, 0.15);
+  playTone(400, t + 0.2, 0.12, 0.12);
+  // Gentle wobble
+  playBoing(300, t + 0.3, 0.08);
 };
 
+// 🏆 Victory fanfare - full cartoon celebration orchestra
 export const playVictoryFanfare = () => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
-  // Triumphant fanfare melody
-  const melody = [392, 392, 523, 523, 659, 659, 784, 1047];
+  // Triumphant fanfare melody (Looney Tunes style "That's All Folks" vibe)
+  const melody = [392, 440, 523, 523, 659, 659, 784, 880, 1047];
   melody.forEach((freq, i) => {
-    playTone(freq, t + i * 0.12, 0.16, 0.2);
+    const delay = i < 4 ? i * 0.1 : 0.4 + (i - 4) * 0.08;
+    playTone(freq, t + delay, 0.18, 0.18);
+    // Harmony underneath
+    if (i >= 4) playTone(freq * 0.5, t + delay, 0.2, 0.06);
   });
-  // Harmony layers
-  playChord([523, 659, 784], t + melody.length * 0.12, 0.5, 0.1);
-  playChord([523, 784, 1047], t + melody.length * 0.12 + 0.3, 0.6, 0.1);
-  playChord([659, 1047, 1319], t + melody.length * 0.12 + 0.6, 0.8, 0.08);
-  // Final sparkle cascade
-  for (let i = 0; i < 6; i++) {
-    playTone(1047 + i * 200, t + melody.length * 0.12 + 0.8 + i * 0.04, 0.1, 0.03, 'triangle');
-  }
+  // Grand finale chord
+  const finale = t + 1.0;
+  playChord([523, 659, 784], finale, 0.5, 0.1);
+  playChord([784, 1047, 1319], finale + 0.25, 0.6, 0.08);
+  playChord([1047, 1319, 1568], finale + 0.5, 0.8, 0.06);
+  // Sparkle cascade finale
+  playSparkleTrail(finale + 0.7, 8, 0.04);
+  // Final cartoon "boing" flourish
+  playBoing(2093, finale + 1.0, 0.05);
 };
 
+// 🔤 Letter pop - musical xylophone note (each letter has its own pitch)
 export const playLetterPopSound = (index: number) => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
-  const freq = 300 + index * 80;
-  playTone(freq, t, 0.08, 0.12);
-  playTone(freq * 2, t + 0.02, 0.05, 0.04, 'triangle');
-  // Subtle resonance
-  playTone(freq * 1.5, t + 0.04, 0.06, 0.03, 'sine');
+  // Xylophone-like chromatic scale for each letter
+  const freq = 350 + index * 60;
+  playTone(freq, t, 0.1, 0.15, 'triangle');
+  playTone(freq * 2, t + 0.015, 0.06, 0.06, 'sine');
+  // Cartoon "ding" resonance
+  playTone(freq * 3, t + 0.03, 0.04, 0.02, 'sine');
 };
 
+// 🎉 Welcome chime - warm, inviting cartoon intro
 export const playWelcomeChime = () => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
-  const notes = [392, 440, 523, 659, 784, 1047];
-  notes.forEach((freq, i) => playTone(freq, t + i * 0.14, 0.3, 0.12));
-  playChord([523, 659, 784, 1047], t + notes.length * 0.14, 0.6, 0.06);
+  // Music box style ascending with warmth
+  const notes = [349, 440, 523, 659, 784, 1047];
+  notes.forEach((freq, i) => {
+    playTone(freq, t + i * 0.12, 0.35, 0.1, 'triangle');
+    playTone(freq * 0.5, t + i * 0.12, 0.25, 0.04, 'sine');
+  });
+  // Magical chord bloom
+  playChord([523, 659, 784, 1047], t + notes.length * 0.12, 0.7, 0.05);
+  playSparkleTrail(t + notes.length * 0.12 + 0.3, 4, 0.03);
 };
 
+// 👆 Selection sound - cute cartoon "boop"
 export const playSelectSound = () => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
-  playTone(440, t, 0.06, 0.12);
-  playTone(660, t + 0.04, 0.08, 0.12);
-  playTone(880, t + 0.08, 0.1, 0.08);
+  playBoing(700, t, 0.1);
 };
 
+// 🆙 Level up - epic cartoon power-up transformation
 export const playLevelUpSound = () => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
-  // Fast ascending scale
-  const scale = [523, 587, 659, 698, 784, 880, 988, 1047];
+  // Rapid ascending chromatic scale - "powering up!"
+  const scale = [392, 440, 494, 523, 587, 659, 698, 784, 880, 988, 1047];
   scale.forEach((freq, i) => {
-    playTone(freq, t + i * 0.06, 0.15, 0.12 + i * 0.01);
-    if (i >= 5) playTone(freq / 2, t + i * 0.06, 0.2, 0.08);
+    playTone(freq, t + i * 0.045, 0.12, 0.1 + i * 0.008);
   });
-  // Power chord finale
-  playChord([1047, 1319, 1568], t + scale.length * 0.06, 0.8, 0.1);
-  playChord([1568, 2093, 2637], t + scale.length * 0.06 + 0.3, 0.6, 0.05);
-  // Twinkle trail
-  for (let i = 0; i < 5; i++) {
-    playTone(2093 + i * 200, t + scale.length * 0.06 + 0.5 + i * 0.06, 0.1, 0.02, 'triangle');
-  }
+  const end = t + scale.length * 0.045;
+  // Explosion of sound at the top
+  playChord([1047, 1319, 1568, 2093], end, 0.8, 0.1);
+  playBoing(2093, end + 0.1, 0.08);
+  // Sparkle rain
+  playSparkleTrail(end + 0.3, 8, 0.04);
+  // Final power chord
+  playChord([1568, 2093, 2637], end + 0.5, 0.6, 0.04);
 };
 
+// ✨ XP gain - coins/gems collecting jingle
 export const playXPGainSound = (amount: number) => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
   const count = Math.min(Math.ceil(amount / 5), 8);
   for (let i = 0; i < count; i++) {
-    playTone(600 + i * 120, t + i * 0.04, 0.06, 0.08, 'triangle');
+    // Coin-like "ching" sounds ascending
+    playTone(800 + i * 150, t + i * 0.035, 0.06, 0.08, 'triangle');
+    playTone(1600 + i * 150, t + i * 0.035 + 0.01, 0.04, 0.03, 'sine');
   }
-  // Final coin sound
-  playTone(1500, t + count * 0.04, 0.1, 0.05, 'sine');
+  // Final satisfying "ka-ching!"
+  playTone(2000, t + count * 0.035, 0.12, 0.06, 'sine');
 };
 
-// Card flip sound
+// 🃏 Card flip - whooshy flip sound
 export const playFlipSound = () => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
-  playTone(400, t, 0.04, 0.1, 'triangle');
-  playTone(800, t + 0.02, 0.04, 0.06, 'sine');
+  ensureContext();
+  // Quick frequency sweep for "flip" effect
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(300, t);
+  osc.frequency.exponentialRampToValueAtTime(900, t + 0.04);
+  osc.frequency.exponentialRampToValueAtTime(600, t + 0.06);
+  gain.gain.setValueAtTime(0.08, t);
+  gain.gain.exponentialRampToValueAtTime(0.01, t + 0.08);
+  osc.start(t);
+  osc.stop(t + 0.08);
 };
 
-// Match found jingle
+// 🎯 Match found - happy recognition jingle
 export const playMatchSound = () => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
   playTone(523, t, 0.1, 0.15);
-  playTone(659, t + 0.06, 0.1, 0.15);
-  playTone(784, t + 0.12, 0.15, 0.18);
-  playTone(1047, t + 0.18, 0.12, 0.1);
-  playTone(1568, t + 0.22, 0.08, 0.05, 'triangle');
+  playTone(659, t + 0.05, 0.1, 0.15);
+  playTone(784, t + 0.1, 0.12, 0.18);
+  playTone(1047, t + 0.16, 0.15, 0.12);
+  playBoing(1047, t + 0.2, 0.06);
+  playSparkleTrail(t + 0.25, 3, 0.03);
 };
 
-// Countdown beep
+// ⏳ Countdown beep - urgency that's exciting, not scary
 export const playCountdownBeep = (remaining: number) => {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
-  const freq = remaining <= 3 ? 800 : 600;
-  playTone(freq, t, 0.06, remaining <= 3 ? 0.2 : 0.1);
   if (remaining <= 3) {
-    playTone(freq * 0.5, t + 0.04, 0.08, 0.08, 'square');
+    // Dramatic but fun
+    playTone(800, t, 0.08, 0.18);
+    playTone(400, t + 0.04, 0.06, 0.08, 'square');
+  } else {
+    playTone(600, t, 0.06, 0.08);
   }
 };
 
-
-// ─── Background Music (rich synthesised loop) ───
+// ─── Background Music (Cartoon-style playful loop) ───
 let bgMusicInterval: ReturnType<typeof setInterval> | null = null;
 let bgMusicGain: GainNode | null = null;
 
+// Cheerful pentatonic melody - sounds like a cartoon adventure
 const bgMelody = [
-  262, 330, 392, 523, 392, 330, 294, 349,
-  440, 523, 440, 349, 330, 392, 330, 262,
-  294, 349, 440, 523, 659, 523, 440, 392,
-  349, 330, 294, 262, 330, 392, 523, 392,
+  523, 587, 659, 784, 880,  // C D E G A ascending
+  784, 659, 587, 523, 440,  // descending
+  523, 659, 784, 880, 1047, // back up higher
+  880, 784, 659, 523, 587,  // playful descent
+  659, 784, 880, 784, 659,  // bouncy middle
+  523, 440, 523, 587, 659,  // gentle rise
+  784, 659, 523, 440, 523,  // resolution
+  587, 659, 784, 523, 440,  // outro
 ];
 
-const bgHarmony = [
-  131, 165, 196, 262, 196, 165, 147, 175,
-  220, 262, 220, 175, 165, 196, 165, 131,
-  147, 175, 220, 262, 330, 262, 220, 196,
-  175, 165, 147, 131, 165, 196, 262, 196,
+// Warm bass harmony underneath
+const bgBass = [
+  262, 262, 330, 392, 440,
+  392, 330, 294, 262, 220,
+  262, 330, 392, 440, 523,
+  440, 392, 330, 262, 294,
+  330, 392, 440, 392, 330,
+  262, 220, 262, 294, 330,
+  392, 330, 262, 220, 262,
+  294, 330, 392, 262, 220,
 ];
 
 export const startBgMusic = () => {
   if (!audioCtx || !isMusicEnabled() || bgMusicInterval) return;
+  ensureContext();
 
   bgMusicGain = audioCtx.createGain();
-  bgMusicGain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+  bgMusicGain.gain.setValueAtTime(0.035, audioCtx.currentTime);
   bgMusicGain.connect(audioCtx.destination);
 
   let noteIndex = 0;
   const playNote = () => {
     if (!audioCtx || !bgMusicGain || !isMusicEnabled()) { stopBgMusic(); return; }
     const idx = noteIndex % bgMelody.length;
-    
-    // Melody
+
+    // Melody - warm triangle wave (music box feel)
     const osc1 = audioCtx.createOscillator();
-    osc1.type = 'sine';
+    const noteGain1 = audioCtx.createGain();
+    osc1.type = 'triangle';
     osc1.frequency.setValueAtTime(bgMelody[idx], audioCtx.currentTime);
-    osc1.connect(bgMusicGain);
+    noteGain1.gain.setValueAtTime(0.04, audioCtx.currentTime);
+    noteGain1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.38);
+    osc1.connect(noteGain1);
+    noteGain1.connect(bgMusicGain);
     osc1.start(audioCtx.currentTime);
-    osc1.stop(audioCtx.currentTime + 0.35);
-    
-    // Harmony (quieter)
-    const harmGain = audioCtx.createGain();
-    harmGain.gain.setValueAtTime(0.02, audioCtx.currentTime);
-    harmGain.connect(bgMusicGain);
+    osc1.stop(audioCtx.currentTime + 0.4);
+
+    // Bass - very soft sine, grounding
     const osc2 = audioCtx.createOscillator();
-    osc2.type = 'triangle';
-    osc2.frequency.setValueAtTime(bgHarmony[idx], audioCtx.currentTime);
-    osc2.connect(harmGain);
+    const noteGain2 = audioCtx.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(bgBass[idx], audioCtx.currentTime);
+    noteGain2.gain.setValueAtTime(0.015, audioCtx.currentTime);
+    noteGain2.gain.exponentialRampToValueAtTime(0.005, audioCtx.currentTime + 0.42);
+    osc2.connect(noteGain2);
+    noteGain2.connect(bgMusicGain);
     osc2.start(audioCtx.currentTime);
-    osc2.stop(audioCtx.currentTime + 0.4);
-    
+    osc2.stop(audioCtx.currentTime + 0.45);
+
+    // Every 8th note: add a subtle sparkle overtone
+    if (idx % 8 === 0) {
+      const osc3 = audioCtx.createOscillator();
+      const noteGain3 = audioCtx.createGain();
+      osc3.type = 'sine';
+      osc3.frequency.setValueAtTime(bgMelody[idx] * 3, audioCtx.currentTime);
+      noteGain3.gain.setValueAtTime(0.008, audioCtx.currentTime);
+      noteGain3.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+      osc3.connect(noteGain3);
+      noteGain3.connect(bgMusicGain);
+      osc3.start(audioCtx.currentTime);
+      osc3.stop(audioCtx.currentTime + 0.32);
+    }
+
     noteIndex++;
   };
 
   playNote();
-  bgMusicInterval = setInterval(playNote, 450);
+  bgMusicInterval = setInterval(playNote, 420); // Slightly faster = more playful
 };
 
 export const stopBgMusic = () => {
