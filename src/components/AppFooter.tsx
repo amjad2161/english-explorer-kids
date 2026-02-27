@@ -13,33 +13,44 @@ const AppFooter = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 1 }}
-      className="relative mt-16 border-t border-border/30"
+      className="relative mt-20"
       dir={dir}
     >
-      {/* Gradient line */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+      {/* Flowing wave top border */}
+      <div className="absolute top-0 left-0 right-0 h-px">
+        <motion.div
+          className="w-full h-[2px]"
+          style={{
+            background: "linear-gradient(90deg, transparent, hsl(var(--primary) / 0.3), hsl(var(--candy) / 0.25), hsl(var(--lavender) / 0.2), transparent)",
+            backgroundSize: "200% 100%",
+          }}
+          animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+        />
+      </div>
       
-      <div className="max-w-5xl mx-auto px-4 py-8">
-        <div className="flex flex-col items-center gap-4">
+      <div className="max-w-5xl mx-auto px-4 py-10">
+        <div className="flex flex-col items-center gap-5">
           {/* Logo */}
           <motion.div
-            className="flex items-center gap-2"
+            className="flex items-center gap-3"
             whileHover={{ scale: 1.05 }}
           >
             <motion.span
-              className="text-2xl"
-              animate={{ rotate: [0, 5, -5, 0] }}
-              transition={{ duration: 4, repeat: Infinity }}
+              className="text-3xl"
+              style={{ filter: "drop-shadow(0 3px 6px rgba(0,0,0,0.15))" }}
+              animate={{ rotate: [0, 8, -8, 0], scale: [1, 1.1, 1] }}
+              transition={{ duration: 5, repeat: Infinity }}
             >
               🦉
             </motion.span>
-            <span className="font-display font-bold text-lg text-gradient">
+            <span className="font-display font-extrabold text-xl text-gradient">
               English Fun
             </span>
           </motion.div>
 
           {/* Tagline */}
-          <p className="text-sm text-muted-foreground font-body text-center max-w-md">
+          <p className="text-sm text-muted-foreground font-body text-center max-w-md leading-relaxed">
             {t({
               he: "לומדים אנגלית בכיף! 🎓 פלטפורמה חינוכית אינטראקטיבית לילדים",
               ar: "تعلم الإنجليزية بمرح! 🎓 منصة تعليمية تفاعلية للأطفال",
@@ -47,28 +58,33 @@ const AppFooter = () => {
             })}
           </p>
 
-          {/* Divider */}
-          <div className="w-24 h-0.5 rounded-full bg-gradient-to-r from-primary/20 via-primary/40 to-primary/20" />
+          {/* Organic divider */}
+          <motion.div 
+            className="w-32 h-1 rounded-full"
+            style={{ background: "var(--gradient-hero)" }}
+            animate={{ scaleX: [0.8, 1, 0.8], opacity: [0.4, 0.7, 0.4] }}
+            transition={{ duration: 4, repeat: Infinity }}
+          />
 
           {/* Copyright */}
-          <div className="flex flex-col items-center gap-1">
-            <p className="text-sm text-muted-foreground font-display font-semibold flex items-center gap-1.5">
+          <div className="flex flex-col items-center gap-1.5">
+            <p className="text-sm text-muted-foreground font-display font-semibold flex items-center gap-2">
               © {year} English Fun •
-              <span className="inline-flex items-center gap-1">
+              <span className="inline-flex items-center gap-1.5">
                 {t({ he: "נבנה עם", ar: "صُنع بـ", en: "Built with" })}
                 <motion.span
-                  animate={{ scale: [1, 1.3, 1] }}
+                  animate={{ scale: [1, 1.4, 1] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
                 >
-                  <Heart className="w-3.5 h-3.5 text-candy fill-candy" />
+                  <Heart className="w-4 h-4 text-candy fill-candy" />
                 </motion.span>
                 {t({ he: "ע״י", ar: "بواسطة", en: "by" })}
               </span>
             </p>
-            <p className="text-sm font-display font-bold text-foreground/80">
+            <p className="text-base font-display font-bold text-foreground/80">
               {t({ he: "אמג׳ד מוברשם", ar: "أمجد مبَرشَم", en: "Amjad Mobarsham" })}
             </p>
-            <p className="text-xs text-muted-foreground/70 font-body">
+            <p className="text-xs text-muted-foreground/60 font-body">
               {t({
                 he: "כל הזכויות שמורות",
                 ar: "جميع الحقوق محفوظة",
