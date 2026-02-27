@@ -86,8 +86,8 @@ const Interactive3DMascot = ({ mood = "idle", size = "md", onClick, showSpeechBu
         className="w-full h-full object-contain select-none pointer-events-none relative z-10"
         style={{
           filter: shadowByMood,
-          WebkitMaskImage: "radial-gradient(ellipse 62% 68% at 50% 48%, black 35%, rgba(0,0,0,0.85) 48%, rgba(0,0,0,0.4) 62%, transparent 78%)",
-          maskImage: "radial-gradient(ellipse 62% 68% at 50% 48%, black 35%, rgba(0,0,0,0.85) 48%, rgba(0,0,0,0.4) 62%, transparent 78%)",
+          WebkitMaskImage: "radial-gradient(ellipse 42% 48% at 50% 45%, black 50%, rgba(0,0,0,0.5) 65%, transparent 72%)",
+          maskImage: "radial-gradient(ellipse 42% 48% at 50% 45%, black 50%, rgba(0,0,0,0.5) 65%, transparent 72%)",
         }}
         animate={animateByMood}
         transition={transitionByMood}
