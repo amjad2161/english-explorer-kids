@@ -252,6 +252,13 @@ const translations: Record<string, Record<Language, string>> = {
   "story.checkAnswer": { he: "בדוק", ar: "تحقق", en: "Check" },
   "story.playAgain": { he: "שחק שוב", ar: "العب مرة أخرى", en: "Play Again" },
   "story.backToThemes": { he: "חזרה לנושאים", ar: "العودة للمواضيع", en: "Back to Themes" },
+
+  // Parental gate
+  "parental.title": { he: "בדיקת הורים", ar: "فحص الوالدين", en: "Parental Check" },
+  "parental.subtitle": { he: "למבוגרים בלבד — פתור כדי להמשיך", ar: "للكبار فقط — حل للمتابعة", en: "Grown-ups only — solve to continue" },
+  "parental.solve": { he: "כמה זה:", ar: "ما هو:", en: "What is:" },
+  "parental.cancel": { he: "ביטול", ar: "إلغاء", en: "Cancel" },
+  "parental.check": { he: "✓ בדוק", ar: "✓ تحقق", en: "Check ✓" },
 };
 
 const LanguageContext = createContext<LanguageContextType | null>(null);

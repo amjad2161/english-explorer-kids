@@ -82,4 +82,29 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Core React runtime
+          "vendor-react": ["react", "react-dom", "react-router-dom"],
+          // Animation + UI
+          "vendor-motion": ["framer-motion"],
+          // Radix UI components (shadcn)
+          "vendor-radix": [
+            "@radix-ui/react-dialog",
+            "@radix-ui/react-dropdown-menu",
+            "@radix-ui/react-select",
+            "@radix-ui/react-tabs",
+            "@radix-ui/react-toast",
+            "@radix-ui/react-tooltip",
+          ],
+          // State management
+          "vendor-state": ["zustand", "@tanstack/react-query"],
+          // Utilities
+          "vendor-utils": ["clsx", "tailwind-merge", "class-variance-authority", "lucide-react"],
+        },
+      },
+    },
+  },
 }));
