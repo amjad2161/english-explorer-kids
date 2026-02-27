@@ -11,8 +11,6 @@ import XPReward from "@/components/XPReward";
 import FloatingParticles from "@/components/FloatingParticles";
 import { Volume2, ArrowRight, BookOpen, Sparkles } from "lucide-react";
 import BackToLevels from "@/components/BackToLevels";
-import InteractiveHeroImage from "@/components/InteractiveHeroImage";
-import wordsHero from "@/assets/words-hero.png";
 
 const categoryGradients: Record<string, string> = {
   grass: "from-grass to-grass/70", candy: "from-candy to-candy/70", sky: "from-sky to-sky/70",
@@ -92,13 +90,29 @@ const WordsPage = () => {
       
       <div className="max-w-5xl mx-auto px-4 py-8 relative z-10">
         <BackToLevels />
+        {/* 3D Words Hero Scene */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
-          className="max-w-2xl mx-auto mb-6"
+          className="flex justify-center items-center gap-3 md:gap-5 mb-6 py-3"
         >
-          <InteractiveHeroImage src={wordsHero} alt="Words hero" glowColor="--accent" className="h-40 md:h-52" />
+          {["🐱", "🌳", "🏠", "🍎", "☀️"].map((emoji, i) => (
+            <motion.span
+              key={i}
+              className="text-3xl md:text-5xl select-none"
+              style={{
+                filter: "drop-shadow(0 6px 12px rgba(0,0,0,0.2))",
+              }}
+              animate={{
+                y: [0, -10 - i * 2, 0],
+                rotate: [0, (i % 2 === 0 ? 8 : -8), 0],
+                scale: [1, 1.15, 1],
+              }}
+              transition={{ duration: 3 + i * 0.3, repeat: Infinity, ease: "easeInOut", delay: i * 0.2 }}
+            >
+              {emoji}
+            </motion.span>
+          ))}
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">

@@ -14,8 +14,6 @@ import Card3D from "@/components/Card3D";
 import XPReward from "@/components/XPReward";
 import FloatingParticles from "@/components/FloatingParticles";
 import { ChevronRight, ChevronLeft, Volume2, BookOpen, Sparkles } from "lucide-react";
-import InteractiveHeroImage from "@/components/InteractiveHeroImage";
-import alphabetHero from "@/assets/alphabet-hero.png";
 
 const letterGradients = [
   { bg: "from-sky to-sky/70", light: "bg-sky/10", text: "text-sky" },
@@ -84,14 +82,43 @@ const AlphabetPage = () => {
       <div className="max-w-5xl mx-auto px-4 py-8 relative z-10">
         <BackToLevels />
         
-        {/* Hero image - blended into background */}
+        {/* 3D Animated Hero Scene - pure CSS/emoji, no image boxes */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
-          className="max-w-2xl mx-auto mb-6"
+          className="flex justify-center items-center gap-3 md:gap-5 mb-6 py-4"
         >
-          <InteractiveHeroImage src={alphabetHero} alt="Alphabet hero" glowColor="--secondary" className="h-40 md:h-52" />
+          {["A", "B", "C"].map((letter, i) => (
+            <motion.div
+              key={letter}
+              className="relative"
+              animate={{
+                y: [0, -12, 0],
+                rotate: [0, i % 2 === 0 ? 5 : -5, 0],
+              }}
+              transition={{ duration: 2.5 + i * 0.3, repeat: Infinity, ease: "easeInOut", delay: i * 0.3 }}
+              style={{ perspective: 600 }}
+            >
+              <motion.span
+                className="text-5xl md:text-7xl font-display font-extrabold block"
+                style={{
+                  color: `hsl(${[195, 25, 145][i]}, ${[80, 95, 60][i]}%, ${[50, 53, 45][i]}%)`,
+                  textShadow: `0 6px 20px hsl(${[195, 25, 145][i]} ${[80, 95, 60][i]}% ${[50, 53, 45][i]}% / 0.3), 0 2px 4px rgba(0,0,0,0.1)`,
+                  transform: "translateZ(30px)",
+                }}
+                whileHover={{ scale: 1.3, rotate: 12 }}
+              >
+                {letter}
+              </motion.span>
+              <motion.span
+                className="absolute -top-2 -right-2 text-lg md:text-xl"
+                animate={{ scale: [1, 1.3, 1], rotate: [0, 15, 0] }}
+                transition={{ duration: 2, repeat: Infinity, delay: i * 0.5 }}
+              >
+                {["⭐", "✨", "💫"][i]}
+              </motion.span>
+            </motion.div>
+          ))}
         </motion.div>
 
         <motion.div

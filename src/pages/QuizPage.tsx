@@ -19,8 +19,6 @@ import XPReward from "@/components/XPReward";
 import FloatingParticles from "@/components/FloatingParticles";
 import ComboBurst from "@/components/ComboBurst";
 import { RotateCcw, Zap, Target, Trophy } from "lucide-react";
-import InteractiveHeroImage from "@/components/InteractiveHeroImage";
-import quizHero from "@/assets/quiz-hero.png";
 
 const QUIZ_SIZE = 8;
 
@@ -125,13 +123,29 @@ const QuizPage = () => {
       <div className="max-w-2xl mx-auto px-4 py-8 relative z-10">
         <BackToLevels />
         
+        {/* 3D Quiz Hero Scene */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
-          className="mb-4"
+          className="flex justify-center items-end gap-4 mb-4 py-3"
         >
-          <InteractiveHeroImage src={quizHero} alt="Quiz hero" glowColor="--lavender" className="h-36 md:h-48" />
+          {["🏆", "❓", "💡"].map((emoji, i) => (
+            <motion.span
+              key={i}
+              className="text-4xl md:text-6xl select-none"
+              style={{
+                filter: "drop-shadow(0 8px 16px rgba(0,0,0,0.2))",
+              }}
+              animate={{
+                y: [0, -15 - i * 3, 0],
+                rotate: [0, i === 1 ? 12 : -8, 0],
+                scale: [1, 1.1, 1],
+              }}
+              transition={{ duration: 2.5 + i * 0.4, repeat: Infinity, ease: "easeInOut", delay: i * 0.3 }}
+            >
+              {emoji}
+            </motion.span>
+          ))}
         </motion.div>
 
         <motion.div
