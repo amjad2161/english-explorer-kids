@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { playTickSound, playTimerWarning } from "@/lib/sounds";
 
 interface Props {
@@ -34,34 +34,59 @@ const GameTimer = ({ seconds, running, onTimeUp, showWarningAt = 5 }: Props) => 
   }, [running, timeLeft, onTimeUp, showWarningAt]);
 
   return (
-    <div className="flex items-center gap-3">
-      <motion.div
-        animate={isCritical ? { scale: [1, 1.25, 1], color: ["hsl(0,84%,60%)", "hsl(0,84%,45%)", "hsl(0,84%,60%)"] } :
-                 isWarning ? { scale: [1, 1.12, 1] } : {}}
-        transition={{ duration: 0.5, repeat: Infinity }}
-        className={`text-2xl font-display font-bold tabular-nums ${
-          isCritical ? "text-destructive" : isWarning ? "text-primary" : "text-foreground"
-        }`}
-      >
-        ⏱️ {timeLeft}s
-      </motion.div>
-      <div className="flex-1 h-3 rounded-full overflow-hidden bg-muted relative">
+    <div className="relative">
+      {/* Timer bar with glow effect */}
+      <div className="flex items-center gap-3">
         <motion.div
-          className={`h-full rounded-full transition-colors duration-500 ${
-            isCritical ? "bg-destructive" : isWarning ? "bg-primary" : pct > 50 ? "bg-accent" : "bg-primary"
+          animate={
+            isCritical ? { scale: [1, 1.3, 1], rotate: [0, -3, 3, 0] } :
+            isWarning ? { scale: [1, 1.15, 1] } : {}
+          }
+          transition={{ duration: 0.5, repeat: Infinity }}
+          className={`text-2xl font-display font-bold tabular-nums min-w-[70px] text-center ${
+            isCritical ? "text-destructive" : isWarning ? "text-primary" : "text-foreground"
           }`}
-          style={{ width: `${pct}%` }}
-          animate={{ width: `${pct}%` }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-        />
-        {isWarning && (
+        >
+          ⏱️ {timeLeft}s
+        </motion.div>
+        
+        <div className="flex-1 h-3.5 rounded-full overflow-hidden bg-muted relative">
           <motion.div
-            className="absolute inset-0 bg-destructive/10 rounded-full"
-            animate={{ opacity: [0, 0.5, 0] }}
-            transition={{ duration: 0.8, repeat: Infinity }}
-          />
-        )}
+            className={`h-full rounded-full transition-colors duration-500 relative ${
+              isCritical ? "bg-destructive" : isWarning ? "bg-primary" : pct > 50 ? "bg-accent" : "bg-primary"
+            }`}
+            animate={{ width: `${pct}%` }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            {/* Shimmer on bar */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+              animate={{ x: ["-100%", "200%"] }}
+              transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 1 }}
+            />
+          </motion.div>
+          
+          {/* Warning pulse ring */}
+          {isWarning && (
+            <motion.div
+              className={`absolute inset-0 rounded-full border-2 ${
+                isCritical ? "border-destructive/40" : "border-primary/30"
+              }`}
+              animate={{ opacity: [0, 0.6, 0], scale: [1, 1.03, 1] }}
+              transition={{ duration: 0.8, repeat: Infinity }}
+            />
+          )}
+        </div>
       </div>
+      
+      {/* Critical time pulsing overlay */}
+      {isCritical && (
+        <motion.div
+          className="absolute inset-0 rounded-xl bg-destructive/5 pointer-events-none"
+          animate={{ opacity: [0, 0.3, 0] }}
+          transition={{ duration: 0.6, repeat: Infinity }}
+        />
+      )}
     </div>
   );
 };
