@@ -97,6 +97,24 @@ const encouragements: Record<string, string[]> = {
   surprised: ["!וואו 😮", "Wow! 🤩", "!מדהים"],
 };
 
+// Tips shown on click
+const clickTips: string[] = [
+  "💡 ידעת? האות E היא הנפוצה ביותר באנגלית!",
+  "🎯 טיפ: תרגול יומי של 5 דקות עדיף על שעה פעם בשבוע!",
+  "🌟 !אתה מדהים, תמשיך ככה",
+  "📖 Did you know? 'Set' has the most definitions in English!",
+  "🦉 !אני פרופסור ינשוף ואני כאן לעזור לך",
+  "💪 כל טעות היא הזדמנות ללמוד משהו חדש!",
+  "🎵 Try singing the ABC song — it helps!",
+  "🧠 !המוח שלך כמו שריר — ככל שמתרגלים, הוא נהיה חזק יותר",
+  "⭐ Practice makes perfect! תרגול עושה מושלם!",
+  "🐝 Spelling Bee tip: Break big words into small parts!",
+  "🎮 !נסה את כל המשחקים — כל אחד מלמד משהו אחר",
+  "🌈 English has 26 letters — you can learn them all!",
+  "🔤 A, B, C... !אתה כבר בדרך הנכונה",
+  "🏆 !כל כוכב שאתה אוסף מראה כמה למדת",
+];
+
 const CharacterCanvas = ({
   mood,
   animationKey,
@@ -110,6 +128,20 @@ const CharacterCanvas = ({
   const [featherKey, setFeatherKey] = useState(0);
   const storeSpeech = useCharacterStore((s) => s.speechBubble);
   const [autoText, setAutoText] = useState<string | null>(null);
+  const lastTipIndex = useRef(-1);
+
+  // Click handler — show random tip
+  const handleOwlClick = useCallback(() => {
+    let idx: number;
+    do {
+      idx = Math.floor(Math.random() * clickTips.length);
+    } while (idx === lastTipIndex.current && clickTips.length > 1);
+    lastTipIndex.current = idx;
+    setAutoText(clickTips[idx]);
+    // Clear after 4 seconds
+    const timer = setTimeout(() => setAutoText(null), 4000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Eye tracking motion values
   const mouseX = useMotionValue(0);
@@ -242,9 +274,13 @@ const CharacterCanvas = ({
     <ErrorBoundary>
       <div
         ref={containerRef}
-        style={{ width, height, ...style }}
+        style={{ width, height, ...style, cursor: "pointer" }}
         className={`relative ${className || ""}`}
-        aria-hidden="true"
+        onClick={handleOwlClick}
+        role="button"
+        tabIndex={0}
+        aria-label="Click the owl for a tip"
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleOwlClick(); }}
       >
         {/* Eye tracking overlay — invisible dots that follow mouse */}
         <motion.div
