@@ -12,6 +12,7 @@ import AppHeader from "@/components/AppHeader";
 import AppFooter from "@/components/AppFooter";
 import AchievementToast from "@/components/AchievementToast";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { CharacterProvider } from "@/components/CharacterProvider";
 import WelcomeScreen, { hasCompletedOnboarding } from "@/components/WelcomeScreen";
 import SplashScreen from "@/components/SplashScreen";
 import { useAchievementChecker } from "@/hooks/useAchievementChecker";
@@ -139,9 +140,11 @@ const App = () => (
       <ThemeProvider>
         <TooltipProvider>
           <ErrorBoundary>
-            <Toaster />
-            <Sonner />
-            <AppContent />
+            <CharacterProvider>
+              <Toaster />
+              <Sonner />
+              <AppContent />
+            </CharacterProvider>
           </ErrorBoundary>
         </TooltipProvider>
       </ThemeProvider>
