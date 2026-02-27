@@ -573,14 +573,16 @@ const Interactive3DMascot = ({ mood = "idle", size = "md", onClick }: Interactiv
             cx="62" cy="98" rx="10" ry="7"
             fill="hsl(350, 65%, 72%)"
             opacity={0.25}
-            animate={{ opacity: [0.15, 0.3, 0.15], rx: [9, 11, 9] }}
+            animate={{ opacity: [0.15, 0.3, 0.15], scale: [0.9, 1.1, 0.9] }}
+            style={{ transformOrigin: "62px 98px" }}
             transition={{ duration: 3, repeat: Infinity }}
           />
           <motion.ellipse
             cx="138" cy="98" rx="10" ry="7"
             fill="hsl(350, 65%, 72%)"
             opacity={0.25}
-            animate={{ opacity: [0.15, 0.3, 0.15], rx: [9, 11, 9] }}
+            animate={{ opacity: [0.15, 0.3, 0.15], scale: [0.9, 1.1, 0.9] }}
+            style={{ transformOrigin: "138px 98px" }}
             transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
           />
 
