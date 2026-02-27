@@ -15,6 +15,7 @@ import StreakCounter from "@/components/StreakCounter";
 import ScorePopup, { useScorePopups } from "@/components/ScorePopup";
 import XPReward from "@/components/XPReward";
 import ComboBurst from "@/components/ComboBurst";
+import FloatingParticles from "@/components/FloatingParticles";
 import { Volume2, RotateCcw, Zap, Trophy } from "lucide-react";
 import BackToLevels from "@/components/BackToLevels";
 
@@ -149,39 +150,50 @@ const SpellingBee = () => {
 
   const currentWord = words[currentIndex];
   const stars = Math.ceil((score / (TOTAL_ROUNDS * 30)) * 5);
+  const progress = ((currentIndex + 1) / words.length) * 100;
 
   if (words.length === 0) return null;
 
   return (
     <div className="min-h-screen relative" dir={dir}>
+      <FloatingParticles count={6} />
       <Confetti show={showConfetti} />
       <ScorePopup popups={popups} />
       <ComboBurst combo={streak} show={showCombo} />
       <XPReward amount={xpAmount} show={showXP} gameType="spelling" onComplete={() => setShowXP(false)} />
       
-      <div className="max-w-2xl mx-auto px-4 py-8 relative z-10">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10 relative z-10">
         <BackToLevels />
 
+        {/* Hero header */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="text-center mb-6"
+          transition={{ duration: 0.5 }}
+          className="text-center mb-8"
         >
-          <span className="text-5xl mb-3 block">🐝</span>
-          <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">{t("spelling.title")}</h1>
-          <p className="text-muted-foreground font-body">{t("spelling.subtitle")}</p>
+          <motion.div
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
+            className="w-20 h-20 rounded-3xl mx-auto mb-4 flex items-center justify-center text-4xl shadow-lg"
+            style={{ background: "linear-gradient(135deg, hsl(var(--sunshine)), hsl(var(--primary)))" }}
+          >
+            🐝
+          </motion.div>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gradient mb-2">{t("spelling.title")}</h1>
+          <p className="text-muted-foreground font-body text-sm sm:text-base">{t("spelling.subtitle")}</p>
         </motion.div>
 
         {!finished ? (
           <>
             {/* Stats bar */}
-            <div className="card-glass mb-4 flex items-center justify-between flex-wrap gap-2">
+            <div className="bg-card rounded-xl border border-border shadow-[var(--shadow-card)] p-3 mb-4 flex items-center justify-between flex-wrap gap-2">
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1.5 bg-muted/50 rounded-full px-3 py-1">
+                <div className="flex items-center gap-1.5 bg-muted/50 rounded-full px-3 py-1.5">
                   <span className="font-display font-bold text-sm">{currentIndex + 1}/{words.length}</span>
                 </div>
-                <div className="flex items-center gap-1.5 bg-primary/10 rounded-full px-3 py-1">
+                <div className="flex items-center gap-1.5 bg-primary/10 rounded-full px-3 py-1.5">
                   <Zap className="w-3.5 h-3.5 text-primary" />
                   <span className="font-display font-bold text-sm text-primary">{score}</span>
                 </div>
@@ -189,7 +201,19 @@ const SpellingBee = () => {
               <StreakCounter streak={streak} bestStreak={bestStreak} />
             </div>
 
+            {/* Progress */}
             <div className="mb-4">
+              <div className="h-2.5 rounded-full bg-muted overflow-hidden border border-border">
+                <motion.div
+                  className="h-full rounded-full"
+                  style={{ background: "linear-gradient(90deg, hsl(var(--sunshine)), hsl(var(--primary)))" }}
+                  animate={{ width: `${progress}%` }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                />
+              </div>
+            </div>
+
+            <div className="mb-5">
               <GameTimer key={timerKey} seconds={TIME_PER_ROUND} running={timerRunning} onTimeUp={handleTimeUp} />
             </div>
 
@@ -200,9 +224,17 @@ const SpellingBee = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -40 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
-                className="card-kid text-center mb-6"
+                className="bg-card rounded-2xl border border-border shadow-[var(--shadow-card)] p-6 sm:p-8 text-center mb-6"
               >
-                <span className="text-6xl mb-3 block">{currentWord.emoji}</span>
+                <motion.span
+                  className="text-6xl sm:text-7xl mb-4 block"
+                  key={currentIndex}
+                  initial={{ scale: 0.5, rotate: -10 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 12 }}
+                >
+                  {currentWord.emoji}
+                </motion.span>
                 <p className="font-display text-lg text-muted-foreground mb-2">
                   {getWordTranslation(currentWord, lang)}
                 </p>
@@ -210,7 +242,7 @@ const SpellingBee = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => speakEnglish(currentWord.english)}
-                  className="inline-flex items-center gap-1.5 text-primary font-display text-sm mb-5 bg-primary/10 px-3 py-1.5 rounded-full hover:bg-primary/15 transition-colors"
+                  className="inline-flex items-center gap-1.5 text-primary font-display text-sm mb-6 bg-primary/10 px-4 py-2 rounded-full hover:bg-primary/15 border border-primary/20 transition-colors"
                 >
                   <Volume2 className="w-4 h-4" /> {t("spelling.listen")}
                 </motion.button>
@@ -223,26 +255,26 @@ const SpellingBee = () => {
                       <motion.div
                         key={i}
                         layout
-                        className={`w-12 h-14 rounded-xl flex items-center justify-center text-2xl font-display font-bold border-2 transition-all ${
+                        className={`w-11 sm:w-12 h-13 sm:h-14 rounded-xl flex items-center justify-center text-xl sm:text-2xl font-display font-bold border-2 transition-all cursor-pointer ${
                           result === "correct"
-                            ? "border-accent bg-accent/15 text-accent shadow-md"
+                            ? "border-accent bg-accent/12 text-accent shadow-md"
                             : result === "wrong"
-                            ? "border-destructive bg-destructive/15 text-destructive"
+                            ? "border-destructive bg-destructive/12 text-destructive"
                             : placed
-                            ? "border-primary bg-primary/10 text-foreground cursor-pointer shadow-sm"
-                            : "border-muted/60 bg-muted/30 text-transparent"
+                            ? "border-primary bg-primary/8 text-foreground shadow-sm hover:shadow-md"
+                            : "border-muted/50 bg-muted/20 text-transparent"
                         }`}
                         onClick={() => placed && handleRemoveLetter(placed, i)}
                       >
                         {placed ? (
                           <motion.span
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            transition={{ duration: 0.2 }}
+                            initial={{ scale: 0, y: -8 }}
+                            animate={{ scale: 1, y: 0 }}
+                            transition={{ type: "spring", stiffness: 300, damping: 15 }}
                           >
                             {placed.letter}
                           </motion.span>
-                        ) : "_"}
+                        ) : <span className="opacity-30">_</span>}
                       </motion.div>
                     );
                   })}
@@ -251,13 +283,15 @@ const SpellingBee = () => {
                 <AnimatePresence>
                   {result && (
                     <motion.div
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className={`text-lg font-display font-bold mb-3 ${
-                        result === "correct" ? "text-accent" : "text-destructive"
+                      initial={{ opacity: 0, y: 8, scale: 0.9 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      className={`text-lg font-display font-bold mb-4 py-2.5 px-5 rounded-xl inline-block ${
+                        result === "correct" 
+                          ? "text-accent bg-accent/10 border border-accent/20" 
+                          : "text-destructive bg-destructive/10 border border-destructive/20"
                       }`}
                     >
-                      {result === "correct" ? t("quiz.correct") : `${t("quiz.wrong")} → ${currentWord.english}`}
+                      {result === "correct" ? `🎉 ${t("quiz.correct")}` : `😅 ${t("quiz.wrong")} → ${currentWord.english}`}
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -268,11 +302,11 @@ const SpellingBee = () => {
                     <motion.button
                       key={item.id}
                       layout
-                      whileHover={{ scale: 1.08, y: -3 }}
-                      whileTap={{ scale: 0.9 }}
+                      whileHover={{ scale: 1.1, y: -4 }}
+                      whileTap={{ scale: 0.88 }}
                       onClick={() => handleLetterClick(item)}
                       disabled={!!result}
-                      className="w-12 h-14 rounded-xl bg-primary/10 border-2 border-primary/30 text-xl font-display font-bold text-foreground hover:bg-primary/20 hover:border-primary hover:shadow-md transition-all"
+                      className="w-11 sm:w-12 h-13 sm:h-14 rounded-xl bg-card border-2 border-primary/25 text-xl font-display font-bold text-foreground hover:bg-primary/10 hover:border-primary/50 hover:shadow-[var(--shadow-card-hover)] active:shadow-sm transition-all duration-200"
                     >
                       {item.letter}
                     </motion.button>
@@ -283,32 +317,41 @@ const SpellingBee = () => {
           </>
         ) : (
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
+            initial={{ scale: 0.85, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.4 }}
-            className="card-kid text-center"
+            transition={{ type: "spring", stiffness: 180, damping: 18 }}
+            className="bg-card rounded-2xl border border-border shadow-[var(--shadow-card)] p-8 sm:p-10 text-center"
           >
-            <span className="text-7xl mb-4 block">🐝</span>
-            <h2 className="text-3xl font-display font-bold text-gradient mb-2">{t("spelling.finished")}</h2>
-            <div className="flex justify-center gap-4 mb-4">
-              <div className="bg-primary/10 rounded-2xl px-4 py-2 flex items-center gap-2">
+            <motion.span
+              className="text-7xl sm:text-8xl mb-5 block"
+              initial={{ scale: 0, rotate: -20 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: "spring", stiffness: 200, damping: 12, delay: 0.15 }}
+            >
+              🐝
+            </motion.span>
+            <h2 className="text-3xl sm:text-4xl font-display font-extrabold text-gradient mb-4">{t("spelling.finished")}</h2>
+            <div className="flex justify-center gap-3 mb-5">
+              <div className="bg-primary/10 border border-primary/20 rounded-2xl px-5 py-2.5 flex items-center gap-2">
                 <Zap className="w-5 h-5 text-primary" />
-                <span className="font-display font-bold text-lg">{score}</span>
+                <span className="font-display font-bold text-xl">{score}</span>
+                <span className="text-xs text-muted-foreground font-display">XP</span>
               </div>
-              <div className="bg-accent/10 rounded-2xl px-4 py-2 flex items-center gap-2">
+              <div className="bg-accent/10 border border-accent/20 rounded-2xl px-5 py-2.5 flex items-center gap-2">
                 <Trophy className="w-5 h-5 text-accent" />
-                <span className="font-display font-bold text-lg">{bestStreak}</span>
+                <span className="font-display font-bold text-xl">{bestStreak}</span>
+                <span className="text-xs text-muted-foreground font-display">streak</span>
               </div>
             </div>
-            <div className="my-4"><StarRating earned={stars} total={5} size={32} /></div>
-            <p className="font-display text-lg font-semibold text-primary mb-4">
+            <div className="my-5"><StarRating earned={stars} total={5} size={40} /></div>
+            <p className="font-body text-base text-muted-foreground mb-7 max-w-xs mx-auto">
               {stars >= 4 ? t("quiz.amazing") : stars >= 2 ? t("quiz.wellDone") : t("quiz.keepTrying")}
             </p>
             <motion.button
-              whileHover={{ scale: 1.03, y: -2 }}
+              whileHover={{ scale: 1.04, y: -2 }}
               whileTap={{ scale: 0.97 }}
               onClick={restart}
-              className="btn-kid gradient-primary text-primary-foreground flex items-center gap-2 mx-auto"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-display font-bold text-base sm:text-lg px-8 py-3.5 rounded-xl shadow-[var(--shadow-button)] hover:shadow-[var(--shadow-button-hover)] hover:brightness-105 transition-all duration-200"
             >
               <RotateCcw className="w-5 h-5" /> {t("quiz.playAgain")}
             </motion.button>
