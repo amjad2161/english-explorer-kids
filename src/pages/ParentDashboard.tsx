@@ -6,6 +6,7 @@ import { getTotalEarnedStars } from "@/lib/levels";
 import { getUnlockedAchievements } from "@/lib/achievements";
 import { getProfile, getWeeklyStats, getSessions } from "@/lib/ageProfile";
 import FloatingParticles from "@/components/FloatingParticles";
+import ClassroomBackground from "@/components/ClassroomBackground";
 import Interactive3DMascot from "@/components/Interactive3DMascot";
 import {
   Shield, BarChart3, Clock, Gamepad2, BookOpen, Star,
@@ -149,7 +150,7 @@ const ParentDashboard = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
-      <FloatingParticles count={4} />
+      <ClassroomBackground />
 
       <motion.div
         initial={{ opacity: 0 }}

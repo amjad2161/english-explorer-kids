@@ -7,6 +7,7 @@ import { getStatsHistory, getLastNDays, getWeeklySummary } from "@/lib/statsTrac
 import { getTotalEarnedStars, levels, getLevelProgress } from "@/lib/levels";
 import { getUnlockedAchievements, achievementNames } from "@/lib/achievements";
 import FloatingParticles from "@/components/FloatingParticles";
+import ClassroomBackground from "@/components/ClassroomBackground";
 import Interactive3DMascot from "@/components/Interactive3DMascot";
 import BackToLevels from "@/components/BackToLevels";
 import {
@@ -126,7 +127,7 @@ const ProgressReport = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
-      <FloatingParticles count={6} />
+      <ClassroomBackground />
       
       <motion.div
         ref={reportRef}

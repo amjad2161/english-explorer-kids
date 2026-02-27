@@ -7,6 +7,7 @@ import { speakEnglish, playClickSound, playStarSound } from "@/lib/sounds";
 import { addCompletedWord } from "@/lib/progress";
 import { saveStageProgress, levels } from "@/lib/levels";
 import Confetti from "@/components/Confetti";
+import ClassroomBackground from "@/components/ClassroomBackground";
 import XPReward from "@/components/XPReward";
 import { Volume2, ArrowRight, BookOpen, Sparkles } from "lucide-react";
 import BackToLevels from "@/components/BackToLevels";
@@ -84,6 +85,7 @@ const WordsPage = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
+      <ClassroomBackground />
       <Confetti show={showConfetti} />
       <XPReward amount={xpAmount} show={showXP} gameType="words" onComplete={() => setShowXP(false)} />
       

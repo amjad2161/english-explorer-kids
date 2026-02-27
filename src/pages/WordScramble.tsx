@@ -18,7 +18,7 @@ import Interactive3DMascot from "@/components/Interactive3DMascot";
 import FloatingParticles from "@/components/FloatingParticles";
 import { Volume2, RotateCcw, Shuffle, Zap, Trophy } from "lucide-react";
 import BackToLevels from "@/components/BackToLevels";
-import CinematicBackground from "@/components/CinematicBackground";
+import ClassroomBackground from "@/components/ClassroomBackground";
 import GameEntrance from "@/components/GameEntrance";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 const shuffleArray = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
@@ -180,7 +180,7 @@ const WordScramble = () => {
   return (
     <div className="min-h-screen relative" dir={dir} style={{ direction: dir === "rtl" ? "rtl" : "ltr" }}>
       <GameEntrance title={t("quick.scramble")} emoji="🔀" />
-      <CinematicBackground intensity={0.5} />
+      <ClassroomBackground />
       <FloatingParticles count={6} />
       <Confetti show={showConfetti} />
       <ScorePopup popups={popups} />

@@ -7,6 +7,7 @@ import { getStatsHistory, getLastNDays, getWeeklySummary } from "@/lib/statsTrac
 import { getTotalEarnedStars } from "@/lib/levels";
 import { getUnlockedAchievements } from "@/lib/achievements";
 import FloatingParticles from "@/components/FloatingParticles";
+import ClassroomBackground from "@/components/ClassroomBackground";
 import Interactive3DMascot from "@/components/Interactive3DMascot";
 import BackToLevels from "@/components/BackToLevels";
 import StreakCalendar from "@/components/StreakCalendar";
@@ -89,7 +90,7 @@ const StatsPage = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
-      <FloatingParticles count={8} />
+      <ClassroomBackground />
       
       <div className="max-w-4xl mx-auto px-4 py-8 relative z-10">
         <BackToLevels />

@@ -8,6 +8,7 @@ import {
   isMusicEnabled, setMusicEnabled,
   startBgMusic, stopBgMusic,
 } from "@/lib/sounds";
+import ClassroomBackground from "@/components/ClassroomBackground";
 import { getXP, getLevel } from "@/lib/xp";
 import { getTotalEarnedStars } from "@/lib/levels";
 import { getUnlockedAchievements } from "@/lib/achievements";
@@ -96,7 +97,7 @@ const SettingsPage = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
-      <FloatingParticles count={8} />
+      <ClassroomBackground />
       
       <motion.div
         variants={containerVariants}

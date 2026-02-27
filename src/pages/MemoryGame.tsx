@@ -15,7 +15,7 @@ import FloatingParticles from "@/components/FloatingParticles";
 import Interactive3DMascot from "@/components/Interactive3DMascot";
 import { ArrowRight, RotateCcw, Timer, Layers, Sparkles } from "lucide-react";
 import BackToLevels from "@/components/BackToLevels";
-import CinematicBackground from "@/components/CinematicBackground";
+import ClassroomBackground from "@/components/ClassroomBackground";
 import GameEntrance from "@/components/GameEntrance";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 
@@ -118,7 +118,7 @@ const MemoryGame = () => {
   return (
     <div className="min-h-screen relative" dir={dir}>
       <GameEntrance title={t("quick.match")} emoji="🧩" />
-      <CinematicBackground intensity={0.5} />
+      <ClassroomBackground />
       <FloatingParticles count={8} />
       <Confetti show={showConfetti} />
       <XPReward amount={xpAmount} show={showXP} gameType="memory" onComplete={() => setShowXP(false)} />
