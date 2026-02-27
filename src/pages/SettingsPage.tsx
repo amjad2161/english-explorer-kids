@@ -50,6 +50,7 @@ const SettingsPage = () => {
   const [resetDone, setResetDone] = useState(false);
   const [profile, setProfileState] = useState(getProfile());
   const [selectedAvatar, setSelectedAvatar] = useState(profile?.avatar || "🦉");
+  const [justSelected, setJustSelected] = useState<string | null>(null);
   const [editingName, setEditingName] = useState(false);
   const [editingAge, setEditingAge] = useState(false);
   const [nameInput, setNameInput] = useState(profile?.name || "");
@@ -222,29 +223,65 @@ const SettingsPage = () => {
             <Sparkles className="w-5 h-5 text-sunshine-foreground" />
             {t({ he: "בחר אווטר", ar: "اختر الصورة الرمزية", en: "Choose Avatar" })}
           </h3>
-          <div className="grid grid-cols-8 gap-2">
-            {AVATAR_OPTIONS.map((emoji) => (
-              <motion.button
-                key={emoji}
-                whileHover={{ scale: 1.15 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => {
-                  setSelectedAvatar(emoji);
-                  if (profile) {
-                    const updated = { ...profile, avatar: emoji };
-                    saveProfile(updated);
-                    setProfileState(updated);
-                  }
-                }}
-                className={`w-full aspect-square rounded-xl flex items-center justify-center text-2xl transition-all ${
-                  selectedAvatar === emoji
-                    ? "bg-primary/20 border-2 border-primary/50 shadow-md"
-                    : "bg-muted/30 border-2 border-transparent hover:bg-muted/50"
-                }`}
-              >
-                {emoji}
-              </motion.button>
-            ))}
+          <div className="grid grid-cols-8 gap-2 relative">
+            {AVATAR_OPTIONS.map((emoji) => {
+              const isSelected = selectedAvatar === emoji;
+              const isJustPicked = justSelected === emoji;
+              return (
+                <motion.button
+                  key={emoji}
+                  layout
+                  whileHover={!isSelected ? { scale: 1.15, rotate: [0, -5, 5, 0] } : {}}
+                  whileTap={{ scale: 0.85 }}
+                  animate={isJustPicked ? {
+                    scale: [1, 1.4, 0.9, 1.1, 1],
+                    rotate: [0, -10, 10, -5, 0],
+                  } : {}}
+                  transition={isJustPicked ? { duration: 0.6, ease: "easeOut" } : { type: "spring", stiffness: 300 }}
+                  onClick={() => {
+                    setSelectedAvatar(emoji);
+                    setJustSelected(emoji);
+                    setTimeout(() => setJustSelected(null), 700);
+                    if (profile) {
+                      const updated = { ...profile, avatar: emoji };
+                      saveProfile(updated);
+                      setProfileState(updated);
+                    }
+                  }}
+                  className={`w-full aspect-square rounded-xl flex items-center justify-center text-2xl transition-colors relative ${
+                    isSelected
+                      ? "bg-primary/20 border-2 border-primary/50 shadow-md"
+                      : "bg-muted/30 border-2 border-transparent hover:bg-muted/50"
+                  }`}
+                >
+                  <span className="relative z-10">{emoji}</span>
+                  {/* Selection burst effect */}
+                  <AnimatePresence>
+                    {isJustPicked && (
+                      <motion.div
+                        className="absolute inset-0 rounded-xl pointer-events-none"
+                        initial={{ opacity: 0.6, scale: 0.5 }}
+                        animate={{ opacity: 0, scale: 2 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.5 }}
+                        style={{ background: "radial-gradient(circle, hsl(var(--primary) / 0.4), transparent 70%)" }}
+                      />
+                    )}
+                  </AnimatePresence>
+                  {/* Checkmark for selected */}
+                  {isSelected && !isJustPicked && (
+                    <motion.div
+                      className="absolute -top-1 -end-1 w-4 h-4 rounded-full bg-primary flex items-center justify-center z-20"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring", stiffness: 400 }}
+                    >
+                      <Check className="w-2.5 h-2.5 text-primary-foreground" />
+                    </motion.div>
+                  )}
+                </motion.button>
+              );
+            })}
           </div>
         </motion.div>
 
