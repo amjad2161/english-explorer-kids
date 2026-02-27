@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef } from "react";
 import { Volume2, VolumeX, Music, Music2, ChevronRight } from "lucide-react";
 import { Language } from "@/lib/i18n";
 import Interactive3DMascot from "@/components/Interactive3DMascot";
@@ -48,14 +48,16 @@ const LightStreak = ({ delay, angle, length }: { delay: number; angle: number; l
 );
 
 /* ───── Floating sparkle ───── */
-const Sparkle = ({ delay, x, y }: { delay: number; x: string; y: string }) => (
+const Sparkle = forwardRef<HTMLDivElement, { delay: number; x: string; y: string }>(({ delay, x, y }, ref) => (
   <motion.div
+    ref={ref}
     className="absolute w-1 h-1 rounded-full bg-primary/30 pointer-events-none"
     style={{ left: x, top: y, boxShadow: "0 0 6px hsl(var(--primary) / 0.3)" }}
     animate={{ opacity: [0, 1, 0], scale: [0.5, 1.5, 0.5], y: [0, -30, -60] }}
     transition={{ duration: 3, delay, repeat: Infinity, repeatDelay: Math.random() * 3 }}
   />
-);
+));
+Sparkle.displayName = "Sparkle";
 
 const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   const [soundOn, setSoundOn] = useState(isSoundEnabled);
