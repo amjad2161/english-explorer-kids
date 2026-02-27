@@ -47,7 +47,8 @@ const DailyChallengeCard = ({ challenge, onUpdate }: Props) => {
   // Calculate time remaining until midnight
   const now = new Date();
   const midnight = new Date(now);
-  midnight.setHours(24, 0, 0, 0);
+  midnight.setDate(midnight.getDate() + 1);
+  midnight.setHours(0, 0, 0, 0);
   const hoursLeft = Math.floor((midnight.getTime() - now.getTime()) / 3600000);
   const minutesLeft = Math.floor(((midnight.getTime() - now.getTime()) % 3600000) / 60000);
 

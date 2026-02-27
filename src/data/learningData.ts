@@ -28,10 +28,10 @@ export interface QuizQuestion {
 }
 
 export const getLocal = (item: { hebrew: string; arabic: string }, lang: Language) =>
-  lang === "he" ? item.hebrew : lang === "ar" ? item.arabic : item.hebrew;
+  lang === "he" ? item.hebrew : lang === "ar" ? item.arabic : "";
 
 export const getWordLocal = (item: { wordHebrew: string; wordArabic: string }, lang: Language) =>
-  lang === "he" ? item.wordHebrew : lang === "ar" ? item.wordArabic : item.wordHebrew;
+  lang === "he" ? item.wordHebrew : lang === "ar" ? item.wordArabic : "";
 
 export const getQuestionLocal = (item: { questionHebrew: string; questionArabic: string }, lang: Language) =>
   lang === "he" ? item.questionHebrew : lang === "ar" ? item.questionArabic : item.questionHebrew;

@@ -101,7 +101,7 @@ const QuizPage = () => {
         const xp = Math.max(10, finalScore);
         setXpAmount(xp);
         setShowXP(true);
-        const totalCorrect = correct ? (score > 0 ? Math.round(score / 15) + 1 : 1) : Math.round(score / 15);
+        const totalCorrect = correctWords.length + (correct ? 1 : 0);
         trackGamePlayed("quiz", totalCorrect, QUIZ_SIZE - totalCorrect, xp);
         recordPerformance("quiz", totalCorrect, QUIZ_SIZE, bestStreak, 0, wrongWords, correctWords);
         updateDailyProgress("quiz");

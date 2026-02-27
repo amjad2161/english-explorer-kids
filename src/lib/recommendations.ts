@@ -124,7 +124,6 @@ export const getSmartRecommendations = (lang: Language): Recommendation[] => {
         priority: 5,
         reason: `untried_${game.type}`,
       });
-      break; // Only suggest one untried game
     }
   }
 

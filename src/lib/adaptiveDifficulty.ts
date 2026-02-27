@@ -172,8 +172,8 @@ export const getAdaptiveQuizParams = (gameType: string) => {
     weakWords,
     // Timer multiplier (less time at higher difficulty)
     timerMultiplier: diff <= 2 ? 1.5 : diff <= 3 ? 1.0 : 0.75,
-    // More options at higher difficulty
-    optionCount: diff >= 4 ? 4 : 4, // always 4 for now
+    // More options at higher difficulty (harder to guess correctly)
+    optionCount: diff <= 2 ? 3 : 4,
     // Hint availability
     hintsAvailable: diff <= 2 ? 3 : diff <= 3 ? 2 : 1,
   };
