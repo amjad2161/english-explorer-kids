@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useCallback, useEffect } from "react";
+import { playCompanionSound } from "@/lib/sounds";
 import CharacterCanvas from "@/components/character/CharacterCanvas";
 import type { CharacterMood } from "@/lib/characterStore";
 
@@ -44,6 +45,7 @@ const LibraryGuardian = () => {
     setShowBubble(true);
     setCurrentMood("talk");
     setAnimKey((k) => k + 1);
+    playCompanionSound('fox', 'happy');
   }, [showBubble]);
 
   useEffect(() => {

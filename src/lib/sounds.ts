@@ -752,3 +752,127 @@ export const playOwlSpeechSound = (mood: 'correct' | 'wrong' | 'combo' | 'celebr
     }
   }
 };
+
+// ─── Companion Character Sounds ───
+
+export type CompanionCharacter = 'fox' | 'bookworm' | 'mouse';
+export type CompanionMood = 'happy' | 'sad' | 'excited' | 'idle';
+
+/**
+ * 🦊 Fox Guardian — playful yips and barks, higher energy
+ * 🐛 Bookworm — soft page-turning rustles and thoughtful hums
+ * 🐭 Mouse Librarian — tiny squeaks and scurrying sounds
+ */
+export const playCompanionSound = (character: CompanionCharacter, mood: CompanionMood = 'happy') => {
+  if (!audioCtx || !isSoundEnabled()) return;
+  ensureContext();
+  const t = audioCtx.currentTime;
+
+  switch (character) {
+    case 'fox': {
+      switch (mood) {
+        case 'happy':
+        case 'excited': {
+          // Playful yip-yip! — quick ascending staccato
+          playTone(900, t, 0.04, 0.12, 'triangle');
+          playTone(1200, t + 0.06, 0.04, 0.14, 'triangle');
+          if (mood === 'excited') {
+            playTone(1500, t + 0.12, 0.04, 0.12, 'triangle');
+            playTone(1800, t + 0.16, 0.06, 0.1, 'sine');
+            playSparkleTrail(t + 0.2, 2, 0.03);
+          }
+          break;
+        }
+        case 'sad': {
+          // Soft whimper — gentle descending whine
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(600, t);
+          osc.frequency.exponentialRampToValueAtTime(350, t + 0.25);
+          gain.gain.setValueAtTime(0.08, t);
+          gain.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(t);
+          osc.stop(t + 0.3);
+          break;
+        }
+        default: {
+          // Curious sniff — two quick soft puffs
+          playTone(500, t, 0.03, 0.06, 'triangle');
+          playTone(550, t + 0.06, 0.03, 0.05, 'triangle');
+          break;
+        }
+      }
+      break;
+    }
+
+    case 'bookworm': {
+      switch (mood) {
+        case 'happy':
+        case 'excited': {
+          // Pleased hum + page rustle — warm low tone with high shimmer
+          playTone(280, t, 0.15, 0.06, 'sine');
+          playTone(350, t + 0.08, 0.12, 0.05, 'sine');
+          // Page rustle shimmer
+          for (let i = 0; i < 3; i++) {
+            playTone(3000 + Math.random() * 2000, t + 0.1 + i * 0.03, 0.02, 0.015, 'triangle');
+          }
+          if (mood === 'excited') {
+            playTone(420, t + 0.2, 0.1, 0.07, 'sine');
+            playSparkleTrail(t + 0.25, 2, 0.02);
+          }
+          break;
+        }
+        case 'sad': {
+          // Disappointed sigh — slow descending breath
+          playTone(300, t, 0.12, 0.05, 'sine');
+          playTone(240, t + 0.1, 0.15, 0.04, 'sine');
+          playTone(200, t + 0.22, 0.1, 0.03, 'sine');
+          break;
+        }
+        default: {
+          // Quiet page turn — subtle rustle
+          for (let i = 0; i < 2; i++) {
+            playTone(2500 + Math.random() * 1500, t + i * 0.04, 0.025, 0.01, 'triangle');
+          }
+          break;
+        }
+      }
+      break;
+    }
+
+    case 'mouse': {
+      switch (mood) {
+        case 'happy':
+        case 'excited': {
+          // Happy squeak — tiny high pitched chirps
+          playTone(1800, t, 0.03, 0.08, 'sine');
+          playTone(2200, t + 0.04, 0.03, 0.1, 'sine');
+          playTone(2000, t + 0.08, 0.04, 0.07, 'sine');
+          if (mood === 'excited') {
+            // Scurrying patter
+            for (let i = 0; i < 4; i++) {
+              playTone(2400 + i * 200, t + 0.12 + i * 0.03, 0.02, 0.05, 'triangle');
+            }
+          }
+          break;
+        }
+        case 'sad': {
+          // Tiny sad squeak — single descending peep
+          playTone(1600, t, 0.06, 0.06, 'sine');
+          playTone(1200, t + 0.06, 0.08, 0.04, 'sine');
+          break;
+        }
+        default: {
+          // Idle nibble — tiny quick clicks
+          playTone(2000, t, 0.015, 0.04, 'triangle');
+          playTone(2100, t + 0.04, 0.015, 0.03, 'triangle');
+          break;
+        }
+      }
+      break;
+    }
+  }
+};
