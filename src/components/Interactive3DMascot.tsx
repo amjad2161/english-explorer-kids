@@ -1,9 +1,10 @@
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import { useState, useEffect, useCallback, useRef } from "react";
-import owlPixar from "@/assets/owl-pixar.png";
+import CharacterCanvas from "@/components/character/CharacterCanvas";
+import type { CharacterMood } from "@/lib/characterStore";
 
 interface Interactive3DMascotProps {
-  mood?: "idle" | "wave" | "celebrate" | "surprised" | "sad";
+  mood?: CharacterMood;
   size?: "sm" | "md" | "lg";
   onClick?: () => void;
   showSpeechBubble?: string;
@@ -19,6 +20,10 @@ const speechByMood: Record<string, string[]> = {
   surprised: ["😮", "❗", "👏", "✅"],
   sad: ["💙", "🔄", "📖", "😊"],
   wave: ["👋", "🌟", "😄", "🎈"],
+  talk: ["💬", "📖", "🗣️", "✨"],
+  think: ["🤔", "💭", "🧠", "📚"],
+  point: ["👉", "📌", "💡", "✅"],
+  react: ["⚡", "✨", "💫", "🌟"],
 };
 
 /* ─── Sparkle particle for celebrations ─── */
@@ -51,28 +56,17 @@ const Interactive3DMascot = ({
   autoSpeak = false,
 }: Interactive3DMascotProps) => {
   const dim = sizeMap[size];
-  const [isBlinking, setIsBlinking] = useState(false);
   const [tapCount, setTapCount] = useState(0);
   const [autoSpeech, setAutoSpeech] = useState<string | null>(null);
   const [showSparkles, setShowSparkles] = useState(false);
   const prevMoodRef = useRef(mood);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+  const [animKey, setAnimKey] = useState(0);
 
   // Parallax tilt from mouse
   const rotateY = useTransform(mouseX, [-200, 200], [-8, 8]);
   const rotateX = useTransform(mouseY, [-200, 200], [5, -5]);
-
-  // Blinking at random intervals
-  useEffect(() => {
-    if (mood === "sad") return;
-    const blink = () => {
-      setIsBlinking(true);
-      setTimeout(() => setIsBlinking(false), 150);
-    };
-    const interval = setInterval(blink, 2500 + Math.random() * 3000);
-    return () => clearInterval(interval);
-  }, [mood]);
 
   // Sparkles on mood change to celebrate/surprised
   useEffect(() => {
@@ -81,6 +75,7 @@ const Interactive3DMascot = ({
       setTimeout(() => setShowSparkles(false), 1500);
     }
     prevMoodRef.current = mood;
+    setAnimKey((k) => k + 1);
   }, [mood]);
 
   // Auto speech bubble
@@ -111,40 +106,6 @@ const Interactive3DMascot = ({
     setTimeout(() => setAutoSpeech(null), 1800);
     onClick?.();
   }, [mood, onClick]);
-
-  // ─── Animation configs by mood ───
-  const bodyAnimate =
-    mood === "wave"
-      ? { y: [0, -10, 0, -7, 0], rotate: [0, -5, 5, -3, 0], scale: [1, 1.03, 1, 1.02, 1], scaleX: [1, 1.02, 0.98, 1.01, 1], scaleY: [1, 0.98, 1.03, 0.99, 1] }
-      : mood === "celebrate"
-      ? { y: [0, -18, 2, -14, 0], rotate: [0, -8, 8, -5, 0], scale: [1, 1.1, 0.94, 1.06, 1], scaleX: [1, 0.92, 1.08, 0.97, 1], scaleY: [1, 1.08, 0.92, 1.03, 1] }
-      : mood === "surprised"
-      ? { y: [0, -12, 0], scale: [1, 1.14, 1.02, 1], scaleX: [1, 0.9, 1.05, 1], scaleY: [1, 1.1, 0.96, 1], rotate: [0, 3, -2, 0] }
-      : mood === "sad"
-      ? { y: [0, 4, 0], rotate: [0, -2, 0], scale: [1, 0.96, 1], scaleY: [1, 0.97, 1] }
-      : { y: [0, -5, 0], rotate: [0, -1, 1, 0], scale: [1, 1.012, 1], scaleY: [1, 1.006, 0.997, 1] };
-
-  const bodyTransition =
-    mood === "idle"
-      ? { duration: 3.5, repeat: Infinity, ease: "easeInOut" as const }
-      : mood === "wave"
-      ? { duration: 1.8, repeat: Infinity, ease: "easeInOut" as const }
-      : mood === "celebrate"
-      ? { duration: 1.2, repeat: Infinity, ease: "easeInOut" as const }
-      : mood === "sad"
-      ? { duration: 4, repeat: Infinity, ease: "easeInOut" as const }
-      : { duration: 0.7, repeat: 0, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] };
-
-  const shadowByMood =
-    mood === "celebrate"
-      ? "drop-shadow(0 10px 24px hsl(var(--sunshine) / 0.35)) drop-shadow(0 3px 8px hsl(var(--foreground) / 0.12))"
-      : mood === "surprised"
-      ? "drop-shadow(0 8px 18px hsl(var(--primary) / 0.25)) drop-shadow(0 2px 6px hsl(var(--foreground) / 0.1))"
-      : mood === "wave"
-      ? "drop-shadow(0 6px 16px hsl(var(--primary) / 0.2)) drop-shadow(0 2px 5px hsl(var(--foreground) / 0.08))"
-      : mood === "sad"
-      ? "drop-shadow(0 3px 10px hsl(var(--foreground) / 0.18)) brightness(0.92)"
-      : "drop-shadow(0 5px 14px hsl(var(--foreground) / 0.14)) drop-shadow(0 1px 4px hsl(var(--foreground) / 0.06))";
 
   const glowColor =
     mood === "celebrate"
@@ -196,32 +157,14 @@ const Interactive3DMascot = ({
         className="relative w-full h-full"
         style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
       >
-        {/* Main owl image */}
-        <motion.img
-          src={owlPixar}
-          alt="Professor Owl mascot"
-          draggable={false}
-          className="w-full h-full object-contain select-none pointer-events-none relative z-10"
-          style={{ filter: shadowByMood }}
-          animate={bodyAnimate}
-          transition={bodyTransition}
+        {/* Real-time 3D character — no <img> */}
+        <CharacterCanvas
+          mood={mood}
+          animationKey={animKey}
+          width={dim}
+          height={dim}
+          className="w-full h-full"
         />
-
-        {/* Blink overlay — subtle squint effect */}
-        <AnimatePresence>
-          {isBlinking && (
-            <motion.div
-              className="absolute inset-0 z-20 pointer-events-none"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.08 }}
-              style={{
-                background: "linear-gradient(180deg, transparent 30%, hsl(var(--foreground) / 0.04) 42%, transparent 55%)",
-              }}
-            />
-          )}
-        </AnimatePresence>
       </motion.div>
 
       {/* Celebration sparkles */}

@@ -334,7 +334,7 @@ const ProgressReport = () => {
                   >
                     <span className="text-lg">🏅</span>
                     <span className="font-display font-semibold text-xs">
-                      {name ? (name as any)[lang] || name.en : a.id}
+                      {name ? name[lang] || name.en : a.id}
                     </span>
                   </motion.div>
                 );

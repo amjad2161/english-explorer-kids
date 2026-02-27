@@ -19,6 +19,7 @@ import OfflineIndicator from "@/components/OfflineIndicator";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import BreakReminder from "@/components/BreakReminder";
 import KeyboardShortcuts from "@/components/KeyboardShortcuts";
+import OwlPageEntrance from "@/components/OwlPageEntrance";
 import Index from "./pages/Index";
 import AlphabetPage from "./pages/AlphabetPage";
 import WordsPage from "./pages/WordsPage";
@@ -35,6 +36,7 @@ import SettingsPage from "./pages/SettingsPage";
 import ProgressReport from "./pages/ProgressReport";
 import ParentDashboard from "./pages/ParentDashboard";
 import NotFound from "./pages/NotFound";
+import StoryPage from "./pages/StoryPage";
 
 const queryClient = new QueryClient();
 
@@ -83,6 +85,7 @@ const AnimatedRoutes = () => {
         <Route path="/settings" element={<PageWrapper><SettingsPage /></PageWrapper>} />
         <Route path="/report" element={<PageWrapper><ProgressReport /></PageWrapper>} />
         <Route path="/parent" element={<PageWrapper><ParentDashboard /></PageWrapper>} />
+        <Route path="/story" element={<PageWrapper><StoryPage /></PageWrapper>} />
         <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
       </Routes>
     </AnimatePresence>
@@ -98,6 +101,7 @@ const AppRoutes = () => (
     <OfflineIndicator />
     <PWAInstallPrompt />
     <main role="main" aria-label="Main content">
+      <OwlPageEntrance />
       <AnimatedRoutes />
     </main>
     <AppFooter />

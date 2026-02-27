@@ -27,7 +27,7 @@ const getState = (): AdaptiveState => {
   try {
     const raw = localStorage.getItem(ADAPTIVE_KEY);
     if (raw) return JSON.parse(raw);
-  } catch {}
+  } catch { /* ignored */ }
   return {
     performances: [],
     difficultyLevel: {},

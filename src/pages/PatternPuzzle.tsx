@@ -20,6 +20,7 @@ import BackToLevels from "@/components/BackToLevels";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 import { Zap, Trophy, RotateCcw, Lightbulb } from "lucide-react";
 import UserAvatar, { CompanionAvatars } from "@/components/UserAvatar";
+import { useOwlEncouragement } from "@/hooks/useOwlEncouragement";
 
 /* ─── Pattern Types ─── */
 type PatternType = "letter-sequence" | "number-sequence" | "shape-pattern" | "mirror-pattern" | "color-word" | "analogy" | "sentence-completion" | "odd-letter-out";
@@ -396,6 +397,7 @@ const PatternPuzzle = () => {
   const [xpAmount, setXpAmount] = useState(0);
   const [owlMood, setOwlMood] = useState<"idle" | "celebrate" | "sad" | "surprised">("idle");
   const { popups, addPopup } = useScorePopups();
+  const { speech, triggerByMood } = useOwlEncouragement();
 
   useEffect(() => {
     setPuzzles(generatePuzzles(TOTAL_ROUNDS));
@@ -417,6 +419,7 @@ const PatternPuzzle = () => {
       setScore(s => s + points);
       setStreak(newStreak);
       setOwlMood("surprised");
+      triggerByMood("surprised", newStreak);
       setBestStreak(b => Math.max(b, newStreak));
       if (newStreak >= 3) {
         playComboSound(newStreak);
@@ -432,6 +435,7 @@ const PatternPuzzle = () => {
       setResult("wrong");
       setStreak(0);
       setOwlMood("sad");
+      triggerByMood("sad");
       playWrongSound();
     }
 
@@ -445,6 +449,7 @@ const PatternPuzzle = () => {
     if (currentIndex + 1 >= puzzles.length) {
       setFinished(true);
       setOwlMood("celebrate");
+      triggerByMood("celebrate");
       playVictoryFanfare();
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 100);
@@ -510,7 +515,7 @@ const PatternPuzzle = () => {
           className="text-center mb-6"
         >
           <div className="flex items-center justify-center gap-3 mb-2">
-            <Interactive3DMascot mood={owlMood} size="sm" />
+            <Interactive3DMascot mood={owlMood} size="sm" showSpeechBubble={speech || undefined} />
             <UserAvatar size="md" showOwl />
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gradient mb-1">

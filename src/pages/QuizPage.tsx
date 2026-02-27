@@ -24,6 +24,7 @@ import GameEntrance from "@/components/GameEntrance";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 import { recordPerformance, getDifficulty } from "@/lib/adaptiveDifficulty";
 import UserAvatar, { CompanionAvatars } from "@/components/UserAvatar";
+import { useOwlEncouragement } from "@/hooks/useOwlEncouragement";
 import { RotateCcw, Zap, Target, Trophy, Sparkles } from "lucide-react";
 const optionLabels = ["A", "B", "C", "D"];
 
@@ -49,6 +50,7 @@ const QuizPage = () => {
   const [wrongWords, setWrongWords] = useState<string[]>([]);
   const [correctWords, setCorrectWords] = useState<string[]>([]);
   const { popups, addPopup } = useScorePopups();
+  const { speech, triggerByMood } = useOwlEncouragement();
 
   const shuffledQuestions = useMemo(
     () => generateDynamicQuiz(QUIZ_SIZE, lang),
@@ -68,6 +70,7 @@ const QuizPage = () => {
       setScore(s => s + points);
       setStreak(newStreak);
       setOwlMood("surprised");
+      triggerByMood("surprised", newStreak);
       setCorrectWords(prev => [...prev, question.options[question.correct]]);
       setBestStreak(b => { const best = Math.max(b, newStreak); saveBestStreak(best); return best; });
       if (newStreak >= 3) {
@@ -81,6 +84,7 @@ const QuizPage = () => {
     } else {
       setStreak(0);
       setOwlMood("sad");
+      triggerByMood("sad");
       setWrongWords(prev => [...prev, question.options[question.correct]]);
       playWrongSound();
     }
@@ -96,6 +100,7 @@ const QuizPage = () => {
         addQuizScore(stars);
         setIsFinished(true);
         setOwlMood("celebrate");
+        triggerByMood("celebrate");
         if (stageId) saveStageProgress(stageId, stars);
         if (stars >= 3) { playVictoryFanfare(); setShowConfetti(true); setTimeout(() => setShowConfetti(false), 100); }
         const xp = Math.max(10, finalScore);
@@ -142,7 +147,7 @@ const QuizPage = () => {
           className="text-center mb-6"
         >
           <div className="flex items-center justify-center gap-3 mb-2">
-            <Interactive3DMascot mood={owlMood} size="sm" />
+            <Interactive3DMascot mood={owlMood} size="sm" showSpeechBubble={speech || undefined} />
             <UserAvatar size="md" showOwl />
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gradient mb-1">
