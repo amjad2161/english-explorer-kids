@@ -56,6 +56,7 @@ const AppHeader = () => {
     { path: "/scramble", label: t("nav.scramble"), icon: "🔀" },
     { path: "/hangman", label: t("nav.hangman"), icon: "🎭" },
     { path: "/achievements", label: "🏅", icon: "🏅" },
+    { path: "/stats", label: "📊", icon: "📊" },
   ];
 
   useEffect(() => {

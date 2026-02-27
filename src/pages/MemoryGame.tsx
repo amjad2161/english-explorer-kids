@@ -6,6 +6,7 @@ import { wordCategories, getCategoryName } from "@/data/learningData";
 import { playCorrectSound, playWrongSound, playClickSound, playStarSound, playVictoryFanfare, speakEnglish } from "@/lib/sounds";
 import { addQuizScore } from "@/lib/progress";
 import { saveStageProgress } from "@/lib/levels";
+import { trackGamePlayed } from "@/lib/statsTracker";
 import StarRating from "@/components/StarRating";
 import Confetti from "@/components/Confetti";
 import XPReward from "@/components/XPReward";
@@ -80,6 +81,7 @@ const MemoryGame = () => {
             playVictoryFanfare(); setShowConfetti(true); setGameComplete(true);
             setXpAmount(stars * 15 + 10);
             setShowXP(true);
+            trackGamePlayed("memory", cards.length / 2, 0, stars * 15 + 10);
             setTimeout(() => setShowConfetti(false), 100);
           }
         }, 500);

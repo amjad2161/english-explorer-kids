@@ -19,6 +19,7 @@ import SpellingBee from "./pages/SpellingBee";
 import WordScramble from "./pages/WordScramble";
 import HangmanGame from "./pages/HangmanGame";
 import AchievementsPage from "./pages/AchievementsPage";
+import StatsPage from "./pages/StatsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -51,6 +52,7 @@ const AppRoutes = () => (
       <Route path="/scramble" element={<WordScramble />} />
       <Route path="/hangman" element={<HangmanGame />} />
       <Route path="/achievements" element={<AchievementsPage />} />
+      <Route path="/stats" element={<StatsPage />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   </>

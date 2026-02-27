@@ -8,6 +8,7 @@ import { playCorrectSound, playWrongSound, playStarSound, playComboSound, playVi
 import { addQuizScore } from "@/lib/progress";
 import { saveStageProgress } from "@/lib/levels";
 import { saveBestStreak } from "@/lib/achievements";
+import { trackGamePlayed } from "@/lib/statsTracker";
 import StarRating from "@/components/StarRating";
 import Confetti from "@/components/Confetti";
 import StreakCounter from "@/components/StreakCounter";
@@ -86,6 +87,9 @@ const QuizPage = () => {
         const xp = Math.max(10, finalScore);
         setXpAmount(xp);
         setShowXP(true);
+        // Track stats
+        const totalCorrect = correct ? (score > 0 ? Math.round(score / 15) + 1 : 1) : Math.round(score / 15);
+        trackGamePlayed("quiz", totalCorrect, QUIZ_SIZE - totalCorrect, xp);
       }
     }, 1500);
   }, [selected, question, currentQ, shuffledQuestions.length, score, streak, stageId, addPopup]);
