@@ -1,7 +1,19 @@
 import { motion } from "framer-motion";
 import { useLanguage } from "@/lib/i18n";
-import { Heart } from "lucide-react";
+import { Heart, BookOpen, Pencil, Star } from "lucide-react";
 import owlPixar from "@/assets/owl-pixar.png";
+
+const ChalkDoodle = ({ children, x, y, delay = 0 }: { children: React.ReactNode; x: string; y: string; delay?: number }) => (
+  <motion.span
+    className="absolute pointer-events-none select-none text-lg opacity-[0.08]"
+    style={{ left: x, top: y, color: "hsl(var(--chalk))" }}
+    initial={{ opacity: 0, scale: 0 }}
+    animate={{ opacity: 0.08, scale: 1, rotate: [0, 5, -5, 0] }}
+    transition={{ delay, duration: 3, repeat: Infinity, repeatType: "reverse" }}
+  >
+    {children}
+  </motion.span>
+);
 
 const AppFooter = () => {
   const { lang, dir } = useLanguage();
@@ -14,66 +26,109 @@ const AppFooter = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 1 }}
-      className="relative mt-20"
+      className="relative mt-20 overflow-hidden"
       dir={dir}
     >
-      {/* Chalkboard footer background */}
+      {/* Chalkboard background with wooden frame */}
       <div
         className="absolute inset-0"
         style={{
-          background: "linear-gradient(0deg, hsl(var(--board)) 0%, hsl(var(--board)) 90%, hsl(var(--board) / 0.95) 100%)",
+          background: "linear-gradient(180deg, hsl(var(--board)) 0%, hsl(160 22% 18%) 50%, hsl(var(--board)) 100%)",
         }}
       />
-      {/* Chalk dust texture */}
+
+      {/* Chalk dust texture dots */}
       <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage: `radial-gradient(circle at 30% 40%, hsl(var(--chalk)) 1px, transparent 1px),
-            radial-gradient(circle at 70% 60%, hsl(var(--chalk)) 0.5px, transparent 0.5px)`,
-          backgroundSize: "80px 50px, 60px 70px",
+          opacity: 0.035,
+          backgroundImage: `
+            radial-gradient(circle at 15% 25%, hsl(var(--chalk)) 1px, transparent 1px),
+            radial-gradient(circle at 45% 75%, hsl(var(--chalk)) 0.8px, transparent 0.8px),
+            radial-gradient(circle at 75% 35%, hsl(var(--chalk)) 0.6px, transparent 0.6px),
+            radial-gradient(circle at 85% 85%, hsl(var(--chalk)) 1px, transparent 1px),
+            radial-gradient(circle at 55% 15%, hsl(var(--chalk)) 0.5px, transparent 0.5px)
+          `,
+          backgroundSize: "120px 80px, 90px 110px, 70px 90px, 100px 60px, 80px 100px",
         }}
       />
-      {/* Top chalk tray strip */}
-      <div
-        className="absolute top-0 left-0 right-0 h-[3px]"
-        style={{
-          background: "linear-gradient(90deg, hsl(var(--grass) / 0.3), hsl(var(--primary) / 0.5), hsl(var(--grass) / 0.3))",
-        }}
-      />
-      {/* Chalk line decoration */}
-      <div className="absolute top-4 left-[10%] right-[10%] h-px opacity-10"
-        style={{ background: "hsl(var(--chalk))" }}
-      />
-      
-      <div className="max-w-5xl mx-auto px-4 py-10 relative">
-        <div className="flex flex-col items-center gap-5">
-          {/* Logo */}
+
+      {/* Top wooden chalk tray */}
+      <div className="absolute top-0 left-0 right-0">
+        <div
+          className="h-[6px]"
+          style={{
+            background: "linear-gradient(180deg, hsl(30 40% 35%), hsl(30 35% 28%), hsl(30 40% 32%))",
+            boxShadow: "0 2px 6px hsl(0 0% 0% / 0.3)",
+          }}
+        />
+        <div
+          className="h-[2px]"
+          style={{
+            background: "linear-gradient(90deg, transparent 5%, hsl(var(--grass) / 0.25) 30%, hsl(var(--primary) / 0.4) 50%, hsl(var(--grass) / 0.25) 70%, transparent 95%)",
+          }}
+        />
+      </div>
+
+      {/* Chalk doodles scattered around */}
+      <ChalkDoodle x="8%" y="20%" delay={0}>ABC</ChalkDoodle>
+      <ChalkDoodle x="88%" y="30%" delay={1}>✏️</ChalkDoodle>
+      <ChalkDoodle x="12%" y="70%" delay={0.5}>⭐</ChalkDoodle>
+      <ChalkDoodle x="82%" y="75%" delay={1.5}>📖</ChalkDoodle>
+      <ChalkDoodle x="5%" y="45%" delay={2}>123</ChalkDoodle>
+      <ChalkDoodle x="92%" y="55%" delay={0.8}>A+</ChalkDoodle>
+
+      <div className="max-w-5xl mx-auto px-4 pt-12 pb-10 relative">
+        <div className="flex flex-col items-center gap-6">
+          {/* Owl + Logo */}
           <motion.div
             className="flex items-center gap-3"
             whileHover={{ scale: 1.05 }}
           >
-            <motion.img
-              src={owlPixar}
-              alt="English Fun Owl"
-              className="w-10 h-10 object-contain rounded-full ring-2 ring-grass/20"
-              animate={{ y: [0, -4, 0], rotate: [0, 3, -3, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            />
-            <span
-              className="font-display font-extrabold text-xl"
-              style={{
-                color: "hsl(var(--chalk))",
-                textShadow: "0 1px 3px hsl(0 0% 0% / 0.3)",
-              }}
-            >
-              English Fun
-            </span>
+            <motion.div className="relative">
+              <motion.img
+                src={owlPixar}
+                alt="English Fun Owl"
+                className="w-12 h-12 object-contain rounded-full"
+                style={{
+                  boxShadow: "0 0 16px hsl(var(--grass) / 0.2), 0 0 4px hsl(var(--grass) / 0.3)",
+                  border: "2px solid hsl(var(--grass) / 0.25)",
+                }}
+                animate={{ y: [0, -3, 0] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              />
+              {/* Tiny chalk circle */}
+              <div
+                className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full"
+                style={{
+                  background: "hsl(var(--grass))",
+                  border: "2px solid hsl(var(--board))",
+                }}
+              />
+            </motion.div>
+            <div>
+              <span
+                className="font-display font-extrabold text-xl block"
+                style={{
+                  color: "hsl(var(--chalk))",
+                  textShadow: "0 1px 4px hsl(0 0% 0% / 0.35), 0 0 12px hsl(var(--grass) / 0.1)",
+                }}
+              >
+                English Fun
+              </span>
+              <span
+                className="font-display text-[10px] font-semibold tracking-wider uppercase block"
+                style={{ color: "hsl(var(--grass) / 0.5)" }}
+              >
+                {t({ he: "למידה חכמה", ar: "تعلم ذكي", en: "Smart Learning" })}
+              </span>
+            </div>
           </motion.div>
 
-          {/* Tagline - chalk style */}
+          {/* Tagline */}
           <p
-            className="text-sm font-body text-center max-w-md leading-relaxed"
-            style={{ color: "hsl(var(--chalk) / 0.6)" }}
+            className="text-sm font-body text-center max-w-sm leading-relaxed"
+            style={{ color: "hsl(var(--chalk) / 0.55)" }}
           >
             {t({
               he: "לומדים אנגלית בכיף! 🎓 פלטפורמה חינוכית אינטראקטיבית לילדים",
@@ -82,32 +137,75 @@ const AppFooter = () => {
             })}
           </p>
 
-          {/* Chalk-drawn divider line */}
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-px" style={{ background: "hsl(var(--grass) / 0.3)" }} />
-            <span style={{ color: "hsl(var(--grass) / 0.5)" }}>✦</span>
-            <div className="w-8 h-px" style={{ background: "hsl(var(--grass) / 0.3)" }} />
+          {/* Fun quick-links row */}
+          <div className="flex items-center gap-4">
+            {[
+              { icon: <BookOpen className="w-4 h-4" />, label: t({ he: "מילים", ar: "كلمات", en: "Words" }) },
+              { icon: <Pencil className="w-4 h-4" />, label: t({ he: "חידון", ar: "اختبار", en: "Quiz" }) },
+              { icon: <Star className="w-4 h-4" />, label: t({ he: "הישגים", ar: "إنجازات", en: "Badges" }) },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-display text-[11px] font-semibold"
+                style={{
+                  color: "hsl(var(--chalk) / 0.45)",
+                  border: "1px solid hsl(var(--chalk) / 0.1)",
+                  background: "hsl(var(--chalk) / 0.04)",
+                }}
+                whileHover={{
+                  scale: 1.08,
+                  borderColor: "hsl(var(--grass) / 0.3)",
+                  color: "hsl(var(--grass))",
+                }}
+              >
+                {item.icon}
+                {item.label}
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Chalk-drawn divider */}
+          <div className="flex items-center gap-4 w-full max-w-xs">
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, transparent, hsl(var(--chalk) / 0.15), transparent)" }} />
+            <motion.span
+              style={{ color: "hsl(var(--grass) / 0.4)" }}
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              className="text-xs"
+            >
+              ✦
+            </motion.span>
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, transparent, hsl(var(--chalk) / 0.15), transparent)" }} />
           </div>
 
           {/* Copyright */}
-          <div className="flex flex-col items-center gap-1.5">
-            <p className="text-sm font-display font-semibold flex items-center gap-2" style={{ color: "hsl(var(--chalk) / 0.5)" }}>
+          <div className="flex flex-col items-center gap-2">
+            <p
+              className="text-sm font-display font-semibold flex items-center gap-2 flex-wrap justify-center"
+              style={{ color: "hsl(var(--chalk) / 0.4)" }}
+            >
               © {year} English Fun •
               <span className="inline-flex items-center gap-1.5">
                 {t({ he: "נבנה עם", ar: "صُنع بـ", en: "Built with" })}
                 <motion.span
-                  animate={{ scale: [1, 1.4, 1] }}
+                  animate={{ scale: [1, 1.3, 1] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
                 >
-                  <Heart className="w-4 h-4 text-candy fill-candy" />
+                  <Heart className="w-3.5 h-3.5 text-candy fill-candy" />
                 </motion.span>
                 {t({ he: "ע״י", ar: "بواسطة", en: "by" })}
               </span>
             </p>
-            <p className="text-base font-display font-bold" style={{ color: "hsl(var(--chalk) / 0.7)" }}>
+            <p
+              className="text-base font-display font-bold"
+              style={{
+                color: "hsl(var(--chalk) / 0.65)",
+                textShadow: "0 0 8px hsl(var(--grass) / 0.1)",
+              }}
+            >
               {t({ he: "אמג׳ד מוברשם", ar: "أمجد مبَرشَم", en: "Amjad Mobarsham" })}
             </p>
-            <p className="text-xs font-body" style={{ color: "hsl(var(--chalk) / 0.35)" }}>
+            <p className="text-[10px] font-body" style={{ color: "hsl(var(--chalk) / 0.25)" }}>
               {t({
                 he: "כל הזכויות שמורות",
                 ar: "جميع الحقوق محفوظة",
@@ -117,6 +215,14 @@ const AppFooter = () => {
           </div>
         </div>
       </div>
+
+      {/* Bottom wooden edge */}
+      <div
+        className="h-[4px]"
+        style={{
+          background: "linear-gradient(180deg, hsl(30 35% 28%), hsl(30 40% 22%))",
+        }}
+      />
     </motion.footer>
   );
 };
