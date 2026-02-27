@@ -8,6 +8,7 @@ import {
 import { playClickSound } from "@/lib/sounds";
 import { Lock, X } from "lucide-react";
 import FloatingParticles from "@/components/FloatingParticles";
+import ClassroomBackground from "@/components/ClassroomBackground";
 import Interactive3DMascot from "@/components/Interactive3DMascot";
 import BackToLevels from "@/components/BackToLevels";
 
@@ -39,7 +40,7 @@ const AchievementsPage = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
-      <FloatingParticles count={10} />
+      <ClassroomBackground />
 
       {/* Locked achievement modal */}
       <AnimatePresence>

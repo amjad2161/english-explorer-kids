@@ -8,6 +8,7 @@ import {
   getStageProgress, getTotalEarnedStars,
 } from "@/lib/levels";
 import StarRating from "@/components/StarRating";
+import ClassroomBackground from "@/components/ClassroomBackground";
 import LevelCompleteCelebration from "@/components/LevelCompleteCelebration";
 import FloatingParticles from "@/components/FloatingParticles";
 import Interactive3DMascot from "@/components/Interactive3DMascot";
@@ -69,7 +70,7 @@ const LevelsPage = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
-      <FloatingParticles count={10} />
+      <ClassroomBackground />
       <LevelCompleteCelebration
         show={!!celebration}
         levelNumber={celebration?.levelNumber ?? 0}

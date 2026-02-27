@@ -8,6 +8,7 @@ import { addCompletedLetter } from "@/lib/progress";
 import { saveStageProgress } from "@/lib/levels";
 import StarRating from "@/components/StarRating";
 import Confetti from "@/components/Confetti";
+import ClassroomBackground from "@/components/ClassroomBackground";
 import BackToLevels from "@/components/BackToLevels";
 import PhoneticGuide from "@/components/PhoneticGuide";
 import Card3D from "@/components/Card3D";
@@ -75,6 +76,7 @@ const AlphabetPage = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
+      <ClassroomBackground />
       <Confetti show={showConfetti} />
       <XPReward amount={xpAmount} show={showXP} onComplete={() => setShowXP(false)} />
       

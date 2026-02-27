@@ -12,7 +12,7 @@ import XPReward from "@/components/XPReward";
 import ComboBurst from "@/components/ComboBurst";
 import FloatingParticles from "@/components/FloatingParticles";
 import Interactive3DMascot from "@/components/Interactive3DMascot";
-import CinematicBackground from "@/components/CinematicBackground";
+import ClassroomBackground from "@/components/ClassroomBackground";
 import GameEntrance from "@/components/GameEntrance";
 import BackToLevels from "@/components/BackToLevels";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
@@ -485,7 +485,7 @@ const PatternPuzzle = () => {
   return (
     <div className="min-h-screen relative" dir={dir}>
       <GameEntrance title={lang === "he" ? "חידת דפוסים" : lang === "ar" ? "لغز الأنماط" : "Pattern Puzzle"} emoji="🧩" />
-      <CinematicBackground intensity={0.5} />
+      <ClassroomBackground />
       <FloatingParticles count={8} />
       <Confetti show={showConfetti} />
       <ScorePopup popups={popups} />
