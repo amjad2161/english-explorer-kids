@@ -192,7 +192,7 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           transition={{ delay: 0.6, duration: 0.6, ease: "easeOut" }}
           className="text-5xl md:text-7xl font-display font-extrabold mb-3"
           style={{
-            background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--candy)), hsl(var(--lavender)))",
+            background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--candy)), hsl(var(--sunshine)))",
             backgroundSize: "300% 300%",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
