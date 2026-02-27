@@ -117,8 +117,9 @@ const Index = () => {
           ].map((stat, i) => (
             <motion.div
               key={i}
-              whileHover={{ y: -2 }}
-              className="bg-card rounded-xl p-3 sm:p-4 text-center border border-border shadow-sm"
+              whileHover={{ y: -3, scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="bg-card rounded-xl p-3 sm:p-4 text-center border border-border hover:border-primary/20 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] transition-[border-color] duration-300 cursor-default"
             >
               <div className="flex justify-center mb-1.5">{stat.icon}</div>
               <p className="font-display font-extrabold text-xl sm:text-2xl leading-none">{stat.value}</p>
@@ -183,7 +184,7 @@ const Index = () => {
         {/* ── CURRENT LEVEL ── */}
         <motion.section variants={item} className="max-w-lg mx-auto mb-8 sm:mb-10">
           <Card3D onClick={() => { playClickSound(); navigate("/levels"); }}>
-            <div className="bg-card rounded-xl p-4 sm:p-5 border border-border shadow-sm hover:border-primary/20 transition-colors cursor-pointer group">
+            <div className="bg-card rounded-xl p-4 sm:p-5 border border-border shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] hover:border-primary/25 transition-all duration-300 cursor-pointer group">
               <div className="flex items-center gap-3 sm:gap-4">
                 <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center text-2xl sm:text-3xl shrink-0 shadow-sm" style={{ background: "var(--gradient-hero)" }}>
                   {level.emoji}
@@ -227,7 +228,7 @@ const Index = () => {
                 <button
                   key={rec.reason}
                   onClick={() => { playClickSound(); navigate(rec.path); }}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl bg-card border border-border hover:border-primary/20 text-start transition-all hover:shadow-sm group"
+                  className="w-full flex items-center gap-3 p-3 rounded-xl bg-card border border-border hover:border-primary/25 text-start transition-all duration-300 hover:shadow-[var(--shadow-card-hover)] group"
                 >
                   <span className="text-2xl">{rec.emoji}</span>
                   <div className="flex-1 min-w-0">
@@ -251,10 +252,10 @@ const Index = () => {
             {gameCards.map((card, i) => (
               <motion.button
                 key={card.path}
-                whileHover={{ y: -4 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ y: -5, scale: 1.04 }}
+                whileTap={{ scale: 0.93 }}
                 onClick={() => { playClickSound(); navigate(card.path); }}
-                className={`${card.color} rounded-xl p-3 sm:p-4 text-center border border-transparent hover:border-primary/15 transition-all group`}
+                className={`${card.color} rounded-xl p-3 sm:p-4 text-center border border-transparent hover:border-primary/20 transition-all duration-300 hover:shadow-[var(--shadow-card-hover)] group`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 + i * 0.03, duration: 0.3 }}
@@ -272,7 +273,7 @@ const Index = () => {
         <motion.section variants={item} className="text-center mb-8 sm:mb-10 flex gap-2 sm:gap-3 justify-center flex-wrap">
           <button
             onClick={() => { playClickSound(); navigate("/levels"); }}
-            className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-display font-bold text-sm sm:text-base px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl shadow-md hover:shadow-lg hover:brightness-105 transition-all"
+            className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-display font-bold text-sm sm:text-base px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl shadow-[var(--shadow-button)] hover:shadow-[var(--shadow-button-hover)] hover:brightness-105 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200"
           >
             <Map className="w-4 h-4 sm:w-5 sm:h-5" />
             {t("home.myJourney")}
@@ -287,7 +288,7 @@ const Index = () => {
             <button
               key={btn.path}
               onClick={() => { playClickSound(); navigate(btn.path); }}
-              className="inline-flex items-center gap-1.5 bg-card text-foreground font-display font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl border border-border hover:border-primary/20 shadow-sm hover:shadow transition-all"
+              className="inline-flex items-center gap-1.5 bg-card text-foreground font-display font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl border border-border hover:border-primary/25 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200"
             >
               {typeof btn.icon === "string" ? <span>{btn.icon}</span> : btn.icon}
               {btn.label}
