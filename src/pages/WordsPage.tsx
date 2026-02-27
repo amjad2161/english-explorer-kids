@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import { useLanguage } from "@/lib/i18n";
 import { wordCategories, WordCard, getCategoryName, getWordTranslation } from "@/data/learningData";
 import { speakEnglish, playClickSound, playStarSound } from "@/lib/sounds";
+import { dispatchCharacterEvent } from "@/lib/characterStore";
 import { addCompletedWord } from "@/lib/progress";
 import { saveStageProgress, levels } from "@/lib/levels";
 import Confetti from "@/components/Confetti";
@@ -77,6 +78,7 @@ const WordsPage = () => {
       playStarSound();
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 100);
+      dispatchCharacterEvent({ type: "celebrate" });
       setXpAmount(10);
       setShowXP(true);
       if (stageId) saveStageProgress(stageId, Math.min(newLearned.size, 4));

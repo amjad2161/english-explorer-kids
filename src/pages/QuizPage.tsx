@@ -23,6 +23,7 @@ import ClassroomBackground from "@/components/ClassroomBackground";
 import GameEntrance from "@/components/GameEntrance";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 import { recordPerformance, getDifficulty } from "@/lib/adaptiveDifficulty";
+import { dispatchCharacterEvent } from "@/lib/characterStore";
 import UserAvatar, { CompanionAvatars } from "@/components/UserAvatar";
 import { RotateCcw, Zap, Target, Trophy, Sparkles } from "lucide-react";
 const optionLabels = ["A", "B", "C", "D"];
@@ -68,6 +69,7 @@ const QuizPage = () => {
       setScore(s => s + points);
       setStreak(newStreak);
       setOwlMood("surprised");
+      dispatchCharacterEvent({ type: "correct" });
       setCorrectWords(prev => [...prev, question.options[question.correct]]);
       setBestStreak(b => { const best = Math.max(b, newStreak); saveBestStreak(best); return best; });
       if (newStreak >= 3) {
@@ -81,6 +83,7 @@ const QuizPage = () => {
     } else {
       setStreak(0);
       setOwlMood("sad");
+      dispatchCharacterEvent({ type: "wrong" });
       setWrongWords(prev => [...prev, question.options[question.correct]]);
       playWrongSound();
     }
@@ -95,6 +98,7 @@ const QuizPage = () => {
         const stars = Math.min(Math.ceil((finalScore / (QUIZ_SIZE * 30)) * 5), 5);
         addQuizScore(stars);
         setIsFinished(true);
+        dispatchCharacterEvent({ type: "level_up" });
         setOwlMood("celebrate");
         if (stageId) saveStageProgress(stageId, stars);
         if (stars >= 3) { playVictoryFanfare(); setShowConfetti(true); setTimeout(() => setShowConfetti(false), 100); }

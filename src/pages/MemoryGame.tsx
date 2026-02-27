@@ -19,6 +19,7 @@ import ClassroomBackground from "@/components/ClassroomBackground";
 import GameEntrance from "@/components/GameEntrance";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 import UserAvatar, { CompanionAvatars } from "@/components/UserAvatar";
+import { dispatchCharacterEvent } from "@/lib/characterStore";
 
 interface MemoryCard {
   id: string;
@@ -87,6 +88,7 @@ const MemoryGame = () => {
           setLastMatchWord(card1.matchId);
           setOwlMood("surprised");
           setTimeout(() => { setLastMatchWord(null); setOwlMood("idle"); }, 1500);
+          dispatchCharacterEvent({ type: "correct" });
           const newMatched = [...matched, newFlipped[0], newFlipped[1]];
           setMatched(newMatched); setFlipped([]); setIsChecking(false);
           if (newMatched.length === cards.length) {
@@ -95,6 +97,7 @@ const MemoryGame = () => {
             addQuizScore(stars);
             if (stageId) saveStageProgress(stageId, stars);
             playVictoryFanfare(); setShowConfetti(true); setGameComplete(true);
+            dispatchCharacterEvent({ type: "level_up" });
             setOwlMood("celebrate");
             setXpAmount(stars * 15 + 10);
             setShowXP(true);
@@ -108,6 +111,7 @@ const MemoryGame = () => {
           playWrongSound();
           setOwlMood("sad");
           setFlipped([]); setIsChecking(false);
+          dispatchCharacterEvent({ type: "wrong" });
           setTimeout(() => setOwlMood("idle"), 1000);
         }, 800);
       }

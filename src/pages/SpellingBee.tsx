@@ -23,6 +23,7 @@ import ClassroomBackground from "@/components/ClassroomBackground";
 import GameEntrance from "@/components/GameEntrance";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 import UserAvatar, { CompanionAvatars } from "@/components/UserAvatar";
+import { dispatchCharacterEvent } from "@/lib/characterStore";
 const shuffle = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
 
 const SpellingBee = () => {
@@ -104,6 +105,7 @@ const SpellingBee = () => {
       setScore(s => s + points);
       setStreak(newStreak);
       setOwlMood("surprised");
+      dispatchCharacterEvent({ type: "correct" });
       setBestStreak(b => { const best = Math.max(b, newStreak); saveBestStreak(best); return best; });
       if (newStreak >= 3) {
         playComboSound(newStreak);
@@ -117,6 +119,7 @@ const SpellingBee = () => {
       setResult("wrong");
       setStreak(0);
       setOwlMood("sad");
+      dispatchCharacterEvent({ type: "wrong" });
       playWrongSound();
     }
     setTimeout(() => { setOwlMood("idle"); advance(); }, 1500);
@@ -134,6 +137,7 @@ const SpellingBee = () => {
   const advance = () => {
     if (currentIndex + 1 >= words.length) {
       setFinished(true);
+      dispatchCharacterEvent({ type: "level_up" });
       setOwlMood("celebrate");
       playVictoryFanfare();
       setShowConfetti(true);

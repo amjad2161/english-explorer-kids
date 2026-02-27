@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useLanguage } from "@/lib/i18n";
 import { playCorrectSound, playWrongSound, playComboSound, playVictoryFanfare } from "@/lib/sounds";
+import { dispatchCharacterEvent } from "@/lib/characterStore";
 import { updateDailyProgress } from "@/lib/xp";
 import { trackGamePlayed } from "@/lib/statsTracker";
 import StarRating from "@/components/StarRating";
@@ -413,6 +414,7 @@ const PatternPuzzle = () => {
       setScore(s => s + points);
       setStreak(newStreak);
       setOwlMood("surprised");
+      dispatchCharacterEvent({ type: "correct" });
       setBestStreak(b => Math.max(b, newStreak));
       if (newStreak >= 3) {
         playComboSound(newStreak);
@@ -428,6 +430,7 @@ const PatternPuzzle = () => {
       setResult("wrong");
       setStreak(0);
       setOwlMood("sad");
+      dispatchCharacterEvent({ type: "wrong" });
       playWrongSound();
     }
 
@@ -440,6 +443,7 @@ const PatternPuzzle = () => {
   const advance = () => {
     if (currentIndex + 1 >= puzzles.length) {
       setFinished(true);
+      dispatchCharacterEvent({ type: "level_up" });
       setOwlMood("celebrate");
       playVictoryFanfare();
       setShowConfetti(true);

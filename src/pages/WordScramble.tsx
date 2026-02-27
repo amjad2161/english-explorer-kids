@@ -22,6 +22,7 @@ import ClassroomBackground from "@/components/ClassroomBackground";
 import GameEntrance from "@/components/GameEntrance";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 import UserAvatar, { CompanionAvatars } from "@/components/UserAvatar";
+import { dispatchCharacterEvent } from "@/lib/characterStore";
 const shuffleArray = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
 
 /* ─── Draggable scrambled letter tile ─── */
@@ -123,6 +124,7 @@ const WordScramble = () => {
       setScore(s => s + points);
       setStreak(newStreak);
       setOwlMood("surprised");
+      dispatchCharacterEvent({ type: "correct" });
       setBestStreak(b => { const best = Math.max(b, newStreak); saveBestStreak(best); return best; });
       if (newStreak >= 3) playComboSound(newStreak); else playCorrectSound();
       addPopup(points, newStreak >= 3 ? `×${newStreak}` : "✓");
@@ -132,6 +134,7 @@ const WordScramble = () => {
       setResult("wrong");
       setStreak(0);
       setOwlMood("sad");
+      dispatchCharacterEvent({ type: "wrong" });
       playWrongSound();
     }
     setTimeout(() => { setOwlMood("idle"); advance(); }, 1500);
@@ -149,6 +152,7 @@ const WordScramble = () => {
   const advance = () => {
     if (currentIndex + 1 >= words.length) {
       setFinished(true);
+      dispatchCharacterEvent({ type: "level_up" });
       setOwlMood("celebrate");
       playVictoryFanfare();
       setShowConfetti(true);

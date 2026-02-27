@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import { useLanguage } from "@/lib/i18n";
 import { alphabet, getLocal, getWordLocal } from "@/data/learningData";
 import { speakEnglish, playClickSound, playStarSound, playLetterPopSound } from "@/lib/sounds";
+import { dispatchCharacterEvent } from "@/lib/characterStore";
 import { addCompletedLetter } from "@/lib/progress";
 import { saveStageProgress } from "@/lib/levels";
 import StarRating from "@/components/StarRating";
@@ -60,6 +61,7 @@ const AlphabetPage = () => {
       playStarSound();
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 100);
+      dispatchCharacterEvent({ type: "celebrate" });
       setXpAmount(15);
       setShowXP(true);
       if (stageId) saveStageProgress(stageId, Math.min(newLearned.length, 5));

@@ -21,6 +21,7 @@ import ClassroomBackground from "@/components/ClassroomBackground";
 import GameEntrance from "@/components/GameEntrance";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 import UserAvatar, { CompanionAvatars } from "@/components/UserAvatar";
+import { dispatchCharacterEvent } from "@/lib/characterStore";
 const DEFAULT_MAX_WRONG = 6;
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const shuffleArray = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
@@ -142,6 +143,7 @@ const HangmanGame = () => {
         setScore(s => s + points);
         setStreak(newStreak);
         setOwlMood("surprised");
+        dispatchCharacterEvent({ type: "correct" });
         setBestStreak(b => { const best = Math.max(b, newStreak); saveBestStreak(best); return best; });
         if (newStreak >= 3) playComboSound(newStreak); else playCorrectSound();
         addPopup(points, newStreak >= 3 ? `×${newStreak}` : "✓");
@@ -153,6 +155,7 @@ const HangmanGame = () => {
       const newWrong = wrongCount + 1;
       setWrongCount(newWrong);
       setOwlMood("sad");
+      dispatchCharacterEvent({ type: "wrong" });
       playWrongSound();
       if (newWrong >= MAX_WRONG) {
         setResult("lost");
@@ -167,6 +170,7 @@ const HangmanGame = () => {
   const advance = () => {
     if (currentIndex + 1 >= words.length) {
       setFinished(true);
+      dispatchCharacterEvent({ type: "level_up" });
       setOwlMood("celebrate");
       playVictoryFanfare();
       setShowConfetti(true);
