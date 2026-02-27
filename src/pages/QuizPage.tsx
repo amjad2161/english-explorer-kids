@@ -16,12 +16,10 @@ import StreakCounter from "@/components/StreakCounter";
 import ScorePopup, { useScorePopups } from "@/components/ScorePopup";
 import BackToLevels from "@/components/BackToLevels";
 import XPReward from "@/components/XPReward";
-import FloatingParticles from "@/components/FloatingParticles";
 import ComboBurst from "@/components/ComboBurst";
 import { RotateCcw, Zap, Target, Trophy } from "lucide-react";
 
 const QUIZ_SIZE = 8;
-
 const optionLabels = ["A", "B", "C", "D"];
 
 const QuizPage = () => {
@@ -84,11 +82,9 @@ const QuizPage = () => {
         setIsFinished(true);
         if (stageId) saveStageProgress(stageId, stars);
         if (stars >= 3) { playVictoryFanfare(); setShowConfetti(true); setTimeout(() => setShowConfetti(false), 100); }
-        // XP reward
         const xp = Math.max(10, finalScore);
         setXpAmount(xp);
         setShowXP(true);
-        // Track stats
         const totalCorrect = correct ? (score > 0 ? Math.round(score / 15) + 1 : 1) : Math.round(score / 15);
         trackGamePlayed("quiz", totalCorrect, QUIZ_SIZE - totalCorrect, xp);
         updateDailyProgress("quiz");
@@ -114,7 +110,6 @@ const QuizPage = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
-      <FloatingParticles count={10} />
       <Confetti show={showConfetti} />
       <ScorePopup popups={popups} />
       <ComboBurst combo={streak} show={showCombo} />
@@ -122,37 +117,14 @@ const QuizPage = () => {
       
       <div className="max-w-2xl mx-auto px-4 py-8 relative z-10">
         <BackToLevels />
-        
-        {/* 3D Quiz Hero Scene */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="flex justify-center items-end gap-4 mb-4 py-3"
-        >
-          {["🏆", "❓", "💡"].map((emoji, i) => (
-            <motion.span
-              key={i}
-              className="text-4xl md:text-6xl select-none"
-              style={{
-                filter: "drop-shadow(0 8px 16px rgba(0,0,0,0.2))",
-              }}
-              animate={{
-                y: [0, -15 - i * 3, 0],
-                rotate: [0, i === 1 ? 12 : -8, 0],
-                scale: [1, 1.1, 1],
-              }}
-              transition={{ duration: 2.5 + i * 0.4, repeat: Infinity, ease: "easeInOut", delay: i * 0.3 }}
-            >
-              {emoji}
-            </motion.span>
-          ))}
-        </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
           className="text-center mb-6"
         >
+          <span className="text-5xl mb-3 block">❓</span>
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">
             {t("quiz.title")}
           </h1>
@@ -163,12 +135,12 @@ const QuizPage = () => {
           {!isFinished ? (
             <motion.div
               key={`q-${currentQ}`}
-              initial={{ opacity: 0, x: 60, rotateY: 15 }}
-              animate={{ opacity: 1, x: 0, rotateY: 0 }}
-              exit={{ opacity: 0, x: -60, rotateY: -15 }}
-              transition={{ type: "spring", stiffness: 200, damping: 25 }}
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -40 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
             >
-              {/* Stats bar with visual upgrade */}
+              {/* Stats bar */}
               <div className="card-glass mb-4 flex items-center justify-between flex-wrap gap-2">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-1.5 bg-muted/50 rounded-full px-3 py-1">
@@ -183,8 +155,8 @@ const QuizPage = () => {
                 <StreakCounter streak={streak} bestStreak={bestStreak} />
               </div>
 
-              {/* Animated progress bar */}
-              <div className="mb-5 relative">
+              {/* Progress bar */}
+              <div className="mb-5">
                 <div className="progress-bar h-3">
                   <motion.div
                     className="progress-bar-fill"
@@ -192,36 +164,26 @@ const QuizPage = () => {
                     transition={{ duration: 0.5, ease: "easeOut" }}
                   />
                 </div>
-                {/* Step dots */}
                 <div className="flex justify-between mt-1 px-1">
                   {shuffledQuestions.map((_, i) => (
-                    <motion.div
+                    <div
                       key={i}
-                      className={`w-2 h-2 rounded-full transition-colors ${
+                      className={`w-2 h-2 rounded-full transition-colors duration-300 ${
                         i < currentQ ? "bg-accent" : i === currentQ ? "bg-primary" : "bg-muted"
                       }`}
-                      animate={i === currentQ ? { scale: [1, 1.4, 1] } : {}}
-                      transition={{ duration: 1, repeat: Infinity }}
                     />
                   ))}
                 </div>
               </div>
 
               {/* Question card */}
-              <div className="card-kid text-center mb-6 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/3 to-accent/3 pointer-events-none" />
-                <motion.span
-                  className="text-7xl block mb-4 drop-shadow-lg relative z-10"
-                  animate={{ scale: [1, 1.08, 1], rotate: [0, 3, -3, 0] }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                >
-                  {question.emoji}
-                </motion.span>
-                <h2 className="font-display text-xl font-bold mb-2 relative z-10">{question.question}</h2>
-                <p className="text-muted-foreground font-body text-sm relative z-10">{getQuestionLocal(question, lang)}</p>
+              <div className="card-kid text-center mb-6">
+                <span className="text-6xl block mb-4">{question.emoji}</span>
+                <h2 className="font-display text-xl font-bold mb-2">{question.question}</h2>
+                <p className="text-muted-foreground font-body text-sm">{getQuestionLocal(question, lang)}</p>
               </div>
 
-              {/* Answer options with labels */}
+              {/* Answer options */}
               <div className="grid grid-cols-2 gap-3">
                 {question.options.map((option, index) => {
                   const isSelected = selected === index;
@@ -244,40 +206,22 @@ const QuizPage = () => {
                   return (
                     <motion.button
                       key={`${index}-${option}`}
-                      whileHover={selected === null ? { scale: 1.04, y: -3 } : {}}
-                      whileTap={selected === null ? { scale: 0.96 } : {}}
+                      whileHover={selected === null ? { scale: 1.03, y: -2 } : {}}
+                      whileTap={selected === null ? { scale: 0.97 } : {}}
                       onClick={() => handleAnswer(index)}
                       disabled={selected !== null}
                       className={`card-kid font-display text-lg font-bold py-5 relative overflow-hidden group ${stateClass} ${bgOverride}`}
                     >
-                      {/* Option label */}
                       <span className="absolute top-2 start-3 text-xs font-display font-bold text-muted-foreground/50 bg-muted/30 w-6 h-6 rounded-full flex items-center justify-center">
                         {optionLabels[index]}
                       </span>
-                      
                       <span className="relative z-10">{option}</span>
-                      
                       {selected !== null && isCorrectOption && (
-                        <motion.span
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          className="block mt-1 text-sm"
-                        >
-                          ✅
-                        </motion.span>
+                        <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} className="block mt-1 text-sm">✅</motion.span>
                       )}
                       {isSelected && !isCorrect && selected !== null && (
-                        <motion.span
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          className="block mt-1 text-sm"
-                        >
-                          ❌
-                        </motion.span>
+                        <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} className="block mt-1 text-sm">❌</motion.span>
                       )}
-                      
-                      {/* Hover gradient */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                     </motion.button>
                   );
                 })}
@@ -287,8 +231,8 @@ const QuizPage = () => {
               <AnimatePresence>
                 {selected !== null && (
                   <motion.div
-                    initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
                     className={`text-center mt-5 font-display text-xl font-bold ${
                       isCorrect ? "text-accent" : "text-destructive"
                     }`}
@@ -301,26 +245,16 @@ const QuizPage = () => {
           ) : (
             <motion.div
               key="results"
-              initial={{ scale: 0.7, opacity: 0, rotateY: 30 }}
-              animate={{ scale: 1, opacity: 1, rotateY: 0 }}
-              transition={{ type: "spring", stiffness: 200 }}
-              className="card-kid text-center relative overflow-hidden"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              className="card-kid text-center"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-sunshine/5 via-transparent to-primary/5 pointer-events-none" />
-              
-              <motion.span
-                className="text-8xl block mb-4 relative z-10 drop-shadow-xl"
-                animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.1, 1] }}
-                transition={{ duration: 2, repeat: 3 }}
-              >
+              <span className="text-7xl block mb-4">
                 {stars >= 4 ? "🏆" : stars >= 2 ? "🎉" : "💪"}
-              </motion.span>
-              
-              <h2 className="font-display text-3xl font-bold mb-3 relative z-10 text-gradient">
-                {t("quiz.finished")}
-              </h2>
-              
-              <div className="flex justify-center gap-4 mb-4 relative z-10">
+              </span>
+              <h2 className="font-display text-3xl font-bold mb-3 text-gradient">{t("quiz.finished")}</h2>
+              <div className="flex justify-center gap-4 mb-4">
                 <div className="bg-primary/10 rounded-2xl px-4 py-2 flex items-center gap-2">
                   <Zap className="w-5 h-5 text-primary" />
                   <span className="font-display font-bold text-lg">{score}</span>
@@ -330,20 +264,15 @@ const QuizPage = () => {
                   <span className="font-display font-bold text-lg">{bestStreak}</span>
                 </div>
               </div>
-              
-              <div className="mb-4 relative z-10">
-                <StarRating earned={stars} total={5} size={36} />
-              </div>
-              
-              <p className="text-muted-foreground font-body mb-6 relative z-10">
+              <div className="mb-4"><StarRating earned={stars} total={5} size={36} /></div>
+              <p className="text-muted-foreground font-body mb-6">
                 {stars >= 4 ? t("quiz.amazing") : stars >= 2 ? t("quiz.wellDone") : t("quiz.keepTrying")}
               </p>
-              
               <motion.button
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={restart}
-                className="btn-kid gradient-primary text-primary-foreground text-lg px-8 flex items-center gap-2 mx-auto relative z-10"
+                className="btn-kid gradient-primary text-primary-foreground text-lg px-8 flex items-center gap-2 mx-auto"
               >
                 <RotateCcw className="w-5 h-5" /> {t("quiz.playAgain")}
               </motion.button>

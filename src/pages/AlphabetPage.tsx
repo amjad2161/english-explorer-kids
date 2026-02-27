@@ -12,7 +12,6 @@ import BackToLevels from "@/components/BackToLevels";
 import PhoneticGuide from "@/components/PhoneticGuide";
 import Card3D from "@/components/Card3D";
 import XPReward from "@/components/XPReward";
-import FloatingParticles from "@/components/FloatingParticles";
 import { ChevronRight, ChevronLeft, Volume2, BookOpen, Sparkles } from "lucide-react";
 
 const letterGradients = [
@@ -75,75 +74,30 @@ const AlphabetPage = () => {
 
   return (
     <div className="min-h-screen relative" dir={dir}>
-      <FloatingParticles count={12} />
       <Confetti show={showConfetti} />
       <XPReward amount={xpAmount} show={showXP} onComplete={() => setShowXP(false)} />
       
       <div className="max-w-5xl mx-auto px-4 py-8 relative z-10">
         <BackToLevels />
-        
-        {/* 3D Animated Hero Scene - pure CSS/emoji, no image boxes */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="flex justify-center items-center gap-3 md:gap-5 mb-6 py-4"
-        >
-          {["A", "B", "C"].map((letter, i) => (
-            <motion.div
-              key={letter}
-              className="relative"
-              animate={{
-                y: [0, -12, 0],
-                rotate: [0, i % 2 === 0 ? 5 : -5, 0],
-              }}
-              transition={{ duration: 2.5 + i * 0.3, repeat: Infinity, ease: "easeInOut", delay: i * 0.3 }}
-              style={{ perspective: 600 }}
-            >
-              <motion.span
-                className="text-5xl md:text-7xl font-display font-extrabold block"
-                style={{
-                  color: `hsl(${[195, 25, 145][i]}, ${[80, 95, 60][i]}%, ${[50, 53, 45][i]}%)`,
-                  textShadow: `0 6px 20px hsl(${[195, 25, 145][i]} ${[80, 95, 60][i]}% ${[50, 53, 45][i]}% / 0.3), 0 2px 4px rgba(0,0,0,0.1)`,
-                  transform: "translateZ(30px)",
-                }}
-                whileHover={{ scale: 1.3, rotate: 12 }}
-              >
-                {letter}
-              </motion.span>
-              <motion.span
-                className="absolute -top-2 -right-2 text-lg md:text-xl"
-                animate={{ scale: [1, 1.3, 1], rotate: [0, 15, 0] }}
-                transition={{ duration: 2, repeat: Infinity, delay: i * 0.5 }}
-              >
-                {["⭐", "✨", "💫"][i]}
-              </motion.span>
-            </motion.div>
-          ))}
-        </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
           className="text-center mb-8"
         >
-          <motion.div
-            className="inline-flex items-center gap-2 bg-primary/10 rounded-full px-4 py-1.5 mb-3"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", delay: 0.2 }}
-          >
+          <div className="inline-flex items-center gap-2 bg-primary/10 rounded-full px-4 py-1.5 mb-3">
             <BookOpen className="w-4 h-4 text-primary" />
             <span className="font-display font-bold text-sm text-primary">
               {learnedLetters.length}/26
             </span>
-          </motion.div>
+          </div>
           
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">
             {t("alphabet.title")}
           </h1>
           <p className="text-muted-foreground font-body mb-3">{t("alphabet.subtitle")}</p>
           
-          {/* Progress stars */}
           <div className="flex justify-center">
             <StarRating earned={learnedLetters.length} total={26} size={18} />
           </div>
@@ -155,27 +109,19 @@ const AlphabetPage = () => {
             <motion.div
               ref={detailRef}
               key={selectedLetter}
-              initial={{ scale: 0.8, opacity: 0, rotateY: 90 }}
-              animate={{ scale: 1, opacity: 1, rotateY: 0 }}
-              exit={{ scale: 0.8, opacity: 0, rotateY: -90 }}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
               className="max-w-md mx-auto mb-8"
             >
-              <Card3D intensity={12}>
-                <div className="card-kid text-center relative overflow-hidden">
-                  {/* Decorative background glow */}
-                  <div
-                    className="absolute inset-0 opacity-[0.06]"
-                    style={{
-                      background: `radial-gradient(circle at 50% 30%, hsl(var(--primary)), transparent 70%)`,
-                    }}
-                  />
-                  
+              <Card3D intensity={8}>
+                <div className="card-kid text-center">
                   {/* Navigation arrows + letter */}
-                  <div className="flex items-center justify-between mb-4 relative z-10">
+                  <div className="flex items-center justify-between mb-4">
                     <motion.button
-                      whileHover={{ scale: 1.15 }}
-                      whileTap={{ scale: 0.85 }}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
                       onClick={() => navigateLetter(dir === "rtl" ? 1 : -1)}
                       className="p-2.5 rounded-xl bg-muted/60 hover:bg-muted transition-colors disabled:opacity-30"
                       disabled={selectedLetter <= 0}
@@ -184,57 +130,31 @@ const AlphabetPage = () => {
                     </motion.button>
                     
                     <div className="relative">
-                      {/* Letter with gradient background */}
-                      <motion.div
-                        className={`w-28 h-28 rounded-3xl bg-gradient-to-br ${colorSet.bg} flex items-center justify-center shadow-xl relative`}
-                        animate={{ rotate: [0, 2, -2, 0] }}
-                        transition={{ duration: 4, repeat: Infinity }}
-                      >
+                      <div className={`w-28 h-28 rounded-3xl bg-gradient-to-br ${colorSet.bg} flex items-center justify-center shadow-xl relative`}>
                         <motion.span
                           className="text-7xl font-display font-extrabold text-white drop-shadow-lg"
                           key={selectedLetter}
-                          initial={{ scale: 0, rotate: -180 }}
-                          animate={{ scale: 1, rotate: 0 }}
-                          transition={{ type: "spring", stiffness: 300 }}
+                          initial={{ scale: 0.7, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          transition={{ duration: 0.3 }}
                         >
                           {alphabet[selectedLetter].letter}
                         </motion.span>
                         
-                        {/* Shimmer overlay */}
-                        <div className="absolute inset-0 rounded-3xl overflow-hidden">
-                          <motion.div
-                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                            animate={{ x: ["-100%", "200%"] }}
-                            transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-                          />
-                        </div>
-                        
-                        {/* Learned badge */}
                         {learnedLetters.includes(alphabet[selectedLetter].letter) && (
-                          <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            className="absolute -top-2 -right-2 text-2xl drop-shadow-md"
-                          >
-                            ⭐
-                          </motion.div>
+                          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}
+                            className="absolute -top-2 -right-2 text-2xl">⭐</motion.div>
                         )}
-                      </motion.div>
+                      </div>
                       
-                      {/* Small + large letter below */}
-                      <motion.p
-                        className="text-xl font-display font-bold text-muted-foreground mt-2"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.3 }}
-                      >
+                      <p className="text-xl font-display font-bold text-muted-foreground mt-2">
                         {alphabet[selectedLetter].letter.toLowerCase()} • {getLocal(alphabet[selectedLetter], lang)}
-                      </motion.p>
+                      </p>
                     </div>
                     
                     <motion.button
-                      whileHover={{ scale: 1.15 }}
-                      whileTap={{ scale: 0.85 }}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
                       onClick={() => navigateLetter(dir === "rtl" ? -1 : 1)}
                       className="p-2.5 rounded-xl bg-muted/60 hover:bg-muted transition-colors disabled:opacity-30"
                       disabled={selectedLetter >= alphabet.length - 1}
@@ -243,20 +163,14 @@ const AlphabetPage = () => {
                     </motion.button>
                   </div>
 
-                  {/* Word example card */}
+                  {/* Word example */}
                   <motion.div
-                    className={`${colorSet.light} rounded-2xl p-5 mb-4 relative z-10`}
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.2 }}
+                    className={`${colorSet.light} rounded-2xl p-5 mb-4`}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1, duration: 0.3 }}
                   >
-                    <motion.span
-                      className="text-6xl mb-2 block drop-shadow-md"
-                      animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
-                      transition={{ duration: 3, repeat: Infinity }}
-                    >
-                      {alphabet[selectedLetter].emoji}
-                    </motion.span>
+                    <span className="text-6xl mb-2 block">{alphabet[selectedLetter].emoji}</span>
                     <p className="font-display text-2xl font-bold mb-0.5">
                       <span className={colorSet.text}>{alphabet[selectedLetter].letter}</span>
                       {alphabet[selectedLetter].word.slice(1)}
@@ -268,19 +182,14 @@ const AlphabetPage = () => {
 
                   {/* Phonetics toggle */}
                   <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={() => setShowPhonetics(!showPhonetics)}
-                    className="w-full flex items-center justify-center gap-2 text-sm font-display font-semibold text-primary/70 hover:text-primary mb-3 py-2 rounded-xl bg-primary/5 hover:bg-primary/10 transition-colors relative z-10"
+                    className="w-full flex items-center justify-center gap-2 text-sm font-display font-semibold text-primary/70 hover:text-primary mb-3 py-2 rounded-xl bg-primary/5 hover:bg-primary/10 transition-colors"
                   >
                     <Sparkles className="w-4 h-4" />
                     {lang === "he" ? "מדריך הגייה" : lang === "ar" ? "دليل النطق" : "Pronunciation Guide"}
-                    <motion.span
-                      animate={{ rotate: showPhonetics ? 180 : 0 }}
-                      className="text-xs"
-                    >
-                      ▼
-                    </motion.span>
+                    <motion.span animate={{ rotate: showPhonetics ? 180 : 0 }} className="text-xs">▼</motion.span>
                   </motion.button>
 
                   <AnimatePresence>
@@ -289,7 +198,7 @@ const AlphabetPage = () => {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        className="overflow-hidden relative z-10 mb-4"
+                        className="overflow-hidden mb-4"
                       >
                         <PhoneticGuide letter={alphabet[selectedLetter].letter} />
                       </motion.div>
@@ -297,10 +206,10 @@ const AlphabetPage = () => {
                   </AnimatePresence>
 
                   {/* Action buttons */}
-                  <div className="flex gap-3 justify-center relative z-10">
+                  <div className="flex gap-3 justify-center">
                     <motion.button
-                      whileHover={{ scale: 1.05, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
+                      whileHover={{ scale: 1.03, y: -2 }}
+                      whileTap={{ scale: 0.97 }}
                       onClick={() => speakEnglish(alphabet[selectedLetter].letter)}
                       className="btn-kid gradient-sky text-secondary-foreground flex items-center gap-2"
                     >
@@ -308,8 +217,8 @@ const AlphabetPage = () => {
                       {t("alphabet.listenLetter")}
                     </motion.button>
                     <motion.button
-                      whileHover={{ scale: 1.05, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
+                      whileHover={{ scale: 1.03, y: -2 }}
+                      whileTap={{ scale: 0.97 }}
                       onClick={handleLearnLetter}
                       className="btn-kid gradient-primary text-primary-foreground flex items-center gap-2"
                     >
@@ -326,7 +235,7 @@ const AlphabetPage = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 0.2, duration: 0.4 }}
           className="grid grid-cols-5 sm:grid-cols-7 md:grid-cols-9 gap-3"
         >
           {alphabet.map((item, index) => {
@@ -337,40 +246,25 @@ const AlphabetPage = () => {
             return (
               <motion.button
                 key={item.letter}
-                initial={{ scale: 0, opacity: 0, rotateZ: Math.random() * 20 - 10 }}
-                animate={{ scale: 1, opacity: 1, rotateZ: 0 }}
-                transition={{ delay: index * 0.025, type: "spring", stiffness: 300 }}
-                whileHover={{ scale: 1.18, y: -6, rotateZ: Math.random() * 6 - 3 }}
-                whileTap={{ scale: 0.85 }}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.02, duration: 0.3 }}
+                whileHover={{ scale: 1.08, y: -3 }}
+                whileTap={{ scale: 0.92 }}
                 onClick={() => handleLetterClick(index)}
                 className={`letter-card aspect-square text-2xl font-bold relative overflow-hidden ${color.light} ${color.text} ${
                   isSelected ? "ring-4 ring-primary ring-offset-2 shadow-xl" : ""
                 }`}
               >
-                {/* Background gradient on hover */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${color.bg} opacity-0 hover:opacity-10 transition-opacity duration-300`} />
-                
                 <span className="relative z-10">{item.letter}</span>
                 
                 {isLearned && (
-                  <motion.span
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute -top-1 -right-1 text-sm drop-shadow-sm z-20"
-                  >
-                    ⭐
-                  </motion.span>
+                  <span className="absolute -top-1 -right-1 text-sm z-20">⭐</span>
                 )}
                 
-                {/* Tiny emoji hint */}
-                <motion.span
-                  className="absolute bottom-0.5 right-1 text-[10px] opacity-50"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 0.5 }}
-                  transition={{ delay: index * 0.025 + 0.5 }}
-                >
+                <span className="absolute bottom-0.5 right-1 text-[10px] opacity-50">
                   {item.emoji}
-                </motion.span>
+                </span>
               </motion.button>
             );
           })}
