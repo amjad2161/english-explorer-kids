@@ -7,6 +7,7 @@ import { speakEnglish, playCorrectSound, playWrongSound, playComboSound, playVic
 import { saveStageProgress } from "@/lib/levels";
 import { saveBestStreak } from "@/lib/achievements";
 import { trackGamePlayed } from "@/lib/statsTracker";
+import { updateDailyProgress } from "@/lib/xp";
 import StarRating from "@/components/StarRating";
 import Confetti from "@/components/Confetti";
 import GameTimer from "@/components/GameTimer";
@@ -124,6 +125,7 @@ const WordScramble = () => {
       setShowXP(true);
       const correctCount = Math.round(score / 15);
       trackGamePlayed("scramble", correctCount, TOTAL_ROUNDS - correctCount, Math.max(10, score));
+      updateDailyProgress("scramble");
     } else {
       setCurrentIndex(i => i + 1);
     }

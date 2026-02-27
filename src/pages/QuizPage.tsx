@@ -5,6 +5,7 @@ import { useLanguage } from "@/lib/i18n";
 import { getQuestionLocal } from "@/data/learningData";
 import { generateDynamicQuiz } from "@/lib/quizGenerator";
 import { playCorrectSound, playWrongSound, playStarSound, playComboSound, playVictoryFanfare } from "@/lib/sounds";
+import { updateDailyProgress } from "@/lib/xp";
 import { addQuizScore } from "@/lib/progress";
 import { saveStageProgress } from "@/lib/levels";
 import { saveBestStreak } from "@/lib/achievements";
@@ -90,6 +91,7 @@ const QuizPage = () => {
         // Track stats
         const totalCorrect = correct ? (score > 0 ? Math.round(score / 15) + 1 : 1) : Math.round(score / 15);
         trackGamePlayed("quiz", totalCorrect, QUIZ_SIZE - totalCorrect, xp);
+        updateDailyProgress("quiz");
       }
     }, 1500);
   }, [selected, question, currentQ, shuffledQuestions.length, score, streak, stageId, addPopup]);

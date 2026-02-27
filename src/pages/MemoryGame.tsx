@@ -7,6 +7,7 @@ import { playCorrectSound, playWrongSound, playClickSound, playStarSound, playVi
 import { addQuizScore } from "@/lib/progress";
 import { saveStageProgress } from "@/lib/levels";
 import { trackGamePlayed } from "@/lib/statsTracker";
+import { updateDailyProgress } from "@/lib/xp";
 import StarRating from "@/components/StarRating";
 import Confetti from "@/components/Confetti";
 import XPReward from "@/components/XPReward";
@@ -82,6 +83,7 @@ const MemoryGame = () => {
             setXpAmount(stars * 15 + 10);
             setShowXP(true);
             trackGamePlayed("memory", cards.length / 2, 0, stars * 15 + 10);
+            updateDailyProgress("memory");
             setTimeout(() => setShowConfetti(false), 100);
           }
         }, 500);
