@@ -65,7 +65,6 @@ const SimpleEntrance = ({ onComplete }: { onComplete: () => void }) => {
         transition={{ delay: 0.7 }}
         className="font-display text-sm text-muted-foreground"
       >
-        {/* Will be replaced by language-aware text below */}
         Let's learn together!
       </motion.p>
     </motion.div>
@@ -83,16 +82,91 @@ const gameCards = [
   { titleKey: "quick.pattern", emoji: "🧩", path: "/pattern", color: "bg-lavender/10 dark:bg-lavender/15" },
 ];
 
-/* ─── Divider ─── */
-const SimpleDivider = () => (
-  <div className="flex items-center justify-center gap-3 my-6 sm:my-8 opacity-30">
-    <div className="h-px flex-1 max-w-20 bg-gradient-to-r from-transparent to-border" />
-    <span className="text-primary/40 text-xs">✦</span>
-    <div className="h-px flex-1 max-w-20 bg-gradient-to-l from-transparent to-border" />
+/* ─── Notebook-style lined card wrapper ─── */
+const NotebookCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
+  <div
+    className={`relative rounded-2xl overflow-hidden ${className}`}
+    style={{
+      background: "hsl(var(--card) / 0.95)",
+      border: "2px solid hsl(var(--border))",
+      boxShadow: "var(--shadow-card)",
+    }}
+  >
+    {/* Red margin line */}
+    <div
+      className="absolute top-0 bottom-0 w-[2px]"
+      style={{
+        left: "2rem",
+        background: "hsl(0 65% 55% / 0.2)",
+      }}
+    />
+    {/* Horizontal ruled lines */}
+    <div
+      className="absolute inset-0 pointer-events-none"
+      style={{
+        backgroundImage: "repeating-linear-gradient(transparent, transparent 27px, hsl(var(--border) / 0.35) 27px, hsl(var(--border) / 0.35) 28px)",
+        backgroundPositionY: "12px",
+      }}
+    />
+    {/* Spiral binding holes */}
+    <div className="absolute top-0 bottom-0 left-1 flex flex-col items-center gap-6 pt-4 pointer-events-none">
+      {Array.from({ length: 12 }).map((_, i) => (
+        <div
+          key={i}
+          className="w-3 h-3 rounded-full border-2 shrink-0"
+          style={{
+            borderColor: "hsl(var(--muted-foreground) / 0.2)",
+            background: "hsl(var(--background) / 0.5)",
+          }}
+        />
+      ))}
+    </div>
+    <div className="relative z-10 p-5 sm:p-6 ps-12">
+      {children}
+    </div>
   </div>
 );
 
-/* ─── Stat card ─── */
+/* ─── Chalkboard section card ─── */
+const ChalkSection = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
+  <div
+    className={`relative rounded-2xl overflow-hidden ${className}`}
+    style={{
+      background: "linear-gradient(135deg, hsl(var(--board)) 0%, hsl(160 22% 18%) 100%)",
+      border: "3px solid hsl(30 35% 30%)",
+      boxShadow: "inset 0 2px 12px hsl(0 0% 0% / 0.2), 0 4px 16px hsl(0 0% 0% / 0.15)",
+    }}
+  >
+    {/* Chalk dust */}
+    <div
+      className="absolute inset-0 pointer-events-none opacity-[0.04]"
+      style={{
+        backgroundImage: `radial-gradient(circle at 25% 35%, hsl(var(--chalk)) 1px, transparent 1px),
+          radial-gradient(circle at 65% 70%, hsl(var(--chalk)) 0.6px, transparent 0.6px),
+          radial-gradient(circle at 80% 25%, hsl(var(--chalk)) 0.8px, transparent 0.8px)`,
+        backgroundSize: "80px 60px, 60px 80px, 70px 50px",
+      }}
+    />
+    <div className="relative z-10 p-5 sm:p-6">
+      {children}
+    </div>
+  </div>
+);
+
+/* ─── Chalk text helper ─── */
+const ChalkText = ({ children, className = "", size = "base" }: { children: React.ReactNode; className?: string; size?: string }) => (
+  <span
+    className={`font-display font-bold ${className}`}
+    style={{
+      color: "hsl(var(--chalk))",
+      textShadow: "0 1px 3px hsl(0 0% 0% / 0.3)",
+    }}
+  >
+    {children}
+  </span>
+);
+
+/* ─── Stat card — notebook style ─── */
 const StatCard = ({
   icon, value, label, delay, accentColor,
 }: {
@@ -108,25 +182,40 @@ const StatCard = ({
     transition={{ type: "spring", stiffness: 180, damping: 18, delay }}
     whileHover={{ y: -5, scale: 1.05 }}
     whileTap={{ scale: 0.95 }}
-    className="card-kid text-center cursor-default group"
+    className="relative rounded-xl overflow-hidden text-center cursor-default group p-4"
+    style={{
+      background: "hsl(var(--card) / 0.95)",
+      border: "2px solid hsl(var(--border))",
+      boxShadow: "var(--shadow-card)",
+    }}
   >
-    <div className="flex justify-center mb-2">{icon}</div>
-    <p className="font-display font-extrabold text-2xl sm:text-3xl leading-none text-foreground">
-      {value}
-    </p>
-    <p className="text-[10px] sm:text-xs font-display font-semibold mt-1 text-muted-foreground">
-      {label}
-    </p>
+    {/* Mini notebook lines */}
+    <div
+      className="absolute inset-0 pointer-events-none opacity-30"
+      style={{
+        backgroundImage: "repeating-linear-gradient(transparent, transparent 19px, hsl(var(--border) / 0.4) 19px, hsl(var(--border) / 0.4) 20px)",
+        backgroundPositionY: "8px",
+      }}
+    />
+    <div className="relative z-10">
+      <div className="flex justify-center mb-2">{icon}</div>
+      <p className="font-display font-extrabold text-2xl sm:text-3xl leading-none text-foreground">
+        {value}
+      </p>
+      <p className="text-[10px] sm:text-xs font-display font-semibold mt-1 text-muted-foreground">
+        {label}
+      </p>
+    </div>
   </motion.div>
 );
 
-/* ─── XP progress bar ─── */
+/* ─── XP progress bar — chalkboard ─── */
 const XPProgressBar = ({ current, needed, level, title, lang }: {
   current: number; needed: number; level: number; title: string; lang: string;
 }) => {
   const percent = Math.min((current / needed) * 100, 100);
   return (
-    <div className="card-kid">
+    <ChalkSection>
       <div className="flex items-center justify-between mb-2.5">
         <div className="flex items-center gap-2.5">
           <motion.div
@@ -135,16 +224,16 @@ const XPProgressBar = ({ current, needed, level, title, lang }: {
           >
             {title.split(" ")[0]}
           </motion.div>
-          <span className="font-display font-bold text-sm text-foreground">
+          <ChalkText>
             {lang === "he" ? "רמה" : lang === "ar" ? "المستوى" : "Level"} {level}
-          </span>
+          </ChalkText>
         </div>
-        <span className="text-xs font-display font-semibold text-muted-foreground">
+        <span className="text-xs font-display font-semibold" style={{ color: "hsl(var(--chalk) / 0.6)" }}>
           {current}/{needed} XP
         </span>
       </div>
 
-      <div className="h-3 rounded-full overflow-hidden bg-muted/50">
+      <div className="h-3 rounded-full overflow-hidden" style={{ background: "hsl(var(--chalk) / 0.12)" }}>
         <motion.div
           className="h-full rounded-full gradient-primary relative overflow-hidden"
           initial={{ width: 0 }}
@@ -159,9 +248,32 @@ const XPProgressBar = ({ current, needed, level, title, lang }: {
           />
         </motion.div>
       </div>
-    </div>
+    </ChalkSection>
   );
 };
+
+/* ─── Divider — chalk tray ─── */
+const ChalkDivider = () => (
+  <div className="flex items-center justify-center gap-3 my-6 sm:my-8">
+    <div
+      className="h-[2px] flex-1 max-w-24"
+      style={{ background: "linear-gradient(90deg, transparent, hsl(var(--border)), transparent)" }}
+    />
+    <motion.div
+      className="flex gap-1"
+      animate={{ rotate: [0, 5, -5, 0] }}
+      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+    >
+      <div className="w-6 h-2 rounded-sm" style={{ background: "hsl(var(--chalk) / 0.3)" }} />
+      <div className="w-4 h-2 rounded-sm" style={{ background: "hsl(var(--grass) / 0.3)" }} />
+      <div className="w-3 h-2 rounded-sm" style={{ background: "hsl(var(--sunshine) / 0.3)" }} />
+    </motion.div>
+    <div
+      className="h-[2px] flex-1 max-w-24"
+      style={{ background: "linear-gradient(90deg, transparent, hsl(var(--border)), transparent)" }}
+    />
+  </div>
+);
 
 const Index = () => {
   const navigate = useNavigate();
@@ -251,12 +363,12 @@ const Index = () => {
           )}
         </motion.section>
 
-        {/* ═══ XP PROGRESS BAR ═══ */}
+        {/* ═══ XP PROGRESS BAR — Chalkboard ═══ */}
         <motion.section variants={item} className="max-w-lg mx-auto mb-6 sm:mb-8">
           <XPProgressBar current={xpLevel.current} needed={xpLevel.needed} level={xpLevel.level} title={xpLevel.title} lang={lang} />
         </motion.section>
 
-        {/* ═══ STAT CARDS ═══ */}
+        {/* ═══ STAT CARDS — Notebook style ═══ */}
         <motion.section variants={item} className="grid grid-cols-3 gap-2.5 sm:gap-3 mb-6 sm:mb-8 max-w-lg mx-auto">
           <StatCard
             icon={<Zap className="w-6 h-6 text-primary" />}
@@ -284,7 +396,13 @@ const Index = () => {
         {/* ═══ STREAK ═══ */}
         {xpState.streak > 0 && (
           <motion.div variants={item} className="max-w-lg mx-auto mb-5 flex justify-center">
-            <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-accent/10 border border-accent/20">
+            <div
+              className="flex items-center gap-2 px-4 py-2 rounded-xl"
+              style={{
+                background: "hsl(var(--accent) / 0.1)",
+                border: "1.5px solid hsl(var(--accent) / 0.2)",
+              }}
+            >
               <span className="text-sm">🔥</span>
               <span className="font-display font-bold text-xs text-accent">
                 {xpState.streak} {lang === "he" ? "ימים ברצף" : lang === "ar" ? "أيام متتالية" : "day streak"}
@@ -293,31 +411,37 @@ const Index = () => {
           </motion.div>
         )}
 
-        <SimpleDivider />
+        <ChalkDivider />
 
-        {/* ═══ DAILY + WORD OF THE DAY ═══ */}
-        <AnimatedSection className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 max-w-3xl mx-auto mb-6 sm:mb-8" delay={0.15}>
-          <DailyChallengeCard key={refreshKey} challenge={dailyChallenge} onUpdate={refreshStats} />
-          <WordOfTheDay />
+        {/* ═══ DAILY + WORD OF THE DAY — Notebook card ═══ */}
+        <AnimatedSection className="max-w-3xl mx-auto mb-6 sm:mb-8" delay={0.15}>
+          <NotebookCard>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <DailyChallengeCard key={refreshKey} challenge={dailyChallenge} onUpdate={refreshStats} />
+              <WordOfTheDay />
+            </div>
+          </NotebookCard>
         </AnimatedSection>
 
-        {/* ═══ MOTIVATION ═══ */}
+        {/* ═══ MOTIVATION — Chalk style ═══ */}
         <AnimatedSection className="max-w-lg mx-auto mb-6 sm:mb-8" delay={0.1}>
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            className="card-glass flex items-center gap-3 justify-center !py-3.5 !px-5"
-          >
-            <span className="text-xl">{motivation.emoji}</span>
-            <span className="font-display font-bold text-sm text-foreground">
-              {motivation.text}
-            </span>
-          </motion.div>
+          <ChalkSection className="text-center">
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className="flex items-center gap-3 justify-center"
+            >
+              <span className="text-xl">{motivation.emoji}</span>
+              <ChalkText className="text-sm">
+                {motivation.text}
+              </ChalkText>
+            </motion.div>
+          </ChalkSection>
         </AnimatedSection>
 
-        {/* ═══ CURRENT LEVEL ═══ */}
+        {/* ═══ CURRENT LEVEL — Notebook card ═══ */}
         <AnimatedSection className="max-w-lg mx-auto mb-8 sm:mb-10" delay={0.15}>
           <Card3D onClick={() => { playClickSound(); navigate("/levels"); }}>
-            <div className="card-kid cursor-pointer group">
+            <NotebookCard className="cursor-pointer group">
               <div className="flex items-center gap-3 sm:gap-4">
                 <motion.div
                   className="w-13 h-13 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center text-2xl sm:text-3xl shrink-0 shadow-md gradient-primary"
@@ -356,51 +480,59 @@ const Index = () => {
                 </div>
                 <ArrowRight className={`w-5 h-5 text-muted-foreground ${dir === "rtl" ? "rotate-180" : ""}`} />
               </div>
-            </div>
+            </NotebookCard>
           </Card3D>
         </AnimatedSection>
 
-        {/* ═══ RECOMMENDATIONS ═══ */}
+        {/* ═══ RECOMMENDATIONS — Notebook ═══ */}
         {recommendations.length > 0 && (
           <AnimatedSection className="max-w-lg mx-auto mb-8 sm:mb-10" delay={0.1}>
             <h3 className="font-display text-sm font-bold mb-3 flex items-center gap-1.5 justify-center text-foreground">
               <Sparkles className="w-4 h-4 text-primary" />
               {lang === "he" ? "מומלץ עבורך" : lang === "ar" ? "مُوصى لك" : "Recommended for You"}
             </h3>
-            <div className="space-y-2">
-              {recommendations.map((rec, i) => (
-                <motion.button
-                  key={rec.reason}
-                  initial={{ opacity: 0, x: dir === "rtl" ? 20 : -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 + i * 0.08 }}
-                  onClick={() => { playClickSound(); navigate(rec.path); }}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl text-start card-glass !p-3 transition-all duration-300 group"
-                >
-                  <motion.span className="text-2xl" whileHover={{ scale: 1.2, rotate: [-5, 5, 0] }}>
-                    {rec.emoji}
-                  </motion.span>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-display font-bold text-sm text-foreground">{rec.title[lang] || rec.title.en}</p>
-                    <p className="text-xs truncate text-muted-foreground">{rec.description[lang] || rec.description.en}</p>
-                  </div>
-                  <ArrowRight className={`w-4 h-4 shrink-0 text-muted-foreground ${dir === "rtl" ? "rotate-180" : ""}`} />
-                </motion.button>
-              ))}
-            </div>
+            <NotebookCard>
+              <div className="space-y-2">
+                {recommendations.map((rec, i) => (
+                  <motion.button
+                    key={rec.reason}
+                    initial={{ opacity: 0, x: dir === "rtl" ? 20 : -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 + i * 0.08 }}
+                    onClick={() => { playClickSound(); navigate(rec.path); }}
+                    className="w-full flex items-center gap-3 p-3 rounded-xl text-start transition-all duration-300 group"
+                    style={{
+                      background: "hsl(var(--muted) / 0.3)",
+                      border: "1px solid hsl(var(--border) / 0.5)",
+                    }}
+                  >
+                    <motion.span className="text-2xl" whileHover={{ scale: 1.2, rotate: [-5, 5, 0] }}>
+                      {rec.emoji}
+                    </motion.span>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-display font-bold text-sm text-foreground">{rec.title[lang] || rec.title.en}</p>
+                      <p className="text-xs truncate text-muted-foreground">{rec.description[lang] || rec.description.en}</p>
+                    </div>
+                    <ArrowRight className={`w-4 h-4 shrink-0 text-muted-foreground ${dir === "rtl" ? "rotate-180" : ""}`} />
+                  </motion.button>
+                ))}
+              </div>
+            </NotebookCard>
           </AnimatedSection>
         )}
 
-        <SimpleDivider />
+        <ChalkDivider />
 
-        {/* ═══ GAME CARDS ═══ */}
+        {/* ═══ GAME CARDS — Chalkboard header ═══ */}
         <AnimatedSection className="mb-8 sm:mb-10" delay={0.12}>
-          <h3 className="font-display text-lg sm:text-xl font-bold mb-5 text-center flex items-center gap-2.5 justify-center">
-            <BookOpen className="w-5 h-5 text-primary" />
-            <span className="text-gradient">
-              {lang === "ar" ? "الألعاب" : lang === "he" ? "משחקים" : "Games"}
-            </span>
-          </h3>
+          <ChalkSection className="mb-5 text-center">
+            <div className="flex items-center gap-2.5 justify-center">
+              <BookOpen className="w-5 h-5" style={{ color: "hsl(var(--chalk) / 0.7)" }} />
+              <ChalkText className="text-lg sm:text-xl">
+                {lang === "ar" ? "الألعاب" : lang === "he" ? "משחקים" : "Games"}
+              </ChalkText>
+            </div>
+          </ChalkSection>
           <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
             {gameCards.map((card, i) => (
               <PremiumGameCard
@@ -446,23 +578,25 @@ const Index = () => {
           ))}
         </AnimatedSection>
 
-        {/* ═══ FUN FACT ═══ */}
+        {/* ═══ FUN FACT — Notebook ═══ */}
         <AnimatedSection className="max-w-lg mx-auto" delay={0.1}>
-          <div className="card-glass text-center">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <span className="text-lg">💡</span>
-              <p className="text-xs font-display font-bold text-primary">
-                {lang === "he" ? "הידעת?" : lang === "ar" ? "هل تعلم؟" : "Did you know?"}
+          <NotebookCard>
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <span className="text-lg">💡</span>
+                <p className="text-xs font-display font-bold text-primary">
+                  {lang === "he" ? "הידעת?" : lang === "ar" ? "هل تعلم؟" : "Did you know?"}
+                </p>
+              </div>
+              <p className="text-xs leading-relaxed text-muted-foreground font-display">
+                {lang === "he"
+                  ? "אנגלית היא השפה הנלמדת ביותר בעולם! 🌍"
+                  : lang === "ar"
+                  ? "الإنجليزية هي اللغة الأكثر تعلّماً في العالم! 🌍"
+                  : "English is the most learned language in the world! 🌍"}
               </p>
             </div>
-            <p className="text-xs leading-relaxed text-muted-foreground font-display">
-              {lang === "he"
-                ? "אנגלית היא השפה הנלמדת ביותר בעולם! 🌍"
-                : lang === "ar"
-                ? "الإنجليزية هي اللغة الأكثر تعلّماً في العالم! 🌍"
-                : "English is the most learned language in the world! 🌍"}
-            </p>
-          </div>
+          </NotebookCard>
         </AnimatedSection>
       </motion.div>
     </div>
