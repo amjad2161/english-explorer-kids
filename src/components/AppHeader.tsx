@@ -106,7 +106,7 @@ const AppHeader = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <img src={owlPixar} alt="English Fun" className="w-8 h-8 object-contain" />
+          <img src={owlPixar} alt="English Fun" className="w-8 h-8 object-contain rounded-full" />
           <div className="hidden sm:block">
             <h1 className="text-lg font-display font-extrabold text-gradient leading-tight">
               English Fun

@@ -204,9 +204,9 @@
   
   .card-kid {
     @apply bg-card p-5 sm:p-6 relative;
-    border-radius: 1.25rem;
-    box-shadow: var(--shadow-card);
-    border: 1px solid hsl(var(--border));
+    border-radius: 1.5rem;
+    box-shadow: var(--shadow-card), inset 0 1px 0 hsl(var(--primary) / 0.05);
+    border: 1.5px solid hsl(var(--primary) / 0.12);
     transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), 
                 box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1), 
                 border-color 0.3s ease;
@@ -217,32 +217,37 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: linear-gradient(135deg, hsl(var(--primary) / 0.04), transparent 60%);
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.06), hsl(var(--sunshine) / 0.03) 40%, transparent 70%);
     opacity: 0;
     transition: opacity 0.35s ease;
     pointer-events: none;
   }
 
   .card-kid:hover {
-    box-shadow: var(--shadow-card-hover);
-    border-color: hsl(var(--primary) / 0.25);
-    transform: translateY(-3px);
+    box-shadow: var(--shadow-card-hover), 0 0 30px hsl(var(--primary) / 0.06);
+    border-color: hsl(var(--primary) / 0.35);
+    transform: translateY(-4px);
   }
 
   .card-kid:hover::before {
     opacity: 1;
   }
 
+  .dark .card-kid {
+    border-color: hsl(var(--primary) / 0.15);
+    box-shadow: var(--shadow-card), inset 0 1px 0 hsl(var(--primary) / 0.08);
+  }
+
   .dark .card-kid:hover {
-    border-color: hsl(var(--primary) / 0.3);
-    box-shadow: var(--shadow-card-hover);
+    border-color: hsl(var(--primary) / 0.4);
+    box-shadow: var(--shadow-card-hover), 0 0 40px hsl(var(--primary) / 0.08);
   }
 
   .card-glass {
-    @apply bg-card/80 backdrop-blur-md p-5 sm:p-6 relative;
-    border-radius: 1.25rem;
-    border: 1px solid hsl(var(--border));
-    box-shadow: var(--shadow-card);
+    @apply bg-card/70 backdrop-blur-xl p-5 sm:p-6 relative;
+    border-radius: 1.5rem;
+    border: 1.5px solid hsl(var(--primary) / 0.1);
+    box-shadow: var(--shadow-card), inset 0 1px 0 hsl(var(--primary) / 0.06);
     transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), 
                 box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1), 
                 border-color 0.3s ease;
@@ -253,15 +258,15 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: linear-gradient(135deg, hsl(var(--primary) / 0.03), transparent 50%);
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.05), hsl(var(--sunshine) / 0.02) 50%, transparent 80%);
     opacity: 0;
     transition: opacity 0.35s ease;
     pointer-events: none;
   }
 
   .card-glass:hover {
-    border-color: hsl(var(--primary) / 0.2);
-    box-shadow: var(--shadow-card-hover);
+    border-color: hsl(var(--primary) / 0.3);
+    box-shadow: var(--shadow-card-hover), 0 0 25px hsl(var(--primary) / 0.05);
     transform: translateY(-2px);
   }
 
@@ -275,9 +280,9 @@
   
   .game-card-3d {
     @apply bg-card relative;
-    border: 1px solid hsl(var(--border));
-    border-radius: 1.25rem;
-    box-shadow: var(--shadow-card);
+    border: 1.5px solid hsl(var(--primary) / 0.12);
+    border-radius: 1.5rem;
+    box-shadow: var(--shadow-card), inset 0 1px 0 hsl(var(--primary) / 0.06);
     transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), 
                 box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1), 
                 border-color 0.3s ease;
@@ -289,25 +294,29 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: linear-gradient(135deg, hsl(var(--primary) / 0.06), transparent 50%);
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.08), hsl(var(--sunshine) / 0.04) 50%, transparent 80%);
     opacity: 0;
     transition: opacity 0.35s ease;
     pointer-events: none;
   }
 
   .game-card-3d:hover {
-    box-shadow: var(--shadow-card-hover);
-    border-color: hsl(var(--primary) / 0.25);
-    transform: translateY(-5px) scale(1.01);
+    box-shadow: var(--shadow-card-hover), 0 0 35px hsl(var(--primary) / 0.08);
+    border-color: hsl(var(--primary) / 0.35);
+    transform: translateY(-5px) scale(1.02);
   }
 
   .game-card-3d:hover::after {
     opacity: 1;
   }
 
+  .dark .game-card-3d {
+    border-color: hsl(var(--primary) / 0.15);
+  }
+
   .dark .game-card-3d:hover {
-    box-shadow: var(--shadow-card-hover);
-    border-color: hsl(var(--primary) / 0.35);
+    box-shadow: var(--shadow-card-hover), 0 0 40px hsl(var(--primary) / 0.1);
+    border-color: hsl(var(--primary) / 0.45);
   }
 
   /* ═══════════════════════════════════ */
@@ -316,28 +325,30 @@
   
   .btn-kid {
     @apply font-display font-bold px-6 py-3 relative overflow-hidden;
-    border-radius: 0.875rem;
-    box-shadow: var(--shadow-button);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-button), inset 0 1px 0 rgba(255,255,255,0.12);
     transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), 
                 box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1), 
                 filter 0.2s ease;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.02em;
+    border: 1.5px solid transparent;
   }
 
   .btn-kid::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent 60%);
+    background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 50%, rgba(0,0,0,0.05) 100%);
     opacity: 0;
     transition: opacity 0.25s ease;
     pointer-events: none;
+    border-radius: inherit;
   }
 
   .btn-kid:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: var(--shadow-button-hover);
-    filter: brightness(1.06);
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: var(--shadow-button-hover), 0 0 20px hsl(var(--primary) / 0.12);
+    filter: brightness(1.08);
   }
 
   .btn-kid:hover::after {
@@ -345,9 +356,9 @@
   }
 
   .btn-kid:active {
-    transform: translateY(0) scale(0.98);
-    filter: brightness(0.97);
-    box-shadow: var(--shadow-button);
+    transform: translateY(0) scale(0.97);
+    filter: brightness(0.96);
+    box-shadow: 0 2px 6px hsl(var(--primary) / 0.15);
   }
 
   .btn-glow {

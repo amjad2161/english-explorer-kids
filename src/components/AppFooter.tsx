@@ -40,8 +40,7 @@ const AppFooter = () => {
             <motion.img
               src={owlPixar}
               alt="English Fun Owl"
-              className="w-10 h-10 object-contain"
-              style={{ }}
+              className="w-10 h-10 object-contain rounded-full"
               animate={{ y: [0, -4, 0], rotate: [0, 3, -3, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             />
