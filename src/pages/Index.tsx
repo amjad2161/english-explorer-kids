@@ -73,6 +73,11 @@ const SimpleEntrance = ({ onComplete }: { onComplete: () => void }) => {
 };
 
 const gameCards = [
+  { titleKey: "quick.stories", emoji: "📖", path: "/story", color: "bg-purple-100 dark:bg-purple-900/20" },
+  { titleKey: "quick.learn", emoji: "🗺️", path: "/learn", color: "bg-blue-100 dark:bg-blue-900/20" },
+  { titleKey: "quick.phonics", emoji: "🔡", path: "/phonics", color: "bg-green-100 dark:bg-green-900/20" },
+  { titleKey: "quick.grammar", emoji: "🏗️", path: "/grammar", color: "bg-orange-100 dark:bg-orange-900/20" },
+  { titleKey: "quick.tpr", emoji: "🏃", path: "/tpr", color: "bg-pink-100 dark:bg-pink-900/20" },
   { titleKey: "quick.alphabet", emoji: "🔤", path: "/alphabet", color: "bg-sky/10 dark:bg-sky/15" },
   { titleKey: "quick.words", emoji: "📝", path: "/words", color: "bg-grass/10 dark:bg-grass/15" },
   { titleKey: "quick.match", emoji: "🧩", path: "/memory", color: "bg-lavender/10 dark:bg-lavender/15" },

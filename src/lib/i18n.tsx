@@ -127,6 +127,11 @@ const translations: Record<string, Record<Language, string>> = {
   "nav.spelling": { he: "🐝 איות", ar: "🐝 تهجئة", en: "🐝 Spelling" },
   "nav.scramble": { he: "🔀 בלבול", ar: "🔀 خلط", en: "🔀 Scramble" },
   "nav.hangman": { he: "🎭 ניחוש", ar: "🎭 تخمين", en: "🎭 Guess" },
+  "nav.story": { he: "📖 סיפורים", ar: "📖 قصص", en: "📖 Stories" },
+  "nav.learn": { he: "🗺️ לימוד", ar: "🗺️ تعلم", en: "🗺️ Learn" },
+  "nav.phonics": { he: "🔡 פוניקס", ar: "🔡 صوتيات", en: "🔡 Phonics" },
+  "nav.grammar": { he: "🏗️ דקדוק", ar: "🏗️ قواعد", en: "🏗️ Grammar" },
+  "nav.tpr": { he: "🏃 תנועה", ar: "🏃 حركة", en: "🏃 TPR" },
 
   // Spelling Bee
   "spelling.title": { he: "🐝 מרוץ האיות", ar: "🐝 سباق التهجئة", en: "🐝 Spelling Bee" },
@@ -153,6 +158,11 @@ const translations: Record<string, Record<Language, string>> = {
   "quick.scramble": { he: "בלבול", ar: "خلط", en: "Scramble" },
   "quick.hangman": { he: "ניחוש", ar: "تخمين", en: "Guess" },
   "quick.pattern": { he: "דפוסים", ar: "أنماط", en: "Patterns" },
+  "quick.stories": { he: "📖 סיפורים", ar: "📖 قصص", en: "📖 Stories" },
+  "quick.learn": { he: "🗺️ מסלול לימוד", ar: "🗺️ مسار التعلم", en: "🗺️ Learning Path" },
+  "quick.phonics": { he: "🔡 פוניקס", ar: "🔡 صوتيات", en: "🔡 Phonics" },
+  "quick.grammar": { he: "🏗️ דקדוק", ar: "🏗️ قواعد", en: "🏗️ Grammar" },
+  "quick.tpr": { he: "🏃 תנועה", ar: "🏃 حركة", en: "🏃 TPR" },
 
   // Fun facts
   "home.funFact1": { he: "השפה האנגלית היא השפה הנפוצה ביותר בעולם! יותר ממיליארד אנשים מדברים אנגלית ברחבי העולם 🌍", ar: "اللغة الإنجليزية هي اللغة الأكثر انتشاراً في العالم! أكثر من مليار شخص يتحدثون الإنجليزية حول العالم 🌍", en: "English is the most widely spoken language in the world! Over a billion people speak English globally 🌍" },
