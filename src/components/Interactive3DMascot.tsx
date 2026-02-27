@@ -103,14 +103,14 @@ const Interactive3DMascot = ({ mood = "idle", size = "md", onClick }: Interactiv
           transition={{ duration: 4, repeat: Infinity }}
         />
 
-        {/* === THE OWL SVG === */}
+        {/* === THE OWL SVG - Realistic Cartoon === */}
         <motion.svg
-          viewBox="0 0 200 220"
+          viewBox="0 0 200 240"
           width={dim}
           height={dim}
           className="relative z-20 select-none"
           style={{
-            filter: "drop-shadow(0 10px 25px hsl(var(--primary) / 0.2)) drop-shadow(0 4px 8px rgba(0,0,0,0.1))",
+            filter: "drop-shadow(0 12px 30px hsl(var(--primary) / 0.25)) drop-shadow(0 4px 10px rgba(0,0,0,0.15))",
             transform: "translateZ(40px)",
           }}
           animate={isPoking
@@ -127,45 +127,145 @@ const Interactive3DMascot = ({ mood = "idle", size = "md", onClick }: Interactiv
             ease: "easeInOut",
           }}
         >
-          {/* Body feathers - animated ruffling */}
+          <defs>
+            {/* Realistic feather gradients */}
+            <radialGradient id="bodyGrad" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stopColor="hsl(25, 48%, 48%)" />
+              <stop offset="50%" stopColor="hsl(25, 45%, 38%)" />
+              <stop offset="100%" stopColor="hsl(25, 42%, 28%)" />
+            </radialGradient>
+            <radialGradient id="headGrad" cx="50%" cy="35%" r="55%">
+              <stop offset="0%" stopColor="hsl(25, 48%, 48%)" />
+              <stop offset="60%" stopColor="hsl(25, 45%, 40%)" />
+              <stop offset="100%" stopColor="hsl(25, 40%, 32%)" />
+            </radialGradient>
+            <radialGradient id="bellyGrad" cx="50%" cy="30%" r="70%">
+              <stop offset="0%" stopColor="hsl(40, 65%, 85%)" />
+              <stop offset="50%" stopColor="hsl(38, 58%, 76%)" />
+              <stop offset="100%" stopColor="hsl(35, 50%, 65%)" />
+            </radialGradient>
+            <radialGradient id="faceGrad" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stopColor="hsl(42, 65%, 82%)" />
+              <stop offset="60%" stopColor="hsl(38, 55%, 72%)" />
+              <stop offset="100%" stopColor="hsl(35, 48%, 62%)" />
+            </radialGradient>
+            <radialGradient id="irisGrad" cx="40%" cy="35%" r="55%">
+              <stop offset="0%" stopColor="hsl(30, 95%, 55%)" />
+              <stop offset="40%" stopColor="hsl(25, 90%, 42%)" />
+              <stop offset="100%" stopColor="hsl(20, 85%, 28%)" />
+            </radialGradient>
+            <radialGradient id="eyeWhite" cx="45%" cy="40%" r="55%">
+              <stop offset="0%" stopColor="hsl(0, 0%, 100%)" />
+              <stop offset="80%" stopColor="hsl(0, 0%, 96%)" />
+              <stop offset="100%" stopColor="hsl(220, 10%, 90%)" />
+            </radialGradient>
+            <linearGradient id="wingGradL" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="hsl(25, 50%, 40%)" />
+              <stop offset="50%" stopColor="hsl(25, 46%, 34%)" />
+              <stop offset="100%" stopColor="hsl(25, 42%, 28%)" />
+            </linearGradient>
+            <linearGradient id="wingGradR" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="hsl(25, 50%, 40%)" />
+              <stop offset="50%" stopColor="hsl(25, 46%, 34%)" />
+              <stop offset="100%" stopColor="hsl(25, 42%, 28%)" />
+            </linearGradient>
+            <linearGradient id="beakGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+              <stop offset="0%" stopColor="hsl(38, 92%, 60%)" />
+              <stop offset="50%" stopColor="hsl(35, 88%, 52%)" />
+              <stop offset="100%" stopColor="hsl(30, 85%, 42%)" />
+            </linearGradient>
+            <linearGradient id="talonGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+              <stop offset="0%" stopColor="hsl(38, 80%, 55%)" />
+              <stop offset="100%" stopColor="hsl(30, 75%, 40%)" />
+            </linearGradient>
+            {/* Feather texture filter */}
+            <filter id="featherTex" x="-5%" y="-5%" width="110%" height="110%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" result="noise" />
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5" />
+            </filter>
+            {/* Soft inner shadow */}
+            <filter id="innerShadow">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur" />
+              <feOffset dx="0" dy="2" result="offsetBlur" />
+              <feComposite in="SourceGraphic" in2="offsetBlur" operator="over" />
+            </filter>
+          </defs>
+
+          {/* === TAIL FEATHERS (behind body) === */}
+          <motion.g
+            animate={isPoking
+              ? { rotate: [0, 8, -8, 0] }
+              : { rotate: [0, 2, -2, 0] }
+            }
+            style={{ transformOrigin: "100px 190px" }}
+            transition={{ duration: isPoking ? 0.6 : 3, repeat: isPoking ? 0 : Infinity }}
+          >
+            <path d="M82 190 L72 218 L80 212 L88 220 L92 200 Z" fill="hsl(25, 42%, 30%)" />
+            <path d="M96 192 L94 222 L100 216 L106 224 L104 195 Z" fill="hsl(25, 45%, 33%)" />
+            <path d="M108 190 L112 218 L118 212 L125 218 L118 200 Z" fill="hsl(25, 42%, 30%)" />
+            {/* Tail feather stripes */}
+            <path d="M78 208 Q85 206 90 210" stroke="hsl(25, 38%, 24%)" strokeWidth="1" fill="none" opacity="0.5" />
+            <path d="M100 212 Q104 210 108 214" stroke="hsl(25, 38%, 24%)" strokeWidth="1" fill="none" opacity="0.5" />
+            <path d="M114 208 Q118 206 122 210" stroke="hsl(25, 38%, 24%)" strokeWidth="1" fill="none" opacity="0.5" />
+          </motion.g>
+
+          {/* === BODY - layered for depth === */}
+          {/* Outer feather edge */}
           <motion.ellipse
-            cx="100" cy="150" rx="55" ry="60"
-            fill="hsl(25, 50%, 35%)"
-            animate={{ rx: [55, 57, 55], ry: [60, 62, 60] }}
+            cx="100" cy="155" rx="58" ry="62"
+            fill="hsl(25, 42%, 28%)"
+            animate={{ rx: [58, 59, 58], ry: [62, 63, 62] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           />
-          {/* Body main */}
+          {/* Main body */}
           <motion.ellipse
-            cx="100" cy="145" rx="50" ry="55"
-            fill="hsl(25, 45%, 42%)"
-            animate={{ ry: [55, 57, 55] }}
+            cx="100" cy="152" rx="53" ry="58"
+            fill="url(#bodyGrad)"
+            animate={{ ry: [58, 59, 58] }}
             transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
           />
-          {/* Belly */}
+          {/* Body feather rows - scalloped pattern */}
+          {[0, 1, 2, 3].map(row => (
+            <g key={`row-${row}`} opacity="0.25">
+              {[-2, -1, 0, 1, 2].map(col => (
+                <motion.path
+                  key={`f-${row}-${col}`}
+                  d={`M ${88 + col * 12 + (row % 2) * 6} ${128 + row * 14} Q ${94 + col * 12 + (row % 2) * 6} ${135 + row * 14} ${88 + col * 12 + (row % 2) * 6} ${142 + row * 14}`}
+                  stroke="hsl(25, 35%, 25%)"
+                  strokeWidth="1.2"
+                  fill="none"
+                  animate={{ opacity: [0.2, 0.35, 0.2] }}
+                  transition={{ duration: 2.5, repeat: Infinity, delay: (row + col) * 0.15 }}
+                />
+              ))}
+            </g>
+          ))}
+
+          {/* Belly - soft warm patch */}
           <motion.ellipse
-            cx="100" cy="155" rx="32" ry="38"
-            fill="hsl(38, 60%, 78%)"
-            animate={{ ry: [38, 40, 38] }}
+            cx="100" cy="162" rx="34" ry="40"
+            fill="url(#bellyGrad)"
+            animate={{ ry: [40, 41, 40] }}
             transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
           />
-          {/* Belly feather pattern */}
-          {[0, 1, 2, 3, 4].map(i => (
+          {/* Belly chevron feather markings */}
+          {[0, 1, 2, 3, 4, 5].map(i => (
             <motion.path
-              key={`belly-${i}`}
-              d={`M ${80 + i * 10} ${140 + (i % 2) * 5} Q ${85 + i * 10} ${148 + (i % 2) * 5} ${80 + i * 10} ${155 + (i % 2) * 5}`}
-              stroke="hsl(30, 40%, 65%)"
-              strokeWidth="1.5"
+              key={`chevron-${i}`}
+              d={`M ${82 + (i % 3) * 12} ${142 + Math.floor(i / 3) * 16} l 6 5 l 6 -5`}
+              stroke="hsl(30, 38%, 60%)"
+              strokeWidth="1.2"
               fill="none"
-              opacity="0.5"
-              animate={{ opacity: [0.3, 0.6, 0.3] }}
-              transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
+              opacity="0.4"
+              animate={{ opacity: [0.25, 0.45, 0.25] }}
+              transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.2 }}
             />
           ))}
 
-          {/* Left wing */}
+          {/* === LEFT WING === */}
           <motion.path
-            d="M50 130 Q25 140 30 170 Q35 185 55 180 Q60 165 55 145 Z"
-            fill="hsl(25, 48%, 38%)"
+            d="M48 128 Q22 142 26 172 Q30 192 52 188 Q62 178 58 155 Q55 140 50 130 Z"
+            fill="url(#wingGradL)"
             style={{ transformOrigin: "55px 145px" }}
             animate={isPoking || mood === "wave"
               ? { rotate: [0, -30, -15, -25, 0], scaleY: [1, 1.1, 1] }
@@ -177,28 +277,32 @@ const Interactive3DMascot = ({ mood = "idle", size = "md", onClick }: Interactiv
               ease: "easeInOut",
             }}
           />
-          {/* Left wing feather details */}
-          <motion.path
-            d="M42 150 Q30 155 35 170"
-            stroke="hsl(25, 40%, 30%)"
-            strokeWidth="1.5"
-            fill="none"
-            style={{ transformOrigin: "55px 145px" }}
-            animate={isPoking || mood === "wave"
-              ? { rotate: [0, -30, -15, -25, 0] }
-              : { rotate: [0, -5, 0, -3, 0] }
-            }
-            transition={{
-              duration: isPoking ? 0.8 : mood === "wave" ? 1.2 : 3,
-              repeat: isPoking ? 0 : Infinity,
-              ease: "easeInOut",
-            }}
-          />
+          {/* Left wing feather lines */}
+          {[0, 1, 2].map(i => (
+            <motion.path
+              key={`lw-${i}`}
+              d={`M ${40 + i * 5} ${148 + i * 10} Q ${30 + i * 4} ${155 + i * 10} ${34 + i * 5} ${168 + i * 6}`}
+              stroke="hsl(25, 38%, 26%)"
+              strokeWidth="1.2"
+              fill="none"
+              opacity="0.4"
+              style={{ transformOrigin: "55px 145px" }}
+              animate={isPoking || mood === "wave"
+                ? { rotate: [0, -30, -15, -25, 0] }
+                : { rotate: [0, -5, 0, -3, 0] }
+              }
+              transition={{
+                duration: isPoking ? 0.8 : mood === "wave" ? 1.2 : 3,
+                repeat: isPoking ? 0 : Infinity,
+                ease: "easeInOut",
+              }}
+            />
+          ))}
 
-          {/* Right wing */}
+          {/* === RIGHT WING === */}
           <motion.path
-            d="M150 130 Q175 140 170 170 Q165 185 145 180 Q140 165 145 145 Z"
-            fill="hsl(25, 48%, 38%)"
+            d="M152 128 Q178 142 174 172 Q170 192 148 188 Q138 178 142 155 Q145 140 150 130 Z"
+            fill="url(#wingGradR)"
             style={{ transformOrigin: "145px 145px" }}
             animate={isPoking || mood === "wave"
               ? { rotate: [0, 30, 15, 25, 0], scaleY: [1, 1.1, 1] }
@@ -211,205 +315,294 @@ const Interactive3DMascot = ({ mood = "idle", size = "md", onClick }: Interactiv
               delay: 0.1,
             }}
           />
-          {/* Right wing feather details */}
-          <motion.path
-            d="M158 150 Q170 155 165 170"
-            stroke="hsl(25, 40%, 30%)"
-            strokeWidth="1.5"
-            fill="none"
-            style={{ transformOrigin: "145px 145px" }}
-            animate={isPoking || mood === "wave"
-              ? { rotate: [0, 30, 15, 25, 0] }
-              : { rotate: [0, 5, 0, 3, 0] }
-            }
-            transition={{
-              duration: isPoking ? 0.8 : mood === "wave" ? 1.2 : 3,
-              repeat: isPoking ? 0 : Infinity,
-              ease: "easeInOut",
-              delay: 0.1,
-            }}
-          />
+          {/* Right wing feather lines */}
+          {[0, 1, 2].map(i => (
+            <motion.path
+              key={`rw-${i}`}
+              d={`M ${160 - i * 5} ${148 + i * 10} Q ${170 - i * 4} ${155 + i * 10} ${166 - i * 5} ${168 + i * 6}`}
+              stroke="hsl(25, 38%, 26%)"
+              strokeWidth="1.2"
+              fill="none"
+              opacity="0.4"
+              style={{ transformOrigin: "145px 145px" }}
+              animate={isPoking || mood === "wave"
+                ? { rotate: [0, 30, 15, 25, 0] }
+                : { rotate: [0, 5, 0, 3, 0] }
+              }
+              transition={{
+                duration: isPoking ? 0.8 : mood === "wave" ? 1.2 : 3,
+                repeat: isPoking ? 0 : Infinity,
+                ease: "easeInOut",
+                delay: 0.1,
+              }}
+            />
+          ))}
 
-          {/* Head */}
+          {/* === HEAD === */}
           <motion.circle
-            cx="100" cy="85" r="45"
-            fill="hsl(25, 45%, 42%)"
+            cx="100" cy="88" r="47"
+            fill="hsl(25, 42%, 28%)"
+          />
+          <motion.circle
+            cx="100" cy="87" r="45"
+            fill="url(#headGrad)"
             animate={{ r: [45, 46, 45] }}
             transition={{ duration: 2.5, repeat: Infinity }}
           />
+          {/* Head feather texture - subtle arcs */}
+          {[0, 1, 2].map(i => (
+            <path
+              key={`hf-${i}`}
+              d={`M ${70 + i * 15} ${60 + i * 4} Q ${78 + i * 15} ${55 + i * 4} ${85 + i * 15} ${60 + i * 4}`}
+              stroke="hsl(25, 38%, 32%)"
+              strokeWidth="1"
+              fill="none"
+              opacity="0.3"
+            />
+          ))}
 
-          {/* Ear tufts left */}
-          <motion.path
-            d="M65 55 L55 25 L78 50 Z"
-            fill="hsl(25, 50%, 35%)"
+          {/* === EAR TUFTS - more detailed === */}
+          <motion.g
+            style={{ transformOrigin: "70px 50px" }}
             animate={isPoking
               ? { rotate: [0, -15, 10, 0], y: [0, -5, 0] }
               : { rotate: [0, -3, 3, 0] }
             }
-            style={{ transformOrigin: "70px 50px" }}
             transition={{ duration: isPoking ? 0.6 : 2, repeat: isPoking ? 0 : Infinity }}
-          />
-          {/* Ear tufts right */}
-          <motion.path
-            d="M135 55 L145 25 L122 50 Z"
-            fill="hsl(25, 50%, 35%)"
+          >
+            <path d="M68 52 L58 22 L72 38 L64 18 L80 48 Z" fill="hsl(25, 48%, 32%)" />
+            <path d="M70 48 L62 25 L76 44 Z" fill="hsl(25, 52%, 38%)" />
+          </motion.g>
+          <motion.g
+            style={{ transformOrigin: "130px 50px" }}
             animate={isPoking
               ? { rotate: [0, 15, -10, 0], y: [0, -5, 0] }
               : { rotate: [0, 3, -3, 0] }
             }
-            style={{ transformOrigin: "130px 50px" }}
             transition={{ duration: isPoking ? 0.6 : 2, repeat: isPoking ? 0 : Infinity }}
-          />
+          >
+            <path d="M132 52 L142 22 L128 38 L136 18 L120 48 Z" fill="hsl(25, 48%, 32%)" />
+            <path d="M130 48 L138 25 L124 44 Z" fill="hsl(25, 52%, 38%)" />
+          </motion.g>
 
-          {/* Face disc */}
-          <ellipse cx="100" cy="88" rx="35" ry="32" fill="hsl(38, 55%, 72%)" />
-
-          {/* Eye sockets */}
-          <circle cx="82" cy="82" r="16" fill="white" />
-          <circle cx="118" cy="82" r="16" fill="white" />
-
-          {/* Irises - follow mouse */}
-          <motion.circle
-            cx={82 + eyeTarget.x}
-            cy={82 + eyeTarget.y}
-            r="10"
-            fill="hsl(25, 90%, 45%)"
+          {/* === FACE DISC - realistic heart shape === */}
+          <path
+            d="M100 55 Q65 58 62 88 Q60 108 80 115 Q92 120 100 118 Q108 120 120 115 Q140 108 138 88 Q135 58 100 55 Z"
+            fill="url(#faceGrad)"
           />
-          <motion.circle
-            cx={118 + eyeTarget.x}
-            cy={82 + eyeTarget.y}
-            r="10"
-            fill="hsl(25, 90%, 45%)"
+          {/* Face disc rim - subtle darker edge */}
+          <path
+            d="M100 55 Q65 58 62 88 Q60 108 80 115 Q92 120 100 118 Q108 120 120 115 Q140 108 138 88 Q135 58 100 55 Z"
+            fill="none"
+            stroke="hsl(30, 40%, 55%)"
+            strokeWidth="1.5"
+            opacity="0.4"
           />
+          {/* Face V pattern between eyes */}
+          <path d="M100 68 L94 82 M100 68 L106 82" stroke="hsl(30, 42%, 58%)" strokeWidth="1.2" fill="none" opacity="0.35" />
 
-          {/* Pupils - follow mouse */}
-          <motion.circle
-            cx={82 + eyeTarget.x * 1.2}
-            cy={82 + eyeTarget.y * 1.2}
-            r="5"
-            fill="hsl(220, 30%, 10%)"
-          />
-          <motion.circle
-            cx={118 + eyeTarget.x * 1.2}
-            cy={82 + eyeTarget.y * 1.2}
-            r="5"
-            fill="hsl(220, 30%, 10%)"
-          />
+          {/* === EYES - hyper detailed === */}
+          {/* Eye sockets - subtle shadow around */}
+          <circle cx="80" cy="84" r="19" fill="hsl(25, 30%, 55%)" opacity="0.3" />
+          <circle cx="120" cy="84" r="19" fill="hsl(25, 30%, 55%)" opacity="0.3" />
 
-          {/* Eye shine */}
-          <circle cx={79 + eyeTarget.x * 0.5} cy={79 + eyeTarget.y * 0.5} r="3" fill="white" opacity="0.9" />
-          <circle cx={115 + eyeTarget.x * 0.5} cy={79 + eyeTarget.y * 0.5} r="3" fill="white" opacity="0.9" />
+          {/* Eye whites with gradient */}
+          <circle cx="80" cy="84" r="17" fill="url(#eyeWhite)" />
+          <circle cx="120" cy="84" r="17" fill="url(#eyeWhite)" />
+
+          {/* Iris - complex layered */}
+          <motion.g>
+            {/* Iris base */}
+            <motion.circle
+              cx={80 + eyeTarget.x}
+              cy={84 + eyeTarget.y}
+              r="11"
+              fill="url(#irisGrad)"
+            />
+            <motion.circle
+              cx={120 + eyeTarget.x}
+              cy={84 + eyeTarget.y}
+              r="11"
+              fill="url(#irisGrad)"
+            />
+            {/* Iris ring detail */}
+            <motion.circle
+              cx={80 + eyeTarget.x}
+              cy={84 + eyeTarget.y}
+              r="9"
+              fill="none"
+              stroke="hsl(28, 80%, 38%)"
+              strokeWidth="0.8"
+              opacity="0.5"
+            />
+            <motion.circle
+              cx={120 + eyeTarget.x}
+              cy={84 + eyeTarget.y}
+              r="9"
+              fill="none"
+              stroke="hsl(28, 80%, 38%)"
+              strokeWidth="0.8"
+              opacity="0.5"
+            />
+            {/* Iris radial lines */}
+            {[0, 45, 90, 135, 180, 225, 270, 315].map(angle => (
+              <g key={`iris-${angle}`} opacity="0.15">
+                <motion.line
+                  x1={80 + eyeTarget.x + Math.cos(angle * Math.PI / 180) * 4}
+                  y1={84 + eyeTarget.y + Math.sin(angle * Math.PI / 180) * 4}
+                  x2={80 + eyeTarget.x + Math.cos(angle * Math.PI / 180) * 10}
+                  y2={84 + eyeTarget.y + Math.sin(angle * Math.PI / 180) * 10}
+                  stroke="hsl(20, 70%, 25%)"
+                  strokeWidth="0.6"
+                />
+                <motion.line
+                  x1={120 + eyeTarget.x + Math.cos(angle * Math.PI / 180) * 4}
+                  y1={84 + eyeTarget.y + Math.sin(angle * Math.PI / 180) * 4}
+                  x2={120 + eyeTarget.x + Math.cos(angle * Math.PI / 180) * 10}
+                  y2={84 + eyeTarget.y + Math.sin(angle * Math.PI / 180) * 10}
+                  stroke="hsl(20, 70%, 25%)"
+                  strokeWidth="0.6"
+                />
+              </g>
+            ))}
+
+            {/* Pupils */}
+            <motion.circle
+              cx={80 + eyeTarget.x * 1.2}
+              cy={84 + eyeTarget.y * 1.2}
+              r="5.5"
+              fill="hsl(220, 25%, 8%)"
+            />
+            <motion.circle
+              cx={120 + eyeTarget.x * 1.2}
+              cy={84 + eyeTarget.y * 1.2}
+              r="5.5"
+              fill="hsl(220, 25%, 8%)"
+            />
+
+            {/* Eye shine - primary highlight */}
+            <circle cx={77 + eyeTarget.x * 0.4} cy={80 + eyeTarget.y * 0.4} r="3.5" fill="white" opacity="0.95" />
+            <circle cx={117 + eyeTarget.x * 0.4} cy={80 + eyeTarget.y * 0.4} r="3.5" fill="white" opacity="0.95" />
+            {/* Eye shine - secondary smaller */}
+            <circle cx={83 + eyeTarget.x * 0.6} cy={88 + eyeTarget.y * 0.6} r="1.8" fill="white" opacity="0.6" />
+            <circle cx={123 + eyeTarget.x * 0.6} cy={88 + eyeTarget.y * 0.6} r="1.8" fill="white" opacity="0.6" />
+          </motion.g>
 
           {/* Eyelids (blink) */}
           <AnimatePresence>
             {blinkState && (
               <>
                 <motion.ellipse
-                  cx="82" cy="82" rx="16" ry="16"
-                  fill="hsl(25, 45%, 42%)"
+                  cx="80" cy="84" rx="17" ry="17"
+                  fill="url(#headGrad)"
                   initial={{ scaleY: 0 }}
                   animate={{ scaleY: 1 }}
                   exit={{ scaleY: 0 }}
                   transition={{ duration: 0.08 }}
-                  style={{ transformOrigin: "82px 82px" }}
+                  style={{ transformOrigin: "80px 84px" }}
                 />
                 <motion.ellipse
-                  cx="118" cy="82" rx="16" ry="16"
-                  fill="hsl(25, 45%, 42%)"
+                  cx="120" cy="84" rx="17" ry="17"
+                  fill="url(#headGrad)"
                   initial={{ scaleY: 0 }}
                   animate={{ scaleY: 1 }}
                   exit={{ scaleY: 0 }}
                   transition={{ duration: 0.08 }}
-                  style={{ transformOrigin: "118px 82px" }}
+                  style={{ transformOrigin: "120px 84px" }}
                 />
+                {/* Eyelash lines */}
+                <motion.path d="M64 82 Q72 78 80 80" stroke="hsl(25, 40%, 28%)" strokeWidth="1.5" fill="none"
+                  initial={{ opacity: 0 }} animate={{ opacity: 0.6 }} exit={{ opacity: 0 }} />
+                <motion.path d="M136 82 Q128 78 120 80" stroke="hsl(25, 40%, 28%)" strokeWidth="1.5" fill="none"
+                  initial={{ opacity: 0 }} animate={{ opacity: 0.6 }} exit={{ opacity: 0 }} />
               </>
             )}
           </AnimatePresence>
 
-          {/* Beak */}
+          {/* === EYEBROWS - expressive === */}
           <motion.path
-            d="M93 95 L100 110 L107 95 Z"
-            fill="hsl(35, 90%, 55%)"
+            d="M64 66 Q76 58 96 66"
+            stroke="hsl(25, 48%, 28%)"
+            strokeWidth="2.8"
+            strokeLinecap="round"
+            fill="none"
+            animate={mood === "celebrate"
+              ? { d: ["M64 66 Q76 56 96 66", "M64 62 Q76 52 96 62", "M64 66 Q76 56 96 66"] }
+              : isPoking
+              ? { d: ["M64 66 Q76 58 96 66", "M64 70 Q76 64 96 70", "M64 66 Q76 58 96 66"] }
+              : {}
+            }
+            transition={{ duration: 0.6, repeat: isPoking ? 0 : mood === "celebrate" ? 3 : 0 }}
+          />
+          <motion.path
+            d="M104 66 Q124 58 136 66"
+            stroke="hsl(25, 48%, 28%)"
+            strokeWidth="2.8"
+            strokeLinecap="round"
+            fill="none"
+            animate={mood === "celebrate"
+              ? { d: ["M104 66 Q120 56 136 66", "M104 62 Q120 52 136 62", "M104 66 Q120 56 136 66"] }
+              : isPoking
+              ? { d: ["M104 66 Q124 58 136 66", "M104 70 Q124 64 136 70", "M104 66 Q124 58 136 66"] }
+              : {}
+            }
+            transition={{ duration: 0.6, repeat: isPoking ? 0 : mood === "celebrate" ? 3 : 0 }}
+          />
+
+          {/* === BEAK - detailed with nostril === */}
+          <motion.path
+            d="M91 98 Q96 96 100 112 Q104 96 109 98 Q100 116 91 98 Z"
+            fill="url(#beakGrad)"
             animate={isPoking
               ? { scaleY: [1, 1.3, 0.8, 1.1, 1], y: [0, -2, 0] }
               : { scaleY: [1, 1.05, 1] }
             }
-            style={{ transformOrigin: "100px 100px" }}
+            style={{ transformOrigin: "100px 105px" }}
             transition={{ duration: isPoking ? 0.6 : 2, repeat: isPoking ? 0 : Infinity }}
           />
-          {/* Beak shine */}
-          <path d="M96 97 L100 105 L100 97 Z" fill="hsl(40, 95%, 65%)" opacity="0.6" />
+          {/* Beak highlight */}
+          <path d="M95 99 Q98 97 100 107 L97 100 Z" fill="hsl(42, 95%, 68%)" opacity="0.5" />
+          {/* Beak ridge line */}
+          <path d="M100 98 L100 111" stroke="hsl(30, 80%, 42%)" strokeWidth="0.8" opacity="0.35" />
+          {/* Nostrils */}
+          <circle cx="97" cy="102" r="1" fill="hsl(30, 70%, 35%)" opacity="0.4" />
+          <circle cx="103" cy="102" r="1" fill="hsl(30, 70%, 35%)" opacity="0.4" />
 
-          {/* Feet */}
+          {/* === CHEEK BLUSH - realistic soft === */}
+          <motion.ellipse
+            cx="62" cy="98" rx="10" ry="7"
+            fill="hsl(350, 65%, 72%)"
+            opacity={0.25}
+            animate={{ opacity: [0.15, 0.3, 0.15], rx: [9, 11, 9] }}
+            transition={{ duration: 3, repeat: Infinity }}
+          />
+          <motion.ellipse
+            cx="138" cy="98" rx="10" ry="7"
+            fill="hsl(350, 65%, 72%)"
+            opacity={0.25}
+            animate={{ opacity: [0.15, 0.3, 0.15], rx: [9, 11, 9] }}
+            transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
+          />
+
+          {/* === FEET - detailed talons === */}
           <motion.g
             animate={{ y: [0, 2, 0] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           >
             {/* Left foot */}
-            <path d="M78 198 L72 210 L78 208 L82 212 L86 208 L90 210 L84 198" fill="hsl(35, 80%, 50%)" />
+            <path d="M76 202 Q70 208 68 216 L72 214 L76 218 L80 214 L84 216 Q82 208 80 202" fill="url(#talonGrad)" />
+            <path d="M70 214 L68 218" stroke="hsl(30, 60%, 35%)" strokeWidth="1" strokeLinecap="round" />
+            <path d="M76 216 L76 220" stroke="hsl(30, 60%, 35%)" strokeWidth="1" strokeLinecap="round" />
+            <path d="M82 214 L84 218" stroke="hsl(30, 60%, 35%)" strokeWidth="1" strokeLinecap="round" />
             {/* Right foot */}
-            <path d="M110 198 L104 210 L110 208 L114 212 L118 208 L122 210 L116 198" fill="hsl(35, 80%, 50%)" />
+            <path d="M116 202 Q110 208 108 216 L112 214 L116 218 L120 214 L124 216 Q122 208 120 202" fill="url(#talonGrad)" />
+            <path d="M110 214 L108 218" stroke="hsl(30, 60%, 35%)" strokeWidth="1" strokeLinecap="round" />
+            <path d="M116 216 L116 220" stroke="hsl(30, 60%, 35%)" strokeWidth="1" strokeLinecap="round" />
+            <path d="M122 214 L124 218" stroke="hsl(30, 60%, 35%)" strokeWidth="1" strokeLinecap="round" />
           </motion.g>
 
-          {/* Tail feathers */}
-          <motion.g
-            animate={isPoking
-              ? { rotate: [0, 8, -8, 0] }
-              : { rotate: [0, 2, -2, 0] }
-            }
-            style={{ transformOrigin: "100px 180px" }}
-            transition={{ duration: isPoking ? 0.6 : 3, repeat: isPoking ? 0 : Infinity }}
-          >
-            <path d="M85 185 L80 205 L90 195 Z" fill="hsl(25, 48%, 35%)" />
-            <path d="M100 188 L100 210 L105 195 Z" fill="hsl(25, 50%, 38%)" />
-            <path d="M115 185 L120 205 L110 195 Z" fill="hsl(25, 48%, 35%)" />
-          </motion.g>
-
-          {/* Eyebrows - expressive */}
-          <motion.path
-            d="M68 68 Q78 62 94 68"
-            stroke="hsl(25, 50%, 30%)"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            fill="none"
-            animate={mood === "celebrate"
-              ? { d: ["M68 68 Q78 58 94 68", "M68 64 Q78 55 94 64", "M68 68 Q78 58 94 68"] }
-              : isPoking
-              ? { d: ["M68 68 Q78 62 94 68", "M68 72 Q78 66 94 72", "M68 68 Q78 62 94 68"] }
-              : {}
-            }
-            transition={{ duration: 0.6, repeat: isPoking ? 0 : mood === "celebrate" ? 3 : 0 }}
-          />
-          <motion.path
-            d="M106 68 Q122 62 132 68"
-            stroke="hsl(25, 50%, 30%)"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            fill="none"
-            animate={mood === "celebrate"
-              ? { d: ["M106 68 Q118 58 132 68", "M106 64 Q118 55 132 64", "M106 68 Q118 58 132 68"] }
-              : isPoking
-              ? { d: ["M106 68 Q122 62 132 68", "M106 72 Q122 66 132 72", "M106 68 Q122 62 132 68"] }
-              : {}
-            }
-            transition={{ duration: 0.6, repeat: isPoking ? 0 : mood === "celebrate" ? 3 : 0 }}
-          />
-
-          {/* Cheek blush */}
-          <motion.circle
-            cx="65" cy="95" r="8"
-            fill="hsl(0, 70%, 75%)"
-            opacity={0.3}
-            animate={{ opacity: [0.2, 0.4, 0.2], r: [7, 9, 7] }}
-            transition={{ duration: 3, repeat: Infinity }}
-          />
-          <motion.circle
-            cx="135" cy="95" r="8"
-            fill="hsl(0, 70%, 75%)"
-            opacity={0.3}
-            animate={{ opacity: [0.2, 0.4, 0.2], r: [7, 9, 7] }}
-            transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
-          />
+          {/* === Ambient light reflection on head === */}
+          <ellipse cx="88" cy="65" rx="12" ry="6" fill="white" opacity="0.06" />
         </motion.svg>
 
         {/* Graduation cap on top */}
