@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import owlPixar from "@/assets/owl-pixar.png";
 
 interface Interactive3DMascotProps {
@@ -10,79 +10,135 @@ interface Interactive3DMascotProps {
 
 const sizeMap = { sm: 130, md: 200, lg: 280 };
 
+/* ── Pixel classification ── */
 const isLikelyCheckerGray = (r: number, g: number, b: number) => {
   const maxDiff = Math.max(Math.abs(r - g), Math.abs(g - b), Math.abs(r - b));
   const avg = (r + g + b) / 3;
-  return maxDiff < 16 && avg > 130 && avg < 245;
+  return maxDiff < 18 && avg > 120 && avg < 250;
 };
 
-const removeCheckerBackground = (img: HTMLImageElement) => {
+const isNearWhite = (r: number, g: number, b: number) => {
+  return r > 230 && g > 230 && b > 230;
+};
+
+/* ── Flood-fill background removal + edge feathering ── */
+const cleanOwlImage = (img: HTMLImageElement): string | null => {
   const canvas = document.createElement("canvas");
-  canvas.width = img.naturalWidth;
-  canvas.height = img.naturalHeight;
+  const w = img.naturalWidth;
+  const h = img.naturalHeight;
+  canvas.width = w;
+  canvas.height = h;
   const ctx = canvas.getContext("2d");
   if (!ctx) return null;
 
   ctx.drawImage(img, 0, 0);
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  const { data, width, height } = imageData;
-  const visited = new Uint8Array(width * height);
+  const imageData = ctx.getImageData(0, 0, w, h);
+  const { data } = imageData;
+  const total = w * h;
+  const visited = new Uint8Array(total);
+  const isBg = new Uint8Array(total);
   const queue: number[] = [];
 
-  const pushIfBg = (x: number, y: number) => {
-    if (x < 0 || y < 0 || x >= width || y >= height) return;
-    const idx = y * width + x;
+  // Seed from edges
+  const tryPush = (x: number, y: number) => {
+    if (x < 0 || y < 0 || x >= w || y >= h) return;
+    const idx = y * w + x;
     if (visited[idx]) return;
     const p = idx * 4;
     const a = data[p + 3];
     if (a < 10) {
       visited[idx] = 1;
+      isBg[idx] = 1;
       queue.push(idx);
       return;
     }
-    if (isLikelyCheckerGray(data[p], data[p + 1], data[p + 2])) {
+    const r = data[p], g = data[p + 1], b = data[p + 2];
+    if (isLikelyCheckerGray(r, g, b) || isNearWhite(r, g, b)) {
       visited[idx] = 1;
+      isBg[idx] = 1;
       queue.push(idx);
     }
   };
 
-  for (let x = 0; x < width; x++) {
-    pushIfBg(x, 0);
-    pushIfBg(x, height - 1);
-  }
-  for (let y = 0; y < height; y++) {
-    pushIfBg(0, y);
-    pushIfBg(width - 1, y);
-  }
+  for (let x = 0; x < w; x++) { tryPush(x, 0); tryPush(x, h - 1); }
+  for (let y = 0; y < h; y++) { tryPush(0, y); tryPush(w - 1, y); }
 
   while (queue.length) {
     const idx = queue.pop()!;
-    const x = idx % width;
-    const y = Math.floor(idx / width);
-    const p = idx * 4;
-    data[p + 3] = 0;
+    const x = idx % w;
+    const y = (idx - x) / w;
+    data[idx * 4 + 3] = 0; // fully transparent
+    tryPush(x + 1, y);
+    tryPush(x - 1, y);
+    tryPush(x, y + 1);
+    tryPush(x, y - 1);
+  }
 
-    pushIfBg(x + 1, y);
-    pushIfBg(x - 1, y);
-    pushIfBg(x, y + 1);
-    pushIfBg(x, y - 1);
+  // Edge feathering: soften alpha on pixels adjacent to removed background
+  // This creates a smooth anti-aliased edge instead of harsh cutout
+  const alphaClone = new Uint8Array(total);
+  for (let i = 0; i < total; i++) alphaClone[i] = data[i * 4 + 3];
+
+  for (let y = 1; y < h - 1; y++) {
+    for (let x = 1; x < w - 1; x++) {
+      const idx = y * w + x;
+      if (alphaClone[idx] === 0) continue; // already transparent
+
+      // Count transparent neighbors (including diagonals)
+      let bgNeighbors = 0;
+      const neighbors = [
+        (y - 1) * w + (x - 1), (y - 1) * w + x, (y - 1) * w + (x + 1),
+        y * w + (x - 1),                          y * w + (x + 1),
+        (y + 1) * w + (x - 1), (y + 1) * w + x, (y + 1) * w + (x + 1),
+      ];
+      for (const n of neighbors) {
+        if (isBg[n]) bgNeighbors++;
+      }
+
+      if (bgNeighbors > 0) {
+        // Feather: reduce alpha based on how many bg neighbors
+        const feather = Math.max(0, 1 - bgNeighbors / 5);
+        data[idx * 4 + 3] = Math.round(alphaClone[idx] * feather);
+      }
+    }
   }
 
   ctx.putImageData(imageData, 0, 0);
   return canvas.toDataURL("image/png");
 };
 
-const Interactive3DMascot = ({ mood = "idle", size = "md", onClick }: Interactive3DMascotProps) => {
-  const dim = sizeMap[size];
-  const [cleanSrc, setCleanSrc] = useState(owlPixar);
+/* ── Cached clean image (shared across instances) ── */
+let cachedCleanSrc: string | null = null;
+let cleaningPromise: Promise<string> | null = null;
 
-  useEffect(() => {
+const getCleanSrc = (): Promise<string> => {
+  if (cachedCleanSrc) return Promise.resolve(cachedCleanSrc);
+  if (cleaningPromise) return cleaningPromise;
+
+  cleaningPromise = new Promise((resolve) => {
     const img = new Image();
+    img.crossOrigin = "anonymous";
     img.src = owlPixar;
     img.onload = () => {
-      const cleaned = removeCheckerBackground(img);
-      if (cleaned) setCleanSrc(cleaned);
+      const cleaned = cleanOwlImage(img);
+      cachedCleanSrc = cleaned || owlPixar;
+      resolve(cachedCleanSrc);
     };
+    img.onerror = () => {
+      cachedCleanSrc = owlPixar;
+      resolve(owlPixar);
+    };
+  });
+
+  return cleaningPromise;
+};
+
+const Interactive3DMascot = ({ mood = "idle", size = "md", onClick }: Interactive3DMascotProps) => {
+  const dim = sizeMap[size];
+  const [src, setSrc] = useState(owlPixar);
+
+  useEffect(() => {
+    getCleanSrc().then(setSrc);
   }, []);
 
   const animateByMood = useMemo(
@@ -90,16 +146,7 @@ const Interactive3DMascot = ({ mood = "idle", size = "md", onClick }: Interactiv
       mood === "wave"
         ? { y: [0, -8, 0, -6, 0], rotate: [0, -4, 4, -3, 0], scale: [1, 1.02, 1, 1.02, 1] }
         : mood === "celebrate"
-        ? {
-            y: [0, -12, 0, -10, 0],
-            rotate: [0, -6, 6, -4, 0],
-            scale: [1, 1.05, 1, 1.03, 1],
-            filter: [
-              "drop-shadow(0 10px 28px hsl(var(--foreground) / 0.22))",
-              "drop-shadow(0 16px 36px hsl(var(--sunshine) / 0.35))",
-              "drop-shadow(0 10px 28px hsl(var(--foreground) / 0.22))",
-            ],
-          }
+        ? { y: [0, -12, 0, -10, 0], rotate: [0, -6, 6, -4, 0], scale: [1, 1.05, 1, 1.03, 1] }
         : mood === "surprised"
         ? { y: [0, -5, 0], scale: [1, 1.06, 1], rotate: [0, 1.5, -1.5, 0] }
         : mood === "sad"
@@ -107,6 +154,16 @@ const Interactive3DMascot = ({ mood = "idle", size = "md", onClick }: Interactiv
         : { y: [0, -5, 0], rotate: [0, -1.5, 1.5, 0], scale: [1, 1.015, 1] },
     [mood],
   );
+
+  // Mood-specific drop-shadow for cinematic depth
+  const shadowByMood =
+    mood === "celebrate"
+      ? "drop-shadow(0 8px 20px hsl(var(--sunshine) / 0.3)) drop-shadow(0 2px 6px hsl(var(--foreground) / 0.15))"
+      : mood === "wave"
+      ? "drop-shadow(0 6px 18px hsl(var(--primary) / 0.2)) drop-shadow(0 2px 6px hsl(var(--foreground) / 0.12))"
+      : mood === "sad"
+      ? "drop-shadow(0 4px 12px hsl(var(--foreground) / 0.25))"
+      : "drop-shadow(0 6px 16px hsl(var(--foreground) / 0.18)) drop-shadow(0 2px 4px hsl(var(--foreground) / 0.08))";
 
   return (
     <motion.button
@@ -118,14 +175,19 @@ const Interactive3DMascot = ({ mood = "idle", size = "md", onClick }: Interactiv
       aria-label="Interactive Owl Mascot"
     >
       <motion.img
-        src={cleanSrc}
+        src={src}
         alt="Pixar style owl mascot"
         draggable={false}
         className="w-full h-full object-contain select-none pointer-events-none"
-        style={{ filter: "drop-shadow(0 10px 28px hsl(var(--foreground) / 0.22))" }}
+        style={{ filter: shadowByMood }}
         animate={animateByMood}
         transition={{
-          duration: mood === "idle" ? 3.2 : mood === "wave" ? 1.6 : mood === "celebrate" ? 1.2 : mood === "sad" ? 3.8 : 0.95,
+          duration:
+            mood === "idle" ? 3.2
+            : mood === "wave" ? 1.6
+            : mood === "celebrate" ? 1.2
+            : mood === "sad" ? 3.8
+            : 0.95,
           repeat: Infinity,
           ease: "easeInOut",
         }}
