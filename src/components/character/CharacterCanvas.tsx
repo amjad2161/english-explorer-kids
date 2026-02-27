@@ -54,10 +54,12 @@ const CharacterCanvas = ({
             {/* Adaptive performance */}
             <AdaptiveDpr pixelated />
 
-            {/* Lighting */}
-            <ambientLight intensity={1.2} />
-            <pointLight position={[2, 4, 3]} intensity={2} />
-            <pointLight position={[-2, 1, 2]} intensity={0.8} color="#fffbf0" />
+            {/* Lighting — dramatic for realistic owl */}
+            <ambientLight intensity={0.6} />
+            <directionalLight position={[3, 5, 4]} intensity={2.5} castShadow color="#fff5e0" />
+            <pointLight position={[-3, 2, 3]} intensity={1.2} color="#ffeedd" />
+            <pointLight position={[0, -1, 4]} intensity={0.5} color="#e8d8c8" />
+            <hemisphereLight args={["#ffeedd", "#4a3520", 0.4]} />
 
             {/* Character */}
             <ProxyCharacter mood={mood} animationKey={animationKey} />
