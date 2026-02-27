@@ -105,7 +105,7 @@ export const getStageProgress = (stageId: string): StageProgress => {
   try {
     const stored = localStorage.getItem(`stage-${stageId}`);
     if (stored) return JSON.parse(stored);
-  } catch {}
+  } catch { /* intentional */ }
   return { stageId, starsEarned: 0, completed: false };
 };
 

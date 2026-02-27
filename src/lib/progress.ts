@@ -14,7 +14,7 @@ export const getProgress = (): LearningProgress => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) return JSON.parse(stored);
-  } catch {}
+  } catch { /* intentional */ }
   return {
     completedLetters: [],
     completedWords: [],

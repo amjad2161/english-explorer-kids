@@ -28,7 +28,7 @@ export const getXP = (): XPState => {
       }
       return state;
     }
-  } catch {}
+  } catch { /* intentional */ }
   return { totalXP: 0, dailyXP: 0, lastDate: today(), streak: 0 };
 };
 
@@ -116,7 +116,7 @@ export const getDailyChallenge = (): DailyChallenge => {
     try {
       const data = JSON.parse(raw);
       if (data.date === todayStr && data.title) return data;
-    } catch {}
+    } catch { /* intentional */ }
   }
 
   // Pick challenge based on date (deterministic)
