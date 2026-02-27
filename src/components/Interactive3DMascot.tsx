@@ -33,14 +33,14 @@ const Interactive3DMascot = ({ mood = "idle", size = "md", onClick, showSpeechBu
 
   const shadowByMood =
     mood === "celebrate"
-      ? "drop-shadow(0 10px 28px hsl(var(--sunshine) / 0.35)) drop-shadow(0 3px 8px hsl(var(--foreground) / 0.12))"
+      ? "drop-shadow(0 8px 20px hsl(var(--sunshine) / 0.3)) drop-shadow(0 2px 6px hsl(var(--foreground) / 0.1))"
       : mood === "surprised"
-      ? "drop-shadow(0 8px 24px hsl(var(--primary) / 0.25)) drop-shadow(0 2px 6px hsl(var(--foreground) / 0.1))"
+      ? "drop-shadow(0 6px 16px hsl(var(--primary) / 0.2)) drop-shadow(0 2px 5px hsl(var(--foreground) / 0.08))"
       : mood === "wave"
-      ? "drop-shadow(0 7px 22px hsl(var(--primary) / 0.2)) drop-shadow(0 2px 6px hsl(var(--foreground) / 0.1))"
+      ? "drop-shadow(0 5px 14px hsl(var(--primary) / 0.18)) drop-shadow(0 2px 4px hsl(var(--foreground) / 0.08))"
       : mood === "sad"
-      ? "drop-shadow(0 4px 12px hsl(var(--foreground) / 0.2))"
-      : "drop-shadow(0 6px 18px hsl(var(--foreground) / 0.15)) drop-shadow(0 2px 4px hsl(var(--foreground) / 0.06))";
+      ? "drop-shadow(0 3px 10px hsl(var(--foreground) / 0.15))"
+      : "drop-shadow(0 4px 12px hsl(var(--foreground) / 0.12)) drop-shadow(0 1px 3px hsl(var(--foreground) / 0.05))";
 
   return (
     <motion.button
@@ -59,35 +59,31 @@ const Interactive3DMascot = ({ mood = "idle", size = "md", onClick, showSpeechBu
       <motion.div
         className="absolute rounded-full pointer-events-none"
         style={{
-          width: dim * 0.7,
-          height: dim * 0.5,
+          width: dim * 0.6,
+          height: dim * 0.35,
           left: "50%",
-          bottom: "5%",
+          bottom: "2%",
           transform: "translateX(-50%)",
           background: mood === "celebrate"
-            ? "radial-gradient(ellipse, hsl(var(--sunshine) / 0.15), transparent 70%)"
-            : mood === "surprised"
-            ? "radial-gradient(ellipse, hsl(var(--primary) / 0.12), transparent 70%)"
-            : "radial-gradient(ellipse, hsl(var(--primary) / 0.08), transparent 70%)",
-          filter: "blur(12px)",
+            ? "radial-gradient(ellipse, hsl(var(--sunshine) / 0.12), transparent 70%)"
+            : "radial-gradient(ellipse, hsl(var(--primary) / 0.06), transparent 70%)",
+          filter: "blur(10px)",
         }}
         animate={{
-          opacity: mood === "celebrate" ? [0.6, 1, 0.6] : mood === "surprised" ? [0.5, 0.8, 0.5] : [0.3, 0.5, 0.3],
-          scale: mood === "celebrate" ? [1, 1.15, 1] : [1, 1.05, 1],
+          opacity: mood === "celebrate" ? [0.5, 0.8, 0.5] : [0.2, 0.4, 0.2],
+          scale: mood === "celebrate" ? [1, 1.1, 1] : [1, 1.03, 1],
         }}
         transition={{ duration: mood === "celebrate" ? 1.5 : 3, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Main owl image — black-bg PNG with vignette mask */}
+      {/* Main owl image — white-bg PNG, clean integration */}
       <motion.img
         src={owlPixar}
-        alt="Pixar-style owl mascot"
+        alt="Professor Owl mascot"
         draggable={false}
         className="w-full h-full object-contain select-none pointer-events-none relative z-10"
         style={{
           filter: shadowByMood,
-          WebkitMaskImage: "radial-gradient(ellipse 50% 54% at 50% 48%, black 42%, rgba(0,0,0,0.5) 58%, transparent 70%)",
-          maskImage: "radial-gradient(ellipse 50% 54% at 50% 48%, black 42%, rgba(0,0,0,0.5) 58%, transparent 70%)",
         }}
         animate={animateByMood}
         transition={transitionByMood}
