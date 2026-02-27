@@ -510,7 +510,7 @@ const PatternPuzzle = () => {
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gradient mb-1">
             {lang === "he" ? "🧩 חידת דפוסים" : lang === "ar" ? "🧩 لغز الأنماط" : "🧩 Pattern Puzzle"}
           </h1>
-          <CompanionAvatars size="xs" className="justify-center mt-2" />
+          <CompanionAvatars size="xs" className="justify-center mt-2" mood={owlMood} />
           <p className="text-muted-foreground font-body text-sm sm:text-base">
             {lang === "he" ? "מצא את הדפוס והשלם את הסדרה!" : lang === "ar" ? "اكتشف النمط وأكمل السلسلة!" : "Find the pattern and complete the sequence!"}
           </p>
