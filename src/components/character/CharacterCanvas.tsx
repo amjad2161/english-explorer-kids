@@ -3,6 +3,7 @@ import { motion, useSpring, useMotionValue, useScroll, useTransform, AnimatePres
 import ErrorBoundary from "@/components/ErrorBoundary";
 import professorOwl from "@/assets/professor-owl.png";
 import type { CharacterMood } from "@/lib/characterStore";
+import { useCharacterStore } from "@/lib/characterStore";
 
 interface CharacterCanvasProps {
   mood: CharacterMood;
@@ -12,6 +13,8 @@ interface CharacterCanvasProps {
   debugOrbit?: boolean;
   className?: string;
   style?: React.CSSProperties;
+  /** Show speech bubble; if true reads from store, or pass a string */
+  speechBubble?: string | boolean;
 }
 
 // Feather particles that float off during celebrations
@@ -82,6 +85,18 @@ const Sparkle = ({ index }: { index: number }) => {
   );
 };
 
+// Encouragement lines by mood
+const encouragements: Record<string, string[]> = {
+  idle: ["🌟 !בוא נלמד", "📚 מוכנים?", "Let's go! 🚀"],
+  celebrate: ["!כל הכבוד 🎉", "Amazing! ⭐", "!מדהים 🏆"],
+  sad: ["!לא נורא, ננסה שוב 💪", "Keep trying! 🌈", "!אתה יכול 🙌"],
+  wave: ["!שלום 👋", "Hello! 😊", "!היי"],
+  think: ["...חושב 🤔", "Hmm... 🧐", "...רגע"],
+  talk: ["!שימו לב 👂", "Listen! 🔊", "!הקשיבו"],
+  point: ["!תסתכלו פה 👉", "Look here! 👆", "!פה"],
+  surprised: ["!וואו 😮", "Wow! 🤩", "!מדהים"],
+};
+
 const CharacterCanvas = ({
   mood,
   animationKey,
@@ -89,9 +104,12 @@ const CharacterCanvas = ({
   height,
   className,
   style,
+  speechBubble,
 }: CharacterCanvasProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [featherKey, setFeatherKey] = useState(0);
+  const storeSpeech = useCharacterStore((s) => s.speechBubble);
+  const [autoText, setAutoText] = useState<string | null>(null);
 
   // Eye tracking motion values
   const mouseX = useMotionValue(0);
@@ -126,9 +144,17 @@ const CharacterCanvas = ({
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, [handleMouseMove]);
 
-  // Reset feathers on mood change
+  // Reset feathers on mood change & show auto encouragement
   useEffect(() => {
     setFeatherKey((k) => k + 1);
+    // Auto-show encouragement on mood change (if no explicit bubble)
+    if (!speechBubble && !storeSpeech && mood !== "idle") {
+      const lines = encouragements[mood] || encouragements.idle;
+      const line = lines[Math.floor(Math.random() * lines.length)];
+      setAutoText(line);
+      const timer = setTimeout(() => setAutoText(null), 3000);
+      return () => clearTimeout(timer);
+    }
   }, [mood, animationKey]);
 
   // Mood-based animation variants
@@ -204,6 +230,13 @@ const CharacterCanvas = ({
       transition: { duration: 3, repeat: Infinity },
     };
   };
+
+  // Resolve bubble text: explicit prop > store > auto
+  const bubbleText = typeof speechBubble === "string"
+    ? speechBubble
+    : speechBubble === true
+      ? storeSpeech
+      : storeSpeech || autoText;
 
   return (
     <ErrorBoundary>
@@ -306,6 +339,63 @@ const CharacterCanvas = ({
           }}
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" as const }}
         />
+
+        {/* Speech Bubble */}
+        <AnimatePresence>
+          {bubbleText && width >= 48 && (
+            <motion.div
+              key={bubbleText}
+              className="absolute z-20 pointer-events-none"
+              style={{
+                bottom: "85%",
+                left: "50%",
+                transform: "translateX(-50%)",
+                minWidth: Math.max(width * 1.2, 80),
+                maxWidth: Math.max(width * 2.5, 160),
+              }}
+              initial={{ opacity: 0, y: 8, scale: 0.7 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -5, scale: 0.8 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              <div
+                className="relative rounded-xl px-3 py-1.5 text-center shadow-lg"
+                style={{
+                  background: "hsl(var(--card))",
+                  border: "2px solid hsl(var(--primary) / 0.3)",
+                  fontSize: Math.max(Math.min(width * 0.14, 14), 10),
+                  lineHeight: 1.4,
+                  color: "hsl(var(--card-foreground))",
+                }}
+              >
+                {bubbleText}
+                {/* Triangle pointer */}
+                <div
+                  className="absolute left-1/2 -translate-x-1/2"
+                  style={{
+                    bottom: -7,
+                    width: 0,
+                    height: 0,
+                    borderLeft: "7px solid transparent",
+                    borderRight: "7px solid transparent",
+                    borderTop: "7px solid hsl(var(--primary) / 0.3)",
+                  }}
+                />
+                <div
+                  className="absolute left-1/2 -translate-x-1/2"
+                  style={{
+                    bottom: -5,
+                    width: 0,
+                    height: 0,
+                    borderLeft: "6px solid transparent",
+                    borderRight: "6px solid transparent",
+                    borderTop: "6px solid hsl(var(--card))",
+                  }}
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </ErrorBoundary>
   );
