@@ -87,37 +87,54 @@ const AppHeader = () => {
     <motion.header
       initial={{ y: -80 }}
       animate={{ y: 0 }}
-      transition={{ type: "spring", stiffness: 200, damping: 20 }}
-      className="sticky top-0 z-50 backdrop-blur-xl bg-card/70 border-b border-border/50"
+      transition={{ type: "spring", stiffness: 180, damping: 22 }}
+      className="sticky top-0 z-50 backdrop-blur-2xl bg-card/60 dark:bg-card/50 border-b border-border/30"
+      style={{
+        boxShadow: "0 4px 30px -10px hsl(var(--primary) / 0.06)",
+      }}
     >
-      <div className="max-w-5xl mx-auto px-4 py-2 flex items-center justify-between" dir={dir}>
+      {/* Flowing gradient line at bottom */}
+      <motion.div 
+        className="absolute bottom-0 left-0 right-0 h-[2px]"
+        style={{
+          background: "linear-gradient(90deg, transparent, hsl(var(--primary) / 0.3), hsl(var(--candy) / 0.3), hsl(var(--lavender) / 0.2), transparent)",
+          backgroundSize: "200% 100%",
+        }}
+        animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+      />
+
+      <div className="max-w-5xl mx-auto px-4 py-2.5 flex items-center justify-between" dir={dir}>
         {/* Logo */}
         <motion.div
-          className="flex items-center gap-2 cursor-pointer"
+          className="flex items-center gap-2.5 cursor-pointer"
           onClick={() => navigate("/")}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
           <motion.span
             className="text-3xl"
-            animate={{ rotate: [0, 5, -5, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            style={{ filter: "drop-shadow(0 3px 6px rgba(0,0,0,0.15))" }}
+            animate={{ rotate: [0, 8, -8, 0], scale: [1, 1.05, 1] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
           >
             🦉
           </motion.span>
           <div className="hidden sm:block">
-            <h1 className="text-lg font-display font-bold text-gradient leading-tight">
+            <h1 className="text-lg font-display font-extrabold text-gradient leading-tight">
               English Fun
             </h1>
-            {/* Mini XP bar in header */}
-            <div className="flex items-center gap-1.5">
+            {/* Mini XP bar */}
+            <div className="flex items-center gap-1.5 mt-0.5">
               <span className="text-[10px] font-display font-semibold text-muted-foreground">
                 {xpLevel.title.split(" ")[0]}
               </span>
-              <div className="w-16 h-1.5 rounded-full bg-muted/50 overflow-hidden">
+              <div className="w-16 h-1.5 rounded-full bg-muted/40 overflow-hidden">
                 <motion.div
                   className="h-full rounded-full"
-                  style={{ background: "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--sunshine)))" }}
+                  style={{ 
+                    background: "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--candy)))",
+                  }}
                   animate={{ width: `${Math.min((xpLevel.current / xpLevel.needed) * 100, 100)}%` }}
                   transition={{ duration: 0.8 }}
                 />
@@ -135,17 +152,16 @@ const AppHeader = () => {
               <motion.button
                 key={item.path}
                 onClick={() => { playClickSound(); navigate(item.path); }}
-                className={`px-1.5 sm:px-2.5 py-1.5 rounded-xl font-display text-xs font-semibold whitespace-nowrap relative ${
+                className={`px-2 sm:px-3 py-1.5 rounded-full font-display text-xs font-semibold whitespace-nowrap relative transition-all ${
                   isActive
-                    ? "gradient-primary text-primary-foreground shadow-sm dark:shadow-md dark:shadow-primary/20"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/60 dark:hover:bg-muted/40"
+                    ? "gradient-primary text-primary-foreground shadow-md"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
                 }`}
-                whileHover={{ scale: 1.08 }}
+                whileHover={{ scale: 1.08, y: -1 }}
                 whileTap={{ scale: 0.92 }}
                 aria-label={item.label}
                 aria-current={isActive ? "page" : undefined}
               >
-                {/* Show icon on very small, label on sm+ */}
                 <span className="sm:hidden text-sm">{item.icon}</span>
                 <span className="hidden sm:inline">{item.label}</span>
                 {isActive && (
@@ -161,13 +177,13 @@ const AppHeader = () => {
         </nav>
 
         {/* Actions */}
-        <div className="flex items-center gap-1">
-          {/* Dark mode toggle */}
+        <div className="flex items-center gap-1.5">
+          {/* Theme toggle */}
           <motion.button
-            whileHover={{ scale: 1.1, rotate: 15 }}
-            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.15, rotate: 20 }}
+            whileTap={{ scale: 0.85 }}
             onClick={toggleTheme}
-            className="w-7 h-7 rounded-full flex items-center justify-center transition-colors bg-muted/60 text-foreground hover:bg-primary/15"
+            className="w-8 h-8 rounded-full flex items-center justify-center transition-colors bg-muted/40 text-foreground hover:bg-primary/10"
             aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
           >
             <AnimatePresence mode="wait" initial={false}>
@@ -178,58 +194,58 @@ const AppHeader = () => {
                 exit={{ y: 12, opacity: 0, rotate: 90 }}
                 transition={{ duration: 0.2 }}
               >
-                {theme === "dark" ? <Sun className="w-3.5 h-3.5 text-sunshine" /> : <Moon className="w-3.5 h-3.5" />}
+                {theme === "dark" ? <Sun className="w-4 h-4 text-sunshine" /> : <Moon className="w-4 h-4" />}
               </motion.div>
             </AnimatePresence>
           </motion.button>
 
           {/* Sound & Music */}
           <motion.button
-            whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.85 }}
             onClick={toggleSound}
-            className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
-              soundOn ? "bg-primary/15 text-primary" : "bg-muted/60 text-muted-foreground"
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+              soundOn ? "bg-primary/12 text-primary" : "bg-muted/40 text-muted-foreground"
             }`}
           >
-            {soundOn ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
+            {soundOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
           </motion.button>
           <motion.button
-            whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.85 }}
             onClick={toggleMusic}
-            className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
-              musicOn ? "bg-accent/15 text-accent" : "bg-muted/60 text-muted-foreground"
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+              musicOn ? "bg-accent/12 text-accent" : "bg-muted/40 text-muted-foreground"
             }`}
           >
-            {musicOn ? <Music className="w-3.5 h-3.5" /> : <Music2 className="w-3.5 h-3.5" />}
+            {musicOn ? <Music className="w-4 h-4" /> : <Music2 className="w-4 h-4" />}
           </motion.button>
 
           {/* Language */}
           <div className="relative" ref={menuRef}>
             <motion.button
-              whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }}
               onClick={() => setLangMenuOpen(prev => !prev)}
-              className="flex items-center gap-1 bg-muted/60 backdrop-blur-sm px-2 py-1.5 rounded-full font-display text-xs font-bold transition-colors hover:bg-muted"
+              className="flex items-center gap-1.5 bg-muted/40 backdrop-blur-sm px-2.5 py-2 rounded-full font-display text-xs font-bold transition-colors hover:bg-muted/60"
             >
               <span>{currentLang.flag}</span>
-              <Globe className="w-3 h-3 text-muted-foreground" />
+              <Globe className="w-3.5 h-3.5 text-muted-foreground" />
             </motion.button>
 
             <AnimatePresence>
               {langMenuOpen && (
                 <motion.div
-                  initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                  transition={{ duration: 0.15 }}
-                  className="absolute top-full mt-2 end-0 bg-card/95 backdrop-blur-xl border border-border rounded-2xl shadow-xl overflow-hidden z-50 min-w-[150px]"
+                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                  transition={{ duration: 0.2, type: "spring" }}
+                  className="absolute top-full mt-2 end-0 bg-card/95 backdrop-blur-2xl border border-border/30 rounded-3xl shadow-2xl overflow-hidden z-50 min-w-[160px]"
                 >
                   {langOptions.map((opt) => (
                     <motion.button
                       key={opt.code}
-                      whileHover={{ x: 4 }}
+                      whileHover={{ x: dir === "rtl" ? -4 : 4, backgroundColor: "hsl(var(--muted) / 0.4)" }}
                       onClick={() => { setLang(opt.code); setLangMenuOpen(false); }}
-                      className={`flex items-center gap-2.5 w-full px-4 py-3 font-display text-sm font-semibold transition-colors ${
-                        lang === opt.code ? "bg-primary/10 text-primary" : "text-foreground hover:bg-muted/50"
+                      className={`flex items-center gap-3 w-full px-5 py-3.5 font-display text-sm font-semibold transition-colors ${
+                        lang === opt.code ? "bg-primary/10 text-primary" : "text-foreground"
                       }`}
                     >
                       <span className="text-lg">{opt.flag}</span>
@@ -237,15 +253,15 @@ const AppHeader = () => {
                       {lang === opt.code && <span className="ms-auto text-primary">✓</span>}
                     </motion.button>
                   ))}
-                  <div className="border-t border-border my-1" />
+                  <div className="border-t border-border/20 mx-3" />
                   <motion.button
-                    whileHover={{ x: 4 }}
+                    whileHover={{ x: dir === "rtl" ? -4 : 4 }}
                     onClick={() => {
                       localStorage.removeItem("english-fun-onboarded");
                       setLangMenuOpen(false);
                       window.location.reload();
                     }}
-                    className="flex items-center gap-2.5 w-full px-4 py-3 font-display text-sm font-semibold text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors"
+                    className="flex items-center gap-3 w-full px-5 py-3.5 font-display text-sm font-semibold text-muted-foreground hover:text-destructive transition-colors"
                   >
                     <RotateCcw className="w-4 h-4" />
                     <span>{lang === "he" ? "מסך פתיחה" : lang === "ar" ? "شاشة الترحيب" : "Welcome Screen"}</span>
@@ -258,9 +274,9 @@ const AppHeader = () => {
           {/* Badges */}
           {badges > 0 && (
             <motion.button
-              whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.85 }}
               onClick={() => navigate("/achievements")}
-              className="flex items-center gap-0.5 bg-candy/10 px-2 py-1 rounded-full"
+              className="flex items-center gap-1 bg-candy/10 px-2.5 py-1.5 rounded-full"
               initial={{ scale: 0 }} animate={{ scale: 1 }}
             >
               <Trophy className="w-3.5 h-3.5 text-candy" />
@@ -270,10 +286,10 @@ const AppHeader = () => {
 
           {/* Stars */}
           <motion.div
-            className="flex items-center gap-1 bg-sunshine/15 px-2 py-1 rounded-full"
-            whileHover={{ scale: 1.05 }}
+            className="flex items-center gap-1.5 bg-sunshine/12 px-2.5 py-1.5 rounded-full"
+            whileHover={{ scale: 1.08 }}
           >
-            <Star className="w-3.5 h-3.5 star-earned fill-current" />
+            <Star className="w-4 h-4 star-earned fill-current" />
             <span className="font-display font-bold text-xs text-sunshine-foreground">{stars}</span>
           </motion.div>
         </div>
