@@ -7,6 +7,7 @@ import { getUnlockedAchievements } from "@/lib/achievements";
 import { getXP, getLevel } from "@/lib/xp";
 import { useLanguage, Language } from "@/lib/i18n";
 import { useState, useEffect, useRef } from "react";
+import owlPixar from "@/assets/owl-pixar.png";
 import {
   isSoundEnabled, setSoundEnabled,
   isMusicEnabled, setMusicEnabled,
@@ -103,7 +104,7 @@ const AppHeader = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <span className="text-2xl">🦉</span>
+          <img src={owlPixar} alt="English Fun" className="w-8 h-8 object-contain" style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.15))" }} />
           <div className="hidden sm:block">
             <h1 className="text-lg font-display font-extrabold text-gradient leading-tight">
               English Fun

@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useLanguage } from "@/lib/i18n";
 import { Heart } from "lucide-react";
+import owlPixar from "@/assets/owl-pixar.png";
 
 const AppFooter = () => {
   const { lang, dir } = useLanguage();
@@ -36,14 +37,14 @@ const AppFooter = () => {
             className="flex items-center gap-3"
             whileHover={{ scale: 1.05 }}
           >
-            <motion.span
-              className="text-3xl"
+            <motion.img
+              src={owlPixar}
+              alt="English Fun Owl"
+              className="w-10 h-10 object-contain"
               style={{ filter: "drop-shadow(0 3px 6px rgba(0,0,0,0.15))" }}
-              animate={{ rotate: [0, 8, -8, 0], scale: [1, 1.1, 1] }}
-              transition={{ duration: 5, repeat: Infinity }}
-            >
-              🦉
-            </motion.span>
+              animate={{ y: [0, -4, 0], rotate: [0, 3, -3, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            />
             <span className="font-display font-extrabold text-xl text-gradient">
               English Fun
             </span>

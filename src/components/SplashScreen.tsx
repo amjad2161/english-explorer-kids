@@ -162,7 +162,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
                   transition={{ type: "spring", stiffness: 150, damping: 15 }}
                   className="text-5xl sm:text-7xl md:text-8xl font-display font-extrabold mb-4"
                   style={{
-                    background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--candy)), hsl(var(--lavender)), hsl(var(--sky)))",
+                    background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--candy)), hsl(var(--sunshine)))",
                     backgroundSize: "300% 300%",
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",

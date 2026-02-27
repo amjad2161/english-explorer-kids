@@ -15,7 +15,7 @@ export default {
     extend: {
       fontFamily: {
         display: ["'Baloo 2'", "cursive"],
-        body: ["'Rubik'", "sans-serif"],
+        body: ["'Nunito'", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
