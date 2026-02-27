@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import { useLanguage } from "@/lib/i18n";
 import { getSpellingWords, getWordTranslation, WordCard } from "@/data/learningData";
 import { speakEnglish, playCorrectSound, playWrongSound, playComboSound, playStarSound, playVictoryFanfare, playLetterPopSound } from "@/lib/sounds";
+import { updateDailyProgress } from "@/lib/xp";
 import { saveStageProgress } from "@/lib/levels";
 import { saveBestStreak } from "@/lib/achievements";
 import { trackGamePlayed } from "@/lib/statsTracker";
@@ -132,6 +133,7 @@ const SpellingBee = () => {
       setShowXP(true);
       const correctCount = Math.round(score / 15);
       trackGamePlayed("spelling", correctCount, TOTAL_ROUNDS - correctCount, Math.max(10, score));
+      updateDailyProgress("spelling");
     } else {
       setCurrentIndex(i => i + 1);
     }

@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useLanguage } from "@/lib/i18n";
 import { getCurrentLevel, getTotalEarnedStars, levels, getLevelProgress } from "@/lib/levels";
 import { getUnlockedAchievements } from "@/lib/achievements";
@@ -8,6 +8,7 @@ import { getXP, getLevel, getDailyChallenge } from "@/lib/xp";
 import { playClickSound } from "@/lib/sounds";
 import FloatingParticles from "@/components/FloatingParticles";
 import Card3D from "@/components/Card3D";
+import DailyChallengeCard from "@/components/DailyChallengeCard";
 import mascotImg from "@/assets/mascot.png";
 
 const containerVariants = {
@@ -39,6 +40,7 @@ const Index = () => {
   const [xpState, setXpState] = useState(getXP());
   const [dailyChallenge, setDailyChallenge] = useState(getDailyChallenge());
   const [mascotMood, setMascotMood] = useState<"idle" | "wave" | "celebrate">("idle");
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     setTotalStars(getTotalEarnedStars());
@@ -58,9 +60,12 @@ const Index = () => {
   const nextLevel = levels[currentLevel] || null;
   const xpLevel = getLevel(xpState.totalXP);
   const funFactIndex = useMemo(() => Math.floor(Math.random() * 5) + 1, []);
-  
-  const dailyLabel = dailyChallenge.type === "quiz" ? "🎯" : dailyChallenge.type === "words" ? "📝" : dailyChallenge.type === "spelling" ? "🐝" : "🧩";
-  const dailyDone = dailyChallenge.progress >= dailyChallenge.target;
+
+  const refreshStats = useCallback(() => {
+    setXpState(getXP());
+    setDailyChallenge(getDailyChallenge());
+    setRefreshKey(k => k + 1);
+  }, []);
 
   return (
     <div className="min-h-screen relative overflow-hidden" dir={dir}>
@@ -172,9 +177,9 @@ const Index = () => {
                 </div>
               </div>
             </div>
-            {/* Streak & Daily */}
-            <div className="flex gap-3 mt-2">
-              {xpState.streak > 0 && (
+            {/* Streak */}
+            {xpState.streak > 0 && (
+              <div className="flex gap-3 mt-2">
                 <motion.div
                   className="flex items-center gap-1.5 bg-primary/10 rounded-full px-3 py-1"
                   animate={{ scale: [1, 1.05, 1] }}
@@ -183,16 +188,14 @@ const Index = () => {
                   <span className="text-sm">🔥</span>
                   <span className="font-display font-bold text-xs text-primary">{xpState.streak} {lang === "he" ? "ימים" : lang === "ar" ? "أيام" : "days"}</span>
                 </motion.div>
-              )}
-              <div className={`flex items-center gap-1.5 rounded-full px-3 py-1 ${dailyDone ? "bg-accent/15" : "bg-muted/40"}`}>
-                <span className="text-sm">{dailyLabel}</span>
-                <span className="font-display font-bold text-xs">
-                  {dailyChallenge.progress}/{dailyChallenge.target}
-                </span>
-                {dailyDone && <span className="text-accent">✓</span>}
               </div>
-            </div>
+            )}
           </div>
+        </motion.div>
+
+        {/* ── DAILY CHALLENGE ── */}
+        <motion.div variants={itemVariants} className="max-w-lg mx-auto mb-8">
+          <DailyChallengeCard key={refreshKey} challenge={dailyChallenge} onUpdate={refreshStats} />
         </motion.div>
 
         {/* ── STATS ROW ── */}
