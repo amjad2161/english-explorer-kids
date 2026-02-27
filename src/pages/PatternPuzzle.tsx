@@ -17,6 +17,7 @@ import GameEntrance from "@/components/GameEntrance";
 import BackToLevels from "@/components/BackToLevels";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 import { Zap, Trophy, RotateCcw, Lightbulb } from "lucide-react";
+import UserAvatar, { CompanionAvatars } from "@/components/UserAvatar";
 
 /* ─── Pattern Types ─── */
 type PatternType = "letter-sequence" | "number-sequence" | "shape-pattern" | "mirror-pattern" | "color-word" | "analogy" | "sentence-completion" | "odd-letter-out";
@@ -502,10 +503,14 @@ const PatternPuzzle = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-6"
         >
-          <Interactive3DMascot mood={owlMood} size="sm" />
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <Interactive3DMascot mood={owlMood} size="sm" />
+            <UserAvatar size="md" showOwl />
+          </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gradient mb-1">
             {lang === "he" ? "🧩 חידת דפוסים" : lang === "ar" ? "🧩 لغز الأنماط" : "🧩 Pattern Puzzle"}
           </h1>
+          <CompanionAvatars size="xs" className="justify-center mt-2" />
           <p className="text-muted-foreground font-body text-sm sm:text-base">
             {lang === "he" ? "מצא את הדפוס והשלם את הסדרה!" : lang === "ar" ? "اكتشف النمط وأكمل السلسلة!" : "Find the pattern and complete the sequence!"}
           </p>

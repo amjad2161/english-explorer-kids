@@ -16,6 +16,7 @@ import Interactive3DMascot from "@/components/Interactive3DMascot";
 import { getSmartRecommendations, getMotivationalMessage, Recommendation } from "@/lib/recommendations";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 import { Zap, Trophy, ArrowRight, Map, Star, Sparkles, BookOpen, Shield } from "lucide-react";
+import UserAvatar, { CompanionAvatars } from "@/components/UserAvatar";
 
 /* ─── Animation variants ─── */
 const container = {
@@ -334,8 +335,25 @@ const Index = () => {
       >
         {/* ═══ TITLE with mascot ═══ */}
         <motion.section variants={item} className="text-center mb-6 sm:mb-10">
-          <div className="flex justify-center mb-3">
-            <Interactive3DMascot mood="wave" size="md" />
+          {/* Hero: Owl mascot + User Avatar side by side */}
+          <div className="flex items-center justify-center gap-4 sm:gap-6 mb-3">
+            <motion.div
+              initial={{ x: -30, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 150, delay: 0.2 }}
+            >
+              <Interactive3DMascot mood="wave" size="md" />
+            </motion.div>
+
+            <motion.div
+              className="flex flex-col items-center gap-1"
+              initial={{ x: 30, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 150, delay: 0.4 }}
+            >
+              <UserAvatar size="lg" showName showOwl={false} />
+              <CompanionAvatars size="xs" className="mt-1" />
+            </motion.div>
           </div>
 
           <motion.h1

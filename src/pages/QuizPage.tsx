@@ -23,6 +23,7 @@ import ClassroomBackground from "@/components/ClassroomBackground";
 import GameEntrance from "@/components/GameEntrance";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 import { recordPerformance, getDifficulty } from "@/lib/adaptiveDifficulty";
+import UserAvatar, { CompanionAvatars } from "@/components/UserAvatar";
 import { RotateCcw, Zap, Target, Trophy, Sparkles } from "lucide-react";
 const optionLabels = ["A", "B", "C", "D"];
 
@@ -140,11 +141,15 @@ const QuizPage = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-6"
         >
-          <Interactive3DMascot mood={owlMood} size="sm" />
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <Interactive3DMascot mood={owlMood} size="sm" />
+            <UserAvatar size="md" showOwl />
+          </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gradient mb-1">
             {t("quiz.title")}
           </h1>
           <p className="text-muted-foreground font-body text-sm sm:text-base max-w-sm mx-auto">{t("quiz.subtitle")}</p>
+          <CompanionAvatars size="xs" className="justify-center mt-2" />
         </motion.div>
 
         <AnimatePresence mode="wait">

@@ -21,6 +21,7 @@ import BackToLevels from "@/components/BackToLevels";
 import ClassroomBackground from "@/components/ClassroomBackground";
 import GameEntrance from "@/components/GameEntrance";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
+import UserAvatar, { CompanionAvatars } from "@/components/UserAvatar";
 const shuffleArray = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
 
 /* ─── Draggable scrambled letter tile ─── */
@@ -195,9 +196,13 @@ const WordScramble = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-6"
         >
-          <Interactive3DMascot mood={owlMood} size="sm" />
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <Interactive3DMascot mood={owlMood} size="sm" />
+            <UserAvatar size="md" showOwl />
+          </div>
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">{t("scramble.title")}</h1>
           <p className="text-muted-foreground font-body">{t("scramble.subtitle")}</p>
+          <CompanionAvatars size="xs" className="justify-center mt-2" />
         </motion.div>
 
         {!finished ? (
