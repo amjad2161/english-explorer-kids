@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useMemo } from "react";
 import Interactive3DMascot from "./Interactive3DMascot";
 import ChalkWriteText from "./ChalkWriteText";
+import { playChalkWriteSound } from "@/lib/sounds";
 
 /**
  * GameEntrance — Bright, fun entrance animation for game pages
@@ -69,7 +70,10 @@ const GameEntrance = ({ title, emoji, onComplete, duration = 1800 }: Props) => {
   );
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase(1), 300);
+    const t1 = setTimeout(() => {
+      setPhase(1);
+      playChalkWriteSound(800);
+    }, 300);
     const t2 = setTimeout(() => setPhase(2), duration - 400);
     const t3 = setTimeout(() => {
       setVisible(false);

@@ -509,3 +509,79 @@ export const stopBgMusic = () => {
   }
   bgMusicGain = null;
 };
+
+// 🖍️ Chalk writing sound — scratchy texture that sounds like chalk on a board
+let chalkWritingInterval: ReturnType<typeof setInterval> | null = null;
+
+export const playChalkWriteSound = (durationMs: number = 800) => {
+  if (!audioCtx || !isSoundEnabled()) return;
+  ensureContext();
+
+  const startTime = audioCtx.currentTime;
+  let elapsed = 0;
+  const stepMs = 60;
+
+  const writeStep = () => {
+    if (!audioCtx || elapsed >= durationMs) {
+      stopChalkWriteSound();
+      return;
+    }
+    const t = audioCtx.currentTime;
+
+    // Scratchy noise burst — filtered white noise via oscillator detuning
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    const filter = audioCtx.createBiquadFilter();
+
+    osc.type = 'sawtooth';
+    // Randomize frequency for scratchy texture
+    const baseFreq = 1800 + Math.random() * 2400;
+    osc.frequency.setValueAtTime(baseFreq, t);
+    osc.frequency.linearRampToValueAtTime(baseFreq + (Math.random() - 0.5) * 800, t + 0.04);
+
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(2500 + Math.random() * 1500, t);
+    filter.Q.setValueAtTime(1.5 + Math.random() * 2, t);
+
+    // Very short burst with random volume for organic feel
+    const vol = 0.02 + Math.random() * 0.025;
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(vol, t + 0.005);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.04 + Math.random() * 0.02);
+
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(t);
+    osc.stop(t + 0.06);
+
+    // Occasional tap/click for chalk hitting the board
+    if (Math.random() > 0.6) {
+      const tap = audioCtx.createOscillator();
+      const tapGain = audioCtx.createGain();
+      tap.type = 'square';
+      tap.frequency.setValueAtTime(3000 + Math.random() * 2000, t);
+      tapGain.gain.setValueAtTime(0.01, t);
+      tapGain.gain.exponentialRampToValueAtTime(0.001, t + 0.015);
+      tap.connect(tapGain);
+      tapGain.connect(audioCtx.destination);
+      tap.start(t);
+      tap.stop(t + 0.02);
+    }
+
+    elapsed += stepMs;
+  };
+
+  writeStep();
+  chalkWritingInterval = setInterval(writeStep, stepMs);
+
+  // Safety stop
+  setTimeout(() => stopChalkWriteSound(), durationMs + 100);
+};
+
+export const stopChalkWriteSound = () => {
+  if (chalkWritingInterval) {
+    clearInterval(chalkWritingInterval);
+    chalkWritingInterval = null;
+  }
+};
