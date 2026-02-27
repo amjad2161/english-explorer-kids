@@ -1,6 +1,6 @@
-import { Suspense, useRef } from "react";
+import { Suspense, useRef, forwardRef } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, AdaptiveDpr, AdaptiveEvents } from "@react-three/drei";
+import { OrbitControls, AdaptiveDpr } from "@react-three/drei";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import ProxyCharacter from "./ProxyCharacter";
 import type { CharacterMood } from "@/lib/characterStore";
@@ -53,7 +53,6 @@ const CharacterCanvas = ({
           >
             {/* Adaptive performance */}
             <AdaptiveDpr pixelated />
-            <AdaptiveEvents />
 
             {/* Lighting */}
             <ambientLight intensity={1.2} />

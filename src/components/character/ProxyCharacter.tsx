@@ -25,9 +25,9 @@ const ProxyCharacter = ({ mood, animationKey }: ProxyCharacterProps) => {
   const rightWingRef = useRef<THREE.Mesh>(null!);
   const beakRef = useRef<THREE.Mesh>(null!);
 
-  // Log missing asset once per mount
+  // Log missing asset once per mount (warn, not error)
   useEffect(() => {
-    console.error("MISSING_CHARACTER_ASSET: No GLB found; rendering proxy 3D character.");
+    console.warn("MISSING_CHARACTER_ASSET: No GLB found; rendering proxy 3D character.");
   }, []);
 
   // Animation clock offsets so we can animate per-mood
