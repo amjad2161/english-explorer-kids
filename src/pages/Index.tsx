@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { useLanguage } from "@/lib/i18n";
@@ -12,26 +12,26 @@ import DailyChallengeCard from "@/components/DailyChallengeCard";
 import WordOfTheDay from "@/components/WordOfTheDay";
 import { getSmartRecommendations, getMotivationalMessage, Recommendation } from "@/lib/recommendations";
 import Interactive3DMascot from "@/components/Interactive3DMascot";
-import { Sparkles, Zap, Trophy, ArrowRight, Map } from "lucide-react";
+import { Zap, Trophy, ArrowRight, Map, Star, BookOpen, Gamepad2 } from "lucide-react";
 
-const containerVariants = {
+const container = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.06, delayChildren: 0.1 } },
+  visible: { opacity: 1, transition: { staggerChildren: 0.05, delayChildren: 0.1 } },
 };
 
-const itemVariants = {
-  hidden: { y: 16, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] } },
+const item = {
+  hidden: { y: 14, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] } },
 };
 
-const quickAccessCards = [
-  { titleKey: "quick.alphabet", emoji: "🔤", path: "/alphabet", accent: "var(--sky)" },
-  { titleKey: "quick.words", emoji: "📝", path: "/words", accent: "var(--grass)" },
-  { titleKey: "quick.match", emoji: "🧩", path: "/memory", accent: "var(--lavender)" },
-  { titleKey: "quick.quiz", emoji: "🎯", path: "/quiz", accent: "var(--primary)" },
-  { titleKey: "quick.spelling", emoji: "🐝", path: "/spelling", accent: "var(--sunshine)" },
-  { titleKey: "quick.scramble", emoji: "🔀", path: "/scramble", accent: "var(--candy)" },
-  { titleKey: "quick.hangman", emoji: "🎭", path: "/hangman", accent: "var(--sky)" },
+const gameCards = [
+  { titleKey: "quick.alphabet", emoji: "🔤", path: "/alphabet", color: "bg-sky/10 dark:bg-sky/15", iconColor: "text-sky" },
+  { titleKey: "quick.words", emoji: "📝", path: "/words", color: "bg-grass/10 dark:bg-grass/15", iconColor: "text-grass" },
+  { titleKey: "quick.match", emoji: "🧩", path: "/memory", color: "bg-lavender/10 dark:bg-lavender/15", iconColor: "text-lavender" },
+  { titleKey: "quick.quiz", emoji: "🎯", path: "/quiz", color: "bg-accent/10 dark:bg-accent/15", iconColor: "text-accent" },
+  { titleKey: "quick.spelling", emoji: "🐝", path: "/spelling", color: "bg-sunshine/10 dark:bg-sunshine/15", iconColor: "text-sunshine" },
+  { titleKey: "quick.scramble", emoji: "🔀", path: "/scramble", color: "bg-candy/10 dark:bg-candy/15", iconColor: "text-candy" },
+  { titleKey: "quick.hangman", emoji: "🎭", path: "/hangman", color: "bg-sky/10 dark:bg-sky/15", iconColor: "text-sky" },
 ];
 
 const Index = () => {
@@ -73,39 +73,22 @@ const Index = () => {
     setRefreshKey(k => k + 1);
   }, []);
 
+  const xpPercent = Math.min((xpLevel.current / xpLevel.needed) * 100, 100);
+  const levelPercent = (levelProgress.completed / levelProgress.total) * 100;
+
   return (
-    <div className="min-h-screen relative overflow-hidden" dir={dir}>
-      <FloatingParticles count={14} />
-      
-      {/* Soft ambient background — no jarring movement */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div
-          className="absolute rounded-full"
-          style={{
-            width: 900, height: 900,
-            background: "radial-gradient(ellipse, hsl(var(--primary) / 0.06), transparent 65%)",
-            top: "-25%", right: "-20%",
-          }}
-        />
-        <div
-          className="absolute rounded-full"
-          style={{
-            width: 700, height: 700,
-            background: "radial-gradient(ellipse, hsl(var(--lavender) / 0.05), transparent 65%)",
-            bottom: "-15%", left: "-15%",
-          }}
-        />
-      </div>
+    <div className="min-h-screen relative" dir={dir}>
+      <FloatingParticles count={8} />
       
       <motion.div
-        variants={containerVariants}
+        variants={container}
         initial="hidden"
         animate="visible"
-        className="max-w-5xl mx-auto px-4 py-8 relative z-10"
+        className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 relative z-10"
       >
         {/* ── HERO ── */}
-        <motion.div variants={itemVariants} className="text-center mb-10 relative">
-          <div className="relative inline-block mb-4">
+        <motion.section variants={item} className="text-center mb-8 sm:mb-12">
+          <div className="inline-block mb-3">
             <Interactive3DMascot
               mood={mascotMood}
               size="lg"
@@ -115,276 +98,213 @@ const Index = () => {
                 setTimeout(() => setMascotMood("idle"), 2000);
               }}
             />
-            <AnimatePresence>
-              {mascotMood === "wave" && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8, x: 40, y: -20 }}
-                  animate={{ opacity: 1, scale: 1, x: 55, y: -35 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ duration: 0.3 }}
-                  className="absolute top-0 end-0 bg-card/90 backdrop-blur-xl rounded-2xl px-4 py-2 shadow-lg border border-primary/10 z-20"
-                >
-                  <span className="font-display font-bold text-sm">
-                    {lang === "he" ? "!שלום" : lang === "ar" ? "!مرحبًا" : "Hi there!"} 👋
-                  </span>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
 
-          <motion.h1
-            variants={itemVariants}
-            className="text-5xl sm:text-6xl md:text-7xl font-display font-extrabold mb-3 leading-tight tracking-tight"
-            style={{
-              background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--candy)), hsl(var(--lavender)))",
-              backgroundSize: "200% 200%",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-              animation: "aurora 8s ease-in-out infinite",
-            }}
-          >
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-extrabold mb-2 text-gradient leading-tight">
             {t("app.subtitle")}
-          </motion.h1>
-          <motion.p variants={itemVariants} className="text-lg text-muted-foreground font-body max-w-lg mx-auto">
-            🌟 {t("app.description")} 🌟
-          </motion.p>
-        </motion.div>
+          </h1>
+          <p className="text-base sm:text-lg text-muted-foreground font-body max-w-md mx-auto">
+            {t("app.description")}
+          </p>
+        </motion.section>
 
-        {/* ── XP BAR ── */}
-        <motion.div variants={itemVariants} className="max-w-xl mx-auto mb-8">
-          <div className="bg-card/70 backdrop-blur-md rounded-2xl p-5 border border-border/50 shadow-sm">
-            <div className="flex items-center gap-4 mb-3">
-              <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shadow-md"
-                style={{ background: "var(--gradient-hero)" }}
-              >
-                {xpLevel.title.split(" ")[0]}
-              </div>
-              <div className="flex-1">
-                <div className="flex justify-between items-baseline">
-                  <span className="font-display font-bold text-sm">
-                    {lang === "he" ? "רמה" : lang === "ar" ? "المستوى" : "Level"} {xpLevel.level}
-                  </span>
-                  <div className="flex items-center gap-1">
-                    <Zap className="w-3.5 h-3.5 text-primary" />
-                    <span className="text-sm text-muted-foreground font-display font-semibold">
-                      {xpState.totalXP} XP
-                    </span>
-                  </div>
-                </div>
-                <div className="h-3 mt-2 rounded-full overflow-hidden bg-muted/30">
-                  <motion.div
-                    className="h-full rounded-full"
-                    style={{
-                      background: "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--candy)))",
-                    }}
-                    initial={{ width: 0 }}
-                    animate={{ width: `${Math.min((xpLevel.current / xpLevel.needed) * 100, 100)}%` }}
-                    transition={{ duration: 1.2, ease: "easeOut", delay: 0.3 }}
-                  />
-                </div>
-              </div>
-            </div>
-            {xpState.streak > 0 && (
-              <div className="flex items-center gap-2 bg-primary/8 rounded-full px-3 py-1 w-fit">
-                <span className="text-sm">🔥</span>
-                <span className="font-display font-bold text-xs text-primary">
-                  {xpState.streak} {lang === "he" ? "ימים" : lang === "ar" ? "أيام" : "days"}
-                </span>
-              </div>
-            )}
-          </div>
-        </motion.div>
-
-        {/* ── STATS ── */}
-        <motion.div variants={itemVariants} className="flex justify-center gap-3 mb-8 flex-wrap">
+        {/* ── STATS ROW ── */}
+        <motion.section variants={item} className="grid grid-cols-3 gap-2 sm:gap-3 mb-6 sm:mb-8 max-w-lg mx-auto">
           {[
-            { emoji: "⭐", value: totalStars, label: t("home.stars") },
-            { emoji: "🏅", value: badgeCount, label: lang === "he" ? "הישגים" : lang === "ar" ? "إنجازات" : "Badges" },
-            { emoji: level.emoji, value: `${t("home.level")} ${level.id}`, label: t(`level.${level.id}`) },
+            { icon: <Star className="w-5 h-5 text-sunshine fill-sunshine" />, value: totalStars, label: t("home.stars") },
+            { icon: <Trophy className="w-5 h-5 text-accent" />, value: badgeCount, label: lang === "he" ? "הישגים" : lang === "ar" ? "إنجازات" : "Badges" },
+            { icon: <Zap className="w-5 h-5 text-primary" />, value: `${xpState.totalXP}`, label: "XP" },
           ].map((stat, i) => (
             <motion.div
               key={i}
-              whileHover={{ y: -4 }}
-              transition={{ duration: 0.2 }}
-              className="bg-card/70 backdrop-blur-md flex items-center gap-3 px-5 py-3.5 rounded-2xl border border-border/50 shadow-sm cursor-default"
+              whileHover={{ y: -2 }}
+              className="bg-card rounded-xl p-3 sm:p-4 text-center border border-border shadow-sm"
             >
-              <span className="text-2xl">{stat.emoji}</span>
-              <div>
-                <p className="font-display font-bold text-lg leading-tight">{stat.value}</p>
-                <p className="text-[11px] text-muted-foreground font-semibold">{stat.label}</p>
-              </div>
+              <div className="flex justify-center mb-1.5">{stat.icon}</div>
+              <p className="font-display font-extrabold text-xl sm:text-2xl leading-none">{stat.value}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground font-semibold mt-0.5">{stat.label}</p>
             </motion.div>
           ))}
-        </motion.div>
+        </motion.section>
+
+        {/* ── XP + LEVEL PROGRESS ── */}
+        <motion.section variants={item} className="max-w-lg mx-auto mb-6 sm:mb-8 space-y-3">
+          {/* XP Progress */}
+          <div className="bg-card rounded-xl p-4 border border-border shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center text-lg" style={{ background: "var(--gradient-hero)" }}>
+                  {xpLevel.title.split(" ")[0]}
+                </div>
+                <span className="font-display font-bold text-sm">
+                  {lang === "he" ? "רמה" : lang === "ar" ? "المستوى" : "Level"} {xpLevel.level}
+                </span>
+              </div>
+              <span className="text-xs text-muted-foreground font-display font-semibold">
+                {xpLevel.current}/{xpLevel.needed} XP
+              </span>
+            </div>
+            <div className="h-2 rounded-full bg-muted overflow-hidden">
+              <motion.div
+                className="h-full rounded-full"
+                style={{ background: "var(--gradient-hero)" }}
+                initial={{ width: 0 }}
+                animate={{ width: `${xpPercent}%` }}
+                transition={{ duration: 1, ease: "easeOut", delay: 0.3 }}
+              />
+            </div>
+          </div>
+
+          {/* Streak */}
+          {xpState.streak > 0 && (
+            <div className="flex items-center gap-2 px-3.5 py-2 bg-accent/8 dark:bg-accent/12 rounded-lg w-fit">
+              <span className="text-sm">🔥</span>
+              <span className="font-display font-bold text-xs text-accent">
+                {xpState.streak} {lang === "he" ? "ימים ברצף" : lang === "ar" ? "أيام متتالية" : "day streak"}
+              </span>
+            </div>
+          )}
+        </motion.section>
 
         {/* ── DAILY + WORD ── */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto mb-8">
-          <motion.div variants={itemVariants}>
-            <DailyChallengeCard key={refreshKey} challenge={dailyChallenge} onUpdate={refreshStats} />
-          </motion.div>
-          <motion.div variants={itemVariants}>
-            <WordOfTheDay />
-          </motion.div>
-        </div>
+        <motion.section variants={item} className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 max-w-3xl mx-auto mb-6 sm:mb-8">
+          <DailyChallengeCard key={refreshKey} challenge={dailyChallenge} onUpdate={refreshStats} />
+          <WordOfTheDay />
+        </motion.section>
 
         {/* ── MOTIVATION ── */}
-        <motion.div variants={itemVariants} className="max-w-xl mx-auto mb-8">
-          <div 
-            className="flex items-center gap-3 justify-center py-3 px-5 rounded-2xl"
-            style={{
-              background: "linear-gradient(135deg, hsl(var(--primary) / 0.06), hsl(var(--candy) / 0.04))",
-              border: "1px solid hsl(var(--primary) / 0.08)",
-            }}
-          >
+        <motion.section variants={item} className="max-w-lg mx-auto mb-6 sm:mb-8">
+          <div className="flex items-center gap-3 justify-center py-3 px-5 bg-primary/5 dark:bg-primary/10 rounded-xl border border-primary/10">
             <span className="text-xl">{motivation.emoji}</span>
-            <span className="font-display font-bold text-sm">{motivation.text}</span>
+            <span className="font-display font-bold text-sm text-foreground">{motivation.text}</span>
           </div>
-        </motion.div>
+        </motion.section>
+
+        {/* ── CURRENT LEVEL ── */}
+        <motion.section variants={item} className="max-w-lg mx-auto mb-8 sm:mb-10">
+          <Card3D onClick={() => { playClickSound(); navigate("/levels"); }}>
+            <div className="bg-card rounded-xl p-4 sm:p-5 border border-border shadow-sm hover:border-primary/20 transition-colors cursor-pointer group">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center text-2xl sm:text-3xl shrink-0 shadow-sm" style={{ background: "var(--gradient-hero)" }}>
+                  {level.emoji}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    <Map className="w-3.5 h-3.5 text-muted-foreground" />
+                    <p className="text-xs text-muted-foreground font-display font-semibold">{t("home.currentLevel")}</p>
+                  </div>
+                  <h2 className="font-display text-base sm:text-lg font-bold truncate">
+                    {t("home.level")} {level.id}: {t(`level.${level.id}`)}
+                  </h2>
+                  <div className="h-2 mt-2 rounded-full bg-muted overflow-hidden">
+                    <motion.div
+                      className="h-full rounded-full bg-primary"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${levelPercent}%` }}
+                      transition={{ duration: 0.8, ease: "easeOut", delay: 0.5 }}
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1.5 font-display">
+                    {levelProgress.completed}/{levelProgress.total} {t("home.stagesCompleted")}
+                    {nextLevel && ` · ${Math.max(0, nextLevel.starsToUnlock - totalStars)} ${t("home.moreToNext")}`}
+                  </p>
+                </div>
+                <ArrowRight className={`w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors ${dir === "rtl" ? "rotate-180" : ""}`} />
+              </div>
+            </div>
+          </Card3D>
+        </motion.section>
 
         {/* ── RECOMMENDATIONS ── */}
         {recommendations.length > 0 && (
-          <motion.div variants={itemVariants} className="max-w-xl mx-auto mb-8">
-            <h3 className="font-display text-sm font-bold mb-3 text-center text-muted-foreground">
-              💡 {lang === "he" ? "מומלץ עבורך" : lang === "ar" ? "مُوصى لك" : "Recommended for You"}
+          <motion.section variants={item} className="max-w-lg mx-auto mb-8 sm:mb-10">
+            <h3 className="font-display text-sm font-bold mb-3 text-muted-foreground flex items-center gap-1.5 justify-center">
+              <BookOpen className="w-4 h-4" />
+              {lang === "he" ? "מומלץ עבורך" : lang === "ar" ? "مُوصى لك" : "Recommended for You"}
             </h3>
             <div className="space-y-2">
               {recommendations.map((rec) => (
-                <motion.button
+                <button
                   key={rec.reason}
-                  whileHover={{ x: dir === "rtl" ? -4 : 4 }}
-                  whileTap={{ scale: 0.98 }}
                   onClick={() => { playClickSound(); navigate(rec.path); }}
-                  className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-card/70 backdrop-blur-md border border-border/50 hover:border-primary/20 text-start transition-colors"
+                  className="w-full flex items-center gap-3 p-3 rounded-xl bg-card border border-border hover:border-primary/20 text-start transition-all hover:shadow-sm group"
                 >
                   <span className="text-2xl">{rec.emoji}</span>
                   <div className="flex-1 min-w-0">
                     <p className="font-display font-bold text-sm">{rec.title[lang] || rec.title.en}</p>
                     <p className="text-xs text-muted-foreground truncate">{rec.description[lang] || rec.description.en}</p>
                   </div>
-                  <span className="text-muted-foreground text-xs">{dir === "rtl" ? "◀" : "▶"}</span>
-                </motion.button>
+                  <ArrowRight className={`w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0 ${dir === "rtl" ? "rotate-180" : ""}`} />
+                </button>
               ))}
             </div>
-          </motion.div>
+          </motion.section>
         )}
 
-        {/* ── CURRENT LEVEL ── */}
-        <motion.div variants={itemVariants} className="max-w-xl mx-auto mb-10">
-          <Card3D onClick={() => { playClickSound(); navigate("/levels"); }} className="group">
-            <div className="bg-card/70 backdrop-blur-md rounded-2xl p-5 border border-border/50 shadow-sm hover:border-primary/20 transition-colors">
-              <div className="flex items-center gap-4">
-                <div
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0 shadow-md"
-                  style={{ background: "var(--gradient-hero)" }}
-                >
-                  {level.emoji}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <Map className="w-3.5 h-3.5 text-muted-foreground" />
-                    <p className="text-xs text-muted-foreground font-display font-semibold">{t("home.currentLevel")}</p>
-                  </div>
-                  <h2 className="font-display text-lg font-bold truncate">{t("home.level")} {level.id}: {t(`level.${level.id}`)}</h2>
-                  <div className="h-2.5 mt-2 rounded-full overflow-hidden bg-muted/30">
-                    <motion.div
-                      className="h-full rounded-full bg-primary"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${(levelProgress.completed / levelProgress.total) * 100}%` }}
-                      transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
-                    />
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1.5 font-display">
-                    {levelProgress.completed}/{levelProgress.total} {t("home.stagesCompleted")}
-                    {nextLevel && ` • ${Math.max(0, nextLevel.starsToUnlock - totalStars)} ${t("home.moreToNext")}`}
-                  </p>
-                </div>
-                <span className="text-muted-foreground text-sm">{dir === "rtl" ? "◀" : "▶"}</span>
-              </div>
-            </div>
-          </Card3D>
-        </motion.div>
-
-        {/* ── QUICK ACCESS GAMES ── */}
-        <motion.div variants={itemVariants} className="mb-10">
-          <h3 className="font-display text-xl font-bold mb-5 text-center">
-            <Sparkles className="w-4 h-4 inline-block text-primary me-1.5" />
+        {/* ── GAMES GRID ── */}
+        <motion.section variants={item} className="mb-8 sm:mb-10">
+          <h3 className="font-display text-lg sm:text-xl font-bold mb-4 text-center flex items-center gap-2 justify-center">
+            <Gamepad2 className="w-5 h-5 text-primary" />
             {t("home.freePlay")}
           </h3>
-          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-3">
-            {quickAccessCards.map((card, i) => (
+          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3">
+            {gameCards.map((card, i) => (
               <motion.button
                 key={card.path}
-                whileHover={{ y: -6 }}
+                whileHover={{ y: -4 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => { playClickSound(); navigate(card.path); }}
-                className="bg-card/70 backdrop-blur-md border border-border/50 hover:border-primary/20 rounded-2xl p-4 text-center transition-colors shadow-sm group"
-                initial={{ opacity: 0, y: 12 }}
+                className={`${card.color} rounded-xl p-3 sm:p-4 text-center border border-transparent hover:border-primary/15 transition-all group`}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 + i * 0.04, duration: 0.4 }}
+                transition={{ delay: 0.15 + i * 0.03, duration: 0.3 }}
               >
-                <span className="text-3xl sm:text-4xl block mb-2 group-hover:scale-110 transition-transform duration-200">
+                <span className="text-2xl sm:text-3xl block mb-1 group-hover:scale-110 transition-transform duration-200">
                   {card.emoji}
                 </span>
-                <span className="font-display text-xs font-bold block leading-tight">{t(card.titleKey)}</span>
+                <span className="font-display text-[10px] sm:text-xs font-bold block leading-tight">{t(card.titleKey)}</span>
               </motion.button>
             ))}
           </div>
-        </motion.div>
+        </motion.section>
 
-        {/* ── ACTION BUTTONS ── */}
-        <motion.div variants={itemVariants} className="text-center mb-10 flex gap-3 justify-center flex-wrap">
-          <motion.button
-            whileHover={{ y: -3 }}
-            whileTap={{ scale: 0.97 }}
+        {/* ── CTA BUTTONS ── */}
+        <motion.section variants={item} className="text-center mb-8 sm:mb-10 flex gap-2 sm:gap-3 justify-center flex-wrap">
+          <button
             onClick={() => { playClickSound(); navigate("/levels"); }}
-            className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-display font-bold text-base px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
+            className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-display font-bold text-sm sm:text-base px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl shadow-md hover:shadow-lg hover:brightness-105 transition-all"
           >
-            <Map className="w-5 h-5" />
+            <Map className="w-4 h-4 sm:w-5 sm:h-5" />
             {t("home.myJourney")}
-            <ArrowRight className="w-4 h-4" />
-          </motion.button>
+            <ArrowRight className={`w-4 h-4 ${dir === "rtl" ? "rotate-180" : ""}`} />
+          </button>
           
-          <motion.button
-            whileHover={{ y: -3 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => { playClickSound(); navigate("/achievements"); }}
-            className="inline-flex items-center gap-2 bg-card/80 backdrop-blur-sm text-foreground font-display font-bold text-sm px-6 py-3.5 rounded-xl border border-border/50 shadow-sm hover:border-primary/20 transition-colors"
-          >
-            <Trophy className="w-4 h-4" />
-            {lang === "he" ? "הישגים" : lang === "ar" ? "إنجازات" : "Badges"}
-          </motion.button>
-          <motion.button
-            whileHover={{ y: -3 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => { playClickSound(); navigate("/report"); }}
-            className="inline-flex items-center gap-2 bg-card/80 backdrop-blur-sm text-foreground font-display font-bold text-sm px-6 py-3.5 rounded-xl border border-border/50 shadow-sm hover:border-primary/20 transition-colors"
-          >
-            📋 {lang === "he" ? "דוח התקדמות" : lang === "ar" ? "تقرير التقدم" : "Report"}
-          </motion.button>
-          <motion.button
-            whileHover={{ y: -3 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => { playClickSound(); navigate("/settings"); }}
-            className="inline-flex items-center gap-2 bg-card/80 backdrop-blur-sm text-foreground font-display font-bold text-sm px-6 py-3.5 rounded-xl border border-border/50 shadow-sm hover:border-primary/20 transition-colors"
-          >
-            ⚙️ {lang === "he" ? "הגדרות" : lang === "ar" ? "إعدادات" : "Settings"}
-          </motion.button>
-        </motion.div>
+          {[
+            { path: "/achievements", icon: <Trophy className="w-4 h-4" />, label: lang === "he" ? "הישגים" : lang === "ar" ? "إنجازات" : "Badges" },
+            { path: "/report", icon: "📋", label: lang === "he" ? "דוח" : lang === "ar" ? "تقرير" : "Report" },
+            { path: "/settings", icon: "⚙️", label: lang === "he" ? "הגדרות" : lang === "ar" ? "إعدادات" : "Settings" },
+          ].map(btn => (
+            <button
+              key={btn.path}
+              onClick={() => { playClickSound(); navigate(btn.path); }}
+              className="inline-flex items-center gap-1.5 bg-card text-foreground font-display font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl border border-border hover:border-primary/20 shadow-sm hover:shadow transition-all"
+            >
+              {typeof btn.icon === "string" ? <span>{btn.icon}</span> : btn.icon}
+              {btn.label}
+            </button>
+          ))}
+        </motion.section>
 
         {/* ── FUN FACT ── */}
-        <motion.div variants={itemVariants} className="max-w-xl mx-auto">
-          <Card3D intensity={6}>
-            <div className="bg-card/70 backdrop-blur-md rounded-2xl p-6 border border-border/50 shadow-sm text-center">
-              <span className="text-4xl block mb-3">💡</span>
-              <h3 className="font-display text-lg font-bold mb-2">{t("home.didYouKnow")}</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">{t(`home.funFact${funFactIndex}`)}</p>
-            </div>
-          </Card3D>
-        </motion.div>
+        <motion.section variants={item} className="max-w-lg mx-auto">
+          <div className="bg-card rounded-xl p-5 sm:p-6 border border-border shadow-sm text-center">
+            <span className="text-3xl sm:text-4xl block mb-2">💡</span>
+            <h3 className="font-display text-base sm:text-lg font-bold mb-1.5">{t("home.didYouKnow")}</h3>
+            <p className="text-muted-foreground text-sm leading-relaxed">{t(`home.funFact${funFactIndex}`)}</p>
+          </div>
+        </motion.section>
 
-        <div className="h-8" />
+        <div className="h-6 sm:h-8" />
       </motion.div>
     </div>
   );
