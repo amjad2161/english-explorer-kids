@@ -876,3 +876,54 @@ export const playCompanionSound = (character: CompanionCharacter, mood: Companio
     }
   }
 };
+
+// ─── Game Entrance Power-Up Sound ───
+
+/**
+ * 🎮 Epic power-up sound for game entrance animations.
+ * Rising synth sweep → impact chord → sparkle cascade.
+ * ~1.2s total — designed to sync with GameEntrance animation.
+ */
+export const playGameEntrancePowerUp = () => {
+  ensureContext();
+  if (!audioCtx || !isSoundEnabled()) return;
+  const t = audioCtx.currentTime;
+
+  // Phase 1: Rising "whoosh" sweep (0–0.4s)
+  const sweep = audioCtx.createOscillator();
+  const sweepGain = audioCtx.createGain();
+  sweep.type = 'sawtooth';
+  sweep.frequency.setValueAtTime(200, t);
+  sweep.frequency.exponentialRampToValueAtTime(1200, t + 0.35);
+  sweepGain.gain.setValueAtTime(0.03, t);
+  sweepGain.gain.linearRampToValueAtTime(0.1, t + 0.25);
+  sweepGain.gain.exponentialRampToValueAtTime(0.01, t + 0.4);
+  sweep.connect(sweepGain);
+  sweepGain.connect(audioCtx.destination);
+  sweep.start(t);
+  sweep.stop(t + 0.4);
+
+  // Phase 2: Impact — bright major chord burst (0.35s)
+  const impactFreqs = [523, 659, 784, 1047]; // C5-E5-G5-C6
+  impactFreqs.forEach((freq, i) => {
+    playTone(freq, t + 0.35 + i * 0.02, 0.25, 0.1);
+    playTone(freq * 2, t + 0.37 + i * 0.02, 0.12, 0.03, 'triangle');
+  });
+
+  // Phase 3: Cartoon "boing" bounce (0.5s)
+  playBoing(1568, t + 0.5, 0.08);
+
+  // Phase 4: Sparkle rain cascade (0.6–1.0s)
+  for (let i = 0; i < 8; i++) {
+    playTone(
+      2000 + i * 300 + Math.random() * 200,
+      t + 0.6 + i * 0.05,
+      0.06,
+      0.035 - i * 0.003,
+      'triangle'
+    );
+  }
+
+  // Phase 5: Final shimmer chord (1.0s)
+  playChord([1047, 1319, 1568, 2093], t + 1.0, 0.4, 0.04);
+};
