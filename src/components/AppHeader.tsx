@@ -48,17 +48,17 @@ const AppHeader = () => {
   };
 
   const navItems = [
-    { path: "/", label: t("nav.home"), icon: "🏠" },
-    { path: "/levels", label: t("nav.levels"), icon: "🗺️" },
-    { path: "/alphabet", label: t("nav.alphabet"), icon: "🔤" },
-    { path: "/words", label: t("nav.words"), icon: "📝" },
-    { path: "/memory", label: t("nav.memory"), icon: "🧩" },
-    { path: "/quiz", label: t("nav.quiz"), icon: "🎯" },
-    { path: "/spelling", label: t("nav.spelling"), icon: "🐝" },
-    { path: "/scramble", label: t("nav.scramble"), icon: "🔀" },
-    { path: "/hangman", label: t("nav.hangman"), icon: "🎭" },
-    { path: "/achievements", label: "🏅", icon: "🏅" },
-    { path: "/stats", label: "📊", icon: "📊" },
+    { path: "/", label: t("nav.home"), icon: "🏠", mobileOnly: false },
+    { path: "/levels", label: t("nav.levels"), icon: "🗺️", mobileOnly: false },
+    { path: "/alphabet", label: t("nav.alphabet"), icon: "🔤", mobileOnly: false },
+    { path: "/words", label: t("nav.words"), icon: "📝", mobileOnly: false },
+    { path: "/memory", label: t("nav.memory"), icon: "🧩", mobileOnly: false },
+    { path: "/quiz", label: t("nav.quiz"), icon: "🎯", mobileOnly: false },
+    { path: "/spelling", label: t("nav.spelling"), icon: "🐝", mobileOnly: true },
+    { path: "/scramble", label: t("nav.scramble"), icon: "🔀", mobileOnly: true },
+    { path: "/hangman", label: t("nav.hangman"), icon: "🎭", mobileOnly: true },
+    { path: "/achievements", label: "🏅", icon: "🏅", mobileOnly: true },
+    { path: "/stats", label: "📊", icon: "📊", mobileOnly: true },
   ];
 
   useEffect(() => {
@@ -126,22 +126,26 @@ const AppHeader = () => {
         </motion.div>
 
         {/* Nav */}
-        <nav className="flex items-center gap-0.5 overflow-x-auto max-w-[50vw] scrollbar-hide px-1">
+        <nav className="flex items-center gap-0.5 overflow-x-auto max-w-[55vw] sm:max-w-[50vw] scrollbar-hide px-1" role="navigation" aria-label="Main navigation">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
               <motion.button
                 key={item.path}
                 onClick={() => { playClickSound(); navigate(item.path); }}
-                className={`px-2.5 py-1.5 rounded-xl font-display text-xs font-semibold whitespace-nowrap relative ${
+                className={`px-1.5 sm:px-2.5 py-1.5 rounded-xl font-display text-xs font-semibold whitespace-nowrap relative ${
                   isActive
-                    ? "gradient-primary text-primary-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                    ? "gradient-primary text-primary-foreground shadow-sm dark:shadow-md dark:shadow-primary/20"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/60 dark:hover:bg-muted/40"
                 }`}
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.92 }}
+                aria-label={item.label}
+                aria-current={isActive ? "page" : undefined}
               >
-                {item.label}
+                {/* Show icon on very small, label on sm+ */}
+                <span className="sm:hidden text-sm">{item.icon}</span>
+                <span className="hidden sm:inline">{item.label}</span>
                 {isActive && (
                   <motion.div
                     layoutId="nav-indicator"
