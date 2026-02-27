@@ -91,14 +91,37 @@ const AppHeader = () => {
       initial={{ y: -60 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="sticky top-0 z-50 backdrop-blur-xl bg-card/85 dark:bg-card/80 border-b border-border/50"
+      className="sticky top-0 z-50"
       style={{
-        boxShadow: "0 1px 4px hsl(var(--foreground) / 0.04)",
         paddingTop: "env(safe-area-inset-top, 0px)",
       }}
     >
+      {/* Chalkboard-style header background */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: "linear-gradient(180deg, hsl(var(--board)) 0%, hsl(var(--board)) 85%, hsl(var(--board) / 0.95) 100%)",
+        }}
+      />
+      {/* Chalk dust texture overlay */}
+      <div
+        className="absolute inset-0 opacity-[0.04] pointer-events-none"
+        style={{
+          backgroundImage: `radial-gradient(circle at 20% 30%, hsl(var(--chalk)) 1px, transparent 1px),
+            radial-gradient(circle at 60% 70%, hsl(var(--chalk)) 0.5px, transparent 0.5px),
+            radial-gradient(circle at 80% 20%, hsl(var(--chalk)) 0.8px, transparent 0.8px)`,
+          backgroundSize: "60px 40px, 80px 60px, 50px 50px",
+        }}
+      />
+      {/* Bottom chalk tray strip */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-[3px]"
+        style={{
+          background: "linear-gradient(90deg, hsl(var(--grass) / 0.5), hsl(var(--primary) / 0.7), hsl(var(--grass) / 0.5))",
+        }}
+      />
 
-      <div className="max-w-5xl mx-auto px-4 py-2.5 flex items-center justify-between" dir={dir}>
+      <div className="max-w-5xl mx-auto px-4 py-2.5 flex items-center justify-between relative" dir={dir}>
         {/* Logo */}
         <motion.div
           className="flex items-center gap-2.5 cursor-pointer"
@@ -106,32 +129,42 @@ const AppHeader = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <img src={owlPixar} alt="English Fun" className="w-8 h-8 object-contain rounded-full" />
+          <div className="relative">
+            <img src={owlPixar} alt="English Fun" className="w-8 h-8 object-contain rounded-full ring-2 ring-grass/30" />
+            {/* Tiny chalk circle decoration */}
+            <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-grass border border-board" />
+          </div>
           <div className="hidden sm:block">
-            <h1 className="text-lg font-display font-extrabold text-gradient leading-tight">
+            <h1
+              className="text-lg font-display font-extrabold leading-tight"
+              style={{
+                color: "hsl(var(--chalk))",
+                textShadow: "0 1px 3px hsl(0 0% 0% / 0.3)",
+              }}
+            >
               English Fun
             </h1>
             {/* Mini XP bar */}
             <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="text-[10px] font-display font-semibold text-muted-foreground">
+              <span className="text-[10px] font-display font-semibold" style={{ color: "hsl(var(--chalk) / 0.6)" }}>
                 {xpLevel.title.split(" ")[0]}
               </span>
-              <div className="w-16 h-1.5 rounded-full bg-muted/40 overflow-hidden">
+              <div className="w-16 h-1.5 rounded-full overflow-hidden" style={{ background: "hsl(var(--chalk) / 0.15)" }}>
                 <motion.div
                   className="h-full rounded-full"
-                  style={{ 
-                    background: "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--candy)))",
+                  style={{
+                    background: "linear-gradient(90deg, hsl(var(--grass)), hsl(var(--primary)))",
                   }}
                   animate={{ width: `${Math.min((xpLevel.current / xpLevel.needed) * 100, 100)}%` }}
                   transition={{ duration: 0.8 }}
                 />
               </div>
-              <span className="text-[10px] font-display text-muted-foreground">{xpTotal}</span>
+              <span className="text-[10px] font-display" style={{ color: "hsl(var(--chalk) / 0.5)" }}>{xpTotal}</span>
             </div>
           </div>
         </motion.div>
 
-        {/* Nav */}
+        {/* Nav - chalk style buttons */}
         <nav className="flex items-center gap-0.5 overflow-x-auto max-w-[55vw] sm:max-w-[50vw] scrollbar-hide px-1" role="navigation" aria-label="Main navigation">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
@@ -141,10 +174,25 @@ const AppHeader = () => {
                 onClick={() => { playClickSound(); navigate(item.path); }}
                 className={`px-2 sm:px-3 py-1.5 rounded-full font-display text-xs font-semibold whitespace-nowrap relative transition-all ${
                   isActive
-                    ? "gradient-primary text-primary-foreground shadow-md"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                    ? "shadow-md"
+                    : "hover:scale-105"
                 }`}
-                whileHover={{ scale: 1.08, y: -1 }}
+                style={
+                  isActive
+                    ? {
+                        background: "hsl(var(--grass) / 0.25)",
+                        color: "hsl(var(--chalk))",
+                        border: "1.5px solid hsl(var(--grass) / 0.4)",
+                      }
+                    : {
+                        color: "hsl(var(--chalk) / 0.65)",
+                      }
+                }
+                whileHover={{
+                  scale: 1.08,
+                  y: -1,
+                  color: "hsl(var(--chalk))",
+                }}
                 whileTap={{ scale: 0.92 }}
                 aria-label={item.label}
                 aria-current={isActive ? "page" : undefined}
@@ -154,8 +202,8 @@ const AppHeader = () => {
                 {isActive && (
                   <motion.div
                     layoutId="nav-indicator"
-                    className="absolute -bottom-1 left-1/2 w-1.5 h-1.5 rounded-full bg-primary-foreground"
-                    style={{ marginLeft: "-3px" }}
+                    className="absolute -bottom-1 left-1/2 w-1.5 h-1.5 rounded-full"
+                    style={{ marginLeft: "-3px", background: "hsl(var(--grass))" }}
                   />
                 )}
               </motion.button>
@@ -170,7 +218,8 @@ const AppHeader = () => {
             whileHover={{ scale: 1.15, rotate: 20 }}
             whileTap={{ scale: 0.85 }}
             onClick={toggleTheme}
-            className="w-8 h-8 rounded-full flex items-center justify-center transition-colors bg-muted/40 text-foreground hover:bg-primary/10"
+            className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+            style={{ background: "hsl(var(--chalk) / 0.1)" }}
             aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
           >
             <AnimatePresence mode="wait" initial={false}>
@@ -181,7 +230,7 @@ const AppHeader = () => {
                 exit={{ y: 12, opacity: 0, rotate: 90 }}
                 transition={{ duration: 0.2 }}
               >
-                {theme === "dark" ? <Sun className="w-4 h-4 text-sunshine" /> : <Moon className="w-4 h-4" />}
+                {theme === "dark" ? <Sun className="w-4 h-4 text-sunshine" /> : <Moon className="w-4 h-4" style={{ color: "hsl(var(--chalk) / 0.8)" }} />}
               </motion.div>
             </AnimatePresence>
           </motion.button>
@@ -190,18 +239,22 @@ const AppHeader = () => {
           <motion.button
             whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.85 }}
             onClick={toggleSound}
-            className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
-              soundOn ? "bg-primary/12 text-primary" : "bg-muted/40 text-muted-foreground"
-            }`}
+            className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+            style={{
+              background: soundOn ? "hsl(var(--grass) / 0.2)" : "hsl(var(--chalk) / 0.08)",
+              color: soundOn ? "hsl(var(--grass))" : "hsl(var(--chalk) / 0.5)",
+            }}
           >
             {soundOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.85 }}
             onClick={toggleMusic}
-            className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
-              musicOn ? "bg-accent/12 text-accent" : "bg-muted/40 text-muted-foreground"
-            }`}
+            className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+            style={{
+              background: musicOn ? "hsl(var(--sky) / 0.2)" : "hsl(var(--chalk) / 0.08)",
+              color: musicOn ? "hsl(var(--sky))" : "hsl(var(--chalk) / 0.5)",
+            }}
           >
             {musicOn ? <Music className="w-4 h-4" /> : <Music2 className="w-4 h-4" />}
           </motion.button>
@@ -211,10 +264,14 @@ const AppHeader = () => {
             <motion.button
               whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }}
               onClick={() => setLangMenuOpen(prev => !prev)}
-              className="flex items-center gap-1.5 bg-muted/40 backdrop-blur-sm px-2.5 py-2 rounded-full font-display text-xs font-bold transition-colors hover:bg-muted/60"
+              className="flex items-center gap-1.5 px-2.5 py-2 rounded-full font-display text-xs font-bold transition-colors"
+              style={{
+                background: "hsl(var(--chalk) / 0.1)",
+                color: "hsl(var(--chalk) / 0.8)",
+              }}
             >
               <span>{currentLang.flag}</span>
-              <Globe className="w-3.5 h-3.5 text-muted-foreground" />
+              <Globe className="w-3.5 h-3.5" />
             </motion.button>
 
             <AnimatePresence>
@@ -263,11 +320,12 @@ const AppHeader = () => {
             <motion.button
               whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.85 }}
               onClick={() => navigate("/achievements")}
-              className="flex items-center gap-1 bg-candy/10 px-2.5 py-1.5 rounded-full"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-full"
+              style={{ background: "hsl(var(--candy) / 0.15)", color: "hsl(var(--candy))" }}
               initial={{ scale: 0 }} animate={{ scale: 1 }}
             >
-              <Trophy className="w-3.5 h-3.5 text-candy" />
-              <span className="font-display font-bold text-xs text-candy">{badges}</span>
+              <Trophy className="w-3.5 h-3.5" />
+              <span className="font-display font-bold text-xs">{badges}</span>
             </motion.button>
           )}
 
@@ -276,8 +334,11 @@ const AppHeader = () => {
             <motion.button
               whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.85 }}
               onClick={() => navigate("/parent")}
-              className="w-8 h-8 rounded-full flex items-center justify-center text-lg border-2 border-primary/25 hover:border-primary/50 transition-colors"
-              style={{ background: "hsl(var(--primary) / 0.08)" }}
+              className="w-8 h-8 rounded-full flex items-center justify-center text-lg transition-colors"
+              style={{
+                background: "hsl(var(--grass) / 0.15)",
+                border: "2px solid hsl(var(--grass) / 0.3)",
+              }}
               title={profile.name}
             >
               {profile.avatar}
@@ -286,11 +347,14 @@ const AppHeader = () => {
 
           {/* Stars */}
           <motion.div
-            className="flex items-center gap-1.5 bg-sunshine/12 px-2.5 py-1.5 rounded-full"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full"
+            style={{
+              background: "hsl(var(--sunshine) / 0.15)",
+            }}
             whileHover={{ scale: 1.08 }}
           >
             <Star className="w-4 h-4 star-earned fill-current" />
-            <span className="font-display font-bold text-xs text-sunshine-foreground">{stars}</span>
+            <span className="font-display font-bold text-xs" style={{ color: "hsl(var(--sunshine))" }}>{stars}</span>
           </motion.div>
         </div>
       </div>
