@@ -2,12 +2,14 @@ import { motion } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useLanguage } from "@/lib/i18n";
 import { ArrowLeft, ArrowRight, Home } from "lucide-react";
+import { useEraserTransition } from "@/components/ChalkEraserTransition";
 
 const BackToLevels = () => {
   const [searchParams] = useSearchParams();
   const stageId = searchParams.get("stage");
   const navigate = useNavigate();
   const { t, isRTL } = useLanguage();
+  const { navigateWithEraser } = useEraserTransition();
 
   const ArrowIcon = isRTL ? ArrowRight : ArrowLeft;
 
@@ -21,7 +23,7 @@ const BackToLevels = () => {
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        onClick={() => navigate(-1)}
+        onClick={() => navigateWithEraser(-1)}
         className="flex items-center gap-1.5 font-display font-bold text-sm text-primary hover:text-primary/80 transition-colors bg-primary/10 rounded-full px-3 py-2"
         aria-label="Go back"
       >
@@ -33,7 +35,7 @@ const BackToLevels = () => {
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        onClick={() => navigate("/")}
+        onClick={() => navigateWithEraser("/")}
         className="flex items-center gap-1.5 font-display font-bold text-sm text-muted-foreground hover:text-foreground transition-colors bg-muted/40 rounded-full px-3 py-2"
         aria-label="Go home"
       >
@@ -46,7 +48,7 @@ const BackToLevels = () => {
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          onClick={() => navigate("/levels")}
+          onClick={() => navigateWithEraser("/levels")}
           className="flex items-center gap-1.5 font-display font-bold text-sm text-accent hover:text-accent/80 transition-colors bg-accent/10 rounded-full px-3 py-2"
         >
           🗺️ <span className="hidden sm:inline">{t("nav.backToLevels")}</span>
