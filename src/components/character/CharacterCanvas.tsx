@@ -1,11 +1,12 @@
 import { useRef, useEffect, useState, useCallback } from "react";
-import { motion, useSpring, useMotionValue, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useSpring, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import professorOwl from "@/assets/professor-owl.png";
 import type { CharacterMood } from "@/lib/characterStore";
 import { useCharacterStore } from "@/lib/characterStore";
 import { playOwlSpeechSound } from "@/lib/sounds";
 import OwlBodyAnimations from "./OwlBodyAnimations";
+import OwlEyes from "./OwlEyes";
 
 interface CharacterCanvasProps {
   mood: CharacterMood;
@@ -145,38 +146,12 @@ const CharacterCanvas = ({
     return () => clearTimeout(timer);
   }, []);
 
-  // Eye tracking motion values
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const eyeX = useSpring(mouseX, { stiffness: 150, damping: 20 });
-  const eyeY = useSpring(mouseY, { stiffness: 150, damping: 20 });
-
   // Parallax on scroll — subtle vertical shift
   const { scrollY } = useScroll();
   const parallaxY = useTransform(scrollY, [0, 600], [0, -18]);
   const parallaxRotate = useTransform(scrollY, [0, 600], [0, -3]);
   const smoothParallaxY = useSpring(parallaxY, { stiffness: 80, damping: 20 });
   const smoothParallaxRotate = useSpring(parallaxRotate, { stiffness: 80, damping: 20 });
-
-  // Track mouse for eye following
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height * 0.35;
-      const dx = (e.clientX - cx) / window.innerWidth;
-      const dy = (e.clientY - cy) / window.innerHeight;
-      mouseX.set(dx * 8);
-      mouseY.set(dy * 5);
-    },
-    [mouseX, mouseY]
-  );
-
-  useEffect(() => {
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [handleMouseMove]);
 
   // Reset feathers on mood change & show auto encouragement
   useEffect(() => {
@@ -302,35 +277,8 @@ const CharacterCanvas = ({
         aria-label="Click the owl for a tip"
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleOwlClick(); }}
       >
-        {/* Eye tracking overlay — invisible dots that follow mouse */}
-        <motion.div
-          className="absolute pointer-events-none z-10"
-          style={{
-            width: width * 0.12,
-            height: width * 0.12,
-            borderRadius: "50%",
-            left: "38%",
-            top: "28%",
-            x: eyeX,
-            y: eyeY,
-            background: "radial-gradient(circle, rgba(0,0,0,0.15) 30%, transparent 70%)",
-            mixBlendMode: "multiply",
-          }}
-        />
-        <motion.div
-          className="absolute pointer-events-none z-10"
-          style={{
-            width: width * 0.12,
-            height: width * 0.12,
-            borderRadius: "50%",
-            left: "52%",
-            top: "28%",
-            x: eyeX,
-            y: eyeY,
-            background: "radial-gradient(circle, rgba(0,0,0,0.15) 30%, transparent 70%)",
-            mixBlendMode: "multiply",
-          }}
-        />
+        {/* Realistic eye tracking */}
+        <OwlEyes width={width} mood={mood} containerRef={containerRef} />
 
         {/* Main owl image with mood + parallax animation */}
         <motion.div
