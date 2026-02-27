@@ -1,11 +1,11 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useLanguage } from "@/lib/i18n";
 import { alphabet, getLocal, getWordLocal } from "@/data/learningData";
 import { speakEnglish, playClickSound, playStarSound, playLetterPopSound } from "@/lib/sounds";
 import { addCompletedLetter } from "@/lib/progress";
-import { saveStageProgress } from "@/lib/levels";
+import { saveStageProgress, levels } from "@/lib/levels";
 import StarRating from "@/components/StarRating";
 import Confetti from "@/components/Confetti";
 import ClassroomBackground from "@/components/ClassroomBackground";
@@ -41,6 +41,16 @@ const AlphabetPage = () => {
     } catch { return []; }
   });
 
+  // Determine which letter indices belong to this stage (if any)
+  const stageLetterRange = useMemo<[number, number] | null>(() => {
+    if (!stageId) return null;
+    for (const level of levels) {
+      const stage = level.stages.find(s => s.id === stageId);
+      if (stage?.letterRange) return stage.letterRange;
+    }
+    return null;
+  }, [stageId]);
+
   const handleLetterClick = (index: number) => {
     playLetterPopSound(index % 12);
     setSelectedLetter(index);
@@ -62,7 +72,16 @@ const AlphabetPage = () => {
       setTimeout(() => setShowConfetti(false), 100);
       setXpAmount(15);
       setShowXP(true);
-      if (stageId) saveStageProgress(stageId, Math.min(newLearned.length, 5));
+      if (stageId) {
+        // Count only letters that belong to this stage's range
+        const stageCount = stageLetterRange
+          ? newLearned.filter(l => {
+              const idx = alphabet.findIndex(a => a.letter === l);
+              return idx >= stageLetterRange[0] && idx <= stageLetterRange[1];
+            }).length
+          : Math.min(newLearned.length, 5);
+        saveStageProgress(stageId, Math.min(stageCount, 5));
+      }
     }
   };
 
@@ -152,7 +171,7 @@ const AlphabetPage = () => {
                       </div>
                       
                       <p className="text-xl font-display font-bold text-muted-foreground mt-2">
-                        {alphabet[selectedLetter].letter.toLowerCase()} • {getLocal(alphabet[selectedLetter], lang)}
+                        {alphabet[selectedLetter].letter.toLowerCase()}{getLocal(alphabet[selectedLetter], lang) ? ` • ${getLocal(alphabet[selectedLetter], lang)}` : ""}
                       </p>
                     </div>
                     
@@ -179,9 +198,11 @@ const AlphabetPage = () => {
                       <span className={colorSet.text}>{alphabet[selectedLetter].letter}</span>
                       {alphabet[selectedLetter].word.slice(1)}
                     </p>
-                    <p className="text-muted-foreground font-body text-sm">
-                      {getWordLocal(alphabet[selectedLetter], lang)}
-                    </p>
+                    {getWordLocal(alphabet[selectedLetter], lang) && (
+                      <p className="text-muted-foreground font-body text-sm">
+                        {getWordLocal(alphabet[selectedLetter], lang)}
+                      </p>
+                    )}
                   </motion.div>
 
                   {/* Phonetics toggle */}

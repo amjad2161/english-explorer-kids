@@ -28,7 +28,7 @@ export const getXP = (): XPState => {
       }
       return state;
     }
-  } catch {}
+  } catch { /* ignored */ }
   return { totalXP: 0, dailyXP: 0, lastDate: today(), streak: 0 };
 };
 
@@ -55,7 +55,7 @@ export const getLevel = (xp: number): { level: number; current: number; needed: 
   }
 
   const current = xp - thresholds[level];
-  const needed = (thresholds[level + 1] || thresholds[level] + 1000) - thresholds[level];
+  const needed = (thresholds[level + 1] ?? thresholds[level] + 1000) - thresholds[level];
 
   return { level: level + 1, current, needed, title: titles[level] || titles[titles.length - 1] };
 };
@@ -96,6 +96,9 @@ const challengeTemplates = [
   { type: "alphabet", target: 8, emoji: "🔤", xpReward: 35, path: "/alphabet",
     title: { he: "חוקר אותיות", ar: "مستكشف الحروف", en: "Letter Explorer" },
     description: { he: "למד 8 אותיות", ar: "تعلم 8 حروف", en: "Study 8 letters" } },
+  { type: "pattern", target: 2, emoji: "🔮", xpReward: 55, path: "/pattern",
+    title: { he: "פותר דפוסים", ar: "حلّال الأنماط", en: "Pattern Master" },
+    description: { he: "פתור 2 חידות דפוסים", ar: "حل لغزي أنماط", en: "Solve 2 pattern puzzles" } },
 ];
 
 // Seeded random based on date for consistency
@@ -116,7 +119,7 @@ export const getDailyChallenge = (): DailyChallenge => {
     try {
       const data = JSON.parse(raw);
       if (data.date === todayStr && data.title) return data;
-    } catch {}
+    } catch { /* ignored */ }
   }
 
   // Pick challenge based on date (deterministic)

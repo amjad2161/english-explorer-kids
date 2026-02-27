@@ -21,6 +21,7 @@ import ClassroomBackground from "@/components/ClassroomBackground";
 import GameEntrance from "@/components/GameEntrance";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 import UserAvatar, { CompanionAvatars } from "@/components/UserAvatar";
+import { useOwlEncouragement } from "@/hooks/useOwlEncouragement";
 const DEFAULT_MAX_WRONG = 6;
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const shuffleArray = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
@@ -105,6 +106,7 @@ const HangmanGame = () => {
   const [xpAmount, setXpAmount] = useState(0);
   const [owlMood, setOwlMood] = useState<"idle" | "surprised" | "sad" | "celebrate">("idle");
   const { popups, addPopup } = useScorePopups();
+  const { speech, triggerByMood } = useOwlEncouragement();
 
   useEffect(() => {
     const maxLen = adaptive.maxWordLength;
@@ -142,6 +144,7 @@ const HangmanGame = () => {
         setScore(s => s + points);
         setStreak(newStreak);
         setOwlMood("surprised");
+        triggerByMood("surprised", newStreak);
         setBestStreak(b => { const best = Math.max(b, newStreak); saveBestStreak(best); return best; });
         if (newStreak >= 3) playComboSound(newStreak); else playCorrectSound();
         addPopup(points, newStreak >= 3 ? `×${newStreak}` : "✓");
@@ -153,6 +156,7 @@ const HangmanGame = () => {
       const newWrong = wrongCount + 1;
       setWrongCount(newWrong);
       setOwlMood("sad");
+      triggerByMood("sad");
       playWrongSound();
       if (newWrong >= MAX_WRONG) {
         setResult("lost");
@@ -168,6 +172,7 @@ const HangmanGame = () => {
     if (currentIndex + 1 >= words.length) {
       setFinished(true);
       setOwlMood("celebrate");
+      triggerByMood("celebrate");
       playVictoryFanfare();
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 100);
@@ -214,12 +219,12 @@ const HangmanGame = () => {
           className="text-center mb-6"
         >
           <div className="flex items-center justify-center gap-3 mb-2">
-            <Interactive3DMascot mood={owlMood} size="sm" />
+            <Interactive3DMascot mood={owlMood} size="sm" showSpeechBubble={speech || undefined} />
             <UserAvatar size="md" showOwl />
           </div>
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">{t("hangman.title")}</h1>
           <p className="text-muted-foreground font-body">{t("hangman.subtitle")}</p>
-          <CompanionAvatars size="xs" className="justify-center mt-2" />
+          <CompanionAvatars size="xs" className="justify-center mt-2" mood={owlMood} />
         </motion.div>
 
         {!finished ? (

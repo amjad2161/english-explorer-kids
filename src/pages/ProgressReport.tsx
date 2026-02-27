@@ -50,7 +50,7 @@ const ProgressReport = () => {
 
   // Skills radar data
   const skillsData = useMemo(() => {
-    const gameTypes = ["alphabet", "words", "quiz", "memory", "spelling", "scramble", "hangman"];
+    const gameTypes = ["alphabet", "words", "quiz", "memory", "spelling", "scramble", "hangman", "pattern"];
     const labels: Record<string, Record<string, string>> = {
       alphabet: { he: "אלפבית", ar: "أبجدية", en: "ABC" },
       words: { he: "מילים", ar: "كلمات", en: "Words" },
@@ -59,6 +59,7 @@ const ProgressReport = () => {
       spelling: { he: "איות", ar: "تهجئة", en: "Spelling" },
       scramble: { he: "בלבול", ar: "خلط", en: "Scramble" },
       hangman: { he: "ניחוש", ar: "تخمين", en: "Hangman" },
+      pattern: { he: "דפוסים", ar: "أنماط", en: "Patterns" },
     };
 
     const breakdown: Record<string, number> = {};
@@ -336,7 +337,7 @@ const ProgressReport = () => {
                   >
                     <span className="text-lg">🏅</span>
                     <span className="font-display font-semibold text-xs">
-                      {name ? (name as any)[lang] || name.en : a.id}
+                      {name ? name[lang] || name.en : a.id}
                     </span>
                   </motion.div>
                 );

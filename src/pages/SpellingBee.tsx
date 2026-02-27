@@ -23,6 +23,7 @@ import ClassroomBackground from "@/components/ClassroomBackground";
 import GameEntrance from "@/components/GameEntrance";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 import UserAvatar, { CompanionAvatars } from "@/components/UserAvatar";
+import { useOwlEncouragement } from "@/hooks/useOwlEncouragement";
 const shuffle = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
 
 const SpellingBee = () => {
@@ -50,6 +51,7 @@ const SpellingBee = () => {
   const [xpAmount, setXpAmount] = useState(0);
   const [owlMood, setOwlMood] = useState<"idle" | "celebrate" | "sad" | "surprised">("idle");
   const { popups, addPopup } = useScorePopups();
+  const { speech, triggerByMood } = useOwlEncouragement();
 
   useEffect(() => {
     const all = shuffle(getSpellingWords(adaptive.maxWordLength));
@@ -104,6 +106,7 @@ const SpellingBee = () => {
       setScore(s => s + points);
       setStreak(newStreak);
       setOwlMood("surprised");
+      triggerByMood("surprised", newStreak);
       setBestStreak(b => { const best = Math.max(b, newStreak); saveBestStreak(best); return best; });
       if (newStreak >= 3) {
         playComboSound(newStreak);
@@ -117,6 +120,7 @@ const SpellingBee = () => {
       setResult("wrong");
       setStreak(0);
       setOwlMood("sad");
+      triggerByMood("sad");
       playWrongSound();
     }
     setTimeout(() => { setOwlMood("idle"); advance(); }, 1500);
@@ -126,7 +130,8 @@ const SpellingBee = () => {
     if (result) return;
     setResult("wrong");
     setStreak(0);
-    setOwlMood("sad");
+      setOwlMood("sad");
+      triggerByMood("sad");
     playWrongSound();
     setTimeout(() => { setOwlMood("idle"); advance(); }, 1200);
   }, [result, currentIndex]);
@@ -135,6 +140,7 @@ const SpellingBee = () => {
     if (currentIndex + 1 >= words.length) {
       setFinished(true);
       setOwlMood("celebrate");
+      triggerByMood("celebrate");
       playVictoryFanfare();
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 100);
@@ -186,12 +192,12 @@ const SpellingBee = () => {
           className="text-center mb-6"
         >
           <div className="flex items-center justify-center gap-3 mb-2">
-            <Interactive3DMascot mood={owlMood} size="sm" />
+            <Interactive3DMascot mood={owlMood} size="sm" showSpeechBubble={speech || undefined} />
             <UserAvatar size="md" showOwl />
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gradient mb-1">{t("spelling.title")}</h1>
           <p className="text-muted-foreground font-body text-sm sm:text-base">{t("spelling.subtitle")}</p>
-          <CompanionAvatars size="xs" className="justify-center mt-2" />
+          <CompanionAvatars size="xs" className="justify-center mt-2" mood={owlMood} />
         </motion.div>
 
         {!finished ? (

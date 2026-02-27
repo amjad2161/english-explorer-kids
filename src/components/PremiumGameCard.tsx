@@ -76,7 +76,7 @@ const PremiumGameCard = ({ emoji, title, color, index, description, onClick }: P
               hsl(var(--primary) / 0.12) 0%, 
               hsl(var(--sunshine) / 0.06) 30%, 
               transparent 60%)`,
-            // @ts-ignore -- CSS custom properties
+            // @ts-expect-error -- CSS custom properties
             "--shine-x": shineX,
             "--shine-y": shineY,
           }}

@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { getProfile } from "@/lib/ageProfile";
-import owlPixar from "@/assets/owl-pixar.png";
+import CharacterCanvas from "@/components/character/CharacterCanvas";
 
 interface UserAvatarProps {
   size?: "xs" | "sm" | "md" | "lg" | "xl";
@@ -68,10 +68,11 @@ const UserAvatar = ({ size = "md", showName = false, showOwl = false, className 
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 300, delay: 0.3 }}
           >
-            <img
-              src={owlPixar}
-              alt="Owl companion"
-              className="w-full h-full object-cover"
+            <CharacterCanvas
+              mood="idle"
+              animationKey={0}
+              width={Math.round(config.container * 0.42)}
+              height={Math.round(config.container * 0.42)}
             />
           </motion.div>
         )}
@@ -93,12 +94,29 @@ const UserAvatar = ({ size = "md", showName = false, showOwl = false, className 
 };
 
 /* ─── Companion avatars row — fox, bookworm, mouse ─── */
+export type CompanionMood = "idle" | "celebrate" | "sad" | "surprised";
+
 interface CompanionAvatarsProps {
   size?: "xs" | "sm";
   className?: string;
+  mood?: CompanionMood;
 }
 
-export const CompanionAvatars = ({ size = "xs", className = "" }: CompanionAvatarsProps) => {
+const moodAnimations: Record<CompanionMood, Record<string, number[]>> = {
+  idle: { y: [0, -2, 0], rotate: [0, 0, 0], scale: [1, 1, 1] },
+  celebrate: { y: [0, -8, 0, -5, 0], rotate: [0, -10, 10, -5, 0], scale: [1, 1.2, 0.95, 1.1, 1] },
+  sad: { y: [0, 2, 0], rotate: [0, -3, 0], scale: [1, 0.92, 1] },
+  surprised: { y: [0, -6, 0], rotate: [0, 5, -5, 0], scale: [1, 1.15, 1] },
+};
+
+const moodTransitions: Record<CompanionMood, object> = {
+  idle: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+  celebrate: { duration: 0.8, repeat: 3, ease: "easeOut" },
+  sad: { duration: 2, repeat: 2, ease: "easeInOut" },
+  surprised: { duration: 0.5, repeat: 1, ease: [0.34, 1.56, 0.64, 1] },
+};
+
+export const CompanionAvatars = ({ size = "xs", className = "", mood = "idle" }: CompanionAvatarsProps) => {
   const companions = [
     { emoji: "🦊", color: "--accent" },
     { emoji: "🐛", color: "--grass" },
@@ -110,19 +128,31 @@ export const CompanionAvatars = ({ size = "xs", className = "" }: CompanionAvata
     <div className={`flex items-center -space-x-2 ${className}`}>
       {companions.map((c, i) => (
         <motion.div
-          key={i}
+          key={`${i}-${mood}`}
           className="rounded-full flex items-center justify-center"
           style={{
             width: dim,
             height: dim,
-            background: `hsl(var(${c.color}) / 0.15)`,
-            border: `1.5px solid hsl(var(--border))`,
+            background: mood === "celebrate"
+              ? `hsl(var(${c.color}) / 0.3)`
+              : `hsl(var(${c.color}) / 0.15)`,
+            border: mood === "celebrate"
+              ? `1.5px solid hsl(var(${c.color}) / 0.5)`
+              : `1.5px solid hsl(var(--border))`,
             fontSize: size === "xs" ? 12 : 15,
             zIndex: 3 - i,
+            transition: "background 0.3s, border-color 0.3s",
           }}
           initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.1 * i, type: "spring", stiffness: 200 }}
+          animate={{
+            opacity: 1,
+            x: 0,
+            ...moodAnimations[mood],
+          }}
+          transition={{
+            ...moodTransitions[mood],
+            delay: i * 0.08,
+          }}
           whileHover={{ scale: 1.2, zIndex: 10 }}
         >
           {c.emoji}

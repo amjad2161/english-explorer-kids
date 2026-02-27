@@ -17,6 +17,7 @@ import { getSmartRecommendations, getMotivationalMessage, Recommendation } from 
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 import { Zap, Trophy, ArrowRight, Map, Star, Sparkles, BookOpen, Shield } from "lucide-react";
 import UserAvatar, { CompanionAvatars } from "@/components/UserAvatar";
+import AITeacherVideo from "@/components/AITeacherVideo";
 
 /* ─── Animation variants ─── */
 const container = {
@@ -563,6 +564,13 @@ const Index = () => {
               />
             ))}
           </div>
+        </AnimatedSection>
+
+        <ChalkDivider />
+
+        {/* ═══ AI TEACHER VIDEO ═══ */}
+        <AnimatedSection delay={0.1}>
+          <AITeacherVideo />
         </AnimatedSection>
 
         {/* ═══ CTA BUTTONS ═══ */}

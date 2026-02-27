@@ -2,7 +2,14 @@ import { getAllWords, wordCategories, WordCard, QuizQuestion } from "@/data/lear
 import { Language } from "@/lib/i18n";
 import { getAdaptiveQuizParams, getWeakWords } from "@/lib/adaptiveDifficulty";
 
-const shuffle = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
+const shuffle = <T,>(arr: T[]): T[] => {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
 const pick = <T,>(arr: T[], n: number): T[] => shuffle(arr).slice(0, n);
 const randItem = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 

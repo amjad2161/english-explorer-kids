@@ -1,9 +1,11 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useLanguage } from "@/lib/i18n";
 import { playCorrectSound, playWrongSound, playComboSound, playVictoryFanfare } from "@/lib/sounds";
 import { updateDailyProgress } from "@/lib/xp";
 import { trackGamePlayed } from "@/lib/statsTracker";
+import { saveStageProgress } from "@/lib/levels";
 import StarRating from "@/components/StarRating";
 import Confetti from "@/components/Confetti";
 import StreakCounter from "@/components/StreakCounter";
@@ -18,6 +20,7 @@ import BackToLevels from "@/components/BackToLevels";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
 import { Zap, Trophy, RotateCcw, Lightbulb } from "lucide-react";
 import UserAvatar, { CompanionAvatars } from "@/components/UserAvatar";
+import { useOwlEncouragement } from "@/hooks/useOwlEncouragement";
 
 /* ─── Pattern Types ─── */
 type PatternType = "letter-sequence" | "number-sequence" | "shape-pattern" | "mirror-pattern" | "color-word" | "analogy" | "sentence-completion" | "odd-letter-out";
@@ -375,6 +378,8 @@ const PatternPuzzle = () => {
   const { t, lang, dir } = useLanguage();
   const adaptive = useAgeAdaptive();
   const TOTAL_ROUNDS = 10;
+  const [searchParams] = useSearchParams();
+  const stageId = searchParams.get("stage");
 
   const [puzzles, setPuzzles] = useState<Puzzle[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -392,6 +397,7 @@ const PatternPuzzle = () => {
   const [xpAmount, setXpAmount] = useState(0);
   const [owlMood, setOwlMood] = useState<"idle" | "celebrate" | "sad" | "surprised">("idle");
   const { popups, addPopup } = useScorePopups();
+  const { speech, triggerByMood } = useOwlEncouragement();
 
   useEffect(() => {
     setPuzzles(generatePuzzles(TOTAL_ROUNDS));
@@ -413,6 +419,7 @@ const PatternPuzzle = () => {
       setScore(s => s + points);
       setStreak(newStreak);
       setOwlMood("surprised");
+      triggerByMood("surprised", newStreak);
       setBestStreak(b => Math.max(b, newStreak));
       if (newStreak >= 3) {
         playComboSound(newStreak);
@@ -428,6 +435,7 @@ const PatternPuzzle = () => {
       setResult("wrong");
       setStreak(0);
       setOwlMood("sad");
+      triggerByMood("sad");
       playWrongSound();
     }
 
@@ -441,6 +449,7 @@ const PatternPuzzle = () => {
     if (currentIndex + 1 >= puzzles.length) {
       setFinished(true);
       setOwlMood("celebrate");
+      triggerByMood("celebrate");
       playVictoryFanfare();
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 100);
@@ -448,8 +457,10 @@ const PatternPuzzle = () => {
       setXpAmount(xp);
       setShowXP(true);
       const correctCount = Math.round(score / 20);
+      const finalStars = Math.ceil((score / (TOTAL_ROUNDS * 30)) * 5);
       trackGamePlayed("pattern", correctCount, TOTAL_ROUNDS - correctCount, xp);
       updateDailyProgress("pattern");
+      if (stageId) saveStageProgress(stageId, Math.min(finalStars, 5));
     } else {
       setCurrentIndex(i => i + 1);
       setSelected(null);
@@ -504,13 +515,13 @@ const PatternPuzzle = () => {
           className="text-center mb-6"
         >
           <div className="flex items-center justify-center gap-3 mb-2">
-            <Interactive3DMascot mood={owlMood} size="sm" />
+            <Interactive3DMascot mood={owlMood} size="sm" showSpeechBubble={speech || undefined} />
             <UserAvatar size="md" showOwl />
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gradient mb-1">
             {lang === "he" ? "🧩 חידת דפוסים" : lang === "ar" ? "🧩 لغز الأنماط" : "🧩 Pattern Puzzle"}
           </h1>
-          <CompanionAvatars size="xs" className="justify-center mt-2" />
+          <CompanionAvatars size="xs" className="justify-center mt-2" mood={owlMood} />
           <p className="text-muted-foreground font-body text-sm sm:text-base">
             {lang === "he" ? "מצא את הדפוס והשלם את הסדרה!" : lang === "ar" ? "اكتشف النمط وأكمل السلسلة!" : "Find the pattern and complete the sequence!"}
           </p>

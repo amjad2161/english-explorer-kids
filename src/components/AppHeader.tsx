@@ -7,7 +7,7 @@ import { getUnlockedAchievements } from "@/lib/achievements";
 import { getXP, getLevel } from "@/lib/xp";
 import { useLanguage, Language } from "@/lib/i18n";
 import { useState, useEffect, useRef, useCallback } from "react";
-import owlPixar from "@/assets/owl-pixar.png";
+import CharacterCanvas from "@/components/character/CharacterCanvas";
 import { getProfile } from "@/lib/ageProfile";
 import UserAvatar from "@/components/UserAvatar";
 import {
@@ -118,6 +118,7 @@ const AppHeader = () => {
     { path: "/spelling", label: t("nav.spelling"), icon: "🐝", mobileOnly: true },
     { path: "/scramble", label: t("nav.scramble"), icon: "🔀", mobileOnly: true },
     { path: "/hangman", label: t("nav.hangman"), icon: "🎭", mobileOnly: true },
+    { path: "/pattern", label: t("nav.pattern"), icon: "🔮", mobileOnly: true },
     { path: "/achievements", label: "🏅", icon: "🏅", mobileOnly: true },
     { path: "/stats", label: "📊", icon: "📊", mobileOnly: true },
     { path: "/report", label: "📋", icon: "📋", mobileOnly: true },
@@ -191,7 +192,7 @@ const AppHeader = () => {
         >
           <ChalkDustBurst active={logoHovered} />
           <div className="relative">
-            <img src={owlPixar} alt="English Fun" className="w-8 h-8 object-contain rounded-full ring-2 ring-grass/30" />
+            <CharacterCanvas mood="idle" animationKey={0} width={32} height={32} style={{ borderRadius: "50%", border: "2px solid hsl(var(--grass) / 0.3)" }} />
             {/* Tiny chalk circle decoration */}
             <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-grass border border-board" />
           </div>
