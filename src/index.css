@@ -522,10 +522,10 @@
   }
 
   @keyframes rainbow-border {
-    0% { border-color: hsl(142, 60%, 45%); }
+    0% { border-color: hsl(38, 90%, 55%); }
     33% { border-color: hsl(210, 70%, 52%); }
-    66% { border-color: hsl(25, 95%, 53%); }
-    100% { border-color: hsl(142, 60%, 45%); }
+    66% { border-color: hsl(330, 70%, 55%); }
+    100% { border-color: hsl(38, 90%, 55%); }
   }
 
   @keyframes breathe {

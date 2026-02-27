@@ -26,8 +26,8 @@ const AchievementsPage = () => {
   };
 
   const rareGlow: Record<string, string> = {
-    gold: "0 0 20px hsl(45, 100%, 55%, 0.25), 0 4px 15px hsl(45, 100%, 55%, 0.1)",
-    diamond: "0 0 20px hsl(195, 85%, 55%, 0.25), 0 4px 15px hsl(195, 85%, 55%, 0.1)",
+    gold: "0 0 20px hsl(var(--sunshine) / 0.25), 0 4px 15px hsl(var(--sunshine) / 0.1)",
+    diamond: "0 0 20px hsl(var(--sky) / 0.25), 0 4px 15px hsl(var(--sky) / 0.1)",
   };
 
   const handleLockedClick = (achievement: Achievement) => {
@@ -229,8 +229,8 @@ const AchievementsPage = () => {
                         <motion.div
                           className={`absolute inset-0 bg-gradient-to-r ${
                             tier === "diamond"
-                              ? "from-transparent via-cyan-300/15 to-transparent"
-                              : "from-transparent via-yellow-300/15 to-transparent"
+                              ? "from-transparent via-sky/15 to-transparent"
+                              : "from-transparent via-sunshine/15 to-transparent"
                           } pointer-events-none`}
                           animate={{ x: ["-100%", "200%"] }}
                           transition={{ duration: 3, repeat: Infinity, repeatDelay: 2, ease: "easeInOut" }}
@@ -264,8 +264,8 @@ const AchievementsPage = () => {
                                 key={j}
                                 className="absolute w-1.5 h-1.5 rounded-full pointer-events-none"
                                 style={{
-                                  background: tier === "diamond" ? "hsl(195, 85%, 65%)" : "hsl(45, 100%, 65%)",
-                                  boxShadow: `0 0 6px ${tier === "diamond" ? "hsl(195, 85%, 65%)" : "hsl(45, 100%, 65%)"}`,
+                                  background: tier === "diamond" ? "hsl(var(--sky))" : "hsl(var(--sunshine))",
+                                  boxShadow: `0 0 6px ${tier === "diamond" ? "hsl(var(--sky))" : "hsl(var(--sunshine))"}`,
                                 }}
                                 animate={{
                                   x: [
