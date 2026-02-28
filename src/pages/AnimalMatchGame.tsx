@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { useLanguage } from "@/lib/i18n";
-import { playClickSound } from "@/lib/sounds";
+import { playClickSound, playAnimalSound, playMatchSound, type AnimalSoundType } from "@/lib/sounds";
 import { dispatchCharacterEvent } from "@/lib/characterStore";
 import { addXP } from "@/lib/xp";
 import ClassroomBackground from "@/components/ClassroomBackground";
@@ -13,33 +13,33 @@ import Confetti from "@/components/Confetti";
 import { Star, RotateCcw, Sparkles, ArrowRight } from "lucide-react";
 
 /* ─── Animal pairs ─── */
-const allPairs = [
-  { letter: "A", animal: "Alligator", emoji: "🐊" },
-  { letter: "B", animal: "Bear", emoji: "🐻" },
-  { letter: "C", animal: "Cat", emoji: "🐱" },
-  { letter: "D", animal: "Dog", emoji: "🐶" },
-  { letter: "E", animal: "Elephant", emoji: "🐘" },
-  { letter: "F", animal: "Fox", emoji: "🦊" },
-  { letter: "G", animal: "Giraffe", emoji: "🦒" },
-  { letter: "H", animal: "Hippo", emoji: "🦛" },
-  { letter: "I", animal: "Iguana", emoji: "🦎" },
-  { letter: "J", animal: "Jaguar", emoji: "🐆" },
-  { letter: "K", animal: "Kangaroo", emoji: "🦘" },
-  { letter: "L", animal: "Lion", emoji: "🦁" },
-  { letter: "M", animal: "Monkey", emoji: "🐒" },
-  { letter: "N", animal: "Newt", emoji: "🦎" },
-  { letter: "O", animal: "Owl", emoji: "🦉" },
-  { letter: "P", animal: "Penguin", emoji: "🐧" },
-  { letter: "Q", animal: "Quail", emoji: "🐦" },
-  { letter: "R", animal: "Rabbit", emoji: "🐰" },
-  { letter: "S", animal: "Snake", emoji: "🐍" },
-  { letter: "T", animal: "Tiger", emoji: "🐯" },
-  { letter: "U", animal: "Unicorn", emoji: "🦄" },
-  { letter: "V", animal: "Vulture", emoji: "🦅" },
-  { letter: "W", animal: "Whale", emoji: "🐋" },
-  { letter: "X", animal: "X-ray Fish", emoji: "🐠" },
-  { letter: "Y", animal: "Yak", emoji: "🐂" },
-  { letter: "Z", animal: "Zebra", emoji: "🦓" },
+const allPairs: { letter: string; animal: string; emoji: string; soundKey: AnimalSoundType }[] = [
+  { letter: "A", animal: "Alligator", emoji: "🐊", soundKey: "alligator" },
+  { letter: "B", animal: "Bear", emoji: "🐻", soundKey: "bear" },
+  { letter: "C", animal: "Cat", emoji: "🐱", soundKey: "cat" },
+  { letter: "D", animal: "Dog", emoji: "🐶", soundKey: "dog" },
+  { letter: "E", animal: "Elephant", emoji: "🐘", soundKey: "elephant" },
+  { letter: "F", animal: "Fox", emoji: "🦊", soundKey: "fox" },
+  { letter: "G", animal: "Giraffe", emoji: "🦒", soundKey: "giraffe" },
+  { letter: "H", animal: "Hippo", emoji: "🦛", soundKey: "hippo" },
+  { letter: "I", animal: "Iguana", emoji: "🦎", soundKey: "iguana" },
+  { letter: "J", animal: "Jaguar", emoji: "🐆", soundKey: "jaguar" },
+  { letter: "K", animal: "Kangaroo", emoji: "🦘", soundKey: "kangaroo" },
+  { letter: "L", animal: "Lion", emoji: "🦁", soundKey: "lion" },
+  { letter: "M", animal: "Monkey", emoji: "🐒", soundKey: "monkey" },
+  { letter: "N", animal: "Newt", emoji: "🦎", soundKey: "newt" },
+  { letter: "O", animal: "Owl", emoji: "🦉", soundKey: "owl" },
+  { letter: "P", animal: "Penguin", emoji: "🐧", soundKey: "penguin" },
+  { letter: "Q", animal: "Quail", emoji: "🐦", soundKey: "quail" },
+  { letter: "R", animal: "Rabbit", emoji: "🐰", soundKey: "rabbit" },
+  { letter: "S", animal: "Snake", emoji: "🐍", soundKey: "snake" },
+  { letter: "T", animal: "Tiger", emoji: "🐯", soundKey: "tiger" },
+  { letter: "U", animal: "Unicorn", emoji: "🦄", soundKey: "unicorn" },
+  { letter: "V", animal: "Vulture", emoji: "🦅", soundKey: "vulture" },
+  { letter: "W", animal: "Whale", emoji: "🐋", soundKey: "whale" },
+  { letter: "X", animal: "X-ray Fish", emoji: "🐠", soundKey: "xrayfish" },
+  { letter: "Y", animal: "Yak", emoji: "🐂", soundKey: "yak" },
+  { letter: "Z", animal: "Zebra", emoji: "🦓", soundKey: "zebra" },
 ];
 
 type GamePhase = "playing" | "complete";
@@ -84,7 +84,10 @@ const AnimalMatchGame = () => {
     playClickSound();
 
     if (selectedLetter === letter) {
-      // Correct match
+      // Correct match — play the animal's sound!
+      const matchedAnimal = currentPairs.find(p => p.letter === letter);
+      if (matchedAnimal) playAnimalSound(matchedAnimal.soundKey);
+      playMatchSound();
       const newMatched = new Set(matchedPairs);
       newMatched.add(letter);
       setMatchedPairs(newMatched);

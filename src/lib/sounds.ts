@@ -927,3 +927,325 @@ export const playGameEntrancePowerUp = () => {
   // Phase 5: Final shimmer chord (1.0s)
   playChord([1047, 1319, 1568, 2093], t + 1.0, 0.4, 0.04);
 };
+
+// ─── ABC Animal Character Sounds ───
+// Synthesized sounds inspired by the ABC Animals Song video
+
+export type AnimalSoundType =
+  | 'alligator' | 'bear' | 'cat' | 'dog' | 'elephant'
+  | 'fox' | 'giraffe' | 'hippo' | 'iguana' | 'jaguar'
+  | 'kangaroo' | 'lion' | 'monkey' | 'newt' | 'owl'
+  | 'penguin' | 'quail' | 'rabbit' | 'snake' | 'tiger'
+  | 'unicorn' | 'vulture' | 'whale' | 'xrayfish' | 'yak' | 'zebra';
+
+/**
+ * 🐾 Play a synthesized animal sound effect.
+ * Each animal has a unique, kid-friendly cartoon sound.
+ */
+export const playAnimalSound = (animal: AnimalSoundType) => {
+  ensureContext();
+  if (!audioCtx || !isSoundEnabled()) return;
+  const t = audioCtx.currentTime;
+
+  switch (animal) {
+    case 'alligator': {
+      // Chomp chomp — snapping jaw sounds
+      playTone(150, t, 0.06, 0.2, 'square');
+      playTone(120, t + 0.03, 0.08, 0.15, 'sawtooth');
+      playTone(160, t + 0.18, 0.06, 0.18, 'square');
+      playTone(100, t + 0.21, 0.08, 0.12, 'sawtooth');
+      break;
+    }
+    case 'bear': {
+      // Deep stomp — low rumble with impact
+      playTone(80, t, 0.15, 0.2, 'sine');
+      playTone(60, t + 0.02, 0.2, 0.15, 'triangle');
+      playTone(90, t + 0.25, 0.15, 0.18, 'sine');
+      playTone(55, t + 0.27, 0.2, 0.12, 'triangle');
+      break;
+    }
+    case 'cat': {
+      // Purring — warm oscillating hum
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      const lfo = audioCtx.createOscillator();
+      const lfoGain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(180, t);
+      lfo.type = 'sine';
+      lfo.frequency.setValueAtTime(25, t); // purr vibration
+      lfoGain.gain.setValueAtTime(40, t);
+      lfo.connect(lfoGain);
+      lfoGain.connect(osc.frequency);
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.1, t + 0.05);
+      gain.gain.setValueAtTime(0.1, t + 0.3);
+      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      lfo.start(t);
+      osc.start(t);
+      lfo.stop(t + 0.5);
+      osc.stop(t + 0.55);
+      break;
+    }
+    case 'dog': {
+      // Woof woof — barky bursts
+      playTone(300, t, 0.08, 0.15, 'sawtooth');
+      playTone(250, t + 0.04, 0.06, 0.1, 'triangle');
+      playTone(320, t + 0.2, 0.08, 0.15, 'sawtooth');
+      playTone(260, t + 0.24, 0.06, 0.1, 'triangle');
+      break;
+    }
+    case 'elephant': {
+      // Trumpet toot — rising brass
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(200, t);
+      osc.frequency.exponentialRampToValueAtTime(500, t + 0.15);
+      osc.frequency.setValueAtTime(500, t + 0.25);
+      osc.frequency.exponentialRampToValueAtTime(350, t + 0.45);
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.12, t + 0.05);
+      gain.gain.setValueAtTime(0.12, t + 0.3);
+      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + 0.55);
+      break;
+    }
+    case 'fox': {
+      // Quick yip-yip (reuse companion fox but shorter)
+      playTone(900, t, 0.04, 0.12, 'triangle');
+      playTone(1200, t + 0.06, 0.04, 0.14, 'triangle');
+      playTone(1500, t + 0.12, 0.04, 0.1, 'triangle');
+      break;
+    }
+    case 'giraffe': {
+      // Gentle high hum — tall and graceful
+      playTone(500, t, 0.12, 0.08, 'sine');
+      playTone(600, t + 0.1, 0.12, 0.1, 'sine');
+      playTone(750, t + 0.2, 0.15, 0.08, 'sine');
+      playSparkleTrail(t + 0.3, 2, 0.02);
+      break;
+    }
+    case 'hippo': {
+      // Big belly grunt — very deep
+      playTone(70, t, 0.2, 0.18, 'sine');
+      playTone(90, t + 0.1, 0.15, 0.12, 'triangle');
+      playTone(65, t + 0.25, 0.2, 0.15, 'sine');
+      break;
+    }
+    case 'iguana': {
+      // Soft scurrying clicks
+      for (let i = 0; i < 5; i++) {
+        playTone(1500 + i * 100, t + i * 0.04, 0.02, 0.06, 'triangle');
+      }
+      break;
+    }
+    case 'jaguar': {
+      // Fast whoosh + growl
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(150, t);
+      osc.frequency.exponentialRampToValueAtTime(400, t + 0.1);
+      osc.frequency.exponentialRampToValueAtTime(120, t + 0.3);
+      gain.gain.setValueAtTime(0.1, t);
+      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.35);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + 0.35);
+      break;
+    }
+    case 'kangaroo': {
+      // Boing boing — bouncy springs
+      playBoing(600, t, 0.12);
+      playBoing(800, t + 0.2, 0.1);
+      playBoing(1000, t + 0.35, 0.08);
+      break;
+    }
+    case 'lion': {
+      // ROAR — big, dramatic, but friendly
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      const filter = audioCtx.createBiquadFilter();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(100, t);
+      osc.frequency.exponentialRampToValueAtTime(250, t + 0.1);
+      osc.frequency.setValueAtTime(250, t + 0.2);
+      osc.frequency.exponentialRampToValueAtTime(80, t + 0.5);
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(600, t);
+      filter.frequency.linearRampToValueAtTime(1200, t + 0.15);
+      filter.frequency.linearRampToValueAtTime(400, t + 0.5);
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.15, t + 0.05);
+      gain.gain.setValueAtTime(0.15, t + 0.2);
+      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.55);
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + 0.6);
+      break;
+    }
+    case 'monkey': {
+      // Playful ooh-ooh — ascending chirps
+      playTone(500, t, 0.06, 0.1, 'triangle');
+      playTone(700, t + 0.08, 0.06, 0.12, 'triangle');
+      playTone(500, t + 0.16, 0.06, 0.1, 'triangle');
+      playTone(800, t + 0.24, 0.08, 0.12, 'triangle');
+      break;
+    }
+    case 'newt': {
+      // Tiny soft crawling — faint clicks
+      for (let i = 0; i < 4; i++) {
+        playTone(1200 + i * 80, t + i * 0.05, 0.02, 0.04, 'sine');
+      }
+      break;
+    }
+    case 'owl': {
+      // Hoo-hoo — classic owl call
+      playTone(520, t, 0.12, 0.12, 'triangle');
+      playTone(420, t + 0.15, 0.1, 0.1, 'triangle');
+      playTone(520, t + 0.3, 0.12, 0.1, 'triangle');
+      break;
+    }
+    case 'penguin': {
+      // Waddling honk — cute nasal sound
+      playTone(400, t, 0.08, 0.1, 'square');
+      playTone(450, t + 0.08, 0.06, 0.08, 'square');
+      playTone(380, t + 0.18, 0.08, 0.1, 'square');
+      break;
+    }
+    case 'quail': {
+      // Quick tweet-tweet — high bird chirp
+      playTone(1400, t, 0.04, 0.1, 'sine');
+      playTone(1600, t + 0.06, 0.04, 0.12, 'sine');
+      playTone(1400, t + 0.14, 0.04, 0.08, 'sine');
+      break;
+    }
+    case 'rabbit': {
+      // Bouncy thump — soft impacts
+      playBoing(500, t, 0.1);
+      playBoing(600, t + 0.15, 0.08);
+      break;
+    }
+    case 'snake': {
+      // Ssssss — filtered noise hiss
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      const filter = audioCtx.createBiquadFilter();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(3000, t);
+      filter.type = 'highpass';
+      filter.frequency.setValueAtTime(2000, t);
+      filter.Q.setValueAtTime(2, t);
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.06, t + 0.05);
+      gain.gain.setValueAtTime(0.06, t + 0.2);
+      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.4);
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + 0.45);
+      break;
+    }
+    case 'tiger': {
+      // Fierce but friendly roar — similar to lion but higher
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(150, t);
+      osc.frequency.exponentialRampToValueAtTime(350, t + 0.08);
+      osc.frequency.exponentialRampToValueAtTime(120, t + 0.35);
+      gain.gain.setValueAtTime(0.12, t);
+      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.4);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + 0.4);
+      break;
+    }
+    case 'unicorn': {
+      // Magical sparkle — ascending with shimmer
+      playTone(600, t, 0.1, 0.08, 'sine');
+      playTone(800, t + 0.08, 0.1, 0.1, 'sine');
+      playTone(1000, t + 0.16, 0.1, 0.08, 'sine');
+      playTone(1200, t + 0.24, 0.12, 0.06, 'sine');
+      playSparkleTrail(t + 0.3, 6, 0.04);
+      playChord([800, 1000, 1200], t + 0.35, 0.3, 0.04);
+      break;
+    }
+    case 'vulture': {
+      // Soaring wind — airy swoosh
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(300, t);
+      osc.frequency.linearRampToValueAtTime(600, t + 0.2);
+      osc.frequency.linearRampToValueAtTime(350, t + 0.4);
+      gain.gain.setValueAtTime(0.06, t);
+      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.45);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + 0.45);
+      break;
+    }
+    case 'whale': {
+      // Deep ocean song — low with wobble
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      const lfo = audioCtx.createOscillator();
+      const lfoGain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(120, t);
+      osc.frequency.linearRampToValueAtTime(180, t + 0.3);
+      osc.frequency.linearRampToValueAtTime(100, t + 0.6);
+      lfo.type = 'sine';
+      lfo.frequency.setValueAtTime(3, t);
+      lfoGain.gain.setValueAtTime(20, t);
+      lfo.connect(lfoGain);
+      lfoGain.connect(osc.frequency);
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.12, t + 0.08);
+      gain.gain.setValueAtTime(0.12, t + 0.4);
+      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.65);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      lfo.start(t);
+      osc.start(t);
+      lfo.stop(t + 0.65);
+      osc.stop(t + 0.7);
+      break;
+    }
+    case 'xrayfish': {
+      // Bubbly swim — quick ascending pops
+      for (let i = 0; i < 5; i++) {
+        playBoing(600 + i * 150, t + i * 0.06, 0.05);
+      }
+      break;
+    }
+    case 'yak': {
+      // Low moo — warm and rumbly
+      playTone(130, t, 0.2, 0.12, 'sine');
+      playTone(150, t + 0.1, 0.2, 0.1, 'triangle');
+      playTone(120, t + 0.25, 0.15, 0.08, 'sine');
+      break;
+    }
+    case 'zebra': {
+      // Galloping hooves — rhythmic clips
+      for (let i = 0; i < 6; i++) {
+        playTone(800 + (i % 2) * 200, t + i * 0.08, 0.03, 0.1, 'triangle');
+        playTone(400, t + i * 0.08, 0.02, 0.06, 'square');
+      }
+      break;
+    }
+  }
+};
