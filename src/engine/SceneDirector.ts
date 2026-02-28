@@ -71,6 +71,7 @@ const ROUTE_TO_STAGE: Record<string, StageId> = {
   "/settings": "classroom",
   "/report": "classroom",
   "/parent": "classroom",
+  "/lesson": "classroom",
 };
 
 interface SceneDirectorState {
