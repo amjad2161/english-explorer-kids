@@ -19,7 +19,7 @@ const EraserOverlay = ({ active, onDone }: { active: boolean; onDone: () => void
         className="fixed inset-0 z-[9999] pointer-events-none"
         initial={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
+        transition={{ duration: 0.2, delay: 0.05 }}
       >
         {/* Chalk dust cloud that follows the eraser */}
         <motion.div

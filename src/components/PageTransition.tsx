@@ -14,7 +14,7 @@ const pageVariants = {
   },
   exit: { 
     opacity: 0, y: -10, scale: 0.99,
-    transition: { duration: 0.3 }
+    transition: { duration: 0.2 }
   },
 };
 
