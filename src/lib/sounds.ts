@@ -413,7 +413,50 @@ export const playMatchSound = () => {
   playSparkleTrail(t + 0.25, 3, 0.03);
 };
 
-// ⏳ Countdown beep - urgency that's exciting, not scary
+// 🪵 Wood button press — deep hollow knock with resonance
+export const playWoodButtonSound = () => {
+  ensureContext(); if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  // Deep wood knock
+  playTone(180, t, 0.08, 0.18, 'triangle');
+  playTone(120, t + 0.01, 0.12, 0.12, 'sine');
+  // Wood resonance
+  playTone(350, t + 0.02, 0.06, 0.06, 'sine');
+  // Creak tail
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(90, t + 0.08);
+  osc.frequency.exponentialRampToValueAtTime(60, t + 0.2);
+  gain.gain.setValueAtTime(0.03, t + 0.08);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+  osc.start(t + 0.08);
+  osc.stop(t + 0.2);
+};
+
+// 🔤 Letter tile tap — bright ceramic tap with pitch based on letter
+export const playTileSound = (index: number = 0) => {
+  ensureContext(); if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  const freq = 600 + index * 80;
+  // Ceramic "tink"
+  playTone(freq, t, 0.06, 0.12, 'triangle');
+  playTone(freq * 2.2, t + 0.008, 0.04, 0.05, 'sine');
+  // Subtle bounce resonance
+  playTone(freq * 0.5, t + 0.03, 0.08, 0.04, 'sine');
+};
+
+// 🪨 Stone/score click — heavy thud
+export const playStoneSound = () => {
+  ensureContext(); if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  playTone(100, t, 0.1, 0.15, 'triangle');
+  playTone(200, t + 0.015, 0.06, 0.08, 'sine');
+  playTone(80, t + 0.04, 0.12, 0.06, 'sine');
+};
+
 export const playCountdownBeep = (remaining: number) => {
   ensureContext(); if (!audioCtx) return;
   const t = audioCtx.currentTime;

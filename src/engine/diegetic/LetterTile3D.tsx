@@ -2,9 +2,10 @@ import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Text } from "@react-three/drei";
 import * as THREE from "three";
+import { playTileSound } from "@/lib/sounds";
 
 /**
- * LetterTile3D — a 3D letter block with hover tilt, press squash, and pop animation.
+ * LetterTile3D — a 3D letter block with hover tilt, press squash, bounce, and pop animation.
  * Used for alphabet displays, spelling games, etc.
  */
 interface LetterTile3DProps {
@@ -15,7 +16,9 @@ interface LetterTile3DProps {
   textColor?: string;
   onClick?: () => void;
   active?: boolean;
-  correct?: boolean | null; // null=neutral, true=green flash, false=red shake
+  correct?: boolean | null;
+  /** Index for pitch variation on click sound */
+  index?: number;
 }
 
 const TILE_COLORS = {
@@ -34,6 +37,7 @@ const LetterTile3D = ({
   onClick,
   active = false,
   correct = null,
+  index = 0,
 }: LetterTile3DProps) => {
   const groupRef = useRef<THREE.Group>(null);
   const meshRef = useRef<THREE.Mesh>(null);
@@ -42,6 +46,7 @@ const LetterTile3D = ({
   const pressAnim = useRef(0);
   const shakeAnim = useRef(0);
   const popAnim = useRef(0);
+  const bounceTimer = useRef(0);
 
   // Determine tile color
   const tileColor = color
@@ -56,6 +61,7 @@ const LetterTile3D = ({
 
   useFrame((_, delta) => {
     if (!groupRef.current) return;
+    const t = performance.now() * 0.001;
 
     // Press animation (squash & stretch)
     if (pressing) {
@@ -66,22 +72,35 @@ const LetterTile3D = ({
       }
     }
     const squash = pressing ? Math.sin(pressAnim.current) * 0.15 : 0;
-    groupRef.current.scale.y = 1 - squash;
+
+    // Bounce animation after click — damped spring
+    let bounceY = 0;
+    if (bounceTimer.current > 0) {
+      bounceTimer.current -= delta;
+      const bt = Math.max(0, bounceTimer.current);
+      bounceY = Math.sin(bt * Math.PI * 5) * bt * 0.6; // Damped bounce
+    }
+
+    groupRef.current.scale.y = 1 - squash + (bounceY > 0 ? bounceY * 0.1 : 0);
     groupRef.current.scale.x = 1 + squash * 0.5;
     groupRef.current.scale.z = 1 + squash * 0.5;
 
-    // Hover lift
+    // Hover lift + bounce offset
     const targetY = hovered ? position[1] + 0.08 : position[1];
-    groupRef.current.position.y += (targetY - groupRef.current.position.y) * (1 - Math.exp(-10 * delta));
+    groupRef.current.position.y +=
+      (targetY + bounceY * 0.15 - groupRef.current.position.y) *
+      (1 - Math.exp(-10 * delta));
 
     // Hover tilt
     const targetRotX = hovered ? -0.1 : 0;
-    groupRef.current.rotation.x += (targetRotX - groupRef.current.rotation.x) * (1 - Math.exp(-8 * delta));
+    groupRef.current.rotation.x +=
+      (targetRotX - groupRef.current.rotation.x) * (1 - Math.exp(-8 * delta));
 
     // Wrong answer shake
     if (correct === false) {
       shakeAnim.current += delta * 30;
-      groupRef.current.rotation.z = Math.sin(shakeAnim.current) * 0.1 * Math.exp(-shakeAnim.current * 0.1);
+      groupRef.current.rotation.z =
+        Math.sin(shakeAnim.current) * 0.1 * Math.exp(-shakeAnim.current * 0.1);
     } else {
       shakeAnim.current = 0;
       groupRef.current.rotation.z *= 0.9;
@@ -90,7 +109,8 @@ const LetterTile3D = ({
     // Correct answer pop
     if (correct === true) {
       popAnim.current += delta * 8;
-      const pop = Math.sin(popAnim.current) * 0.1 * Math.exp(-popAnim.current * 0.3);
+      const pop =
+        Math.sin(popAnim.current) * 0.1 * Math.exp(-popAnim.current * 0.3);
       groupRef.current.scale.x = 1 + pop;
       groupRef.current.scale.y = 1 + pop;
     } else {
@@ -101,6 +121,8 @@ const LetterTile3D = ({
   const handleClick = () => {
     setPressing(true);
     pressAnim.current = 0;
+    bounceTimer.current = 0.5; // Trigger bounce
+    playTileSound(index);
     onClick?.();
   };
 
@@ -108,14 +130,29 @@ const LetterTile3D = ({
     <group
       ref={groupRef}
       position={position}
-      onPointerEnter={(e) => { e.stopPropagation(); setHovered(true); document.body.style.cursor = "pointer"; }}
-      onPointerLeave={() => { setHovered(false); document.body.style.cursor = "default"; }}
-      onClick={(e) => { e.stopPropagation(); handleClick(); }}
+      onPointerEnter={(e) => {
+        e.stopPropagation();
+        setHovered(true);
+        document.body.style.cursor = "pointer";
+      }}
+      onPointerLeave={() => {
+        setHovered(false);
+        document.body.style.cursor = "default";
+      }}
+      onClick={(e) => {
+        e.stopPropagation();
+        handleClick();
+      }}
     >
       {/* Shadow */}
       <mesh position={[0, -0.02, -0.03]}>
         <boxGeometry args={[size, size, size * 0.3]} />
-        <meshStandardMaterial color="#8d6e63" roughness={0.95} transparent opacity={0.3} />
+        <meshStandardMaterial
+          color="#8d6e63"
+          roughness={0.95}
+          transparent
+          opacity={0.3}
+        />
       </mesh>
 
       {/* Tile body */}
@@ -128,10 +165,31 @@ const LetterTile3D = ({
         />
       </mesh>
 
+      {/* Surface texture — subtle cross-hatch for ceramic feel */}
+      {[0.15, -0.15].map((offset, i) => (
+        <mesh
+          key={`tex-${i}`}
+          position={[0, offset * size, size * 0.126]}
+        >
+          <boxGeometry args={[size * 0.85, 0.008, 0.002]} />
+          <meshStandardMaterial
+            color="#d4c8a8"
+            roughness={0.8}
+            transparent
+            opacity={0.2}
+          />
+        </mesh>
+      ))}
+
       {/* Beveled edge highlight */}
       <mesh position={[0, size * 0.48, size * 0.08]}>
         <boxGeometry args={[size * 0.9, 0.02, size * 0.2]} />
-        <meshStandardMaterial color="#ffffff" transparent opacity={0.2} roughness={0.3} />
+        <meshStandardMaterial
+          color="#ffffff"
+          transparent
+          opacity={0.2}
+          roughness={0.3}
+        />
       </mesh>
 
       {/* Letter */}
@@ -153,7 +211,13 @@ const LetterTile3D = ({
           position={[0, 0, 0.5]}
           intensity={active ? 0.6 : 0.3}
           distance={1.5}
-          color={correct === true ? "#66bb6a" : correct === false ? "#ef5350" : "#ffd54f"}
+          color={
+            correct === true
+              ? "#66bb6a"
+              : correct === false
+              ? "#ef5350"
+              : "#ffd54f"
+          }
           decay={2}
         />
       )}
