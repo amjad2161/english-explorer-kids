@@ -4,4 +4,8 @@ export { useSceneDirector } from "./SceneDirector";
 export type { StageId, CameraPreset, LightingRig } from "./SceneDirector";
 export { MOTION, MOTION_BUDGET } from "./motionTokens";
 export { default as CinematicCanvas } from "./CinematicCanvas";
+export { default as CinematicCamera } from "./CinematicCamera";
+export { default as CinematicPostProcessing } from "./CinematicPostProcessing";
+export { default as SceneTransitionFade } from "./SceneTransitionFade";
+export { default as PerformanceHUD } from "./PerformanceHUD";
 export { default as ProxyCharacter3D } from "./ProxyCharacter3D";
