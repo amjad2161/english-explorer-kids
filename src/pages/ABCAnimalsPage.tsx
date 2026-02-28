@@ -2,10 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useLanguage } from "@/lib/i18n";
 import { playClickSound, playAnimalSound, speakEnglish, speakExcited, type AnimalSoundType } from "@/lib/sounds";
-import animalsGrid1 from "@/assets/animals-grid-1.png";
-import animalsGrid2 from "@/assets/animals-grid-2.png";
-import animalsGrid3 from "@/assets/animals-grid-3.png";
-import animalsGrid4 from "@/assets/animals-grid-4.png";
+import { animalImages } from "@/assets/animals";
 import { dispatchCharacterEvent } from "@/lib/characterStore";
 import ClassroomBackground from "@/components/ClassroomBackground";
 import BackToLevels from "@/components/BackToLevels";
@@ -73,13 +70,18 @@ const AnimalCard = ({ item, index, isActive, onClick }: {
       {item.letter}
     </motion.div>
 
-    {/* Emoji */}
+    {/* Animal Image */}
     <motion.div
-      className="text-3xl sm:text-4xl mb-1"
+      className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-1 rounded-full overflow-hidden"
       animate={isActive ? { y: [0, -6, 0] } : {}}
       transition={{ duration: 0.8, repeat: isActive ? Infinity : 0, repeatDelay: 0.5 }}
     >
-      {item.emoji}
+      <img
+        src={animalImages[item.soundKey]}
+        alt={item.animal}
+        className="w-full h-full object-cover"
+        loading="lazy"
+      />
     </motion.div>
 
     {/* Name */}
@@ -507,19 +509,39 @@ const ABCAnimalsPage = () => {
 
         {/* Character Gallery Banner */}
         <AnimatedSection delay={0.12} className="mb-6">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {[animalsGrid1, animalsGrid2, animalsGrid3, animalsGrid4].map((img, i) => (
+          <div className="flex flex-wrap justify-center gap-2">
+            {abcAnimals.slice(0, 13).map((item, i) => (
               <motion.div
-                key={i}
-                className="rounded-2xl overflow-hidden"
+                key={item.letter}
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden"
                 style={{
-                  border: "2px solid hsl(var(--primary) / 0.15)",
-                  boxShadow: "0 4px 16px hsl(var(--primary) / 0.08)",
+                  border: `2px solid hsl(${item.color} / 0.3)`,
+                  boxShadow: `0 2px 8px hsl(${item.color} / 0.15)`,
                 }}
-                whileHover={{ scale: 1.03, y: -2 }}
-                transition={{ type: "spring", stiffness: 300 }}
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: i * 0.05, type: "spring" }}
+                whileHover={{ scale: 1.2, y: -3, zIndex: 10 }}
               >
-                <img src={img} alt={`ABC Animals characters ${i + 1}`} className="w-full h-auto" loading="lazy" />
+                <img src={animalImages[item.soundKey]} alt={item.animal} className="w-full h-full object-cover" loading="lazy" />
+              </motion.div>
+            ))}
+          </div>
+          <div className="flex flex-wrap justify-center gap-2 mt-2">
+            {abcAnimals.slice(13).map((item, i) => (
+              <motion.div
+                key={item.letter}
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden"
+                style={{
+                  border: `2px solid hsl(${item.color} / 0.3)`,
+                  boxShadow: `0 2px 8px hsl(${item.color} / 0.15)`,
+                }}
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: (i + 13) * 0.05, type: "spring" }}
+                whileHover={{ scale: 1.2, y: -3, zIndex: 10 }}
+              >
+                <img src={animalImages[item.soundKey]} alt={item.animal} className="w-full h-full object-cover" loading="lazy" />
               </motion.div>
             ))}
           </div>
@@ -561,11 +583,15 @@ const ABCAnimalsPage = () => {
               }}
             >
               <motion.div
-                className="text-6xl sm:text-7xl mb-2"
-                animate={{ y: [0, -10, 0], rotate: [0, -5, 5, 0] }}
+                className="w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-3 rounded-full overflow-hidden"
+                style={{
+                  border: `3px solid hsl(${abcAnimals[activeIndex].color} / 0.4)`,
+                  boxShadow: `0 4px 20px hsl(${abcAnimals[activeIndex].color} / 0.2)`,
+                }}
+                animate={{ y: [0, -10, 0], rotate: [0, -3, 3, 0] }}
                 transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 1 }}
               >
-                {abcAnimals[activeIndex].emoji}
+                <img src={animalImages[abcAnimals[activeIndex].soundKey]} alt={abcAnimals[activeIndex].animal} className="w-full h-full object-cover" />
               </motion.div>
               <h3 className="font-display font-extrabold text-3xl sm:text-4xl mb-1" style={{ color: `hsl(${abcAnimals[activeIndex].color})` }}>
                 {abcAnimals[activeIndex].letter} is for {abcAnimals[activeIndex].animal}
