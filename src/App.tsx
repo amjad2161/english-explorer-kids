@@ -67,8 +67,9 @@ const AchievementWatcher = () => {
 };
 
 const AnimatedRoutes = () => {
+  const location = useLocation();
   return (
-    <Routes>
+    <Routes location={location} key={location.pathname}>
       <Route path="/" element={<PageWrapper><Index /></PageWrapper>} />
       <Route path="/alphabet" element={<PageWrapper><AlphabetPage /></PageWrapper>} />
       <Route path="/words" element={<PageWrapper><WordsPage /></PageWrapper>} />
