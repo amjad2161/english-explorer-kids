@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { useEraserTransition } from "@/components/ChalkEraserTransition";
 import { useEffect, useState, useMemo, useCallback, forwardRef } from "react";
 import { useLanguage } from "@/lib/i18n";
 import { getCurrentLevel, getTotalEarnedStars, levels, getLevelProgress } from "@/lib/levels";
@@ -281,6 +282,7 @@ ChalkDivider.displayName = "ChalkDivider";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { navigateWithEraser } = useEraserTransition();
   const { t, dir, lang } = useLanguage();
   const [totalStars, setTotalStars] = useState(0);
   const [currentLevel, setCurrentLevel] = useState(1);
@@ -457,7 +459,7 @@ const Index = () => {
 
         {/* ═══ CURRENT LEVEL — Notebook card ═══ */}
         <AnimatedSection className="max-w-lg mx-auto mb-8 sm:mb-10" delay={0.15}>
-          <Card3D onClick={() => { playClickSound(); navigate("/levels"); }}>
+          <Card3D onClick={() => { playClickSound(); navigateWithEraser("/levels"); }}>
             <NotebookCard className="cursor-pointer group">
               <div className="flex items-center gap-3 sm:gap-4">
                 <motion.div
@@ -516,7 +518,7 @@ const Index = () => {
                     initial={{ opacity: 0, x: dir === "rtl" ? 20 : -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1 + i * 0.08 }}
-                    onClick={() => { playClickSound(); navigate(rec.path); }}
+                    onClick={() => { playClickSound(); navigateWithEraser(rec.path); }}
                     className="w-full flex items-center gap-3 p-3 rounded-xl text-start transition-all duration-300 group"
                     style={{
                       background: "hsl(var(--muted) / 0.3)",
@@ -558,7 +560,7 @@ const Index = () => {
                 title={t(card.titleKey)}
                 color={card.color}
                 index={i}
-                onClick={() => { playClickSound(); navigate(card.path); }}
+                onClick={() => { playClickSound(); navigateWithEraser(card.path); }}
               />
             ))}
           </div>
@@ -590,7 +592,7 @@ const Index = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => { playClickSound(); navigate("/abc-animals"); }}
+                onClick={() => { playClickSound(); navigateWithEraser("/abc-animals"); }}
                 className="btn-kid inline-flex items-center gap-2 text-xs gradient-primary text-primary-foreground"
               >
                 🐾 {lang === "he" ? "לדף החיות המלא" : "Explore All Animals"}
@@ -610,7 +612,7 @@ const Index = () => {
           <motion.button
             whileHover={{ y: -3, scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
-            onClick={() => { playClickSound(); navigate("/levels"); }}
+            onClick={() => { playClickSound(); navigateWithEraser("/levels"); }}
             className="btn-kid inline-flex items-center gap-2 text-sm sm:text-base gradient-primary text-primary-foreground"
           >
             <Map className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -627,7 +629,7 @@ const Index = () => {
               key={btn.path}
               whileHover={{ y: -2, scale: 1.03 }}
               whileTap={{ scale: 0.96 }}
-              onClick={() => { playClickSound(); navigate(btn.path); }}
+              onClick={() => { playClickSound(); navigateWithEraser(btn.path); }}
               className="btn-glow inline-flex items-center gap-1.5 text-xs sm:text-sm text-foreground"
             >
               {typeof btn.icon === "string" ? <span>{btn.icon}</span> : btn.icon}

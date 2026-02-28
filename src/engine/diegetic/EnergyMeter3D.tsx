@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, forwardRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Text } from "@react-three/drei";
 import * as THREE from "three";
@@ -14,12 +14,12 @@ interface EnergyMeter3DProps {
   height?: number;
 }
 
-const EnergyMeter3D = ({
+const EnergyMeter3D = forwardRef<THREE.Group, EnergyMeter3DProps>(({
   energy,
   label = "Energy",
   position = [0, 0, 0],
   height = 2,
-}: EnergyMeter3DProps) => {
+}, _ref) => {
   const fillRef = useRef<THREE.Mesh>(null);
   const glowRef = useRef<THREE.PointLight>(null);
   const bubblesRef = useRef<THREE.Group>(null);
@@ -191,6 +191,8 @@ const EnergyMeter3D = ({
       />
     </group>
   );
-};
+});
+
+EnergyMeter3D.displayName = "EnergyMeter3D";
 
 export default EnergyMeter3D;

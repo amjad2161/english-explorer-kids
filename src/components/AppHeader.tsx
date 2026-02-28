@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Star, Globe, Trophy, RotateCcw, Volume2, VolumeX, Music, Music2, Sun, Moon } from "lucide-react";
+import { useEraserTransition } from "@/components/ChalkEraserTransition";
 import { useTheme } from "@/lib/theme";
 import { getTotalEarnedStars } from "@/lib/levels";
 import { getUnlockedAchievements } from "@/lib/achievements";
@@ -82,6 +83,7 @@ const AppHeader = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t, lang, setLang, dir } = useLanguage();
+  const { navigateWithEraser } = useEraserTransition();
   const [stars, setStars] = useState(0);
   const [badges, setBadges] = useState(0);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
@@ -184,7 +186,7 @@ const AppHeader = () => {
         {/* Logo */}
         <motion.div
           className="flex items-center gap-2.5 cursor-pointer relative"
-          onClick={() => navigate("/")}
+          onClick={() => navigateWithEraser("/")}
           onHoverStart={() => setLogoHovered(true)}
           onHoverEnd={() => setLogoHovered(false)}
           whileHover={{ scale: 1.05 }}
@@ -233,7 +235,10 @@ const AppHeader = () => {
             return (
               <motion.button
                 key={item.path}
-                onClick={() => { playClickSound(); navigate(item.path); }}
+                onClick={() => {
+                  playClickSound();
+                  if (location.pathname !== item.path) navigateWithEraser(item.path);
+                }}
                 className={`px-2 sm:px-3 py-1.5 rounded-full font-display text-xs font-semibold whitespace-nowrap relative transition-all ${
                   isActive
                     ? "shadow-md"
@@ -381,7 +386,7 @@ const AppHeader = () => {
           {badges > 0 && (
             <motion.button
               whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.85 }}
-              onClick={() => navigate("/achievements")}
+              onClick={() => navigateWithEraser("/achievements")}
               className="flex items-center gap-1 px-2.5 py-1.5 rounded-full"
               style={{ background: "hsl(var(--candy) / 0.15)", color: "hsl(var(--candy))" }}
               initial={{ scale: 0 }} animate={{ scale: 1 }}
@@ -396,7 +401,7 @@ const AppHeader = () => {
             <UserAvatar
               size="xs"
               showOwl
-              onClick={() => navigate("/parent")}
+              onClick={() => navigateWithEraser("/parent")}
             />
           )}
 
