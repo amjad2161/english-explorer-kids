@@ -456,7 +456,32 @@ const Index = () => {
           </Card3D>
         </AnimatedSection>
 
-        {/* ═══ RECOMMENDATIONS — Notebook ═══ */}
+        {/* ═══ LEARNING PATHS CTA ═══ */}
+        <AnimatedSection className="max-w-lg mx-auto mb-6 sm:mb-8" delay={0.18}>
+          <Card3D onClick={() => { playClickSound(); navigateWithEraser("/learning-paths"); }}>
+            <NotebookCard className="cursor-pointer group">
+              <div className="flex items-center gap-3">
+                <motion.div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0 shadow-md"
+                  style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))" }}
+                  whileHover={{ scale: 1.1, rotate: [0, -5, 5, 0] }}
+                >
+                  🗺️
+                </motion.div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-display font-bold text-sm text-foreground">
+                    {lang === "he" ? "מסלולי למידה" : lang === "ar" ? "مسارات التعلم" : "Learning Paths"}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {lang === "he" ? "סדר מומלץ של נושאים לפי הרמה שלך" : lang === "ar" ? "ترتيب مقترح حسب مستواك" : "Recommended topics for your level"}
+                  </p>
+                </div>
+                <ArrowRight className={`w-5 h-5 text-muted-foreground ${dir === "rtl" ? "rotate-180" : ""}`} />
+              </div>
+            </NotebookCard>
+          </Card3D>
+        </AnimatedSection>
+
         {recommendations.length > 0 && (
           <AnimatedSection className="max-w-lg mx-auto mb-8 sm:mb-10" delay={0.1}>
             <h3 className="font-display text-sm font-bold mb-3 flex items-center gap-1.5 justify-center text-foreground">
