@@ -19,6 +19,10 @@ const ClassroomStage = lazy(() => import("./stages/ClassroomStage"));
 const SnowMountainStage = lazy(() => import("./stages/SnowMountainStage"));
 const JungleStage = lazy(() => import("./stages/JungleStage"));
 
+type StageComponentName = "forest" | "classroom" | "snowMountain" | "jungle";
+type StageComponent = React.FC;
+type StageComponents = Record<StageComponentName, StageComponent>;
+
 const STAGE_COMPONENTS = {
   forest: ForestStage,
   classroom: ClassroomStage,
@@ -26,10 +30,8 @@ const STAGE_COMPONENTS = {
   jungle: JungleStage,
 } as const;
 
-/** Null fallback for Suspense inside Canvas */
 const Null = () => null;
 
-/** Per-stage positions for characters */
 type Vec3 = [number, number, number];
 interface StagePositions {
   owl: Vec3;
@@ -67,7 +69,8 @@ const STAGE_POSITIONS: Record<string, StagePositions> = {
 
 /**
  * LerpedCharacter — wraps a character in a group that smoothly
- * lerps its position when the target changes (scene switch).
+ * lerps its position when the target changes, with a gentle
+ * scale bounce on arrival.
  */
 const _lerpTarget = new THREE.Vector3();
 
@@ -82,21 +85,55 @@ const LerpedCharacter = ({
   const reduceMotion = useQualityStore((s) => s.reduceMotion);
   const isTransitioning = useSceneDirector((s) => s.isTransitioning);
   const initialized = useRef(false);
+  const prevTarget = useRef<Vec3>([...target]);
+  const bounceTime = useRef(0); // -1 = armed, >0 = animating, 0 = idle
+  const BOUNCE_DUR = 0.45;
 
   useFrame((_, delta) => {
     if (!groupRef.current) return;
     _lerpTarget.set(...target);
+
+    // Detect target change → arm bounce
+    if (
+      target[0] !== prevTarget.current[0] ||
+      target[1] !== prevTarget.current[1] ||
+      target[2] !== prevTarget.current[2]
+    ) {
+      prevTarget.current = [...target];
+      bounceTime.current = -1;
+    }
+
     if (!initialized.current) {
       groupRef.current.position.copy(_lerpTarget);
+      groupRef.current.scale.setScalar(1);
       initialized.current = true;
       return;
     }
+
     if (reduceMotion) {
       groupRef.current.position.copy(_lerpTarget);
+      groupRef.current.scale.setScalar(1);
     } else {
       // Slower during cinematic transitions, snappier during normal nav
       const speed = isTransitioning ? 1.2 : 3.5;
       groupRef.current.position.lerp(_lerpTarget, 1 - Math.exp(-speed * delta));
+
+      // Trigger bounce when close enough to destination
+      if (bounceTime.current === -1 && groupRef.current.position.distanceTo(_lerpTarget) < 0.02) {
+        bounceTime.current = BOUNCE_DUR;
+      }
+
+      // Gentle scale bounce on arrival
+      if (bounceTime.current > 0) {
+        bounceTime.current -= delta;
+        const t = 1 - bounceTime.current / BOUNCE_DUR; // 0→1
+        const s = 1 + 0.08 * Math.sin(t * Math.PI) * (1 - t);
+        groupRef.current.scale.setScalar(s);
+        if (bounceTime.current <= 0) {
+          bounceTime.current = 0;
+          groupRef.current.scale.setScalar(1);
+        }
+      }
     }
   });
 
@@ -136,7 +173,6 @@ const SceneContent = () => {
   );
 };
 
-/** Route sync — updates SceneDirector when route changes */
 const RouteSync = () => {
   const location = useLocation();
   const setStageForRoute = useSceneDirector((s) => s.setStageForRoute);
@@ -148,10 +184,6 @@ const RouteSync = () => {
   return null;
 };
 
-/**
- * CinematicCanvas — persistent WebGL canvas mounted at app root.
- * Never remounts on navigation. Stage switches are handled internally.
- */
 const CinematicCanvas = () => {
   const { settings } = useQualityStore();
 
