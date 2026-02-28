@@ -80,6 +80,7 @@ const LerpedCharacter = ({
 }) => {
   const groupRef = useRef<THREE.Group>(null);
   const reduceMotion = useQualityStore((s) => s.reduceMotion);
+  const isTransitioning = useSceneDirector((s) => s.isTransitioning);
   const initialized = useRef(false);
 
   useFrame((_, delta) => {
@@ -93,7 +94,9 @@ const LerpedCharacter = ({
     if (reduceMotion) {
       groupRef.current.position.copy(_lerpTarget);
     } else {
-      groupRef.current.position.lerp(_lerpTarget, 1 - Math.exp(-2.5 * delta));
+      // Slower during cinematic transitions, snappier during normal nav
+      const speed = isTransitioning ? 1.2 : 3.5;
+      groupRef.current.position.lerp(_lerpTarget, 1 - Math.exp(-speed * delta));
     }
   });
 
