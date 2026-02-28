@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useLanguage } from "@/lib/i18n";
 import { getSpellingWords, getWordTranslation, WordCard } from "@/data/learningData";
-import { speakEnglish, playClickSound } from "@/lib/sounds";
+import { speakEnglish, playClickSound, playCorrectSound, playWrongSound, playVictoryFanfare, startBgMusic, stopBgMusic } from "@/lib/sounds";
 import { useRewardsPipeline } from "@/hooks/useRewardsPipeline";
 import GameSceneShell from "@/components/GameSceneShell";
 import StarRating from "@/components/StarRating";
@@ -76,6 +76,11 @@ const HangmanGame = () => {
   const [correctCount, setCorrectCount] = useState(0);
 
   useEffect(() => {
+    startBgMusic();
+    return () => stopBgMusic();
+  }, []);
+
+  useEffect(() => {
     const maxLen = adaptive.maxWordLength;
     const all = shuffleArray(getSpellingWords(maxLen));
     const selected = all.slice(0, TOTAL_ROUNDS);
@@ -103,15 +108,18 @@ const HangmanGame = () => {
     setGuessedLetters(newGuessed);
 
     if (wordLetters.includes(letter)) {
+      playCorrectSound();
       if (wordLetters.every(l => newGuessed.has(l))) {
         setResult("won");
         setCorrectCount(c => c + 1);
+        playVictoryFanfare();
         rewards.fireEvent({ type: "correct", points: Math.max(5, (MAX_WRONG - wrongCount) * 5) });
         setTimeout(() => advance(), 1800);
       }
     } else {
       const newWrong = wrongCount + 1;
       setWrongCount(newWrong);
+      playWrongSound();
       if (newWrong >= MAX_WRONG) {
         setResult("lost");
         rewards.fireEvent({ type: "wrong" });

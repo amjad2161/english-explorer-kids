@@ -6,6 +6,7 @@ import { useRewardsPipeline } from "@/hooks/useRewardsPipeline";
 import GameSceneShell from "@/components/GameSceneShell";
 import StarRating from "@/components/StarRating";
 import { useAgeAdaptive } from "@/hooks/useAgeAdaptive";
+import { playCorrectSound, playWrongSound, playVictoryFanfare, playClickSound, startBgMusic, stopBgMusic } from "@/lib/sounds";
 import { Zap, Trophy, RotateCcw, Lightbulb } from "lucide-react";
 
 /* ─── Pattern Types ─── */
@@ -277,6 +278,7 @@ const PatternPuzzle = () => {
   const [hintsUsed, setHintsUsed] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
 
+  useEffect(() => { startBgMusic(); return () => stopBgMusic(); }, []);
   useEffect(() => { setPuzzles(generatePuzzles(TOTAL_ROUNDS)); }, []);
 
   const puzzle = puzzles[currentIndex];
@@ -289,9 +291,11 @@ const PatternPuzzle = () => {
     if (option === puzzle.answer) {
       setResult("correct");
       setCorrectCount(c => c + 1);
+      playCorrectSound();
       rewards.fireEvent({ type: "correct", points: Math.max(5, 15 + (showHint ? 0 : 5)) });
     } else {
       setResult("wrong");
+      playWrongSound();
       rewards.fireEvent({ type: "wrong" });
     }
 
@@ -300,11 +304,14 @@ const PatternPuzzle = () => {
 
   const advance = () => {
     if (currentIndex + 1 >= puzzles.length) {
+      const finalCorrect = correctCount + (result === "correct" ? 1 : 0);
+      if (finalCorrect >= TOTAL_ROUNDS * 0.7) playVictoryFanfare();
+      stopBgMusic();
       rewards.completeGame({
         gameType: "pattern",
         stageId,
-        correct: correctCount + (result === "correct" ? 1 : 0),
-        wrong: TOTAL_ROUNDS - correctCount - (result === "correct" ? 1 : 0),
+        correct: finalCorrect,
+        wrong: TOTAL_ROUNDS - finalCorrect,
         totalRounds: TOTAL_ROUNDS,
       });
     } else {

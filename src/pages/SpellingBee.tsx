@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useLanguage } from "@/lib/i18n";
 import { getSpellingWords, getWordTranslation, WordCard } from "@/data/learningData";
-import { speakEnglish, playLetterPopSound } from "@/lib/sounds";
+import { speakEnglish, playLetterPopSound, playCorrectSound, playWrongSound, playVictoryFanfare, startBgMusic, stopBgMusic } from "@/lib/sounds";
 import { useRewardsPipeline } from "@/hooks/useRewardsPipeline";
 import GameSceneShell from "@/components/GameSceneShell";
 import GameTimer from "@/components/GameTimer";
@@ -30,6 +30,11 @@ const SpellingBee = () => {
   const [timerKey, setTimerKey] = useState(0);
   const [timerRunning, setTimerRunning] = useState(true);
   const [correctCount, setCorrectCount] = useState(0);
+
+  useEffect(() => {
+    startBgMusic();
+    return () => stopBgMusic();
+  }, []);
 
   useEffect(() => {
     const all = shuffle(getSpellingWords(adaptive.maxWordLength));
@@ -79,9 +84,11 @@ const SpellingBee = () => {
     if (answer === correct) {
       setResult("correct");
       setCorrectCount(c => c + 1);
+      playCorrectSound();
       rewards.fireEvent({ type: "correct", points: 15 });
     } else {
       setResult("wrong");
+      playWrongSound();
       rewards.fireEvent({ type: "wrong" });
     }
     setTimeout(() => advance(), 1500);
@@ -90,17 +97,21 @@ const SpellingBee = () => {
   const handleTimeUp = useCallback(() => {
     if (result) return;
     setResult("wrong");
+    playWrongSound();
     rewards.fireEvent({ type: "wrong" });
     setTimeout(() => advance(), 1200);
   }, [result, currentIndex, rewards]);
 
   const advance = () => {
     if (currentIndex + 1 >= words.length) {
+      const finalCorrect = correctCount + (result === "correct" ? 1 : 0);
+      if (finalCorrect >= TOTAL_ROUNDS * 0.7) playVictoryFanfare();
+      stopBgMusic();
       rewards.completeGame({
         gameType: "spelling",
         stageId,
-        correct: correctCount + (result === "correct" ? 1 : 0),
-        wrong: TOTAL_ROUNDS - correctCount - (result === "correct" ? 1 : 0),
+        correct: finalCorrect,
+        wrong: TOTAL_ROUNDS - finalCorrect,
         totalRounds: TOTAL_ROUNDS,
       });
     } else {

@@ -1,9 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useLanguage } from "@/lib/i18n";
 import { wordCategories, getCategoryName } from "@/data/learningData";
-import { playClickSound, playFlipSound, playMatchSound, speakEnglish } from "@/lib/sounds";
+import { playClickSound, playFlipSound, playMatchSound, playVictoryFanfare, playWrongSound, speakEnglish, startBgMusic, stopBgMusic } from "@/lib/sounds";
 import { useRewardsPipeline } from "@/hooks/useRewardsPipeline";
 import GameSceneShell from "@/components/GameSceneShell";
 import StarRating from "@/components/StarRating";
@@ -36,6 +36,8 @@ const MemoryGame = () => {
   const [moves, setMoves] = useState(0);
   const [isChecking, setIsChecking] = useState(false);
   const [lastMatchWord, setLastMatchWord] = useState<string | null>(null);
+
+  useEffect(() => { startBgMusic(); return () => stopBgMusic(); }, []);
 
   const startGame = useCallback((catIndex: number) => {
     playClickSound();
@@ -80,6 +82,7 @@ const MemoryGame = () => {
 
           if (newMatched.length === cards.length) {
             setTimeout(() => {
+              playVictoryFanfare();
               const currentMoves = moves + 1;
               const stars = currentMoves < 8 ? 3 : currentMoves < 12 ? 2 : 1;
               rewards.completeGame({
