@@ -88,43 +88,9 @@ const gameCards = [
 const NotebookCard = forwardRef<HTMLDivElement, { children: React.ReactNode; className?: string }>(({ children, className = "" }, ref) => (
   <div
     ref={ref}
-    className={`relative rounded-2xl overflow-hidden ${className}`}
-    style={{
-      background: "hsl(var(--card) / 0.95)",
-      border: "2px solid hsl(var(--border))",
-      boxShadow: "var(--shadow-card)",
-    }}
+    className={`relative ${className}`}
   >
-    {/* Red margin line */}
-    <div
-      className="absolute top-0 bottom-0 w-[2px]"
-      style={{
-        left: "2rem",
-        background: "hsl(0 65% 55% / 0.2)",
-      }}
-    />
-    {/* Horizontal ruled lines */}
-    <div
-      className="absolute inset-0 pointer-events-none"
-      style={{
-        backgroundImage: "repeating-linear-gradient(transparent, transparent 27px, hsl(var(--border) / 0.35) 27px, hsl(var(--border) / 0.35) 28px)",
-        backgroundPositionY: "12px",
-      }}
-    />
-    {/* Spiral binding holes */}
-    <div className="absolute top-0 bottom-0 left-1 flex flex-col items-center gap-6 pt-4 pointer-events-none">
-      {Array.from({ length: 12 }).map((_, i) => (
-        <div
-          key={i}
-          className="w-3 h-3 rounded-full border-2 shrink-0"
-          style={{
-            borderColor: "hsl(var(--muted-foreground) / 0.2)",
-            background: "hsl(var(--background) / 0.5)",
-          }}
-        />
-      ))}
-    </div>
-    <div className="relative z-10 p-5 sm:p-6 ps-12">
+    <div className="relative z-10">
       {children}
     </div>
   </div>
@@ -187,20 +153,7 @@ const StatCard = ({
     whileHover={{ y: -5, scale: 1.05 }}
     whileTap={{ scale: 0.95 }}
     className="relative rounded-xl overflow-hidden text-center cursor-default group p-4"
-    style={{
-      background: "hsl(var(--card) / 0.95)",
-      border: "2px solid hsl(var(--border))",
-      boxShadow: "var(--shadow-card)",
-    }}
   >
-    {/* Mini notebook lines */}
-    <div
-      className="absolute inset-0 pointer-events-none opacity-30"
-      style={{
-        backgroundImage: "repeating-linear-gradient(transparent, transparent 19px, hsl(var(--border) / 0.4) 19px, hsl(var(--border) / 0.4) 20px)",
-        backgroundPositionY: "8px",
-      }}
-    />
     <div className="relative z-10">
       <div className="flex justify-center mb-2">{icon}</div>
       <p className="font-display font-extrabold text-2xl sm:text-3xl leading-none text-foreground">
@@ -520,10 +473,6 @@ const Index = () => {
                     transition={{ delay: 0.1 + i * 0.08 }}
                     onClick={() => { playClickSound(); navigateWithEraser(rec.path); }}
                     className="w-full flex items-center gap-3 p-3 rounded-xl text-start transition-all duration-300 group"
-                    style={{
-                      background: "hsl(var(--muted) / 0.3)",
-                      border: "1px solid hsl(var(--border) / 0.5)",
-                    }}
                   >
                     <motion.span className="text-2xl" whileHover={{ scale: 1.2, rotate: [-5, 5, 0] }}>
                       {rec.emoji}
