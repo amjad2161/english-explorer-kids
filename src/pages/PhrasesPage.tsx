@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/lib/i18n";
 import { phraseGroups, getPhraseGroupName, getPhraseTranslation, Phrase, PhraseGroup } from "@/data/phrasesData";
@@ -6,8 +6,16 @@ import { speakEnglish, speakHebrew, speakArabic, playClickSound, playCorrectSoun
 import { Volume2, ChevronLeft, ChevronRight, RotateCcw, Shuffle, Brain, CheckCircle, XCircle } from "lucide-react";
 import GameShell from "@/components/GameShell";
 import StarRating from "@/components/StarRating";
+import Confetti from "@/components/Confetti";
 
 type Mode = "flashcards" | "quiz";
+
+/** Plays victory fanfare once on mount */
+const CompletionFanfare = () => {
+  const played = useRef(false);
+  useEffect(() => { if (!played.current) { played.current = true; playVictoryFanfare(); } }, []);
+  return null;
+};
 
 const PhrasesPage = () => {
   const { lang, t, dir } = useLanguage();
@@ -360,17 +368,21 @@ const PhrasesPage = () => {
         </div>
 
         {cardIndex === phrases.length - 1 && flipped && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-8 text-center p-4 rounded-2xl"
-            style={{ background: "hsl(var(--grass) / 0.1)", border: "2px solid hsl(var(--grass) / 0.3)" }}>
-            <p className="text-lg font-bold" style={{ color: "hsl(var(--grass))" }}>
-              🎉 {lang === "he" ? "כל הכבוד! סיימת את כל הביטויים!" : lang === "ar" ? "أحسنت! أتممت جميع العبارات!" : "Well done! You completed all phrases!"}
-            </p>
-            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={generateQuiz}
-              className="mt-3 px-5 py-2 rounded-xl text-sm font-bold flex items-center gap-2 mx-auto"
-              style={{ background: "var(--gradient-candy)", color: "hsl(var(--primary-foreground))" }}>
-              <Brain size={16} /> {lang === "he" ? "עכשיו בחן אותי!" : lang === "ar" ? "الآن اختبرني!" : "Now Quiz Me!"}
-            </motion.button>
-          </motion.div>
+          <>
+            <Confetti show={true} />
+            <CompletionFanfare />
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-8 text-center p-4 rounded-2xl"
+              style={{ background: "hsl(var(--grass) / 0.1)", border: "2px solid hsl(var(--grass) / 0.3)" }}>
+              <p className="text-lg font-bold" style={{ color: "hsl(var(--grass))" }}>
+                🎉 {lang === "he" ? "כל הכבוד! סיימת את כל הביטויים!" : lang === "ar" ? "أحسنت! أتممت جميع العبارات!" : "Well done! You completed all phrases!"}
+              </p>
+              <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={generateQuiz}
+                className="mt-3 px-5 py-2 rounded-xl text-sm font-bold flex items-center gap-2 mx-auto"
+                style={{ background: "var(--gradient-candy)", color: "hsl(var(--primary-foreground))" }}>
+                <Brain size={16} /> {lang === "he" ? "עכשיו בחן אותי!" : lang === "ar" ? "الآن اختبرني!" : "Now Quiz Me!"}
+              </motion.button>
+            </motion.div>
+          </>
         )}
       </div>
     </GameShell>
