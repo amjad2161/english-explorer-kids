@@ -1,4 +1,4 @@
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, forwardRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useSceneDirector } from "./SceneDirector";
@@ -13,7 +13,7 @@ import { useSceneDirector } from "./SceneDirector";
 
 const PARTICLE_COUNT = 120;
 
-const SceneTransitionFade = ({ active }: { active: boolean }) => {
+const SceneTransitionFade = forwardRef<THREE.Group, { active: boolean }>(({ active }, _ref) => {
   const quadRef = useRef<THREE.Mesh>(null);
   const matRef = useRef<THREE.MeshBasicMaterial>(null);
   const pointsRef = useRef<THREE.Points>(null);
@@ -156,6 +156,8 @@ const SceneTransitionFade = ({ active }: { active: boolean }) => {
       </points>
     </>
   );
-};
+});
+
+SceneTransitionFade.displayName = "SceneTransitionFade";
 
 export default SceneTransitionFade;
