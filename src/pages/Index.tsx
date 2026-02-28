@@ -33,7 +33,7 @@ const item = {
 /* ─── Simple entrance — fade + scale with owl ─── */
 const SimpleEntrance = ({ onComplete }: { onComplete: () => void }) => {
   useEffect(() => {
-    const t = setTimeout(onComplete, 1800);
+    const t = setTimeout(onComplete, 1000);
     return () => clearTimeout(t);
   }, [onComplete]);
 
