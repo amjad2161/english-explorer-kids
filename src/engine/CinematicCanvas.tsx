@@ -6,6 +6,7 @@ import { useQualityStore } from "./qualityTier";
 import SceneLighting from "./SceneLighting";
 import CinematicCamera from "./CinematicCamera";
 import Owl3DCharacter from "./Owl3DCharacter";
+import DiegeticUIShowcase from "./DiegeticUIShowcase";
 import CinematicPostProcessing from "./CinematicPostProcessing";
 import SceneTransitionFade from "./SceneTransitionFade";
 import PerformanceHUD from "./PerformanceHUD";
@@ -40,6 +41,7 @@ const SceneContent = () => {
         <StageComponent />
       </Suspense>
       <Owl3DCharacter />
+      <DiegeticUIShowcase />
       <SceneTransitionFade active={isTransitioning} />
       <CinematicPostProcessing />
     </>
@@ -70,9 +72,9 @@ const CinematicCanvas = () => {
       <RouteSync />
       <PerformanceHUD />
       <div
-        className="fixed inset-0 z-0 pointer-events-none"
+        className="fixed inset-0 z-0"
         aria-hidden="true"
-        style={{ opacity: 0.6 }}
+        style={{ opacity: 0.6, pointerEvents: "none" }}
       >
         <Canvas
           shadows={settings.shadows}
