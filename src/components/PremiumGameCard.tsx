@@ -52,13 +52,13 @@ const PremiumGameCard = ({ emoji, title, color, index, description, onClick }: P
         perspective: 800,
       }}
       className="cursor-pointer group"
-      initial={{ opacity: 0, y: 40, scale: 0.8 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
+      initial={{ opacity: 0, y: 30, scale: 0.85, rotateZ: index % 2 === 0 ? -3 : 3 }}
+      animate={{ opacity: 1, y: 0, scale: 1, rotateZ: 0 }}
       transition={{
         type: "spring",
-        stiffness: 180,
-        damping: 18,
-        delay: 0.1 + index * 0.06,
+        stiffness: 300,
+        damping: 22,
+        delay: index * 0.04,
       }}
       whileTap={{ scale: 0.9 }}
     >
