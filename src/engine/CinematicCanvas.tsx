@@ -28,11 +28,48 @@ const STAGE_COMPONENTS = {
 /** Null fallback for Suspense inside Canvas */
 const Null = () => null;
 
+/** Per-stage positions for characters */
+type Vec3 = [number, number, number];
+interface StagePositions {
+  owl: Vec3;
+  fox: Vec3;
+  bookworm: Vec3;
+  mouse: Vec3;
+}
+
+const STAGE_POSITIONS: Record<string, StagePositions> = {
+  forest: {
+    owl:      [-3,   0.8,  2],
+    fox:      [-1.8, 0.2,  2.5],
+    bookworm: [-2.8, -0.1, 2],
+    mouse:    [-4,   0,    2.8],
+  },
+  classroom: {
+    owl:      [-2.5, 1.2,  1.5],
+    fox:      [-1,   0.3,  2],
+    bookworm: [-3.5, 0.6,  1.8],
+    mouse:    [-4.2, 0.3,  2.2],
+  },
+  snowMountain: {
+    owl:      [-2,   1.5,  1],
+    fox:      [-0.5, 0.6,  1.8],
+    bookworm: [-3.2, 0.2,  1.5],
+    mouse:    [-3.8, 0.8,  2.5],
+  },
+  jungle: {
+    owl:      [-3.5, 1,    2.2],
+    fox:      [-2,   -0.2, 3],
+    bookworm: [-1.5, 0.5,  2.5],
+    mouse:    [-4.5, -0.3, 3.2],
+  },
+};
+
 /** Scene content — renders active stage + lighting + camera + effects */
 const SceneContent = () => {
   const activeStage = useSceneDirector((s) => s.activeStage);
   const isTransitioning = useSceneDirector((s) => s.isTransitioning);
   const StageComponent = STAGE_COMPONENTS[activeStage];
+  const pos = STAGE_POSITIONS[activeStage] || STAGE_POSITIONS.forest;
 
   return (
     <>
@@ -41,10 +78,10 @@ const SceneContent = () => {
       <Suspense fallback={<Null />}>
         <StageComponent />
       </Suspense>
-      <Owl3DCharacter />
-      <Fox3DCompanion />
-      <Bookworm3DCompanion />
-      <Mouse3DCompanion />
+      <Owl3DCharacter position={pos.owl} />
+      <Fox3DCompanion position={pos.fox} />
+      <Bookworm3DCompanion position={pos.bookworm} />
+      <Mouse3DCompanion position={pos.mouse} />
       <DiegeticUIShowcase />
       <SceneTransitionFade active={isTransitioning} />
       <CinematicPostProcessing />
