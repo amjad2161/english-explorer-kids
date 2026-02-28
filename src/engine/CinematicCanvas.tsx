@@ -212,7 +212,7 @@ const CinematicCanvas = () => {
       <div
         className="fixed inset-0 z-0"
         aria-hidden="true"
-        style={{ opacity: 0.8, pointerEvents: "none" }}
+        style={{ opacity: 1, pointerEvents: "none" }}
       >
         <Canvas
           shadows={settings.shadows}
