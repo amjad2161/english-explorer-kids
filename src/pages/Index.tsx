@@ -82,6 +82,7 @@ const gameCards = [
   { titleKey: "quick.pattern", emoji: "🧩", path: "/pattern", color: "bg-lavender/10 dark:bg-lavender/15" },
   { titleKey: "quick.abcAnimals", emoji: "🎵", path: "/abc-animals", color: "bg-grass/10 dark:bg-grass/15" },
   { titleKey: "quick.animalMatch", emoji: "🐾", path: "/animal-match", color: "bg-sunshine/10 dark:bg-sunshine/15" },
+  { titleKey: "quick.opposites", emoji: "🔄", path: "/opposites", color: "bg-candy/10 dark:bg-candy/15" },
 ];
 
 /* ─── Notebook-style lined card wrapper ─── */
