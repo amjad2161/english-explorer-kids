@@ -42,7 +42,7 @@ import ABCAnimalsPage from "./pages/ABCAnimalsPage";
 import AnimalMatchGame from "./pages/AnimalMatchGame";
 import LessonPage from "./pages/LessonPage";
 import PhrasesPage from "./pages/PhrasesPage";
-
+import TopicGamesPage from "./pages/TopicGamesPage";
 const queryClient = new QueryClient();
 
 const PageWrapper = ({ children }: { children: React.ReactNode }) => (
@@ -91,6 +91,7 @@ const AnimatedRoutes = () => {
       <Route path="/animal-match" element={<PageWrapper><AnimalMatchGame /></PageWrapper>} />
       <Route path="/lesson" element={<PageWrapper><LessonPage /></PageWrapper>} />
       <Route path="/phrases" element={<PageWrapper><PhrasesPage /></PageWrapper>} />
+      <Route path="/topics" element={<PageWrapper><TopicGamesPage /></PageWrapper>} />
       <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
     </Routes>
   );

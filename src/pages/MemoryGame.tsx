@@ -25,6 +25,7 @@ const categoryGradients: Record<string, string> = {
 const MemoryGame = () => {
   const [searchParams] = useSearchParams();
   const stageId = searchParams.get("stage");
+  const topicParam = searchParams.get("topic");
   const { t, lang } = useLanguage();
   const adaptive = useAgeAdaptive();
   const rewards = useRewardsPipeline();
@@ -38,6 +39,16 @@ const MemoryGame = () => {
   const [lastMatchWord, setLastMatchWord] = useState<string | null>(null);
 
   useEffect(() => { startBgMusic(); return () => stopBgMusic(); }, []);
+
+  // Auto-start if topic param is provided
+  useEffect(() => {
+    if (topicParam !== null && selectedCategory === null) {
+      const idx = parseInt(topicParam);
+      if (!isNaN(idx) && idx >= 0 && idx < wordCategories.length) {
+        startGame(idx);
+      }
+    }
+  }, [topicParam]);
 
   const startGame = useCallback((catIndex: number) => {
     playClickSound();

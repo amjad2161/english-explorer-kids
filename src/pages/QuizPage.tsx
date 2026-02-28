@@ -31,6 +31,7 @@ const optionLabels = ["A", "B", "C", "D"];
 const QuizPage = () => {
   const [searchParams] = useSearchParams();
   const stageId = searchParams.get("stage");
+  const topicIndex = searchParams.get("topic") !== null ? parseInt(searchParams.get("topic")!) : undefined;
   const { t, lang, dir } = useLanguage();
   const adaptive = useAgeAdaptive();
   const QUIZ_SIZE = adaptive.quizSize;
@@ -53,8 +54,8 @@ const QuizPage = () => {
   const { speech, triggerByMood } = useOwlEncouragement(lang);
 
   const shuffledQuestions = useMemo(
-    () => generateDynamicQuiz(QUIZ_SIZE, lang),
-    [lang, quizKey]
+    () => generateDynamicQuiz(QUIZ_SIZE, lang, topicIndex),
+    [lang, quizKey, topicIndex]
   );
 
   const question = shuffledQuestions[currentQ];

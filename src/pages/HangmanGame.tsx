@@ -62,6 +62,7 @@ const HangmanFigure = ({ wrongCount, maxWrong = DEFAULT_MAX_WRONG }: { wrongCoun
 const HangmanGame = () => {
   const [searchParams] = useSearchParams();
   const stageId = searchParams.get("stage");
+  const topicIndex = searchParams.get("topic") !== null ? parseInt(searchParams.get("topic")!) : undefined;
   const { t, lang } = useLanguage();
   const adaptive = useAgeAdaptive();
   const rewards = useRewardsPipeline();
@@ -82,7 +83,7 @@ const HangmanGame = () => {
 
   useEffect(() => {
     const maxLen = adaptive.maxWordLength;
-    const all = shuffleArray(getSpellingWords(maxLen));
+    const all = shuffleArray(getSpellingWords(maxLen, topicIndex));
     const selected = all.slice(0, TOTAL_ROUNDS);
     selected.sort((a, b) => a.english.length - b.english.length);
     setWords(selected);
