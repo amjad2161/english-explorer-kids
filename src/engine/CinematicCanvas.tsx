@@ -123,14 +123,20 @@ const LerpedCharacter = ({
         bounceTime.current = BOUNCE_DUR;
       }
 
-      // Gentle scale bounce on arrival
+      // Gentle Y bounce + scale on arrival
       if (bounceTime.current > 0) {
         bounceTime.current -= delta;
         const t = 1 - bounceTime.current / BOUNCE_DUR; // 0→1
-        const s = 1 + 0.08 * Math.sin(t * Math.PI) * (1 - t);
+        const easeOut = 1 - t;
+        // Y hop: quick up then settle — damped sine
+        const yBounce = 0.12 * Math.sin(t * Math.PI * 2) * easeOut;
+        groupRef.current.position.y = _lerpTarget.y + yBounce;
+        // Subtle scale squash-stretch
+        const s = 1 + 0.06 * Math.sin(t * Math.PI) * easeOut;
         groupRef.current.scale.setScalar(s);
         if (bounceTime.current <= 0) {
           bounceTime.current = 0;
+          groupRef.current.position.y = _lerpTarget.y;
           groupRef.current.scale.setScalar(1);
         }
       }
