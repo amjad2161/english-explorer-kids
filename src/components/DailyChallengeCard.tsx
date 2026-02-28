@@ -61,7 +61,7 @@ const DailyChallengeCard = ({ challenge, onUpdate }: Props) => {
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: "spring", stiffness: 200, damping: 20 }}
-        className="card-kid relative overflow-hidden group"
+        className="card-kid relative overflow-hidden group animate-glow-pulse"
         dir={dir}
       >
         {/* Animated background gradient */}
