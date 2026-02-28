@@ -51,6 +51,7 @@ const translations: Record<string, Record<Language, string>> = {
   "quick.abcAnimals": { he: "שיר ABC", ar: "أغنية ABC", en: "ABC Song" },
   "quick.animalMatch": { he: "חיות", ar: "حيوانات", en: "Animals" },
   "quick.opposites": { he: "הפכים", ar: "أضداد", en: "Opposites" },
+  "quick.sentences": { he: "השלם משפט", ar: "أكمل الجملة", en: "Sentences" },
 
   // Alphabet
   "alphabet.title": { he: "🔤 האלפבית האנגלי", ar: "🔤 الأبجدية الإنجليزية", en: "🔤 The English Alphabet" },
