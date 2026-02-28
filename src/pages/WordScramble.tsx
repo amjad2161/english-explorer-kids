@@ -29,6 +29,7 @@ const ScrambledTile = ({ letter, index }: { letter: string; index: number }) => 
 const WordScramble = () => {
   const [searchParams] = useSearchParams();
   const stageId = searchParams.get("stage");
+  const topicIndex = searchParams.get("topic") !== null ? parseInt(searchParams.get("topic")!) : undefined;
   const { t, lang } = useLanguage();
   const adaptive = useAgeAdaptive();
   const rewards = useRewardsPipeline();
@@ -51,7 +52,7 @@ const WordScramble = () => {
   }, []);
 
   useEffect(() => {
-    const all = shuffleArray(getSpellingWords(adaptive.maxWordLength));
+    const all = shuffleArray(getSpellingWords(adaptive.maxWordLength, topicIndex));
     const selected = all.slice(0, TOTAL_ROUNDS);
     selected.sort((a, b) => a.english.length - b.english.length);
     setWords(selected);

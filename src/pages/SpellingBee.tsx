@@ -16,6 +16,7 @@ const shuffle = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
 const SpellingBee = () => {
   const [searchParams] = useSearchParams();
   const stageId = searchParams.get("stage");
+  const topicIndex = searchParams.get("topic") !== null ? parseInt(searchParams.get("topic")!) : undefined;
   const { t, lang } = useLanguage();
   const adaptive = useAgeAdaptive();
   const rewards = useRewardsPipeline();
@@ -37,7 +38,7 @@ const SpellingBee = () => {
   }, []);
 
   useEffect(() => {
-    const all = shuffle(getSpellingWords(adaptive.maxWordLength));
+    const all = shuffle(getSpellingWords(adaptive.maxWordLength, topicIndex));
     const selected = all.slice(0, TOTAL_ROUNDS);
     selected.sort((a, b) => a.english.length - b.english.length);
     setWords(selected);

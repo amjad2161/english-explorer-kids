@@ -1,4 +1,4 @@
-import { getAllWords, wordCategories, WordCard, QuizQuestion } from "@/data/learningData";
+import { getAllWords, getTopicWords, wordCategories, WordCard, QuizQuestion } from "@/data/learningData";
 import { getAllPhrases, Phrase, phraseGroups } from "@/data/phrasesData";
 import { Language } from "@/lib/i18n";
 import { getAdaptiveQuizParams, getWeakWords } from "@/lib/adaptiveDifficulty";
@@ -263,9 +263,9 @@ const templates: QuizTemplate[] = [
  * Generate N unique dynamic quiz questions with adaptive difficulty.
  * Now includes phrase-based questions (~25% of total).
  */
-export const generateDynamicQuiz = (count: number, lang: Language): QuizQuestion[] => {
-  const allWords = getAllWords();
-  const allPhrases = getAllPhrases();
+export const generateDynamicQuiz = (count: number, lang: Language, topicIndex?: number): QuizQuestion[] => {
+  const allWords = topicIndex !== undefined ? getTopicWords(topicIndex) : getAllWords();
+  const allPhrases = topicIndex !== undefined ? [] : getAllPhrases(); // No phrases for topic-filtered quizzes
   const adaptive = getAdaptiveQuizParams("quiz");
   const weakWords = getWeakWords();
   const questions: QuizQuestion[] = [];

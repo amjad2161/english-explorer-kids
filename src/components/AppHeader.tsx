@@ -112,6 +112,7 @@ const AppHeader = () => {
 
   const navItems = [
     { path: "/", label: t("nav.home"), icon: "🏠", mobileOnly: false },
+    { path: "/topics", label: lang === "he" ? "נושאים" : lang === "ar" ? "مواضيع" : "Topics", icon: "🎮", mobileOnly: false },
     { path: "/levels", label: t("nav.levels"), icon: "🗺️", mobileOnly: false },
     { path: "/alphabet", label: t("nav.alphabet"), icon: "🔤", mobileOnly: false },
     { path: "/words", label: t("nav.words"), icon: "📝", mobileOnly: false },

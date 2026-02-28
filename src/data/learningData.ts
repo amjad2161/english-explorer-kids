@@ -1014,5 +1014,13 @@ export const getAllWords = (): WordCard[] =>
   wordCategories.flatMap(cat => cat.words);
 
 /** Get words suitable for spelling games (filtered by max length, no spaces) */
-export const getSpellingWords = (maxLen = 7): WordCard[] =>
-  getAllWords().filter(w => w.english.length <= maxLen && w.english.length >= 3 && !w.english.includes(" "));
+export const getSpellingWords = (maxLen = 7, topicIndex?: number): WordCard[] => {
+  const source = topicIndex !== undefined && topicIndex >= 0 && topicIndex < wordCategories.length
+    ? wordCategories[topicIndex].words
+    : getAllWords();
+  return source.filter(w => w.english.length <= maxLen && w.english.length >= 3 && !w.english.includes(" "));
+};
+
+/** Get words for a specific topic category */
+export const getTopicWords = (topicIndex: number): WordCard[] =>
+  topicIndex >= 0 && topicIndex < wordCategories.length ? wordCategories[topicIndex].words : getAllWords();
