@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/lib/theme";
 import { useState, useEffect, useCallback, forwardRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { EraserTransitionProvider } from "@/components/ChalkEraserTransition";
+import CinematicCanvas from "@/engine/CinematicCanvas";
 import AppHeader from "@/components/AppHeader";
 import AppFooter from "@/components/AppFooter";
 import AchievementToast from "@/components/AchievementToast";
@@ -98,13 +99,14 @@ const AnimatedRoutes = () => {
 
 const AppRoutes = () => (
   <EraserTransitionProvider>
+    <CinematicCanvas />
     <AppHeader />
     <AchievementWatcher />
     <KeyboardShortcuts />
     <BreakReminder />
     <OfflineIndicator />
     <PWAInstallPrompt />
-    <main role="main" aria-label="Main content">
+    <main role="main" aria-label="Main content" className="relative z-10">
       <OwlPageEntrance />
       <AnimatedRoutes />
     </main>
