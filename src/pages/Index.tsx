@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback, forwardRef } from "react";
 import { useLanguage } from "@/lib/i18n";
 import { getCurrentLevel, getTotalEarnedStars, levels, getLevelProgress } from "@/lib/levels";
 import { getUnlockedAchievements } from "@/lib/achievements";
@@ -84,8 +84,9 @@ const gameCards = [
 ];
 
 /* ─── Notebook-style lined card wrapper ─── */
-const NotebookCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
+const NotebookCard = forwardRef<HTMLDivElement, { children: React.ReactNode; className?: string }>(({ children, className = "" }, ref) => (
   <div
+    ref={ref}
     className={`relative rounded-2xl overflow-hidden ${className}`}
     style={{
       background: "hsl(var(--card) / 0.95)",
@@ -126,7 +127,8 @@ const NotebookCard = ({ children, className = "" }: { children: React.ReactNode;
       {children}
     </div>
   </div>
-);
+));
+NotebookCard.displayName = "NotebookCard";
 
 /* ─── Chalkboard section card ─── */
 const ChalkSection = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
@@ -254,8 +256,8 @@ const XPProgressBar = ({ current, needed, level, title, lang }: {
 };
 
 /* ─── Divider — chalk tray ─── */
-const ChalkDivider = () => (
-  <div className="flex items-center justify-center gap-3 my-6 sm:my-8">
+const ChalkDivider = forwardRef<HTMLDivElement>((_props, ref) => (
+  <div ref={ref} className="flex items-center justify-center gap-3 my-6 sm:my-8">
     <div
       className="h-[2px] flex-1 max-w-24"
       style={{ background: "linear-gradient(90deg, transparent, hsl(var(--border)), transparent)" }}
@@ -274,7 +276,8 @@ const ChalkDivider = () => (
       style={{ background: "linear-gradient(90deg, transparent, hsl(var(--border)), transparent)" }}
     />
   </div>
-);
+));
+ChalkDivider.displayName = "ChalkDivider";
 
 const Index = () => {
   const navigate = useNavigate();

@@ -110,7 +110,7 @@ const WordsPage = () => {
           <p className="text-muted-foreground font-body">{t("words.subtitle")}</p>
         </motion.div>
 
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="popLayout">
           {activeCategory === null ? (
             <motion.div key="categories" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               className="grid grid-cols-2 md:grid-cols-4 gap-4">

@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
+import { forwardRef } from "react";
 import { useLanguage } from "@/lib/i18n";
 import { Sparkles } from "lucide-react";
 
-const AITeacherVideo = () => {
+const AITeacherVideo = forwardRef<HTMLElement>((_props, ref) => {
   const { lang, dir } = useLanguage();
 
   const title =
@@ -17,6 +18,7 @@ const AITeacherVideo = () => {
 
   return (
     <motion.section
+      ref={ref}
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
@@ -81,6 +83,8 @@ const AITeacherVideo = () => {
       </motion.div>
     </motion.section>
   );
-};
+});
+
+AITeacherVideo.displayName = "AITeacherVideo";
 
 export default AITeacherVideo;
