@@ -109,8 +109,10 @@ export const useSceneDirector = create<SceneDirectorState>((set, get) => ({
       isTransitioning: true,
       transitionProgress: 0,
     });
-    // Auto-complete transition
-    setTimeout(() => set({ isTransitioning: false, transitionProgress: 1 }), 800);
+    // Phase 1: fade-to-black completes at 400ms, swap stage visible
+    // Phase 2: fade-from-black 400–900ms
+    setTimeout(() => set({ transitionProgress: 0.5 }), 400);
+    setTimeout(() => set({ isTransitioning: false, transitionProgress: 1 }), 900);
   },
 
   setCameraPreset: (p) => set({
