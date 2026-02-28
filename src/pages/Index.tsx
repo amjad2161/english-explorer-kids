@@ -6,6 +6,7 @@ import { useLanguage } from "@/lib/i18n";
 import { getCurrentLevel, getTotalEarnedStars, levels, getLevelProgress } from "@/lib/levels";
 import { getUnlockedAchievements } from "@/lib/achievements";
 import { getXP, getLevel, getDailyChallenge } from "@/lib/xp";
+import { generateSessionPlan } from "@/lib/learningPath";
 import { playClickSound } from "@/lib/sounds";
 import ClassroomBackground from "@/components/ClassroomBackground";
 import NotebookPage from "@/components/NotebookPage";
@@ -464,11 +465,25 @@ const Index = () => {
             <NotebookCard className="cursor-pointer group">
               <div className="flex items-center gap-3">
                 <motion.div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0 shadow-md"
+                  className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0 shadow-md relative"
                   style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))" }}
                   whileHover={{ scale: 1.1, rotate: [0, -5, 5, 0] }}
                 >
                   🗺️
+                  {(() => {
+                    const plan = generateSessionPlan(undefined, 10);
+                    const count = plan.activities.filter(a => a.reason === "new" || a.reason === "remediation").length;
+                    if (count === 0) return null;
+                    return (
+                      <motion.span
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="absolute -top-1.5 -end-1.5 min-w-[20px] h-5 rounded-full bg-destructive text-destructive-foreground text-[11px] font-bold flex items-center justify-center px-1 shadow-md"
+                      >
+                        {count}
+                      </motion.span>
+                    );
+                  })()}
                 </motion.div>
                 <div className="flex-1 min-w-0">
                   <p className="font-display font-bold text-sm text-foreground">
