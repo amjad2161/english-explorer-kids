@@ -44,14 +44,12 @@ import LessonPage from "./pages/LessonPage";
 
 const queryClient = new QueryClient();
 
-const pageVariants = {
-  initial: { opacity: 0, y: 12 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" as const } },
-  exit: { opacity: 0, y: -8, transition: { duration: 0.2, ease: "easeIn" as const } },
-};
-
 const PageWrapper = ({ children }: { children: React.ReactNode }) => (
-  <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit">
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 0.25, ease: "easeOut" }}
+  >
     {children}
   </motion.div>
 );
@@ -69,33 +67,29 @@ const AchievementWatcher = () => {
 };
 
 const AnimatedRoutes = () => {
-  const location = useLocation();
-
   return (
-    <AnimatePresence mode="popLayout" initial={false}>
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<PageWrapper><Index /></PageWrapper>} />
-        <Route path="/alphabet" element={<PageWrapper><AlphabetPage /></PageWrapper>} />
-        <Route path="/words" element={<PageWrapper><WordsPage /></PageWrapper>} />
-        <Route path="/quiz" element={<PageWrapper><QuizPage /></PageWrapper>} />
-        <Route path="/memory" element={<PageWrapper><MemoryGame /></PageWrapper>} />
-        <Route path="/levels" element={<PageWrapper><LevelsPage /></PageWrapper>} />
-        <Route path="/spelling" element={<PageWrapper><SpellingBee /></PageWrapper>} />
-        <Route path="/scramble" element={<PageWrapper><WordScramble /></PageWrapper>} />
-        <Route path="/hangman" element={<PageWrapper><HangmanGame /></PageWrapper>} />
-        <Route path="/pattern" element={<PageWrapper><PatternPuzzle /></PageWrapper>} />
-        <Route path="/achievements" element={<PageWrapper><AchievementsPage /></PageWrapper>} />
-        <Route path="/stats" element={<PageWrapper><StatsPage /></PageWrapper>} />
-        <Route path="/settings" element={<PageWrapper><SettingsPage /></PageWrapper>} />
-        <Route path="/report" element={<PageWrapper><ProgressReport /></PageWrapper>} />
-        <Route path="/parent" element={<PageWrapper><ParentDashboard /></PageWrapper>} />
-        <Route path="/story" element={<PageWrapper><StoryPage /></PageWrapper>} />
-        <Route path="/abc-animals" element={<PageWrapper><ABCAnimalsPage /></PageWrapper>} />
-        <Route path="/animal-match" element={<PageWrapper><AnimalMatchGame /></PageWrapper>} />
-        <Route path="/lesson" element={<PageWrapper><LessonPage /></PageWrapper>} />
-        <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
-      </Routes>
-    </AnimatePresence>
+    <Routes>
+      <Route path="/" element={<PageWrapper><Index /></PageWrapper>} />
+      <Route path="/alphabet" element={<PageWrapper><AlphabetPage /></PageWrapper>} />
+      <Route path="/words" element={<PageWrapper><WordsPage /></PageWrapper>} />
+      <Route path="/quiz" element={<PageWrapper><QuizPage /></PageWrapper>} />
+      <Route path="/memory" element={<PageWrapper><MemoryGame /></PageWrapper>} />
+      <Route path="/levels" element={<PageWrapper><LevelsPage /></PageWrapper>} />
+      <Route path="/spelling" element={<PageWrapper><SpellingBee /></PageWrapper>} />
+      <Route path="/scramble" element={<PageWrapper><WordScramble /></PageWrapper>} />
+      <Route path="/hangman" element={<PageWrapper><HangmanGame /></PageWrapper>} />
+      <Route path="/pattern" element={<PageWrapper><PatternPuzzle /></PageWrapper>} />
+      <Route path="/achievements" element={<PageWrapper><AchievementsPage /></PageWrapper>} />
+      <Route path="/stats" element={<PageWrapper><StatsPage /></PageWrapper>} />
+      <Route path="/settings" element={<PageWrapper><SettingsPage /></PageWrapper>} />
+      <Route path="/report" element={<PageWrapper><ProgressReport /></PageWrapper>} />
+      <Route path="/parent" element={<PageWrapper><ParentDashboard /></PageWrapper>} />
+      <Route path="/story" element={<PageWrapper><StoryPage /></PageWrapper>} />
+      <Route path="/abc-animals" element={<PageWrapper><ABCAnimalsPage /></PageWrapper>} />
+      <Route path="/animal-match" element={<PageWrapper><AnimalMatchGame /></PageWrapper>} />
+      <Route path="/lesson" element={<PageWrapper><LessonPage /></PageWrapper>} />
+      <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
+    </Routes>
   );
 };
 
