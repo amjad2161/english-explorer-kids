@@ -131,7 +131,7 @@ const MemoryGame = () => {
           )}
         </AnimatePresence>
 
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="popLayout">
           {selectedCategory === null ? (
             /* ═══ Category Selection ═══ */
             <motion.div key="cat-select" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}

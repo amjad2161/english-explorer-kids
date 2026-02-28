@@ -1,5 +1,5 @@
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, forwardRef } from "react";
 
 interface PremiumGameCardProps {
   emoji: string;
@@ -14,7 +14,7 @@ interface PremiumGameCardProps {
  * AAA-quality game card with holographic shine, depth layers,
  * and spring-physics 3D tilt. Nintendo-inspired bounce and glow.
  */
-const PremiumGameCard = ({ emoji, title, color, index, description, onClick }: PremiumGameCardProps) => {
+const PremiumGameCard = forwardRef<HTMLDivElement, PremiumGameCardProps>(({ emoji, title, color, index, description, onClick }, _fRef) => {
   const ref = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0.5);
   const mouseY = useMotionValue(0.5);
@@ -126,6 +126,8 @@ const PremiumGameCard = ({ emoji, title, color, index, description, onClick }: P
       </div>
     </motion.div>
   );
-};
+});
+
+PremiumGameCard.displayName = "PremiumGameCard";
 
 export default PremiumGameCard;

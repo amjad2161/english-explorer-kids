@@ -128,7 +128,7 @@ const AnimalMatchGame = () => {
       totalRounds={currentPairs.length}
     >
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 relative z-10">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="popLayout">
           {!rewards.isComplete ? (
             <motion.div key="game" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               className="grid grid-cols-2 gap-4 sm:gap-6 max-w-2xl mx-auto">
