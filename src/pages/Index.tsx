@@ -7,6 +7,7 @@ import { getUnlockedAchievements } from "@/lib/achievements";
 import { getXP, getLevel, getDailyChallenge } from "@/lib/xp";
 import { playClickSound } from "@/lib/sounds";
 import ClassroomBackground from "@/components/ClassroomBackground";
+import NotebookPage from "@/components/NotebookPage";
 import PremiumGameCard from "@/components/PremiumGameCard";
 import AnimatedSection from "@/components/AnimatedSection";
 import Card3D from "@/components/Card3D";
@@ -326,9 +327,8 @@ const Index = () => {
         {showEntrance && <SimpleEntrance onComplete={handleEntranceComplete} />}
       </AnimatePresence>
 
-      <div
-        className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 relative z-10"
-      >
+      <NotebookPage>
+        <div className="max-w-3xl mx-auto relative z-10">
         {/* ═══ TITLE with mascot ═══ */}
         <motion.section {...stagger(0)} className="text-center mb-6 sm:mb-10">
           {/* Hero: Owl mascot + User Avatar side by side */}
@@ -378,7 +378,7 @@ const Index = () => {
         </motion.section>
 
         {/* ═══ XP PROGRESS BAR — Chalkboard ═══ */}
-        <motion.section {...stagger(1)} className="max-w-lg mx-auto mb-6 sm:mb-8">
+        <motion.section {...stagger(1)} className="max-w-lg mx-auto mb-6 sm:mb-8 px-1">
           <XPProgressBar current={xpLevel.current} needed={xpLevel.needed} level={xpLevel.level} title={xpLevel.title} lang={lang} />
         </motion.section>
 
@@ -547,7 +547,7 @@ const Index = () => {
               </ChalkText>
             </div>
           </ChalkSection>
-          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
+          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2.5 sm:gap-3">
             {gameCards.map((card, i) => (
               <PremiumGameCard
                 key={card.path}
@@ -564,7 +564,7 @@ const Index = () => {
         <ChalkDivider />
 
         {/* ═══ ABC ANIMALS VIDEO ═══ */}
-        <AnimatedSection className="max-w-2xl mx-auto mb-6 sm:mb-8" delay={0.1}>
+        <AnimatedSection className="max-w-2xl mx-auto mb-6 sm:mb-8 px-1" delay={0.1}>
           <NotebookCard>
             <div className="text-center mb-3">
               <h3 className="font-display font-bold text-base sm:text-lg text-foreground flex items-center justify-center gap-2">
@@ -653,7 +653,8 @@ const Index = () => {
             </div>
           </NotebookCard>
         </AnimatedSection>
-      </div>
+        </div>
+      </NotebookPage>
     </div>
   );
 };
