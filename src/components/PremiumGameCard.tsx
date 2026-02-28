@@ -60,12 +60,13 @@ const PremiumGameCard = ({ emoji, title, color, index, description, onClick }: P
         damping: 22,
         delay: index * 0.04,
       }}
+      whileHover={{ scale: 1.08, y: -6 }}
       whileTap={{ scale: 0.9 }}
     >
       <div
         className={`${color} rounded-2xl p-4 sm:p-5 text-center border border-transparent 
-          group-hover:border-primary/25 transition-[border-color] duration-300 
-          group-hover:shadow-[var(--shadow-card-hover)] relative overflow-hidden`}
+          group-hover:border-primary/30 transition-all duration-300 
+          group-hover:shadow-[0_0_20px_hsl(var(--primary)/0.25),0_8px_32px_hsl(var(--primary)/0.15)] relative overflow-hidden`}
         style={{ transformStyle: "preserve-3d" }}
       >
         {/* Holographic shine layer */}
@@ -98,16 +99,18 @@ const PremiumGameCard = ({ emoji, title, color, index, description, onClick }: P
 
         {/* Emoji with squash-and-stretch */}
         <motion.span
-          className="text-3xl sm:text-4xl block mb-2 relative"
+          className="text-3xl sm:text-4xl block mb-2 relative drop-shadow-lg"
           style={{ transform: "translateZ(35px)" }}
           whileHover={{
-            scale: [1, 1.3, 1.15],
-            rotate: [0, -8, 8, 0],
+            scale: [1, 1.4, 0.9, 1.2],
+            rotate: [0, -12, 12, -6, 0],
+            y: [0, -8, 2, -4, 0],
           }}
           transition={{
             type: "spring",
-            stiffness: 400,
-            damping: 12,
+            stiffness: 500,
+            damping: 10,
+            duration: 0.6,
           }}
         >
           {emoji}
