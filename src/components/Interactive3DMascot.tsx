@@ -59,6 +59,7 @@ const Interactive3DMascot = forwardRef<HTMLButtonElement, Interactive3DMascotPro
   const [tapCount, setTapCount] = useState(0);
   const [autoSpeech, setAutoSpeech] = useState<string | null>(null);
   const [showSparkles, setShowSparkles] = useState(false);
+  const [dragShake, setDragShake] = useState(false);
   const prevMoodRef = useRef(mood);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -99,6 +100,16 @@ const Interactive3DMascot = forwardRef<HTMLButtonElement, Interactive3DMascotPro
     [mouseX, mouseY]
   );
 
+  const dropReactions = ["😵‍💫", "וואו!", "!שיט", "🤪", "הופה!", "🫨"];
+
+  const handleDragEnd = useCallback(() => {
+    setDragShake(true);
+    const line = dropReactions[Math.floor(Math.random() * dropReactions.length)];
+    setAutoSpeech(line);
+    setTimeout(() => setAutoSpeech(null), 1500);
+    setTimeout(() => setDragShake(false), 600);
+  }, []);
+
   const handleTap = useCallback(() => {
     setTapCount((c) => c + 1);
     const lines = speechByMood[mood] || speechByMood.idle;
@@ -130,7 +141,9 @@ const Interactive3DMascot = forwardRef<HTMLButtonElement, Interactive3DMascotPro
       dragMomentum
       dragElastic={0.15}
       dragTransition={{ bounceStiffness: 300, bounceDamping: 20 }}
+      onDragEnd={handleDragEnd}
       whileDrag={{ scale: 1.08, zIndex: 50 }}
+      animate={dragShake ? { rotate: [0, -12, 10, -8, 6, -3, 0] } : { rotate: 0 }}
       whileTap={{
         scale: [1, 0.86, 1.08, 0.97, 1],
         scaleY: [1, 0.88, 1.08, 0.98, 1],
