@@ -41,6 +41,7 @@ import StoryPage from "./pages/StoryPage";
 import ABCAnimalsPage from "./pages/ABCAnimalsPage";
 import AnimalMatchGame from "./pages/AnimalMatchGame";
 import LessonPage from "./pages/LessonPage";
+import PhrasesPage from "./pages/PhrasesPage";
 
 const queryClient = new QueryClient();
 
@@ -89,6 +90,7 @@ const AnimatedRoutes = () => {
       <Route path="/abc-animals" element={<PageWrapper><ABCAnimalsPage /></PageWrapper>} />
       <Route path="/animal-match" element={<PageWrapper><AnimalMatchGame /></PageWrapper>} />
       <Route path="/lesson" element={<PageWrapper><LessonPage /></PageWrapper>} />
+      <Route path="/phrases" element={<PageWrapper><PhrasesPage /></PageWrapper>} />
       <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
     </Routes>
   );

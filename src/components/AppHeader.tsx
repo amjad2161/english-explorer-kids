@@ -121,6 +121,7 @@ const AppHeader = () => {
     { path: "/scramble", label: t("nav.scramble"), icon: "🔀", mobileOnly: true },
     { path: "/hangman", label: t("nav.hangman"), icon: "🎭", mobileOnly: true },
     { path: "/pattern", label: t("nav.pattern"), icon: "🔮", mobileOnly: true },
+    { path: "/phrases", label: lang === "he" ? "ביטויים" : lang === "ar" ? "عبارات" : "Phrases", icon: "💬", mobileOnly: true },
     { path: "/achievements", label: "🏅", icon: "🏅", mobileOnly: true },
     { path: "/stats", label: "📊", icon: "📊", mobileOnly: true },
     { path: "/report", label: "📋", icon: "📋", mobileOnly: true },
