@@ -118,8 +118,8 @@ const SpellingBee = () => {
   };
 
   const currentWord = words[currentIndex];
-  const progress = words.length > 0 ? ((currentIndex + 1) / words.length) * 100 : 0;
-  if (words.length === 0) return null;
+  const progress = words.length > 0 ? (Math.min(currentIndex + 1, words.length) / words.length) * 100 : 0;
+  if (!currentWord && !rewards.isComplete) return null;
 
   return (
     <GameSceneShell
@@ -133,7 +133,7 @@ const SpellingBee = () => {
       totalRounds={words.length}
     >
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 relative z-10">
-        {!rewards.isComplete ? (
+        {!rewards.isComplete && currentWord ? (
           <>
             <div className="mb-4">
               <GameTimer key={timerKey} seconds={TIME_PER_ROUND} running={timerRunning} onTimeUp={handleTimeUp} />
