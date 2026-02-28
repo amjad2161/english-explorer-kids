@@ -1,7 +1,11 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useLanguage } from "@/lib/i18n";
-import { playClickSound, playAnimalSound, type AnimalSoundType } from "@/lib/sounds";
+import { playClickSound, playAnimalSound, speakEnglish, speakExcited, type AnimalSoundType } from "@/lib/sounds";
+import animalsGrid1 from "@/assets/animals-grid-1.png";
+import animalsGrid2 from "@/assets/animals-grid-2.png";
+import animalsGrid3 from "@/assets/animals-grid-3.png";
+import animalsGrid4 from "@/assets/animals-grid-4.png";
 import { dispatchCharacterEvent } from "@/lib/characterStore";
 import ClassroomBackground from "@/components/ClassroomBackground";
 import BackToLevels from "@/components/BackToLevels";
@@ -453,6 +457,10 @@ const ABCAnimalsPage = () => {
     setActiveIndex(index);
     const animal = abcAnimals[index];
     playAnimalSound(animal.soundKey);
+    // TTS: Read the animal name aloud after a short delay so it doesn't overlap the animal sound
+    setTimeout(() => {
+      speakEnglish(`${animal.letter} is for ${animal.animal}`);
+    }, 400);
     dispatchCharacterEvent({
       type: "talk",
       payload: { message: `${animal.letter} is for ${animal.animal} ${animal.emoji}`, duration: 2500 },
@@ -497,12 +505,32 @@ const ABCAnimalsPage = () => {
           </p>
         </AnimatedSection>
 
+        {/* Character Gallery Banner */}
+        <AnimatedSection delay={0.12} className="mb-6">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {[animalsGrid1, animalsGrid2, animalsGrid3, animalsGrid4].map((img, i) => (
+              <motion.div
+                key={i}
+                className="rounded-2xl overflow-hidden"
+                style={{
+                  border: "2px solid hsl(var(--primary) / 0.15)",
+                  boxShadow: "0 4px 16px hsl(var(--primary) / 0.08)",
+                }}
+                whileHover={{ scale: 1.03, y: -2 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <img src={img} alt={`ABC Animals characters ${i + 1}`} className="w-full h-auto" loading="lazy" />
+              </motion.div>
+            ))}
+          </div>
+        </AnimatedSection>
+
         {/* ABC Animals Grid */}
         <AnimatedSection delay={0.15}>
           <div className="text-center mb-4">
             <h2 className="font-display font-bold text-lg sm:text-xl text-foreground flex items-center justify-center gap-2">
               <Sparkles className="w-5 h-5 text-primary" />
-              {lang === "he" ? "לחצו על חיה כדי ללמוד" : lang === "ar" ? "اضغط على حيوان للتعلم" : "Tap an animal to learn!"}
+              {lang === "he" ? "לחצו על חיה כדי לשמוע את השם שלה!" : lang === "ar" ? "اضغط على حيوان لسماع اسمه!" : "Tap an animal to hear its name!"}
             </h2>
           </div>
           <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-2 sm:gap-3">
@@ -549,6 +577,26 @@ const ABCAnimalsPage = () => {
               >
                 {abcAnimals[activeIndex].sound}
               </motion.p>
+
+              {/* Hear it again button */}
+              <motion.button
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.92 }}
+                onClick={() => {
+                  const animal = abcAnimals[activeIndex];
+                  playAnimalSound(animal.soundKey);
+                  setTimeout(() => speakEnglish(`${animal.letter} is for ${animal.animal}`), 400);
+                }}
+                className="mt-3 px-4 py-2 rounded-full font-display font-bold text-sm flex items-center gap-2 mx-auto"
+                style={{
+                  background: `hsl(${abcAnimals[activeIndex].color} / 0.15)`,
+                  color: `hsl(${abcAnimals[activeIndex].color})`,
+                  border: `2px solid hsl(${abcAnimals[activeIndex].color} / 0.3)`,
+                }}
+              >
+                <Volume2 className="w-4 h-4" />
+                {lang === "he" ? "שמע שוב" : "Hear it again!"}
+              </motion.button>
 
               {/* Prev/Next */}
               <div className="flex justify-center gap-3 mt-4">
