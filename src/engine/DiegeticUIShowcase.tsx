@@ -1,7 +1,7 @@
 import { WoodButton3D, LetterTile3D, ProgressSign3D, Scoreboard3D, StarBadge3D, EnergyMeter3D } from "./diegetic";
 import { useSceneDirector } from "./SceneDirector";
 import { dispatchCharacterEvent } from "@/lib/characterStore";
-import { playClickSound } from "@/lib/sounds";
+
 
 /**
  * DiegeticUIShowcase — demonstrates the 3D UI primitives in the scene.
@@ -20,7 +20,6 @@ const DiegeticUIShowcase = () => {
         label="▶  Play"
         position={[0, 2.5, 0]}
         onClick={() => {
-          playClickSound();
           dispatchCharacterEvent({ type: "celebrate" });
         }}
       />
@@ -31,9 +30,9 @@ const DiegeticUIShowcase = () => {
           <LetterTile3D
             key={letter}
             letter={letter}
+            index={i}
             position={[i * 0.7, 0, 0]}
             onClick={() => {
-              playClickSound();
               dispatchCharacterEvent({ type: "correct" });
             }}
           />
