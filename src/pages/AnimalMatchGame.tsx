@@ -4,14 +4,10 @@ import { useLanguage } from "@/lib/i18n";
 import { playClickSound, playAnimalSound, playMatchSound, speakEnglish, type AnimalSoundType } from "@/lib/sounds";
 import { animalImages } from "@/assets/animals";
 import { dispatchCharacterEvent } from "@/lib/characterStore";
-import { addXP } from "@/lib/xp";
-import ClassroomBackground from "@/components/ClassroomBackground";
-import BackToLevels from "@/components/BackToLevels";
-import Interactive3DMascot from "@/components/Interactive3DMascot";
-import AnimatedSection from "@/components/AnimatedSection";
-import GameShell from "@/components/GameShell";
-import Confetti from "@/components/Confetti";
-import { Star, RotateCcw, Sparkles, ArrowRight } from "lucide-react";
+import { useRewardsPipeline } from "@/hooks/useRewardsPipeline";
+import GameSceneShell from "@/components/GameSceneShell";
+import StarRating from "@/components/StarRating";
+import { RotateCcw } from "lucide-react";
 
 /* ─── Animal pairs ─── */
 const allPairs: { letter: string; animal: string; emoji: string; soundKey: AnimalSoundType }[] = [
@@ -43,8 +39,6 @@ const allPairs: { letter: string; animal: string; emoji: string; soundKey: Anima
   { letter: "Z", animal: "Zebra", emoji: "🦓", soundKey: "zebra" },
 ];
 
-type GamePhase = "playing" | "complete";
-
 const shuffle = <T,>(arr: T[]): T[] => {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -55,16 +49,13 @@ const shuffle = <T,>(arr: T[]): T[] => {
 };
 
 const AnimalMatchGame = () => {
-  const { dir, lang } = useLanguage();
+  const { lang } = useLanguage();
+  const rewards = useRewardsPipeline();
   const [round, setRound] = useState(0);
-  const [score, setScore] = useState(0);
-  const [streak, setStreak] = useState(0);
-  const [phase, setPhase] = useState<GamePhase>("playing");
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
   const [matchedPairs, setMatchedPairs] = useState<Set<string>>(new Set());
   const [wrongPair, setWrongPair] = useState<string | null>(null);
 
-  // Pick 8 random pairs per round
   const currentPairs = useMemo(() => shuffle(allPairs).slice(0, 8), [round]);
   const shuffledLetters = useMemo(() => shuffle(currentPairs.map(p => p.letter)), [currentPairs]);
   const shuffledAnimals = useMemo(() => shuffle(currentPairs.map(p => ({ letter: p.letter, animal: p.animal, emoji: p.emoji, soundKey: p.soundKey }))), [currentPairs]);
@@ -85,7 +76,6 @@ const AnimalMatchGame = () => {
     playClickSound();
 
     if (selectedLetter === letter) {
-      // Correct match — play the animal's sound!
       const matchedAnimal = currentPairs.find(p => p.letter === letter);
       if (matchedAnimal) {
         playAnimalSound(matchedAnimal.soundKey);
@@ -95,91 +85,53 @@ const AnimalMatchGame = () => {
       const newMatched = new Set(matchedPairs);
       newMatched.add(letter);
       setMatchedPairs(newMatched);
-      setScore(s => s + 10 + streak * 5);
-      setStreak(s => s + 1);
       setSelectedLetter(null);
-      dispatchCharacterEvent({ type: "correct", payload: { duration: 1500 } });
+      rewards.fireEvent({ type: "correct", points: 10 });
 
       if (newMatched.size === currentPairs.length) {
         setTimeout(() => {
-          setPhase("complete");
-          addXP(50 + score);
-          dispatchCharacterEvent({ type: "celebrate", payload: { message: lang === "he" ? "!מושלם" : "Perfect! 🎉" } });
+          rewards.completeGame({
+            gameType: "animal-match",
+            stageId: null,
+            correct: currentPairs.length,
+            wrong: 0,
+            totalRounds: currentPairs.length,
+          });
         }, 600);
       }
     } else {
-      // Wrong match
       setWrongPair(letter);
-      setStreak(0);
-      dispatchCharacterEvent({ type: "wrong", payload: { duration: 1500 } });
+      rewards.fireEvent({ type: "wrong" });
       setTimeout(() => { setWrongPair(null); setSelectedLetter(null); }, 800);
     }
-  }, [selectedLetter, matchedPairs, currentPairs.length, streak, score, lang]);
+  }, [selectedLetter, matchedPairs, currentPairs, rewards]);
 
   const nextRound = useCallback(() => {
     setRound(r => r + 1);
-    setPhase("playing");
     setMatchedPairs(new Set());
     setSelectedLetter(null);
-    setScore(0);
-    setStreak(0);
+    rewards.reset();
     playClickSound();
-  }, []);
+  }, [rewards]);
 
-  const totalMatched = matchedPairs.size;
+  const progress = (matchedPairs.size / currentPairs.length) * 100;
 
   return (
-    <div className="min-h-screen relative" dir={dir}>
-      <ClassroomBackground />
-      {phase === "complete" && <Confetti show={true} />}
-
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 relative z-10">
-        <BackToLevels />
-
-        <AnimatedSection className="text-center mb-6">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <Interactive3DMascot mood={phase === "complete" ? "celebrate" : "idle"} size="sm" />
-            <div>
-              <h1 className="font-display font-extrabold text-2xl sm:text-3xl text-gradient">
-                {lang === "he" ? "התאמת חיות" : lang === "ar" ? "مطابقة الحيوانات" : "Animal Match"} 🐾
-              </h1>
-              <p className="font-display text-xs text-muted-foreground">
-                {lang === "he" ? "חברו בין האות לחיה שמתחילה בה" : "Match each letter to its animal!"}
-              </p>
-            </div>
-          </div>
-
-          {/* Score bar */}
-          <div className="flex items-center justify-center gap-4 mt-3">
-            <div className="flex items-center gap-1 px-3 py-1 rounded-full" style={{ background: "hsl(var(--primary) / 0.1)" }}>
-              <Star className="w-4 h-4 text-primary" />
-              <span className="font-display font-bold text-sm text-primary">{score}</span>
-            </div>
-            <div className="font-display text-xs text-muted-foreground">
-              {totalMatched}/{currentPairs.length} {lang === "he" ? "התאמות" : "matches"}
-            </div>
-            {streak > 1 && (
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="px-2 py-0.5 rounded-full text-xs font-display font-bold"
-                style={{ background: "hsl(var(--accent) / 0.15)", color: "hsl(var(--accent))" }}
-              >
-                🔥 x{streak}
-              </motion.div>
-            )}
-          </div>
-        </AnimatedSection>
-
+    <GameSceneShell
+      title={lang === "he" ? "התאמת חיות" : "Animal Match"}
+      emoji="🐾"
+      gameType="animal-match"
+      rewards={rewards}
+      onDismissXP={rewards.dismissXP}
+      progress={progress}
+      currentRound={matchedPairs.size}
+      totalRounds={currentPairs.length}
+    >
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 relative z-10">
         <AnimatePresence mode="wait">
-          {phase === "playing" ? (
-            <motion.div
-              key="game"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="grid grid-cols-2 gap-4 sm:gap-6 max-w-2xl mx-auto"
-            >
+          {!rewards.isComplete ? (
+            <motion.div key="game" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="grid grid-cols-2 gap-4 sm:gap-6 max-w-2xl mx-auto">
               {/* Letters column */}
               <div className="space-y-2">
                 <p className="text-center font-display font-bold text-sm text-muted-foreground mb-2">
@@ -189,21 +141,17 @@ const AnimalMatchGame = () => {
                   const isMatched = matchedPairs.has(letter);
                   const isSelected = selectedLetter === letter;
                   return (
-                    <motion.button
-                      key={letter}
+                    <motion.button key={letter}
                       whileHover={!isMatched ? { scale: 1.04 } : {}}
                       whileTap={!isMatched ? { scale: 0.96 } : {}}
                       onClick={() => handleLetterClick(letter)}
                       disabled={isMatched}
                       className={`w-full py-3 rounded-xl font-display font-extrabold text-2xl transition-all ${isMatched ? "opacity-40" : ""}`}
                       style={{
-                        background: isSelected
-                          ? "hsl(var(--primary) / 0.15)"
-                          : "hsl(var(--card) / 0.9)",
+                        background: isSelected ? "hsl(var(--primary) / 0.15)" : "hsl(var(--card) / 0.9)",
                         border: `2px solid ${isSelected ? "hsl(var(--primary))" : "hsl(var(--border))"}`,
                         color: isSelected ? "hsl(var(--primary))" : "hsl(var(--foreground))",
-                      }}
-                    >
+                      }}>
                       {letter}
                     </motion.button>
                   );
@@ -219,8 +167,7 @@ const AnimalMatchGame = () => {
                   const isMatched = matchedPairs.has(a.letter);
                   const isWrong = wrongPair === a.letter;
                   return (
-                    <motion.button
-                      key={a.letter}
+                    <motion.button key={a.letter}
                       whileHover={!isMatched ? { scale: 1.04 } : {}}
                       whileTap={!isMatched ? { scale: 0.96 } : {}}
                       onClick={() => handleAnimalClick(a.letter)}
@@ -229,15 +176,10 @@ const AnimalMatchGame = () => {
                       transition={isWrong ? { duration: 0.4 } : {}}
                       className={`w-full py-2.5 rounded-xl font-display font-bold text-sm flex items-center justify-center gap-2 transition-all ${isMatched ? "opacity-40" : ""}`}
                       style={{
-                        background: isWrong
-                          ? "hsl(var(--destructive) / 0.12)"
-                          : isMatched
-                          ? "hsl(var(--primary) / 0.08)"
-                          : "hsl(var(--card) / 0.9)",
+                        background: isWrong ? "hsl(var(--destructive) / 0.12)" : isMatched ? "hsl(var(--primary) / 0.08)" : "hsl(var(--card) / 0.9)",
                         border: `2px solid ${isWrong ? "hsl(var(--destructive) / 0.5)" : "hsl(var(--border))"}`,
                         color: "hsl(var(--foreground))",
-                      }}
-                    >
+                      }}>
                       <img src={animalImages[a.soundKey]} alt={a.animal} className="w-8 h-8 rounded-full object-cover" />
                       <span>{a.animal}</span>
                     </motion.button>
@@ -246,46 +188,27 @@ const AnimalMatchGame = () => {
               </div>
             </motion.div>
           ) : (
-            <motion.div
-              key="complete"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
+            <motion.div key="complete" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
               className="text-center max-w-md mx-auto rounded-2xl p-8"
-              style={{
-                background: "hsl(var(--card) / 0.95)",
-                border: "2px solid hsl(var(--primary) / 0.2)",
-                boxShadow: "0 8px 30px hsl(var(--primary) / 0.1)",
-              }}
-            >
-              <motion.div
-                className="text-6xl mb-3"
-                animate={{ rotate: [0, -10, 10, 0], scale: [1, 1.2, 1] }}
-                transition={{ duration: 1, repeat: 2 }}
-              >
-                🎉
-              </motion.div>
+              style={{ background: "hsl(var(--card) / 0.95)", border: "2px solid hsl(var(--primary) / 0.2)", boxShadow: "0 8px 30px hsl(var(--primary) / 0.1)" }}>
+              <motion.div className="text-6xl mb-3" animate={{ rotate: [0, -10, 10, 0], scale: [1, 1.2, 1] }} transition={{ duration: 1, repeat: 2 }}>🎉</motion.div>
               <h2 className="font-display font-extrabold text-2xl text-gradient mb-2">
                 {lang === "he" ? "!כל הכבוד" : "Amazing!"}
               </h2>
+              <div className="my-4"><StarRating earned={rewards.starsEarned} total={5} size={32} /></div>
               <p className="text-muted-foreground font-display text-sm mb-4">
-                {lang === "he" ? `!צברת ${score} נקודות` : `You scored ${score} points!`}
+                {lang === "he" ? `!צברת ${rewards.xpEarned} XP` : `You earned ${rewards.xpEarned} XP!`}
               </p>
-              <div className="flex justify-center gap-3">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={nextRound}
-                  className="btn-kid inline-flex items-center gap-2 gradient-primary text-primary-foreground text-sm"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                  {lang === "he" ? "סיבוב נוסף" : "Play Again"}
-                </motion.button>
-              </div>
+              <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={nextRound}
+                className="btn-kid inline-flex items-center gap-2 gradient-primary text-primary-foreground text-sm">
+                <RotateCcw className="w-4 h-4" />
+                {lang === "he" ? "סיבוב נוסף" : "Play Again"}
+              </motion.button>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
-    </div>
+    </GameSceneShell>
   );
 };
 
