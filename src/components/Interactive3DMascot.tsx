@@ -124,14 +124,19 @@ const Interactive3DMascot = forwardRef<HTMLButtonElement, Interactive3DMascotPro
       onClick={handleTap}
       onPointerMove={handlePointerMove}
       onPointerLeave={() => { mouseX.set(0); mouseY.set(0); }}
-      className="relative inline-flex items-center justify-center p-0 border-0 bg-transparent"
-      style={{ width: dim, height: dim, perspective: 600 }}
+      className="relative inline-flex items-center justify-center p-0 border-0 bg-transparent cursor-grab active:cursor-grabbing"
+      style={{ width: dim, height: dim, perspective: 600, touchAction: "none" }}
+      drag
+      dragMomentum
+      dragElastic={0.15}
+      dragTransition={{ bounceStiffness: 300, bounceDamping: 20 }}
+      whileDrag={{ scale: 1.08, zIndex: 50 }}
       whileTap={{
         scale: [1, 0.86, 1.08, 0.97, 1],
         scaleY: [1, 0.88, 1.08, 0.98, 1],
         transition: { duration: 0.5, ease: "easeOut" },
       }}
-      aria-label="Interactive Owl Mascot"
+      aria-label="Interactive Owl Mascot – drag to move"
     >
       {/* Ambient glow ring */}
       <motion.div
