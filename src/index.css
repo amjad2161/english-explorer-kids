@@ -513,6 +513,13 @@
   .animate-rainbow-border { animation: rainbow-border 4s linear infinite; border-width: 2px; }
   .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
   .animate-breathe { animation: breathe 4s ease-in-out infinite; }
+
+  /* Game entrance CSS fallback — guarantees the overlay disappears */
+  @keyframes game-entrance-fade {
+    0%, 70% { opacity: 1; pointer-events: auto; }
+    90% { opacity: 0; pointer-events: none; }
+    100% { opacity: 0; pointer-events: none; visibility: hidden; }
+  }
   .animate-float-rotate { animation: float-rotate 5s ease-in-out infinite; }
 
   /* ─── Difficulty indicator ─── */
