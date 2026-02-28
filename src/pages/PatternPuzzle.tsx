@@ -129,6 +129,21 @@ const ANALOGIES: { a: string; b: string; c: string; d: string; hint: string }[] 
   { a: "Red", b: "Apple", c: "Yellow", d: "Banana", hint: "Color → Fruit" },
   { a: "Passport", b: "Travel", c: "Ticket", d: "Bus", hint: "Document → Usage" },
   { a: "Water", b: "Drink", c: "Bread", d: "Eat", hint: "Item → Action" },
+  // Verb analogies
+  { a: "Pen", b: "Write", c: "Brush", d: "Paint", hint: "Tool → Action" },
+  { a: "Chef", b: "Cook", c: "Singer", d: "Sing", hint: "Person → Action" },
+  { a: "Nose", b: "Smell", c: "Tongue", d: "Taste", hint: "Body part → Sense" },
+  // Opposite analogies
+  { a: "Wet", b: "Dry", c: "Loud", d: "Quiet", hint: "Opposites!" },
+  { a: "Full", b: "Empty", c: "Alive", d: "Dead", hint: "Opposites!" },
+  { a: "Sweet", b: "Sour", c: "Smooth", d: "Rough", hint: "Opposites!" },
+  { a: "Deep", b: "Shallow", c: "Wide", d: "Narrow", hint: "Opposites!" },
+  // Weather analogies
+  { a: "Rain", b: "Umbrella", c: "Snow", d: "Coat", hint: "Weather → Protection" },
+  { a: "Sunny", b: "Hot", c: "Snowy", d: "Cold", hint: "Weather → Temperature" },
+  // Kitchen analogies
+  { a: "Spoon", b: "Soup", c: "Fork", d: "Salad", hint: "Utensil → Food" },
+  { a: "Oven", b: "Bake", c: "Pan", d: "Fry", hint: "Tool → Cooking Method" },
 ];
 
 const generateAnalogy = (): Puzzle => {
@@ -168,9 +183,30 @@ const SENTENCES: { parts: string[]; answer: string; distractors: string[]; hint:
   { parts: ["The kitchen is", "?"], answer: "clean", distractors: ["fly", "sing", "jump"], hint: "Tidy and neat" },
   { parts: ["Close the", "?", "please"], answer: "door", distractors: ["run", "happy", "eat"], hint: "You walk through it" },
   { parts: ["Where is the", "?"], answer: "bathroom", distractors: ["run", "big", "cold"], hint: "A room to wash" },
-  // New: Opposites in context
+  // Opposites in context
   { parts: ["The elephant is big, the ant is", "?"], answer: "small", distractors: ["blue", "run", "eat"], hint: "The opposite of big" },
   { parts: ["Summer is hot, winter is", "?"], answer: "cold", distractors: ["run", "eat", "big"], hint: "The opposite of hot" },
+  { parts: ["Day is bright, night is", "?"], answer: "dark", distractors: ["run", "eat", "big"], hint: "The opposite of bright" },
+  { parts: ["Honey is sweet, lemon is", "?"], answer: "sour", distractors: ["big", "run", "blue"], hint: "The opposite of sweet" },
+  { parts: ["The baby is young, grandpa is", "?"], answer: "old", distractors: ["run", "eat", "blue"], hint: "The opposite of young" },
+  { parts: ["The rock is hard, the pillow is", "?"], answer: "soft", distractors: ["big", "run", "eat"], hint: "The opposite of hard" },
+  { parts: ["The library is quiet, the playground is", "?"], answer: "loud", distractors: ["run", "eat", "big"], hint: "The opposite of quiet" },
+  // Weather context
+  { parts: ["Today is", "?", "so bring an umbrella"], answer: "rainy", distractors: ["big", "run", "eat"], hint: "A weather type 🌧️" },
+  { parts: ["It is very", "?", "so wear a coat"], answer: "cold", distractors: ["run", "eat", "big"], hint: "A temperature" },
+  { parts: ["Look at the beautiful", "?", "after the rain"], answer: "rainbow", distractors: ["run", "eat", "big"], hint: "Colorful arc in the sky 🌈" },
+  // Verb context
+  { parts: ["The chef likes to", "?"], answer: "cook", distractors: ["blue", "big", "cold"], hint: "What chefs do" },
+  { parts: ["The artist likes to", "?"], answer: "draw", distractors: ["cold", "big", "run"], hint: "Making pictures" },
+  { parts: ["The fish can", "?"], answer: "swim", distractors: ["fly", "run", "sing"], hint: "Movement in water" },
+  { parts: ["The singer loves to", "?"], answer: "sing", distractors: ["eat", "blue", "big"], hint: "Making music with your voice" },
+  { parts: ["We use a spoon to eat", "?"], answer: "soup", distractors: ["run", "big", "blue"], hint: "A liquid food" },
+  { parts: ["Put the book", "?", "the table"], answer: "on", distractors: ["eat", "run", "big"], hint: "A position word" },
+  { parts: ["The cat is hiding", "?", "the bed"], answer: "under", distractors: ["eat", "run", "big"], hint: "Below something" },
+  { parts: ["She is standing", "?", "the door"], answer: "behind", distractors: ["eat", "run", "big"], hint: "At the back of" },
+  // Kitchen context
+  { parts: ["We need", "?", "to make bread"], answer: "flour", distractors: ["run", "big", "blue"], hint: "A white powder" },
+  { parts: ["Please pass the", "?", "for the eggs"], answer: "salt", distractors: ["run", "big", "blue"], hint: "Makes food tasty" },
 ];
 
 const generateSentenceCompletion = (): Puzzle => {
