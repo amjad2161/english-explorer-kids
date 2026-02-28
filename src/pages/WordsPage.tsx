@@ -3,7 +3,7 @@ import { useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useLanguage } from "@/lib/i18n";
 import { wordCategories, WordCard, getCategoryName, getWordTranslation } from "@/data/learningData";
-import { speakEnglish, playClickSound, playStarSound } from "@/lib/sounds";
+import { speakEnglish, speakEnglishLearn, playClickSound, playStarSound } from "@/lib/sounds";
 import { addCompletedWord } from "@/lib/progress";
 import { saveStageProgress, levels } from "@/lib/levels";
 import Confetti from "@/components/Confetti";
@@ -69,7 +69,7 @@ const WordsPage = () => {
     const key = word.english;
     setFlippedCards((prev) => {
       const next = new Set(prev);
-      if (next.has(key)) { next.delete(key); } else { next.add(key); speakEnglish(word.english); }
+      if (next.has(key)) { next.delete(key); } else { next.add(key); speakEnglishLearn(word.english); }
       return next;
     });
   };

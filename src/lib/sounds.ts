@@ -54,14 +54,14 @@ const getKidVoice = (lang: string): SpeechSynthesisVoice | null => {
 };
 
 // ─── Speech ───
-// Cartoon-character voice: high pitch, slightly slow for clarity, warm & bouncy
-export const speak = (text: string, lang: string = 'en-US', rate: number = 0.78) => {
+// Natural, clear voices optimised for language learning (not cartoon pitch)
+export const speak = (text: string, lang: string = 'en-US', rate: number = 0.78, pitch: number = 1.1) => {
   if (!('speechSynthesis' in window) || !isSoundEnabled()) return;
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = lang;
   utterance.rate = rate;
-  utterance.pitch = 1.5; // Higher pitch = more cartoon-like, kid-friendly
+  utterance.pitch = pitch;
   utterance.volume = 1;
 
   const voice = getKidVoice(lang);
@@ -70,12 +70,39 @@ export const speak = (text: string, lang: string = 'en-US', rate: number = 0.78)
   window.speechSynthesis.speak(utterance);
 };
 
-// English: Slow, clear, enthusiastic - like a friendly cartoon teacher
-export const speakEnglish = (text: string) => speak(text, 'en-US', 0.72);
+// English: Clear, slow, natural — so the child hears real pronunciation
+export const speakEnglish = (text: string) => speak(text, 'en-US', 0.65, 1.05);
 // Hebrew: Slightly faster, warm
-export const speakHebrew = (text: string) => speak(text, 'he-IL', 0.82);
+export const speakHebrew = (text: string) => speak(text, 'he-IL', 0.78, 1.1);
 // Arabic: Clear and warm
-export const speakArabic = (text: string) => speak(text, 'ar-SA', 0.80);
+export const speakArabic = (text: string) => speak(text, 'ar-SA', 0.75, 1.1);
+
+// Speak English word twice — first slow then normal speed, for learning
+export const speakEnglishLearn = (text: string) => {
+  if (!('speechSynthesis' in window) || !isSoundEnabled()) return;
+  window.speechSynthesis.cancel();
+  // First: very slow & clear
+  const slow = new SpeechSynthesisUtterance(text);
+  slow.lang = 'en-US';
+  slow.rate = 0.5;
+  slow.pitch = 1.0;
+  slow.volume = 1;
+  const voice = getKidVoice('en-US');
+  if (voice) slow.voice = voice;
+  // Second: normal speed after a pause
+  slow.onend = () => {
+    setTimeout(() => {
+      const normal = new SpeechSynthesisUtterance(text);
+      normal.lang = 'en-US';
+      normal.rate = 0.8;
+      normal.pitch = 1.05;
+      normal.volume = 1;
+      if (voice) normal.voice = voice;
+      window.speechSynthesis.speak(normal);
+    }, 400);
+  };
+  window.speechSynthesis.speak(slow);
+};
 
 // Speak with extra enthusiasm (for celebrations, correct answers)
 export const speakExcited = (text: string) => {
@@ -83,8 +110,8 @@ export const speakExcited = (text: string) => {
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = 'en-US';
-  utterance.rate = 0.85;
-  utterance.pitch = 1.7; // Extra high for excitement
+  utterance.rate = 0.8;
+  utterance.pitch = 1.2;
   utterance.volume = 1;
   const voice = getKidVoice('en-US');
   if (voice) utterance.voice = voice;
@@ -97,8 +124,8 @@ export const speakSpelling = (letter: string) => {
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(letter);
   utterance.lang = 'en-US';
-  utterance.rate = 0.6; // Very slow for letter clarity
-  utterance.pitch = 1.4;
+  utterance.rate = 0.5;
+  utterance.pitch = 1.05;
   utterance.volume = 1;
   const voice = getKidVoice('en-US');
   if (voice) utterance.voice = voice;
