@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useLanguage } from "@/lib/i18n";
-import { playClickSound } from "@/lib/sounds";
+import { playClickSound, playAnimalSound, type AnimalSoundType } from "@/lib/sounds";
 import { dispatchCharacterEvent } from "@/lib/characterStore";
 import ClassroomBackground from "@/components/ClassroomBackground";
 import BackToLevels from "@/components/BackToLevels";
@@ -10,33 +10,33 @@ import AnimatedSection from "@/components/AnimatedSection";
 import { Play, Pause, Volume2, VolumeX, SkipBack, SkipForward, Music, Sparkles } from "lucide-react";
 
 /* ─── ABC Animals data from the video ─── */
-const abcAnimals = [
-  { letter: "A", animal: "Alligator", emoji: "🐊", sound: "Chomp! Chomp!", color: "142 60% 42%" },
-  { letter: "B", animal: "Bear", emoji: "🐻", sound: "Stomp! Stomp!", color: "25 60% 45%" },
-  { letter: "C", animal: "Cat", emoji: "🐱", sound: "Purrrr~", color: "265 55% 58%" },
-  { letter: "D", animal: "Dog", emoji: "🐶", sound: "Woof! Woof!", color: "25 95% 53%" },
-  { letter: "E", animal: "Elephant", emoji: "🐘", sound: "Toot! Toot!", color: "220 15% 55%" },
-  { letter: "F", animal: "Fox", emoji: "🦊", sound: "Sly & Fast!", color: "25 90% 50%" },
-  { letter: "G", animal: "Giraffe", emoji: "🦒", sound: "Reaching high!", color: "45 100% 55%" },
-  { letter: "H", animal: "Hippo", emoji: "🦛", sound: "Big & round!", color: "265 30% 55%" },
-  { letter: "I", animal: "Iguana", emoji: "🦎", sound: "Crawling low!", color: "142 50% 50%" },
-  { letter: "J", animal: "Jaguar", emoji: "🐆", sound: "Zooming past!", color: "45 80% 45%" },
-  { letter: "K", animal: "Kangaroo", emoji: "🦘", sound: "Hop! Hop!", color: "25 70% 50%" },
-  { letter: "L", animal: "Lion", emoji: "🦁", sound: "ROAR!", color: "35 90% 50%" },
-  { letter: "M", animal: "Monkey", emoji: "🐒", sound: "Swing swing!", color: "25 60% 40%" },
-  { letter: "N", animal: "Newt", emoji: "🦎", sound: "Crawling~", color: "142 45% 45%" },
-  { letter: "O", animal: "Owl", emoji: "🦉", sound: "Hoo hoo!", color: "25 40% 45%" },
-  { letter: "P", animal: "Penguin", emoji: "🐧", sound: "Skate skate!", color: "210 70% 52%" },
-  { letter: "Q", animal: "Quail", emoji: "🐦", sound: "Tweet tweet!", color: "330 55% 55%" },
-  { letter: "R", animal: "Rabbit", emoji: "🐰", sound: "Bounce bounce!", color: "330 75% 55%" },
-  { letter: "S", animal: "Snake", emoji: "🐍", sound: "Ssssss!", color: "142 60% 40%" },
-  { letter: "T", animal: "Tiger", emoji: "🐯", sound: "ROAR!", color: "25 90% 50%" },
-  { letter: "U", animal: "Unicorn", emoji: "🦄", sound: "✨ Magic!", color: "265 70% 60%" },
-  { letter: "V", animal: "Vulture", emoji: "🦅", sound: "Soaring high!", color: "25 30% 40%" },
-  { letter: "W", animal: "Whale", emoji: "🐋", sound: "Splash!", color: "210 70% 55%" },
-  { letter: "X", animal: "X-ray Fish", emoji: "🐠", sound: "Swim swim!", color: "180 60% 50%" },
-  { letter: "Y", animal: "Yak", emoji: "🐂", sound: "Moo~", color: "25 40% 40%" },
-  { letter: "Z", animal: "Zebra", emoji: "🦓", sound: "Gallop!", color: "0 0% 30%" },
+const abcAnimals: { letter: string; animal: string; emoji: string; sound: string; color: string; soundKey: AnimalSoundType }[] = [
+  { letter: "A", animal: "Alligator", emoji: "🐊", sound: "Chomp! Chomp!", color: "142 60% 42%", soundKey: "alligator" },
+  { letter: "B", animal: "Bear", emoji: "🐻", sound: "Stomp! Stomp!", color: "25 60% 45%", soundKey: "bear" },
+  { letter: "C", animal: "Cat", emoji: "🐱", sound: "Purrrr~", color: "265 55% 58%", soundKey: "cat" },
+  { letter: "D", animal: "Dog", emoji: "🐶", sound: "Woof! Woof!", color: "25 95% 53%", soundKey: "dog" },
+  { letter: "E", animal: "Elephant", emoji: "🐘", sound: "Toot! Toot!", color: "220 15% 55%", soundKey: "elephant" },
+  { letter: "F", animal: "Fox", emoji: "🦊", sound: "Sly & Fast!", color: "25 90% 50%", soundKey: "fox" },
+  { letter: "G", animal: "Giraffe", emoji: "🦒", sound: "Reaching high!", color: "45 100% 55%", soundKey: "giraffe" },
+  { letter: "H", animal: "Hippo", emoji: "🦛", sound: "Big & round!", color: "265 30% 55%", soundKey: "hippo" },
+  { letter: "I", animal: "Iguana", emoji: "🦎", sound: "Crawling low!", color: "142 50% 50%", soundKey: "iguana" },
+  { letter: "J", animal: "Jaguar", emoji: "🐆", sound: "Zooming past!", color: "45 80% 45%", soundKey: "jaguar" },
+  { letter: "K", animal: "Kangaroo", emoji: "🦘", sound: "Hop! Hop!", color: "25 70% 50%", soundKey: "kangaroo" },
+  { letter: "L", animal: "Lion", emoji: "🦁", sound: "ROAR!", color: "35 90% 50%", soundKey: "lion" },
+  { letter: "M", animal: "Monkey", emoji: "🐒", sound: "Swing swing!", color: "25 60% 40%", soundKey: "monkey" },
+  { letter: "N", animal: "Newt", emoji: "🦎", sound: "Crawling~", color: "142 45% 45%", soundKey: "newt" },
+  { letter: "O", animal: "Owl", emoji: "🦉", sound: "Hoo hoo!", color: "25 40% 45%", soundKey: "owl" },
+  { letter: "P", animal: "Penguin", emoji: "🐧", sound: "Skate skate!", color: "210 70% 52%", soundKey: "penguin" },
+  { letter: "Q", animal: "Quail", emoji: "🐦", sound: "Tweet tweet!", color: "330 55% 55%", soundKey: "quail" },
+  { letter: "R", animal: "Rabbit", emoji: "🐰", sound: "Bounce bounce!", color: "330 75% 55%", soundKey: "rabbit" },
+  { letter: "S", animal: "Snake", emoji: "🐍", sound: "Ssssss!", color: "142 60% 40%", soundKey: "snake" },
+  { letter: "T", animal: "Tiger", emoji: "🐯", sound: "ROAR!", color: "25 90% 50%", soundKey: "tiger" },
+  { letter: "U", animal: "Unicorn", emoji: "🦄", sound: "✨ Magic!", color: "265 70% 60%", soundKey: "unicorn" },
+  { letter: "V", animal: "Vulture", emoji: "🦅", sound: "Soaring high!", color: "25 30% 40%", soundKey: "vulture" },
+  { letter: "W", animal: "Whale", emoji: "🐋", sound: "Splash!", color: "210 70% 55%", soundKey: "whale" },
+  { letter: "X", animal: "X-ray Fish", emoji: "🐠", sound: "Swim swim!", color: "180 60% 50%", soundKey: "xrayfish" },
+  { letter: "Y", animal: "Yak", emoji: "🐂", sound: "Moo~", color: "25 40% 40%", soundKey: "yak" },
+  { letter: "Z", animal: "Zebra", emoji: "🦓", sound: "Gallop!", color: "0 0% 30%", soundKey: "zebra" },
 ];
 
 /* ─── Animal Card ─── */
@@ -226,8 +226,8 @@ const ABCAnimalsPage = () => {
 
   const handleCardClick = useCallback((index: number) => {
     setActiveIndex(index);
-    playClickSound();
     const animal = abcAnimals[index];
+    playAnimalSound(animal.soundKey);
     dispatchCharacterEvent({
       type: "talk",
       payload: { message: `${animal.letter} is for ${animal.animal} ${animal.emoji}`, duration: 2500 },

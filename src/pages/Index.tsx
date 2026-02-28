@@ -570,6 +570,40 @@ const Index = () => {
 
         <ChalkDivider />
 
+        {/* ═══ ABC ANIMALS VIDEO ═══ */}
+        <AnimatedSection className="max-w-2xl mx-auto mb-6 sm:mb-8" delay={0.1}>
+          <NotebookCard>
+            <div className="text-center mb-3">
+              <h3 className="font-display font-bold text-base sm:text-lg text-foreground flex items-center justify-center gap-2">
+                🎵 {lang === "he" ? "שיר ABC עם חיות" : lang === "ar" ? "أغنية ABC مع الحيوانات" : "ABC Animals Song"}
+              </h3>
+              <p className="text-xs text-muted-foreground font-display">
+                {lang === "he" ? "למדו את האלפבית עם חיות מהנות!" : "Learn the alphabet with fun animals!"}
+              </p>
+            </div>
+            <div className="rounded-xl overflow-hidden" style={{ border: "2px solid hsl(var(--primary) / 0.15)" }}>
+              <video
+                src="/videos/abc-animals-song.mp4"
+                className="w-full aspect-video object-cover"
+                controls
+                playsInline
+                poster=""
+              />
+            </div>
+            <div className="flex justify-center mt-3">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => { playClickSound(); navigate("/abc-animals"); }}
+                className="btn-kid inline-flex items-center gap-2 text-xs gradient-primary text-primary-foreground"
+              >
+                🐾 {lang === "he" ? "לדף החיות המלא" : "Explore All Animals"}
+                <ArrowRight className={`w-3 h-3 ${dir === "rtl" ? "rotate-180" : ""}`} />
+              </motion.button>
+            </div>
+          </NotebookCard>
+        </AnimatedSection>
+
         {/* ═══ AI TEACHER VIDEO ═══ */}
         <AnimatedSection delay={0.1}>
           <AITeacherVideo />

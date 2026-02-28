@@ -138,8 +138,13 @@ export const getActiveAgeConfig = (): AgeGroupConfig => {
 };
 
 export const AVATAR_OPTIONS = [
+  // Original
   "🦊", "🐻", "🐼", "🦁", "🐸", "🐨", "🐯", "🦉",
   "🐙", "🦋", "🐝", "🐬", "🦄", "🐲", "🦜", "🐢",
+  // ABC Animals Song characters
+  "🐊", "🐱", "🐶", "🐘", "🦒", "🦛", "🦎", "🐆",
+  "🦘", "🐒", "🐧", "🐦", "🐰", "🐍", "🐂", "🦓",
+  "🦅", "🐋", "🐠",
 ];
 
 // Session tracking for parent dashboard

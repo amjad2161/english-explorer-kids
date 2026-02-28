@@ -121,6 +121,8 @@ export const CompanionAvatars = ({ size = "xs", className = "", mood = "idle" }:
     { emoji: "🦊", color: "--accent" },
     { emoji: "🐛", color: "--grass" },
     { emoji: "🐭", color: "--sky" },
+    { emoji: "🦁", color: "--sunshine" },
+    { emoji: "🐘", color: "--lavender" },
   ];
   const dim = size === "xs" ? 24 : 30;
 
