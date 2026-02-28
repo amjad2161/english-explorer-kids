@@ -119,6 +119,15 @@ const ANALOGIES: { a: string; b: string; c: string; d: string; hint: string }[] 
   { a: "Milk", b: "White", c: "Sky", d: "Blue", hint: "Thing → Color" },
   { a: "Winter", b: "Cold", c: "Summer", d: "Hot", hint: "Season → Temperature" },
   { a: "Hand", b: "Glove", c: "Foot", d: "Shoe", hint: "Body part → Clothing" },
+  // New analogies inspired by reference content
+  { a: "Mother", b: "Father", c: "Sister", d: "Brother", hint: "Female → Male" },
+  { a: "Beautiful", b: "Ugly", c: "Clean", d: "Dirty", hint: "Opposites!" },
+  { a: "Expensive", b: "Cheap", c: "New", d: "Old", hint: "Opposites!" },
+  { a: "Morning", b: "Breakfast", c: "Evening", d: "Dinner", hint: "Time → Meal" },
+  { a: "Monday", b: "Tuesday", c: "Wednesday", d: "Thursday", hint: "Next day of the week" },
+  { a: "Red", b: "Apple", c: "Yellow", d: "Banana", hint: "Color → Fruit" },
+  { a: "Passport", b: "Travel", c: "Ticket", d: "Bus", hint: "Document → Usage" },
+  { a: "Water", b: "Drink", c: "Bread", d: "Eat", hint: "Item → Action" },
 ];
 
 const generateAnalogy = (): Puzzle => {
@@ -139,6 +148,28 @@ const SENTENCES: { parts: string[]; answer: string; distractors: string[]; hint:
   { parts: ["I sleep in my", "?"], answer: "bed", distractors: ["eat", "run", "sing"], hint: "Furniture for sleeping" },
   { parts: ["The dog likes to", "?"], answer: "play", distractors: ["chair", "blue", "milk"], hint: "A fun activity" },
   { parts: ["It is very", "?", "outside"], answer: "cold", distractors: ["running", "book", "singing"], hint: "A weather feeling" },
+  // New: "I want to..." patterns
+  { parts: ["I want to", "?"], answer: "eat", distractors: ["chair", "blue", "happy"], hint: "A daily action" },
+  { parts: ["I want to", "?", "a new language"], answer: "learn", distractors: ["table", "red", "cold"], hint: "What you do at school" },
+  { parts: ["She wants to", "?", "to the park"], answer: "go", distractors: ["milk", "big", "sing"], hint: "A movement word" },
+  // New: Question patterns
+  { parts: ["Are you", "?"], answer: "ready", distractors: ["table", "water", "blue"], hint: "Prepared to start" },
+  { parts: ["How", "?", "are you?"], answer: "old", distractors: ["eat", "run", "milk"], hint: "Asking about age" },
+  { parts: ["What is your", "?"], answer: "name", distractors: ["run", "blue", "cold"], hint: "What people call you" },
+  // New: Daily expressions
+  { parts: ["Good", "?"], answer: "morning", distractors: ["table", "run", "blue"], hint: "A greeting at the start of the day" },
+  { parts: ["Thank", "?", "very much"], answer: "you", distractors: ["run", "big", "eat"], hint: "A polite word" },
+  { parts: ["See you", "?"], answer: "later", distractors: ["eat", "blue", "big"], hint: "Means 'after some time'" },
+  // New: Feelings
+  { parts: ["I am very", "?", "today"], answer: "happy", distractors: ["table", "water", "run"], hint: "A good feeling 😊" },
+  { parts: ["Don't be", "?"], answer: "afraid", distractors: ["table", "water", "run"], hint: "A scary feeling" },
+  // New: Home & Daily
+  { parts: ["The kitchen is", "?"], answer: "clean", distractors: ["fly", "sing", "jump"], hint: "Tidy and neat" },
+  { parts: ["Close the", "?", "please"], answer: "door", distractors: ["run", "happy", "eat"], hint: "You walk through it" },
+  { parts: ["Where is the", "?"], answer: "bathroom", distractors: ["run", "big", "cold"], hint: "A room to wash" },
+  // New: Opposites in context
+  { parts: ["The elephant is big, the ant is", "?"], answer: "small", distractors: ["blue", "run", "eat"], hint: "The opposite of big" },
+  { parts: ["Summer is hot, winter is", "?"], answer: "cold", distractors: ["run", "eat", "big"], hint: "The opposite of hot" },
 ];
 
 const generateSentenceCompletion = (): Puzzle => {
