@@ -18,7 +18,9 @@ import ClassroomBackground from "@/components/ClassroomBackground";
 import GameEntrance from "@/components/GameEntrance";
 import { ArrowLeft, Pause, Play, Lightbulb, X, Zap, Target, Trophy } from "lucide-react";
 import { RewardsPipelineState } from "@/hooks/useRewardsPipeline";
-import { useState, useCallback } from "react";
+import { useState, useCallback, lazy, Suspense } from "react";
+
+const DiegeticHUD3D = lazy(() => import("@/components/DiegeticHUD3D"));
 
 // ---------------------------------------------------------------------------
 // Types
@@ -409,6 +411,16 @@ const GameSceneShell = forwardRef<HTMLDivElement, GameSceneShellProps>(
           onHint={onHint ? handleHint : undefined}
           dir={dir}
         />
+
+        {/* Diegetic 3D HUD — live rewards */}
+        <Suspense fallback={null}>
+          <DiegeticHUD3D
+            score={rewards.score}
+            starsEarned={rewards.starsEarned}
+            energy={Math.min(rewards.streak * 20, 100)}
+            visible={!rewards.isComplete && !paused}
+          />
+        </Suspense>
 
         {/* Game content */}
         <main className="flex-1 relative z-10">{children}</main>
