@@ -21,13 +21,13 @@ import AITeacherVideo from "@/components/AITeacherVideo";
 
 /* ─── Animation variants ─── */
 const container = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.07, delayChildren: 0.3 } },
+  hidden: { opacity: 1 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.07, delayChildren: 0.1 } },
 };
 
 const item = {
-  hidden: { y: 24, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] } },
+  hidden: { y: 20, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] } },
 };
 
 /* ─── Simple entrance — fade + scale with owl ─── */
@@ -290,7 +290,7 @@ const Index = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [motivation, setMotivation] = useState(getMotivationalMessage(lang));
-  const [showEntrance, setShowEntrance] = useState(() => !sessionStorage.getItem("library-entered"));
+  const [showEntrance, setShowEntrance] = useState<boolean>(false);
   const adaptive = useAgeAdaptive();
 
   useEffect(() => {
@@ -333,7 +333,7 @@ const Index = () => {
       <motion.div
         variants={container}
         initial="hidden"
-        animate={showEntrance ? "hidden" : "visible"}
+        animate="visible"
         className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 relative z-10"
       >
         {/* ═══ TITLE with mascot ═══ */}
@@ -656,7 +656,7 @@ const Index = () => {
                   : lang === "ar"
                   ? "الإنجليزية هي اللغة الأكثر تعلّماً في العالم! 🌍"
                   : "English is the most learned language in the world! 🌍"}
-              </p>
+               </p>
             </div>
           </NotebookCard>
         </AnimatedSection>
