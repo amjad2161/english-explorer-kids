@@ -87,18 +87,25 @@ const LerpedCharacter = ({
   const initialized = useRef(false);
   const prevTarget = useRef<Vec3>([...target]);
   const bounceTime = useRef(0); // -1 = armed, >0 = animating, 0 = idle
+  const targetRotY = useRef(0);
   const BOUNCE_DUR = 0.45;
 
   useFrame((_, delta) => {
     if (!groupRef.current) return;
     _lerpTarget.set(...target);
 
-    // Detect target change → arm bounce
+    // Detect target change → arm bounce + compute turn direction
     if (
       target[0] !== prevTarget.current[0] ||
       target[1] !== prevTarget.current[1] ||
       target[2] !== prevTarget.current[2]
     ) {
+      // Determine Y rotation based on X movement direction
+      const dx = target[0] - prevTarget.current[0];
+      const dz = target[2] - prevTarget.current[2];
+      if (Math.abs(dx) > 0.01 || Math.abs(dz) > 0.01) {
+        targetRotY.current = Math.atan2(dx, dz) * 0.35; // subtle, max ~20°
+      }
       prevTarget.current = [...target];
       bounceTime.current = -1;
     }
@@ -106,6 +113,7 @@ const LerpedCharacter = ({
     if (!initialized.current) {
       groupRef.current.position.copy(_lerpTarget);
       groupRef.current.scale.setScalar(1);
+      groupRef.current.rotation.y = 0;
       initialized.current = true;
       return;
     }
@@ -113,13 +121,19 @@ const LerpedCharacter = ({
     if (reduceMotion) {
       groupRef.current.position.copy(_lerpTarget);
       groupRef.current.scale.setScalar(1);
+      groupRef.current.rotation.y = 0;
     } else {
       // Slower during cinematic transitions, snappier during normal nav
       const speed = isTransitioning ? 1.2 : 3.5;
       groupRef.current.position.lerp(_lerpTarget, 1 - Math.exp(-speed * delta));
 
+      // Smoothly rotate toward movement direction, then ease back to 0
+      const dist = groupRef.current.position.distanceTo(_lerpTarget);
+      const rotTarget = dist > 0.03 ? targetRotY.current : 0;
+      groupRef.current.rotation.y += (rotTarget - groupRef.current.rotation.y) * (1 - Math.exp(-4 * delta));
+
       // Trigger bounce when close enough to destination
-      if (bounceTime.current === -1 && groupRef.current.position.distanceTo(_lerpTarget) < 0.02) {
+      if (bounceTime.current === -1 && dist < 0.02) {
         bounceTime.current = BOUNCE_DUR;
       }
 
@@ -128,10 +142,8 @@ const LerpedCharacter = ({
         bounceTime.current -= delta;
         const t = 1 - bounceTime.current / BOUNCE_DUR; // 0→1
         const easeOut = 1 - t;
-        // Y hop: quick up then settle — damped sine
         const yBounce = 0.12 * Math.sin(t * Math.PI * 2) * easeOut;
         groupRef.current.position.y = _lerpTarget.y + yBounce;
-        // Subtle scale squash-stretch
         const s = 1 + 0.06 * Math.sin(t * Math.PI) * easeOut;
         groupRef.current.scale.setScalar(s);
         if (bounceTime.current <= 0) {
