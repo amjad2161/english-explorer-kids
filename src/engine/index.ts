@@ -9,3 +9,4 @@ export { default as CinematicPostProcessing } from "./CinematicPostProcessing";
 export { default as SceneTransitionFade } from "./SceneTransitionFade";
 export { default as PerformanceHUD } from "./PerformanceHUD";
 export { default as ProxyCharacter3D } from "./ProxyCharacter3D";
+export { default as Owl3DCharacter } from "./Owl3DCharacter";

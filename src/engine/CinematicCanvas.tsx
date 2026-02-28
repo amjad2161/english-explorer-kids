@@ -5,6 +5,7 @@ import { useSceneDirector } from "./SceneDirector";
 import { useQualityStore } from "./qualityTier";
 import SceneLighting from "./SceneLighting";
 import CinematicCamera from "./CinematicCamera";
+import Owl3DCharacter from "./Owl3DCharacter";
 import CinematicPostProcessing from "./CinematicPostProcessing";
 import SceneTransitionFade from "./SceneTransitionFade";
 import PerformanceHUD from "./PerformanceHUD";
@@ -38,6 +39,7 @@ const SceneContent = () => {
       <Suspense fallback={<Null />}>
         <StageComponent />
       </Suspense>
+      <Owl3DCharacter />
       <SceneTransitionFade active={isTransitioning} />
       <CinematicPostProcessing />
     </>
