@@ -44,6 +44,12 @@ const translations: Record<string, Record<Language, string>> = {
   "quick.words": { he: "מילים", ar: "كلمات", en: "Words" },
   "quick.match": { he: "התאמה", ar: "تطابق", en: "Match" },
   "quick.quiz": { he: "חידון", ar: "اختبار", en: "Quiz" },
+  "quick.spelling": { he: "איות", ar: "إملاء", en: "Spell" },
+  "quick.scramble": { he: "בלבול", ar: "خلط", en: "Scramble" },
+  "quick.hangman": { he: "איש תלוי", ar: "الرجل المعلق", en: "Hangman" },
+  "quick.pattern": { he: "תבנית", ar: "نمط", en: "Pattern" },
+  "quick.abcAnimals": { he: "שיר ABC", ar: "أغنية ABC", en: "ABC Song" },
+  "quick.animalMatch": { he: "חיות", ar: "حيوانات", en: "Animals" },
 
   // Alphabet
   "alphabet.title": { he: "🔤 האלפבית האנגלי", ar: "🔤 الأبجدية الإنجليزية", en: "🔤 The English Alphabet" },
@@ -149,11 +155,6 @@ const translations: Record<string, Record<Language, string>> = {
   "hangman.subtitle": { he: "בחר אותיות וגלה את המילה הנסתרת!", ar: "اختر حروف واكتشف الكلمة المخفية!", en: "Pick letters and discover the hidden word!" },
   "hangman.lost": { he: "לא נורא, ננסה שוב", ar: "لا بأس، نحاول مرة أخرى", en: "No worries, let's try again!" },
 
-  // Quick access - new
-  "quick.spelling": { he: "איות", ar: "تهجئة", en: "Spelling" },
-  "quick.scramble": { he: "בלבול", ar: "خلط", en: "Scramble" },
-  "quick.hangman": { he: "ניחוש", ar: "تخمين", en: "Guess" },
-  "quick.pattern": { he: "דפוסים", ar: "أنماط", en: "Patterns" },
 
   // Fun facts
   "home.funFact1": { he: "השפה האנגלית היא השפה הנפוצה ביותר בעולם! יותר ממיליארד אנשים מדברים אנגלית ברחבי העולם 🌍", ar: "اللغة الإنجليزية هي اللغة الأكثر انتشاراً في العالم! أكثر من مليار شخص يتحدثون الإنجليزية حول العالم 🌍", en: "English is the most widely spoken language in the world! Over a billion people speak English globally 🌍" },
