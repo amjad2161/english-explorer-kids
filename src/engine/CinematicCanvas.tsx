@@ -1,6 +1,7 @@
-import { Suspense, lazy, useEffect } from "react";
-import { Canvas } from "@react-three/fiber";
+import { Suspense, lazy, useEffect, useRef } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { useLocation } from "react-router-dom";
+import * as THREE from "three";
 import { useSceneDirector } from "./SceneDirector";
 import { useQualityStore } from "./qualityTier";
 import SceneLighting from "./SceneLighting";
@@ -64,6 +65,41 @@ const STAGE_POSITIONS: Record<string, StagePositions> = {
   },
 };
 
+/**
+ * LerpedCharacter — wraps a character in a group that smoothly
+ * lerps its position when the target changes (scene switch).
+ */
+const _lerpTarget = new THREE.Vector3();
+
+const LerpedCharacter = ({
+  target,
+  children,
+}: {
+  target: Vec3;
+  children: React.ReactNode;
+}) => {
+  const groupRef = useRef<THREE.Group>(null);
+  const reduceMotion = useQualityStore((s) => s.reduceMotion);
+  const initialized = useRef(false);
+
+  useFrame((_, delta) => {
+    if (!groupRef.current) return;
+    _lerpTarget.set(...target);
+    if (!initialized.current) {
+      groupRef.current.position.copy(_lerpTarget);
+      initialized.current = true;
+      return;
+    }
+    if (reduceMotion) {
+      groupRef.current.position.copy(_lerpTarget);
+    } else {
+      groupRef.current.position.lerp(_lerpTarget, 1 - Math.exp(-2.5 * delta));
+    }
+  });
+
+  return <group ref={groupRef}>{children}</group>;
+};
+
 /** Scene content — renders active stage + lighting + camera + effects */
 const SceneContent = () => {
   const activeStage = useSceneDirector((s) => s.activeStage);
@@ -78,10 +114,18 @@ const SceneContent = () => {
       <Suspense fallback={<Null />}>
         <StageComponent />
       </Suspense>
-      <Owl3DCharacter position={pos.owl} />
-      <Fox3DCompanion position={pos.fox} />
-      <Bookworm3DCompanion position={pos.bookworm} />
-      <Mouse3DCompanion position={pos.mouse} />
+      <LerpedCharacter target={pos.owl}>
+        <Owl3DCharacter position={[0, 0, 0]} />
+      </LerpedCharacter>
+      <LerpedCharacter target={pos.fox}>
+        <Fox3DCompanion position={[0, 0, 0]} />
+      </LerpedCharacter>
+      <LerpedCharacter target={pos.bookworm}>
+        <Bookworm3DCompanion position={[0, 0, 0]} />
+      </LerpedCharacter>
+      <LerpedCharacter target={pos.mouse}>
+        <Mouse3DCompanion position={[0, 0, 0]} />
+      </LerpedCharacter>
       <DiegeticUIShowcase />
       <SceneTransitionFade active={isTransitioning} />
       <CinematicPostProcessing />
