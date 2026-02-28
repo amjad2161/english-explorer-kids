@@ -40,7 +40,7 @@ interface GameSceneShellProps {
   /** Current round */
   currentRound?: number;
   /** Rewards pipeline state */
-  rewards: RewardsPipelineState;
+  rewards?: RewardsPipelineState;
   /** Called to dismiss XP overlay */
   onDismissXP?: () => void;
   /** Called when player requests a hint */
