@@ -49,14 +49,14 @@ const SimpleEntrance = ({ onComplete }: { onComplete: () => void }) => {
       <motion.div
         initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
+        transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.05 }}
       >
         <Interactive3DMascot mood="celebrate" size="lg" />
       </motion.div>
       <motion.h1
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4, duration: 0.5 }}
+        transition={{ delay: 0.2, duration: 0.3 }}
         className="font-display font-extrabold text-3xl sm:text-4xl text-gradient"
       >
         English Fun ✨
@@ -64,7 +64,7 @@ const SimpleEntrance = ({ onComplete }: { onComplete: () => void }) => {
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.7 }}
+        transition={{ delay: 0.4 }}
         className="font-display text-sm text-muted-foreground"
       >
         Let's learn together!
