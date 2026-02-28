@@ -19,16 +19,12 @@ import { Zap, Trophy, ArrowRight, Map, Star, Sparkles, BookOpen, Shield } from "
 import UserAvatar, { CompanionAvatars } from "@/components/UserAvatar";
 import AITeacherVideo from "@/components/AITeacherVideo";
 
-/* ─── Animation variants ─── */
-const container = {
-  hidden: { opacity: 1 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.07, delayChildren: 0.1 } },
-};
-
-const item = {
-  hidden: { y: 20, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] } },
-};
+/* ─── Stagger helper — replaces variant propagation ─── */
+const stagger = (index: number) => ({
+  initial: { y: 20, opacity: 0 } as const,
+  animate: { y: 0, opacity: 1 } as const,
+  transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number], delay: 0.1 + index * 0.07 },
+});
 
 /* ─── Simple entrance — fade + scale with owl ─── */
 const SimpleEntrance = ({ onComplete }: { onComplete: () => void }) => {
@@ -330,14 +326,11 @@ const Index = () => {
         {showEntrance && <SimpleEntrance onComplete={handleEntranceComplete} />}
       </AnimatePresence>
 
-      <motion.div
-        variants={container}
-        initial="hidden"
-        animate="visible"
+      <div
         className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 relative z-10"
       >
         {/* ═══ TITLE with mascot ═══ */}
-        <motion.section variants={item} className="text-center mb-6 sm:mb-10">
+        <motion.section {...stagger(0)} className="text-center mb-6 sm:mb-10">
           {/* Hero: Owl mascot + User Avatar side by side */}
           <div className="flex items-center justify-center gap-4 sm:gap-6 mb-3">
             <motion.div
@@ -385,12 +378,12 @@ const Index = () => {
         </motion.section>
 
         {/* ═══ XP PROGRESS BAR — Chalkboard ═══ */}
-        <motion.section variants={item} className="max-w-lg mx-auto mb-6 sm:mb-8">
+        <motion.section {...stagger(1)} className="max-w-lg mx-auto mb-6 sm:mb-8">
           <XPProgressBar current={xpLevel.current} needed={xpLevel.needed} level={xpLevel.level} title={xpLevel.title} lang={lang} />
         </motion.section>
 
         {/* ═══ STAT CARDS — Notebook style ═══ */}
-        <motion.section variants={item} className="grid grid-cols-3 gap-2.5 sm:gap-3 mb-6 sm:mb-8 max-w-lg mx-auto">
+        <motion.section {...stagger(2)} className="grid grid-cols-3 gap-2.5 sm:gap-3 mb-6 sm:mb-8 max-w-lg mx-auto">
           <StatCard
             icon={<Zap className="w-6 h-6 text-primary" />}
             value={xpState.totalXP}
@@ -416,7 +409,7 @@ const Index = () => {
 
         {/* ═══ STREAK ═══ */}
         {xpState.streak > 0 && (
-          <motion.div variants={item} className="max-w-lg mx-auto mb-5 flex justify-center">
+          <motion.div {...stagger(3)} className="max-w-lg mx-auto mb-5 flex justify-center">
             <div
               className="flex items-center gap-2 px-4 py-2 rounded-xl"
               style={{
@@ -660,7 +653,7 @@ const Index = () => {
             </div>
           </NotebookCard>
         </AnimatedSection>
-      </motion.div>
+      </div>
     </div>
   );
 };
