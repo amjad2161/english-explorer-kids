@@ -10,5 +10,5 @@ export { default as SceneTransitionFade } from "./SceneTransitionFade";
 export { default as PerformanceHUD } from "./PerformanceHUD";
 export { default as ProxyCharacter3D } from "./ProxyCharacter3D";
 export { default as Owl3DCharacter } from "./Owl3DCharacter";
-export { WoodButton3D, LetterTile3D, ProgressSign3D } from "./diegetic";
+export { WoodButton3D, LetterTile3D, ProgressSign3D, Scoreboard3D, StarBadge3D, EnergyMeter3D } from "./diegetic";
 export { Fox3DCompanion, Bookworm3DCompanion, Mouse3DCompanion } from "./companions";
