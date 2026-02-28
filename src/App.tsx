@@ -44,6 +44,8 @@ import LessonPage from "./pages/LessonPage";
 import PhrasesPage from "./pages/PhrasesPage";
 import TopicGamesPage from "./pages/TopicGamesPage";
 import BodyPartsGame from "./pages/BodyPartsGame";
+import GrammarPage from "./pages/GrammarPage";
+import CurriculumPage from "./pages/CurriculumPage";
 const queryClient = new QueryClient();
 
 const PageWrapper = ({ children }: { children: React.ReactNode }) => (
@@ -94,6 +96,8 @@ const AnimatedRoutes = () => {
       <Route path="/phrases" element={<PageWrapper><PhrasesPage /></PageWrapper>} />
       <Route path="/topics" element={<PageWrapper><TopicGamesPage /></PageWrapper>} />
       <Route path="/body-parts" element={<PageWrapper><BodyPartsGame /></PageWrapper>} />
+      <Route path="/grammar" element={<PageWrapper><GrammarPage /></PageWrapper>} />
+      <Route path="/curriculum" element={<PageWrapper><CurriculumPage /></PageWrapper>} />
       <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
     </Routes>
   );
