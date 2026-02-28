@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { useLanguage } from "@/lib/i18n";
-import { playClickSound, playAnimalSound, playMatchSound, type AnimalSoundType } from "@/lib/sounds";
+import { playClickSound, playAnimalSound, playMatchSound, speakEnglish, type AnimalSoundType } from "@/lib/sounds";
+import { animalImages } from "@/assets/animals";
 import { dispatchCharacterEvent } from "@/lib/characterStore";
 import { addXP } from "@/lib/xp";
 import ClassroomBackground from "@/components/ClassroomBackground";
@@ -66,7 +67,7 @@ const AnimalMatchGame = () => {
   // Pick 8 random pairs per round
   const currentPairs = useMemo(() => shuffle(allPairs).slice(0, 8), [round]);
   const shuffledLetters = useMemo(() => shuffle(currentPairs.map(p => p.letter)), [currentPairs]);
-  const shuffledAnimals = useMemo(() => shuffle(currentPairs.map(p => ({ letter: p.letter, animal: p.animal, emoji: p.emoji }))), [currentPairs]);
+  const shuffledAnimals = useMemo(() => shuffle(currentPairs.map(p => ({ letter: p.letter, animal: p.animal, emoji: p.emoji, soundKey: p.soundKey }))), [currentPairs]);
 
   useEffect(() => {
     dispatchCharacterEvent({ type: "wave", payload: { message: lang === "he" ? "!חברו בין האות לחיה" : "Match the letter to the animal! 🐾" } });
@@ -86,7 +87,10 @@ const AnimalMatchGame = () => {
     if (selectedLetter === letter) {
       // Correct match — play the animal's sound!
       const matchedAnimal = currentPairs.find(p => p.letter === letter);
-      if (matchedAnimal) playAnimalSound(matchedAnimal.soundKey);
+      if (matchedAnimal) {
+        playAnimalSound(matchedAnimal.soundKey);
+        setTimeout(() => speakEnglish(`${matchedAnimal.letter} is for ${matchedAnimal.animal}`), 400);
+      }
       playMatchSound();
       const newMatched = new Set(matchedPairs);
       newMatched.add(letter);
@@ -234,7 +238,7 @@ const AnimalMatchGame = () => {
                         color: "hsl(var(--foreground))",
                       }}
                     >
-                      <span className="text-2xl">{a.emoji}</span>
+                      <img src={animalImages[a.soundKey]} alt={a.animal} className="w-8 h-8 rounded-full object-cover" />
                       <span>{a.animal}</span>
                     </motion.button>
                   );
