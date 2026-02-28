@@ -7,6 +7,7 @@ import SceneLighting from "./SceneLighting";
 import CinematicCamera from "./CinematicCamera";
 import Owl3DCharacter from "./Owl3DCharacter";
 import DiegeticUIShowcase from "./DiegeticUIShowcase";
+import { Fox3DCompanion, Bookworm3DCompanion, Mouse3DCompanion } from "./companions";
 import CinematicPostProcessing from "./CinematicPostProcessing";
 import SceneTransitionFade from "./SceneTransitionFade";
 import PerformanceHUD from "./PerformanceHUD";
@@ -41,6 +42,9 @@ const SceneContent = () => {
         <StageComponent />
       </Suspense>
       <Owl3DCharacter />
+      <Fox3DCompanion />
+      <Bookworm3DCompanion />
+      <Mouse3DCompanion />
       <DiegeticUIShowcase />
       <SceneTransitionFade active={isTransitioning} />
       <CinematicPostProcessing />
