@@ -6,6 +6,9 @@ import type { CharacterMood } from "@/lib/characterStore";
 import { useCharacterStore } from "@/lib/characterStore";
 import { playOwlSpeechSound } from "@/lib/sounds";
 import OwlBodyAnimations from "./OwlBodyAnimations";
+import type { Language } from "@/lib/i18n";
+
+const getLang = (): Language => (localStorage.getItem("app-lang") as Language) || "en";
 
 
 interface CharacterCanvasProps {
@@ -93,34 +96,90 @@ const CharacterSparkle = forwardRef<HTMLSpanElement, { index: number }>(({ index
 CharacterSparkle.displayName = "CharacterSparkle";
 
 // Encouragement lines by mood
-const encouragements: Record<string, string[]> = {
-  idle: ["🌟 !בוא נלמד", "📚 מוכנים?", "Let's go! 🚀"],
-  celebrate: ["!כל הכבוד 🎉", "Amazing! ⭐", "!מדהים 🏆"],
-  sad: ["!לא נורא, ננסה שוב 💪", "Keep trying! 🌈", "!אתה יכול 🙌"],
-  wave: ["!שלום 👋", "Hello! 😊", "!היי"],
-  think: ["...חושב 🤔", "Hmm... 🧐", "...רגע"],
-  talk: ["!שימו לב 👂", "Listen! 🔊", "!הקשיבו"],
-  point: ["!תסתכלו פה 👉", "Look here! 👆", "!פה"],
-  surprised: ["!וואו 😮", "Wow! 🤩", "!מדהים"],
+const encouragementsI18n: Record<string, Record<Language, string[]>> = {
+  idle: {
+    he: ["🌟 !בוא נלמד", "📚 מוכנים?", "!יאללה 🚀"],
+    ar: ["🌟 !هيا نتعلم", "📚 مستعدين؟", "!يلا 🚀"],
+    en: ["🌟 Let's learn!", "📚 Ready?", "Let's go! 🚀"],
+  },
+  celebrate: {
+    he: ["!כל הכבוד 🎉", "!מדהים ⭐", "!אלוף 🏆"],
+    ar: ["!أحسنت 🎉", "!رائع ⭐", "!بطل 🏆"],
+    en: ["Great job! 🎉", "Amazing! ⭐", "Champion! 🏆"],
+  },
+  sad: {
+    he: ["!לא נורא, ננסה שוב 💪", "!אתה יכול 🙌"],
+    ar: ["!لا بأس، نحاول مرة أخرى 💪", "!تقدر 🙌"],
+    en: ["No worries, try again! 💪", "You can do it! 🙌"],
+  },
+  wave: {
+    he: ["!שלום 👋", "!היי 😊"],
+    ar: ["!مرحبا 👋", "!أهلاً 😊"],
+    en: ["Hello! 👋", "Hi there! 😊"],
+  },
+  think: {
+    he: ["...חושב 🤔", "...רגע"],
+    ar: ["...أفكر 🤔", "...لحظة"],
+    en: ["Thinking... 🤔", "Hmm... 🧐"],
+  },
+  talk: {
+    he: ["!שימו לב 👂", "!הקשיבו"],
+    ar: ["!انتبهوا 👂", "!اسمعوا"],
+    en: ["Pay attention! 👂", "Listen! 🔊"],
+  },
+  point: {
+    he: ["!תסתכלו פה 👉", "!פה"],
+    ar: ["!انظروا هنا 👉", "!هنا"],
+    en: ["Look here! 👆", "Right here! 👉"],
+  },
+  surprised: {
+    he: ["!וואו 😮", "!מדהים"],
+    ar: ["!واو 😮", "!مذهل"],
+    en: ["Wow! 😮", "Amazing! 🤩"],
+  },
 };
 
-// Tips shown on click
-const clickTips: string[] = [
-  "💡 ידעת? האות E היא הנפוצה ביותר באנגלית!",
-  "🎯 טיפ: תרגול יומי של 5 דקות עדיף על שעה פעם בשבוע!",
-  "🌟 !אתה מדהים, תמשיך ככה",
-  "📖 Did you know? 'Set' has the most definitions in English!",
-  "🦉 !אני פרופסור ינשוף ואני כאן לעזור לך",
-  "💪 כל טעות היא הזדמנות ללמוד משהו חדש!",
-  "🎵 Try singing the ABC song — it helps!",
-  "🧠 !המוח שלך כמו שריר — ככל שמתרגלים, הוא נהיה חזק יותר",
-  "⭐ Practice makes perfect! תרגול עושה מושלם!",
-  "🐝 Spelling Bee tip: Break big words into small parts!",
-  "🎮 !נסה את כל המשחקים — כל אחד מלמד משהו אחר",
-  "🌈 English has 26 letters — you can learn them all!",
-  "🔤 A, B, C... !אתה כבר בדרך הנכונה",
-  "🏆 !כל כוכב שאתה אוסף מראה כמה למדת",
-];
+const getEncouragements = (mood: string): string[] => {
+  const lang = getLang();
+  const lines = encouragementsI18n[mood]?.[lang] || encouragementsI18n[mood]?.en || encouragementsI18n.idle[lang];
+  return lines;
+};
+
+const clickTipsI18n: Record<Language, string[]> = {
+  he: [
+    "💡 ידעת? האות E היא הנפוצה ביותר באנגלית!",
+    "🎯 טיפ: תרגול יומי של 5 דקות עדיף על שעה פעם בשבוע!",
+    "🌟 !אתה מדהים, תמשיך ככה",
+    "🦉 !אני פרופסור ינשוף ואני כאן לעזור לך",
+    "💪 כל טעות היא הזדמנות ללמוד משהו חדש!",
+    "🧠 !המוח שלך כמו שריר — ככל שמתרגלים, הוא נהיה חזק יותר",
+    "🏆 !כל כוכב שאתה אוסף מראה כמה למדת",
+  ],
+  ar: [
+    "💡 هل تعلم؟ الحرف E هو الأكثر شيوعاً في الإنجليزية!",
+    "🎯 نصيحة: تمرين 5 دقائق يومياً أفضل من ساعة في الأسبوع!",
+    "🌟 !أنت رائع، واصل هكذا",
+    "🦉 !أنا البروفيسور بومة وأنا هنا لمساعدتك",
+    "💪 كل خطأ فرصة لتعلم شيء جديد!",
+    "🧠 !عقلك مثل العضلة — كلما تمرنت أصبح أقوى",
+    "🏆 !كل نجمة تجمعها تظهر كم تعلمت",
+  ],
+  en: [
+    "💡 Did you know? The letter E is the most common in English!",
+    "🎯 Tip: 5 minutes daily beats 1 hour weekly!",
+    "🌟 You're amazing, keep going!",
+    "📖 Did you know? 'Set' has the most definitions in English!",
+    "🦉 I'm Professor Owl and I'm here to help!",
+    "💪 Every mistake is a chance to learn something new!",
+    "🧠 Your brain is like a muscle — practice makes it stronger!",
+    "🎵 Try singing the ABC song — it helps!",
+    "🐝 Spelling Bee tip: Break big words into small parts!",
+    "🌈 English has 26 letters — you can learn them all!",
+    "🏆 Every star you collect shows how much you've learned!",
+  ],
+};
+
+const getClickTips = (): string[] => clickTipsI18n[getLang()] || clickTipsI18n.en;
 
 const CharacterCanvas = ({
   mood,
@@ -139,13 +198,13 @@ const CharacterCanvas = ({
 
   // Click handler — show random tip
   const handleOwlClick = useCallback(() => {
+    const tips = getClickTips();
     let idx: number;
     do {
-      idx = Math.floor(Math.random() * clickTips.length);
-    } while (idx === lastTipIndex.current && clickTips.length > 1);
+      idx = Math.floor(Math.random() * tips.length);
+    } while (idx === lastTipIndex.current && tips.length > 1);
     lastTipIndex.current = idx;
-    setAutoText(clickTips[idx]);
-    // Clear after 4 seconds
+    setAutoText(tips[idx]);
     const timer = setTimeout(() => setAutoText(null), 4000);
     return () => clearTimeout(timer);
   }, []);
@@ -162,7 +221,7 @@ const CharacterCanvas = ({
     setFeatherKey((k) => k + 1);
     // Auto-show encouragement on mood change (if no explicit bubble)
     if (!speechBubble && !storeSpeech && mood !== "idle") {
-      const lines = encouragements[mood] || encouragements.idle;
+      const lines = getEncouragements(mood);
       const line = lines[Math.floor(Math.random() * lines.length)];
       setAutoText(line);
       const timer = setTimeout(() => setAutoText(null), 3000);

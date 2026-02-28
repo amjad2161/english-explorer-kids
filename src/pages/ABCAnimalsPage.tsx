@@ -452,7 +452,7 @@ const ABCAnimalsPage = () => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    dispatchCharacterEvent({ type: "wave", payload: { message: lang === "he" ? "!בואו נשיר ABC עם חיות" : "Let's sing ABC with animals! 🎵" } });
+    dispatchCharacterEvent({ type: "wave", payload: { message: lang === "he" ? "!בואו נשיר ABC עם חיות 🎵" : lang === "ar" ? "!هيا نغني ABC مع الحيوانات 🎵" : "Let's sing ABC with animals! 🎵" } });
   }, [lang]);
 
   const handleCardClick = useCallback((index: number) => {
