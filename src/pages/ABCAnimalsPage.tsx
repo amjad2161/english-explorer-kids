@@ -104,12 +104,204 @@ const AnimalCard = ({ item, index, isActive, onClick }: {
   </motion.button>
 );
 
-/* ─── Video Player Section ─── */
+/* ─── Karaoke lyrics synced to video timestamps ─── */
+interface LyricLine {
+  start: number; // seconds
+  end: number;
+  text: string;
+  emoji?: string;
+}
+
+const karaokeLines: LyricLine[] = [
+  { start: 0, end: 4, text: "Are you ready to sing the ABCs with animals?", emoji: "🎤" },
+  { start: 4, end: 6, text: "Let's go!", emoji: "🚀" },
+  { start: 11, end: 13, text: "A is for Alligator — Chomp! Chomp! Chomp!", emoji: "🐊" },
+  { start: 13, end: 16, text: "B is for Bear who loves to stomp!", emoji: "🐻" },
+  { start: 16, end: 19, text: "C is for Cat with a soft little purr", emoji: "🐱" },
+  { start: 19, end: 21, text: "D is for Dog who loves to stir!", emoji: "🐶" },
+  { start: 21, end: 24, text: "E is for Elephant — Toot! Toot! Toot!", emoji: "🐘" },
+  { start: 24, end: 26, text: "Splashing in water, oh so cute!", emoji: "💦" },
+  { start: 26, end: 31, text: "🎵 A, B, C, D, E — Come and sing along with me!", emoji: "🎵" },
+  { start: 31, end: 37, text: "🎵 F, G, H, I, J — Animal friends are here to play!", emoji: "🎵" },
+  { start: 37, end: 39, text: "F is for Fox, fast and sly", emoji: "🦊" },
+  { start: 39, end: 42, text: "G is for Giraffe, reaching high!", emoji: "🦒" },
+  { start: 42, end: 44, text: "H is for Hippo, big and round", emoji: "🦛" },
+  { start: 44, end: 47, text: "I is for Iguana, low to the ground", emoji: "🦎" },
+  { start: 47, end: 50, text: "J is for Jaguar, jumping fast!", emoji: "🐆" },
+  { start: 50, end: 52, text: "Through the jungle, zooming past!", emoji: "🌴" },
+  { start: 52, end: 58, text: "🎵 K, L, M, N, O — See how many animals you know!", emoji: "🎵" },
+  { start: 58, end: 65, text: "🎵 P, Q, R, S, T — Sing and learn the ABCs with me!", emoji: "🎵" },
+  { start: 65, end: 68, text: "K is for Kangaroo — Hop! Hop! Hop!", emoji: "🦘" },
+  { start: 68, end: 70, text: "L is for Lion, he's the king on top!", emoji: "🦁" },
+  { start: 70, end: 73, text: "M is for Monkey, swinging trees!", emoji: "🐒" },
+  { start: 73, end: 76, text: "N is for Newt, crawling with ease", emoji: "🦎" },
+  { start: 76, end: 78, text: "O is for Owl, who stays up late", emoji: "🦉" },
+  { start: 78, end: 81, text: "P is for Penguin, who likes to skate!", emoji: "🐧" },
+  { start: 81, end: 84, text: "Q is for Quail, with feathers neat", emoji: "🐦" },
+  { start: 84, end: 86, text: "R is for Rabbit, with bouncy feet!", emoji: "🐰" },
+  { start: 86, end: 89, text: "S is for Snake, who slithers by", emoji: "🐍" },
+  { start: 89, end: 94, text: "T is for Tiger, with a mighty cry — ROAR!", emoji: "🐯" },
+  { start: 94, end: 97, text: "U is for Unicorn, okay not real…", emoji: "🦄" },
+  { start: 97, end: 99, text: "But let's pretend and see how it feels!", emoji: "✨" },
+  { start: 99, end: 102, text: "V is for Vulture, flying high", emoji: "🦅" },
+  { start: 102, end: 105, text: "W is for Whale, with a water spout sky!", emoji: "🐋" },
+  { start: 105, end: 107, text: "X is for X-ray Fish, you see", emoji: "🐠" },
+  { start: 107, end: 110, text: "Y is for Yak, with a shaggy goatee!", emoji: "🐂" },
+  { start: 110, end: 112, text: "Z is for Zebra, black and white", emoji: "🦓" },
+  { start: 112, end: 117, text: "We made it through, you did it right! 🎉", emoji: "🎉" },
+  { start: 117, end: 122, text: "A to Z, now we know — Animals from head to toe!", emoji: "🌟" },
+  { start: 122, end: 131, text: "Sing it once, or maybe three — It's fun to learn your ABCs!", emoji: "🎶" },
+  { start: 131, end: 140, text: "Woo-hoo! 🎉", emoji: "🥳" },
+  { start: 162, end: 173, text: "Sing it once, or maybe three — It's fun to learn your ABCs! Woo-hoo!", emoji: "🎶" },
+];
+
+/* ─── Karaoke Display ─── */
+const KaraokeDisplay = ({ currentTime, isPlaying }: { currentTime: number; isPlaying: boolean }) => {
+  const activeLine = karaokeLines.find(l => currentTime >= l.start && currentTime < l.end);
+  const nextLine = karaokeLines.find(l => l.start > currentTime);
+
+  return (
+    <div
+      className="relative rounded-xl px-4 py-3 min-h-[72px] flex flex-col items-center justify-center text-center overflow-hidden"
+      style={{
+        background: "linear-gradient(135deg, hsl(var(--primary) / 0.08), hsl(var(--accent) / 0.06))",
+        border: "1.5px solid hsl(var(--primary) / 0.15)",
+      }}
+    >
+      {/* Animated music notes background */}
+      {isPlaying && (
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {["♪", "♫", "♬", "🎵"].map((note, i) => (
+            <motion.span
+              key={i}
+              className="absolute text-xs opacity-20"
+              style={{ left: `${15 + i * 22}%`, bottom: 0 }}
+              animate={{ y: [0, -60], opacity: [0.3, 0], x: [0, (i % 2 ? 10 : -10)] }}
+              transition={{ duration: 2 + i * 0.3, repeat: Infinity, delay: i * 0.5, ease: "easeOut" }}
+            >
+              {note}
+            </motion.span>
+          ))}
+        </div>
+      )}
+
+      <AnimatePresence mode="wait">
+        {activeLine ? (
+          <motion.div
+            key={activeLine.start}
+            initial={{ opacity: 0, y: 12, scale: 0.92 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.95 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="flex flex-col items-center gap-1"
+          >
+            {activeLine.emoji && (
+              <motion.span
+                className="text-2xl"
+                animate={{ scale: [1, 1.2, 1], rotate: [0, -5, 5, 0] }}
+                transition={{ duration: 0.6, repeat: Infinity, repeatDelay: 0.5 }}
+              >
+                {activeLine.emoji}
+              </motion.span>
+            )}
+            <KaraokeText text={activeLine.text} duration={activeLine.end - activeLine.start} />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="waiting"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="text-xs text-muted-foreground font-display"
+          >
+            {isPlaying && nextLine ? (
+              <span className="flex items-center gap-1.5">
+                <motion.span animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1, repeat: Infinity }}>
+                  🎵
+                </motion.span>
+                <span>{nextLine.emoji} Coming up...</span>
+              </span>
+            ) : (
+              <span>🎤 Press play to start the karaoke!</span>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Progress dots showing position in song */}
+      {isPlaying && (
+        <div className="flex gap-0.5 mt-2">
+          {karaokeLines.slice(0, 20).map((line, i) => (
+            <motion.div
+              key={i}
+              className="w-1.5 h-1.5 rounded-full"
+              style={{
+                background: currentTime >= line.start
+                  ? "hsl(var(--primary))"
+                  : "hsl(var(--muted-foreground) / 0.2)",
+              }}
+              animate={currentTime >= line.start && currentTime < line.end ? { scale: [1, 1.5, 1] } : {}}
+              transition={{ duration: 0.5, repeat: Infinity }}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+/* ─── Word-by-word highlight karaoke text ─── */
+const KaraokeText = ({ text, duration }: { text: string; duration: number }) => {
+  const words = text.split(" ");
+  const perWord = duration / words.length;
+
+  return (
+    <p className="font-display font-bold text-sm sm:text-base leading-relaxed flex flex-wrap justify-center gap-x-1.5 gap-y-0.5">
+      {words.map((word, i) => (
+        <motion.span
+          key={i}
+          initial={{ color: "hsl(var(--muted-foreground))", scale: 1 }}
+          animate={{
+            color: "hsl(var(--primary))",
+            scale: [1, 1.1, 1],
+          }}
+          transition={{
+            delay: i * perWord,
+            duration: perWord * 0.8,
+            scale: { delay: i * perWord, duration: 0.2 },
+          }}
+          className="inline-block"
+        >
+          {word}
+        </motion.span>
+      ))}
+    </p>
+  );
+};
+
+/* ─── Video Player Section with Karaoke ─── */
 const VideoPlayer = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [karaokeEnabled, setKaraokeEnabled] = useState(true);
   const { lang } = useLanguage();
+  const animFrameRef = useRef<number>(0);
+
+  // Sync current time with video via requestAnimationFrame for smooth updates
+  useEffect(() => {
+    const update = () => {
+      if (videoRef.current && isPlaying) {
+        setCurrentTime(videoRef.current.currentTime);
+      }
+      animFrameRef.current = requestAnimationFrame(update);
+    };
+    if (isPlaying) {
+      animFrameRef.current = requestAnimationFrame(update);
+    }
+    return () => cancelAnimationFrame(animFrameRef.current);
+  }, [isPlaying]);
 
   const togglePlay = useCallback(() => {
     if (!videoRef.current) return;
@@ -133,84 +325,117 @@ const VideoPlayer = () => {
     videoRef.current.currentTime = 0;
     videoRef.current.play();
     setIsPlaying(true);
+    setCurrentTime(0);
     playClickSound();
   }, []);
 
   return (
-    <div
-      className="relative rounded-2xl overflow-hidden"
-      style={{
-        border: "3px solid hsl(var(--primary) / 0.2)",
-        boxShadow: "0 8px 30px hsl(var(--primary) / 0.1)",
-      }}
-    >
-      {/* Video */}
-      <video
-        ref={videoRef}
-        src="/videos/abc-animals-song.mp4"
-        className="w-full aspect-video object-cover"
-        playsInline
-        onEnded={() => setIsPlaying(false)}
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
-      />
-
-      {/* Play overlay when paused */}
-      <AnimatePresence>
-        {!isPlaying && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 flex items-center justify-center cursor-pointer"
-            style={{ background: "hsl(0 0% 0% / 0.35)" }}
-            onClick={togglePlay}
-          >
-            <motion.div
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center gradient-primary shadow-lg"
-            >
-              <Play className="w-8 h-8 text-primary-foreground ml-1" />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Controls */}
+    <div className="space-y-3">
       <div
-        className="absolute bottom-0 inset-x-0 flex items-center gap-2 px-3 py-2"
-        style={{ background: "linear-gradient(transparent, hsl(0 0% 0% / 0.6))" }}
+        className="relative rounded-2xl overflow-hidden"
+        style={{
+          border: `3px solid hsl(var(--primary) / ${karaokeEnabled && isPlaying ? 0.4 : 0.2})`,
+          boxShadow: karaokeEnabled && isPlaying
+            ? "0 8px 30px hsl(var(--primary) / 0.15), 0 0 20px hsl(var(--primary) / 0.05)"
+            : "0 8px 30px hsl(var(--primary) / 0.1)",
+          transition: "border-color 0.3s, box-shadow 0.3s",
+        }}
       >
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={togglePlay}
-          className="w-8 h-8 rounded-full flex items-center justify-center"
-          style={{ background: "hsl(var(--primary) / 0.8)" }}
+        {/* Video */}
+        <video
+          ref={videoRef}
+          src="/videos/abc-animals-song.mp4"
+          className="w-full aspect-video object-cover"
+          playsInline
+          onEnded={() => setIsPlaying(false)}
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+        />
+
+        {/* Play overlay when paused */}
+        <AnimatePresence>
+          {!isPlaying && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 flex items-center justify-center cursor-pointer"
+              style={{ background: "hsl(0 0% 0% / 0.35)" }}
+              onClick={togglePlay}
+            >
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center gradient-primary shadow-lg"
+              >
+                <Play className="w-8 h-8 text-primary-foreground ml-1" />
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Controls */}
+        <div
+          className="absolute bottom-0 inset-x-0 flex items-center gap-2 px-3 py-2"
+          style={{ background: "linear-gradient(transparent, hsl(0 0% 0% / 0.6))" }}
         >
-          {isPlaying ? <Pause className="w-4 h-4 text-primary-foreground" /> : <Play className="w-4 h-4 text-primary-foreground ml-0.5" />}
-        </motion.button>
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={restart}
-          className="w-8 h-8 rounded-full flex items-center justify-center"
-          style={{ background: "hsl(0 0% 100% / 0.15)" }}
-        >
-          <SkipBack className="w-4 h-4 text-white" />
-        </motion.button>
-        <div className="flex-1" />
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={toggleMute}
-          className="w-8 h-8 rounded-full flex items-center justify-center"
-          style={{ background: "hsl(0 0% 100% / 0.15)" }}
-        >
-          {isMuted ? <VolumeX className="w-4 h-4 text-white" /> : <Volume2 className="w-4 h-4 text-white" />}
-        </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={togglePlay}
+            className="w-8 h-8 rounded-full flex items-center justify-center"
+            style={{ background: "hsl(var(--primary) / 0.8)" }}
+          >
+            {isPlaying ? <Pause className="w-4 h-4 text-primary-foreground" /> : <Play className="w-4 h-4 text-primary-foreground ml-0.5" />}
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={restart}
+            className="w-8 h-8 rounded-full flex items-center justify-center"
+            style={{ background: "hsl(0 0% 100% / 0.15)" }}
+          >
+            <SkipBack className="w-4 h-4 text-white" />
+          </motion.button>
+
+          {/* Karaoke toggle */}
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => { setKaraokeEnabled(!karaokeEnabled); playClickSound(); }}
+            className="w-8 h-8 rounded-full flex items-center justify-center text-xs"
+            style={{
+              background: karaokeEnabled ? "hsl(var(--primary) / 0.8)" : "hsl(0 0% 100% / 0.15)",
+            }}
+            title={karaokeEnabled ? "Karaoke ON" : "Karaoke OFF"}
+          >
+            🎤
+          </motion.button>
+
+          <div className="flex-1" />
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={toggleMute}
+            className="w-8 h-8 rounded-full flex items-center justify-center"
+            style={{ background: "hsl(0 0% 100% / 0.15)" }}
+          >
+            {isMuted ? <VolumeX className="w-4 h-4 text-white" /> : <Volume2 className="w-4 h-4 text-white" />}
+          </motion.button>
+        </div>
       </div>
+
+      {/* Karaoke lyrics panel */}
+      {karaokeEnabled && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <KaraokeDisplay currentTime={currentTime} isPlaying={isPlaying} />
+        </motion.div>
+      )}
     </div>
   );
 };
