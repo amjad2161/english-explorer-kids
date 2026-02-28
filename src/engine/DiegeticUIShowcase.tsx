@@ -1,6 +1,4 @@
-import { WoodButton3D } from "./diegetic";
-import { LetterTile3D } from "./diegetic";
-import { ProgressSign3D } from "./diegetic";
+import { WoodButton3D, LetterTile3D, ProgressSign3D, Scoreboard3D, StarBadge3D, EnergyMeter3D } from "./diegetic";
 import { useSceneDirector } from "./SceneDirector";
 import { dispatchCharacterEvent } from "@/lib/characterStore";
 import { playClickSound } from "@/lib/sounds";
@@ -48,6 +46,30 @@ const DiegeticUIShowcase = () => {
         label="Level 3"
         position={[0, 0.3, 0]}
         width={1.8}
+      />
+
+      {/* Scoreboard */}
+      <Scoreboard3D
+        score={1250}
+        label="Score"
+        position={[0, -1.2, 0]}
+        width={1.6}
+      />
+
+      {/* Star badge */}
+      <StarBadge3D
+        earned={3}
+        total={5}
+        position={[-1.2, -1.2, 0]}
+        size={0.3}
+      />
+
+      {/* Energy meter */}
+      <EnergyMeter3D
+        energy={72}
+        label="Energy"
+        position={[1.5, -0.5, 0]}
+        height={1.6}
       />
     </group>
   );
