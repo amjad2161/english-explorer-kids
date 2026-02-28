@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { createContext, useContext, useCallback, useState, ReactNode } from "react";
+import { createContext, useContext, useCallback, useState, useEffect, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { playEraserSound } from "@/lib/sounds";
 
@@ -119,22 +119,18 @@ const EraserOverlay = ({ active, onDone }: { active: boolean; onDone: () => void
 export const EraserTransitionProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
   const [active, setActive] = useState(false);
-  const [target, setTarget] = useState<string | number | null>(null);
 
   const navigateWithEraser = useCallback((to: string | number) => {
-    setTarget(to);
     setActive(true);
     playEraserSound(900);
-    // Navigate at the midpoint of the wipe so content switches behind the eraser
-    setTimeout(() => {
-      if (typeof to === "number") navigate(to as number);
-      else navigate(to);
-    }, 450);
+    // Navigate immediately — the eraser overlay plays on top as a visual effect
+    if (typeof to === "number") navigate(to as number);
+    else navigate(to);
+    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }, [navigate]);
 
   const handleDone = useCallback(() => {
     setActive(false);
-    setTarget(null);
   }, []);
 
   return (
