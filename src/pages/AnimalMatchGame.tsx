@@ -61,7 +61,7 @@ const AnimalMatchGame = () => {
   const shuffledAnimals = useMemo(() => shuffle(currentPairs.map(p => ({ letter: p.letter, animal: p.animal, emoji: p.emoji, soundKey: p.soundKey }))), [currentPairs]);
 
   useEffect(() => {
-    dispatchCharacterEvent({ type: "wave", payload: { message: lang === "he" ? "!חברו בין האות לחיה" : "Match the letter to the animal! 🐾" } });
+    dispatchCharacterEvent({ type: "wave", payload: { message: lang === "he" ? "!חברו בין האות לחיה 🐾" : lang === "ar" ? "!طابقوا الحرف مع الحيوان 🐾" : "Match the letter to the animal! 🐾" } });
   }, [lang]);
 
   const handleLetterClick = useCallback((letter: string) => {
@@ -193,16 +193,16 @@ const AnimalMatchGame = () => {
               style={{ background: "hsl(var(--card) / 0.95)", border: "2px solid hsl(var(--primary) / 0.2)", boxShadow: "0 8px 30px hsl(var(--primary) / 0.1)" }}>
               <motion.div className="text-6xl mb-3" animate={{ rotate: [0, -10, 10, 0], scale: [1, 1.2, 1] }} transition={{ duration: 1, repeat: 2 }}>🎉</motion.div>
               <h2 className="font-display font-extrabold text-2xl text-gradient mb-2">
-                {lang === "he" ? "!כל הכבוד" : "Amazing!"}
+                {lang === "he" ? "!כל הכבוד" : lang === "ar" ? "!أحسنت" : "Amazing!"}
               </h2>
               <div className="my-4"><StarRating earned={rewards.starsEarned} total={5} size={32} /></div>
               <p className="text-muted-foreground font-display text-sm mb-4">
-                {lang === "he" ? `!צברת ${rewards.xpEarned} XP` : `You earned ${rewards.xpEarned} XP!`}
+                {lang === "he" ? `!צברת ${rewards.xpEarned} XP` : lang === "ar" ? `!حصلت على ${rewards.xpEarned} XP` : `You earned ${rewards.xpEarned} XP!`}
               </p>
               <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={nextRound}
                 className="btn-kid inline-flex items-center gap-2 gradient-primary text-primary-foreground text-sm">
                 <RotateCcw className="w-4 h-4" />
-                {lang === "he" ? "סיבוב נוסף" : "Play Again"}
+                {lang === "he" ? "סיבוב נוסף" : lang === "ar" ? "جولة أخرى" : "Play Again"}
               </motion.button>
             </motion.div>
           )}
