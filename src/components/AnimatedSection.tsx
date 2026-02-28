@@ -1,5 +1,5 @@
-import { motion, useInView } from "framer-motion";
-import { ReactNode, useRef, forwardRef } from "react";
+import { motion } from "framer-motion";
+import { ReactNode, forwardRef } from "react";
 
 interface AnimatedSectionProps {
   children: ReactNode;
@@ -9,13 +9,10 @@ interface AnimatedSectionProps {
 }
 
 /**
- * Cinematic scroll-triggered section with directional reveal.
- * Uses IntersectionObserver for performant viewport detection.
+ * Animated section with directional reveal.
+ * Animates on mount with configurable delay and direction.
  */
 const AnimatedSection = forwardRef<HTMLDivElement, AnimatedSectionProps>(({ children, className = "", delay = 0, direction = "up" }, _ref) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-60px" });
-
   const offsets = {
     up: { y: 30, x: 0 },
     down: { y: -30, x: 0 },
@@ -25,7 +22,6 @@ const AnimatedSection = forwardRef<HTMLDivElement, AnimatedSectionProps>(({ chil
 
   return (
     <motion.div
-      ref={ref}
       className={className}
       initial={{
         opacity: 0,
@@ -33,12 +29,12 @@ const AnimatedSection = forwardRef<HTMLDivElement, AnimatedSectionProps>(({ chil
         x: offsets[direction].x,
         scale: 0.97,
       }}
-      animate={isInView ? {
+      animate={{
         opacity: 1,
         y: 0,
         x: 0,
         scale: 1,
-      } : {}}
+      }}
       transition={{
         duration: 0.6,
         delay,
