@@ -49,6 +49,7 @@ import CurriculumPage from "./pages/CurriculumPage";
 import LearningPathsPage from "./pages/LearningPathsPage";
 import OppositesGame from "./pages/OppositesGame";
 import SentenceGame from "./pages/SentenceGame";
+import VideoPage from "./pages/VideoPage";
 const queryClient = new QueryClient();
 
 const PageWrapper = ({ children }: { children: React.ReactNode }) => (
@@ -104,6 +105,7 @@ const AnimatedRoutes = () => {
       <Route path="/learning-paths" element={<PageWrapper><LearningPathsPage /></PageWrapper>} />
       <Route path="/opposites" element={<PageWrapper><OppositesGame /></PageWrapper>} />
       <Route path="/sentences" element={<PageWrapper><SentenceGame /></PageWrapper>} />
+      <Route path="/video/:id" element={<PageWrapper><VideoPage /></PageWrapper>} />
       <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
     </Routes>
   );

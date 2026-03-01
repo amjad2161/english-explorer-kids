@@ -402,6 +402,15 @@ const AllActivitiesMap = ({
       hangman: { he: "🎭 ניחוש", ar: "🎭 تخمين", en: "🎭 Hangman" },
       pattern: { he: "🧩 דפוסים", ar: "🧩 أنماط", en: "🧩 Patterns" },
       story: { he: "📖 סיפורים", ar: "📖 قصص", en: "📖 Stories" },
+      "abc-animals": { he: "🦁 חיות ABC", ar: "🦁 حيوانات ABC", en: "🦁 ABC Animals" },
+      "animal-match": { he: "🐾 התאמת חיות", ar: "🐾 مطابقة الحيوانات", en: "🐾 Animal Match" },
+      phrases: { he: "💬 ביטויים", ar: "💬 عبارات", en: "💬 Phrases" },
+      "body-parts": { he: "🦵 חלקי גוף", ar: "🦵 أجزاء الجسم", en: "🦵 Body Parts" },
+      grammar: { he: "📐 דקדוק", ar: "📐 قواعد", en: "📐 Grammar" },
+      opposites: { he: "🔄 הפכים", ar: "🔄 متضادات", en: "🔄 Opposites" },
+      sentences: { he: "✏️ משפטים", ar: "✏️ جمل", en: "✏️ Sentences" },
+      topics: { he: "🎮 נושאים", ar: "🎮 مواضيع", en: "🎮 Topics" },
+      video: { he: "🎬 סרטונים", ar: "🎬 فيديوهات", en: "🎬 Videos" },
     };
     for (const act of activities) {
       const key = act.type;
