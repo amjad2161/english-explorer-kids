@@ -85,6 +85,7 @@ const gameCards = [
   { titleKey: "quick.animalMatch", emoji: "🐾", path: "/animal-match", color: "bg-sunshine/10 dark:bg-sunshine/15" },
   { titleKey: "quick.opposites", emoji: "🔄", path: "/opposites", color: "bg-candy/10 dark:bg-candy/15" },
   { titleKey: "quick.sentences", emoji: "📝", path: "/sentences", color: "bg-sky/10 dark:bg-sky/15" },
+  { titleKey: "quick.wordOrder", emoji: "🔀", path: "/word-order", color: "bg-grass/10 dark:bg-grass/15" },
 ];
 
 /* ─── Notebook-style lined card wrapper ─── */

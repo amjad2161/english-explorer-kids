@@ -35,7 +35,8 @@ export type ActivityType =
   | "animal-match"
   | "abc-animals"
   | "topics"
-  | "video";
+  | "video"
+  | "word-order";
 
 export interface LearningActivity {
   id: string;
@@ -436,6 +437,20 @@ export const ACTIVITIES: LearningActivity[] = [
     masteryThreshold: 0.5,
     estimatedMinutes: 4,
     initialInterval: 7,
+  },
+  // Word Order
+  {
+    id: "word-order-game",
+    type: "word-order",
+    title: { en: "Word Order", he: "סדר מילים", ar: "ترتيب الكلمات" },
+    description: { en: "Arrange words to make sentences!", he: "סדר מילים ליצירת משפטים!", ar: "رتّب الكلمات لتكوين جمل!" },
+    emoji: "🔀",
+    path: "/word-order",
+    prerequisites: ["sentences-game"],
+    ageBuckets: ["5-7", "8-10", "11-14"],
+    masteryThreshold: 0.6,
+    estimatedMinutes: 8,
+    initialInterval: 2,
   },
 ];
 
