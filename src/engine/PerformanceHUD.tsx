@@ -44,13 +44,13 @@ const PerformanceHUD = memo(() => {
 
     if (elapsed >= 1000) {
       const fps = Math.round((framesRef.current * 1000) / elapsed);
-      const memory = (performance as any).memory
-        ? Math.round((performance as any).memory.usedJSHeapSize / 1048576)
+      const memory = (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory
+        ? Math.round((performance as unknown as { memory: { usedJSHeapSize: number } }).memory.usedJSHeapSize / 1048576)
         : 0;
 
       // Try reading WebGL info from canvas
-      let drawCalls = 0;
-      let triangles = 0;
+      const drawCalls = 0;
+      const triangles = 0;
       const canvas = document.querySelector("canvas");
       if (canvas) {
         const gl = canvas.getContext("webgl2") || canvas.getContext("webgl");

@@ -1,73 +1,63 @@
-# Welcome to your Lovable project
+# English Explorer Kids 🦉
 
-## Project info
+An interactive English learning platform for kids, featuring games, quizzes, spelling challenges, and more. Supports Hebrew, Arabic, and English.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+[![CI](https://github.com/amjad2161/english-explorer-kids/actions/workflows/ci.yml/badge.svg)](https://github.com/amjad2161/english-explorer-kids/actions/workflows/ci.yml)
 
-## How can I edit this code?
+🌐 **Live site:** https://amjad2161.github.io/english-explorer-kids/
 
-There are several ways of editing your application.
+---
 
-**Use Lovable**
+## Local Development
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+**Prerequisites:** Node.js (LTS) and npm
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# 1. Clone the repository
+git clone https://github.com/amjad2161/english-explorer-kids.git
+cd english-explorer-kids
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# 2. Install dependencies
+npm install
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# 3. Start the development server (hot-reload on http://localhost:8080)
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Available Scripts
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+| Command | Description |
+|---|---|
+| `npm run dev` | Start local dev server on port 8080 |
+| `npm run build` | Production build into `dist/` |
+| `npm run preview` | Preview the production build locally |
+| `npm run lint` | Run ESLint across all source files |
+| `npm test` | Run Vitest unit tests (single run) |
+| `npm run test:watch` | Run Vitest in watch mode |
 
-**Use GitHub Codespaces**
+## CI / CD
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- **CI** runs on every push and pull request: lint → test → build (see `.github/workflows/ci.yml`).
+- **GitHub Pages** is deployed automatically on every push to `main` (see `.github/workflows/pages.yml`).
 
-## What technologies are used for this project?
+## Tech Stack
 
-This project is built with:
+- [Vite 5](https://vitejs.dev/) + [TypeScript 5](https://www.typescriptlang.org/)
+- [React 18](https://react.dev/) + [Tailwind CSS 3](https://tailwindcss.com/)
+- [React Router v6](https://reactrouter.com/)
+- [Framer Motion](https://www.framer.com/motion/) for animations
+- [Vitest](https://vitest.dev/) + [@testing-library/react](https://testing-library.com/) for tests
+- [shadcn/ui](https://ui.shadcn.com/) component library
+- PWA support via [vite-plugin-pwa](https://vite-pwa-org.netlify.app/)
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Open PR Status (PRs #3–#8)
 
-## How can I deploy this project?
+| PR | Title | Recommendation |
+|---|---|---|
+| [#3](https://github.com/amjad2161/english-explorer-kids/pull/3) | Visual overhaul | Review and merge after CI passes |
+| [#4](https://github.com/amjad2161/english-explorer-kids/pull/4) | SVG mascot (Professor Owl) | **Merge** — preferred over 3D for performance |
+| [#5](https://github.com/amjad2161/english-explorer-kids/pull/5) | Lint fixes, package rename, unit tests | **Merge** — foundational quality improvements |
+| [#6](https://github.com/amjad2161/english-explorer-kids/pull/6) | 3D mascot (three.js) | **Close** — superseded by SVG approach in PR #4 |
+| [#7](https://github.com/amjad2161/english-explorer-kids/pull/7) | Production upgrade | Review and merge after conflicts resolved |
+| [#8](https://github.com/amjad2161/english-explorer-kids/pull/8) | Foundational engines | Review and merge after conflicts resolved |
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)

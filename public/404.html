@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>English Explorer Kids</title>
+    <script>
+      // Single-Page Application 404 redirect for GitHub Pages.
+      // Stores the full path in sessionStorage and redirects to the
+      // root index.html so the SPA router can handle it.
+      // NOTE: The base path below must match the `base` in vite.config.ts
+      // (used when GITHUB_ACTIONS=true). Update both if the repo is renamed.
+      var path = window.location.pathname;
+      var base = "/english-explorer-kids";
+      var route = path.startsWith(base) ? path.slice(base.length) : path;
+      sessionStorage.setItem("spa-redirect", route + window.location.search);
+      window.location.replace(base + "/");
+    </script>
+  </head>
+  <body></body>
+</html>
