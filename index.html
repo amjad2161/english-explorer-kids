@@ -76,6 +76,16 @@
 
   <body>
     <div id="root"></div>
+    <!-- SPA redirect handler for GitHub Pages 404.html fallback -->
+    <script>
+      (function () {
+        var redirect = sessionStorage.getItem("spa-redirect");
+        if (redirect) {
+          sessionStorage.removeItem("spa-redirect");
+          window.history.replaceState(null, "", redirect);
+        }
+      })();
+    </script>
     <noscript>
       <div style="text-align:center;padding:2rem;font-family:sans-serif;">
         <h1>🦉 English Fun</h1>

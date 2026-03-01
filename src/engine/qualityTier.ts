@@ -61,7 +61,7 @@ interface QualityStore {
 const detectTier = (): QualityTier => {
   if (typeof navigator === "undefined") return "med";
   const cores = navigator.hardwareConcurrency || 2;
-  const mem = (navigator as any).deviceMemory || 4;
+  const mem = (navigator as unknown as { deviceMemory?: number }).deviceMemory || 4;
   if (cores <= 2 || mem <= 2) return "low";
   if (cores >= 8 && mem >= 8) return "high";
   return "med";
@@ -73,7 +73,7 @@ const loadTier = (): QualityTier => {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved === "low" || saved === "med" || saved === "high") return saved;
-  } catch {}
+  } catch { /* intentional */ }
   return detectTier();
 };
 
