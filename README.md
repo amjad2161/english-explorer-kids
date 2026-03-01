@@ -18,7 +18,7 @@ git clone https://github.com/amjad2161/english-explorer-kids.git
 cd english-explorer-kids
 
 # 2. Install dependencies
-npm install
+npm ci
 
 # 3. Start the development server (hot-reload on http://localhost:8080)
 npm run dev
@@ -60,4 +60,3 @@ npm run dev
 | [#6](https://github.com/amjad2161/english-explorer-kids/pull/6) | 3D mascot (three.js) | **Close** — superseded by SVG approach in PR #4 |
 | [#7](https://github.com/amjad2161/english-explorer-kids/pull/7) | Production upgrade | Review and merge after conflicts resolved |
 | [#8](https://github.com/amjad2161/english-explorer-kids/pull/8) | Foundational engines | Review and merge after conflicts resolved |
-
