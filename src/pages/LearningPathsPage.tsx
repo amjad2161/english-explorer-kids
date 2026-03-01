@@ -411,6 +411,7 @@ const AllActivitiesMap = ({
       sentences: { he: "✏️ משפטים", ar: "✏️ جمل", en: "✏️ Sentences" },
       topics: { he: "🎮 נושאים", ar: "🎮 مواضيع", en: "🎮 Topics" },
       video: { he: "🎬 סרטונים", ar: "🎬 فيديوهات", en: "🎬 Videos" },
+      "word-order": { he: "🔀 סדר מילים", ar: "🔀 ترتيب الكلمات", en: "🔀 Word Order" },
     };
     for (const act of activities) {
       const key = act.type;
