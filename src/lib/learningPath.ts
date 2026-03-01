@@ -26,7 +26,16 @@ export type ActivityType =
   | "scramble"
   | "hangman"
   | "pattern"
-  | "story";
+  | "story"
+  | "phrases"
+  | "grammar"
+  | "opposites"
+  | "sentences"
+  | "body-parts"
+  | "animal-match"
+  | "abc-animals"
+  | "topics"
+  | "video";
 
 export interface LearningActivity {
   id: string;
@@ -288,6 +297,145 @@ export const ACTIVITIES: LearningActivity[] = [
     masteryThreshold: 0.65,
     estimatedMinutes: 10,
     initialInterval: 3,
+  },
+  // ABC Animals
+  {
+    id: "abc-animals",
+    type: "abc-animals",
+    title: { en: "ABC Animals", he: "חיות ה-ABC", ar: "حيوانات ABC" },
+    description: { en: "Learn letters with animals!", he: "למד אותיות עם חיות!", ar: "تعلم الحروف مع الحيوانات!" },
+    emoji: "🦁",
+    path: "/abc-animals",
+    prerequisites: ["abc-a-i"],
+    ageBuckets: ["0-4", "5-7", "8-10"],
+    masteryThreshold: 0.6,
+    estimatedMinutes: 8,
+    initialInterval: 2,
+  },
+  // Animal Match
+  {
+    id: "animal-match",
+    type: "animal-match",
+    title: { en: "Animal Match", he: "התאמת חיות", ar: "مطابقة الحيوانات" },
+    description: { en: "Match animals to their names!", he: "התאם חיות לשמותיהן!", ar: "طابق الحيوانات مع أسمائها!" },
+    emoji: "🐾",
+    path: "/animal-match",
+    prerequisites: ["words-animals"],
+    ageBuckets: ["0-4", "5-7", "8-10"],
+    masteryThreshold: 0.65,
+    estimatedMinutes: 7,
+    initialInterval: 2,
+  },
+  // Phrases
+  {
+    id: "phrases-basic",
+    type: "phrases",
+    title: { en: "Daily Phrases", he: "ביטויים יומיומיים", ar: "عبارات يومية" },
+    description: { en: "Learn useful everyday phrases!", he: "למד ביטויים שימושיים!", ar: "تعلم عبارات مفيدة!" },
+    emoji: "💬",
+    path: "/phrases",
+    prerequisites: ["words-animals", "words-colors"],
+    ageBuckets: ["5-7", "8-10", "11-14"],
+    masteryThreshold: 0.6,
+    estimatedMinutes: 8,
+    initialInterval: 2,
+  },
+  // Body Parts Game
+  {
+    id: "body-parts-game",
+    type: "body-parts",
+    title: { en: "Body Parts Game", he: "משחק חלקי גוף", ar: "لعبة أجزاء الجسم" },
+    description: { en: "Interactive body parts game!", he: "משחק חלקי גוף אינטראקטיבי!", ar: "لعبة أجزاء الجسم التفاعلية!" },
+    emoji: "🦵",
+    path: "/body-parts",
+    prerequisites: ["words-body"],
+    ageBuckets: ["5-7", "8-10", "11-14"],
+    masteryThreshold: 0.6,
+    estimatedMinutes: 7,
+    initialInterval: 2,
+  },
+  // Grammar
+  {
+    id: "grammar-basic",
+    type: "grammar",
+    title: { en: "Grammar Basics", he: "יסודות דקדוק", ar: "أساسيات القواعد" },
+    description: { en: "Learn English grammar rules!", he: "למד כללי דקדוק באנגלית!", ar: "تعلم قواعد اللغة الإنجليزية!" },
+    emoji: "📐",
+    path: "/grammar",
+    prerequisites: ["phrases-basic"],
+    ageBuckets: ["8-10", "11-14"],
+    masteryThreshold: 0.6,
+    estimatedMinutes: 10,
+    initialInterval: 3,
+  },
+  // Opposites
+  {
+    id: "opposites-game",
+    type: "opposites",
+    title: { en: "Opposites", he: "הפכים", ar: "المتضادات" },
+    description: { en: "Match words with their opposites!", he: "התאם מילים להפכים שלהן!", ar: "طابق الكلمات مع أضدادها!" },
+    emoji: "🔄",
+    path: "/opposites",
+    prerequisites: ["words-fruits"],
+    ageBuckets: ["5-7", "8-10", "11-14"],
+    masteryThreshold: 0.6,
+    estimatedMinutes: 7,
+    initialInterval: 2,
+  },
+  // Sentences
+  {
+    id: "sentences-game",
+    type: "sentences",
+    title: { en: "Complete the Sentence", he: "השלם את המשפט", ar: "أكمل الجملة" },
+    description: { en: "Choose the right word to complete sentences!", he: "בחר את המילה הנכונה להשלמת משפטים!", ar: "اختر الكلمة الصحيحة لإكمال الجمل!" },
+    emoji: "✏️",
+    path: "/sentences",
+    prerequisites: ["phrases-basic"],
+    ageBuckets: ["5-7", "8-10", "11-14"],
+    masteryThreshold: 0.6,
+    estimatedMinutes: 8,
+    initialInterval: 2,
+  },
+  // Topic Games
+  {
+    id: "topics-explore",
+    type: "topics",
+    title: { en: "Topic Games", he: "משחקי נושאים", ar: "ألعاب المواضيع" },
+    description: { en: "Explore games by topic!", he: "חקור משחקים לפי נושא!", ar: "استكشف الألعاب حسب الموضوع!" },
+    emoji: "🎮",
+    path: "/topics",
+    prerequisites: ["quiz-basic"],
+    ageBuckets: ["5-7", "8-10", "11-14"],
+    masteryThreshold: 0.6,
+    estimatedMinutes: 10,
+    initialInterval: 3,
+  },
+  // Videos
+  {
+    id: "video-abc-song",
+    type: "video",
+    title: { en: "ABC Animals Song", he: "שיר חיות ABC", ar: "أغنية حيوانات ABC" },
+    description: { en: "Watch and sing along!", he: "צפה ושיר ביחד!", ar: "شاهد وغنِّ معنا!" },
+    emoji: "🎬",
+    path: "/abc-animals",
+    prerequisites: [],
+    ageBuckets: ["0-4", "5-7", "8-10", "11-14"],
+    masteryThreshold: 0.5,
+    estimatedMinutes: 3,
+    initialInterval: 3,
+  },
+  {
+    id: "video-reference",
+    type: "video",
+    title: { en: "Learning Style Guide", he: "מדריך סגנון למידה", ar: "دليل أسلوب التعلم" },
+    description: { en: "Tips for effective learning!", he: "טיפים ללמידה אפקטיבית!", ar: "نصائح للتعلم الفعال!" },
+    emoji: "🎥",
+    path: "/video/reference",
+    prerequisites: [],
+    ageBuckets: ["5-7", "8-10", "11-14"],
+    masteryThreshold: 0.5,
+    estimatedMinutes: 4,
+    initialInterval: 7,
   },
 ];
 
