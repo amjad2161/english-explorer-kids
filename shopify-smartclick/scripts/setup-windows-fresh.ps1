@@ -1,4 +1,4 @@
-# SmartClick — full Windows setup from zero (fix-pack → mobarshamhub).
+# SmartClick - full Windows setup from zero (fix-pack -> mobarshamhub).
 #
 # Usage (run in PowerShell):
 #   Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
@@ -94,18 +94,18 @@ From the .smartclick-pack file, copy into your real TOML (KEEP your client_id):
 Save shopify.app.smartclick.toml
 "@
 
-Write-Step 7 "Next — two PowerShell windows"
+Write-Step 7 "Next - two PowerShell windows"
 
 Write-Host @"
 
-WINDOW A — dev server (leave running):
+WINDOW A - dev server (leave running):
   cd $MobarshamhubRoot
   npm run dev
   -> Log in to Partners if asked
   -> Press p to open the app
   -> Click Update app if scopes changed
 
-WINDOW B — demo product (after WINDOW A is running):
+WINDOW B - demo product (after WINDOW A is running):
   cd $MobarshamhubRoot
   .\scripts\bootstrap-demo-product.ps1 -Store $Store
 

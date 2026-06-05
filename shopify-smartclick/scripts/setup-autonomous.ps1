@@ -1,4 +1,4 @@
-# SmartClick — fully automated Windows setup (fix-pack → merge TOML → dev → demo product).
+# SmartClick - fully automated Windows setup (fix-pack -> merge TOML -> dev -> demo product).
 #
 # One command after mobarshamhub exists:
 #   cd english-explorer-kids\shopify-smartclick\scripts
@@ -99,7 +99,7 @@ if (-not (Test-Path $packToml)) {
 & (Join-Path $PSScriptRoot "merge-smartclick-toml.ps1") -TargetToml $targetToml -PackToml $packToml
 
 if (-not $SkipDevServer) {
-  Write-Step 6 "Start dev server (new window — log in once if prompted)"
+  Write-Step 6 "Start dev server (new window - log in once if prompted)"
   $devCommand = "Set-Location '$MobarshamhubRoot'; npm run dev"
   Start-Process powershell -ArgumentList @("-NoExit", "-Command", $devCommand) | Out-Null
   Write-Host "Dev window opened. If asked, log in to Partners and press p to preview."

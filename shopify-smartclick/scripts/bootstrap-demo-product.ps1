@@ -1,4 +1,4 @@
-# Create a demo product on the dev store (PowerShell-safe — no @file syntax).
+# Create a demo product on the dev store (PowerShell-safe - no @file syntax).
 # Requires: npm run dev running in another terminal.
 #
 # Usage:

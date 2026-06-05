@@ -53,7 +53,7 @@ $tomlReference = Join-Path $TargetRoot "shopify.app.smartclick.toml.smartclick-p
 Copy-Item -Path $tomlSource -Destination $tomlReference -Force
 Write-Host "Wrote reference TOML -> $tomlReference"
 Write-Host ""
-Apply script also copies `merge-smartclick-toml.ps1` — use `setup-autonomous.ps1` for full auto merge.
+Apply script also copies merge-smartclick-toml.ps1 - use setup-autonomous.ps1 for full auto merge.
 Write-Host "Optional UI patch: patches\app._index.destinationBroken.snippet.jsx"
 Write-Host ""
 Write-Host "Next:"
