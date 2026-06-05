@@ -1,0 +1,39 @@
+# Run with: shopify app execute --store smartclick-vliwpke0.myshopify.com --query @scripts/bootstrap-store.graphql
+# Requires: npm run dev running (or app installed with write_products scope)
+
+mutation BootstrapSmartclickStore {
+  productCreate(
+    product: {
+      title: "SmartClick Classic Tee"
+      descriptionHtml: "<p>Premium cotton tee for SmartClick demo store. Scan the QR code to buy instantly.</p>"
+      vendor: "SmartClick"
+      productType: "Apparel"
+      status: ACTIVE
+      tags: ["smartclick", "demo"]
+      productOptions: [{ name: "Size", values: [{ name: "M" }, { name: "L" }] }]
+    }
+    media: [
+      {
+        originalSource: "https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-product-1_large.png"
+        mediaContentType: IMAGE
+      }
+    ]
+  ) {
+    product {
+      id
+      handle
+      title
+      variants(first: 5) {
+        nodes {
+          id
+          legacyResourceId
+          price
+        }
+      }
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}

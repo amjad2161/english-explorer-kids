@@ -1,0 +1,112 @@
+# SmartClick — fix & store bootstrap
+
+This folder contains the **official Shopify QR-code fix** and setup files for your local project at:
+
+`C:\Users\Mobar\.gemini\antigravity\scratch\mobarshamhub\mobarshamhub`
+
+## 1. Security (do this first)
+
+You pasted Admin API tokens in chat. **Rotate them now:**
+
+1. [Shopify Partners](https://partners.shopify.com) → Apps → **smartclick** → **API credentials** → Regenerate Client secret.
+2. Partners → **Settings** → Rotate any exposed tokens.
+3. Never share `shpat_`, `shpss_`, or `atkn_` tokens in chat again.
+
+## 2. Fix `Field 'createdAt' doesn't exist on type 'Metaobject'`
+
+**Cause:** GraphQL queried `createdAt` on `Metaobject`. Shopify exposes `updatedAt`; the UI field `createdAt` is mapped from that in app code.
+
+**Fix:** Replace your file:
+
+`app/models/QRCode.server.js`
+
+with the copy in this repo:
+
+`shopify-smartclick/app/models/QRCode.server.js`
+
+Key lines:
+
+- Query uses `updatedAt` (not `createdAt`).
+- `transformMetaobject` sets `createdAt: metaobject.updatedAt` for the UI.
+
+## 3. App config (scopes + metaobjects)
+
+Merge into your `shopify.app.smartclick.toml` (keep your real `client_id`):
+
+```toml
+[access_scopes]
+scopes = "write_metaobject_definitions,write_metaobjects,read_metaobjects,write_products,read_products,write_inventory,read_inventory,read_locations"
+```
+
+Copy the `[metaobjects.app.qrcode]` block from `shopify-smartclick/shopify.app.smartclick.toml` if missing.
+
+Then:
+
+```powershell
+cd C:\Users\Mobar\.gemini\antigravity\scratch\mobarshamhub\mobarshamhub
+npm run dev
+```
+
+When prompted, allow URL override. In the admin, click **Update app** if scopes changed.
+
+## 4. Create demo products (automated)
+
+With `npm run dev` running:
+
+```powershell
+shopify app execute --store smartclick-vliwpke0.myshopify.com --query @scripts/bootstrap-store.graphql
+```
+
+Copy `scripts/bootstrap-store.graphql` from this folder into your project `scripts/` folder first, or run from a clone of this repo.
+
+Repeat with different product titles, or create more products in **Admin → Products**.
+
+## 5. Store contact details
+
+Update in **Admin → Settings → General** (not in app code):
+
+| Field | Value |
+|-------|--------|
+| Store name | smartclick |
+| Store email | newmobarsham@gmail.com |
+| Store domain (dev) | smartclick-vliwpke0.myshopify.com |
+
+Production store **OneClick Hub** (`jrvm00-gs.myshopify.com`) is separate — install the app there only when you are ready to sell live.
+
+## 6. Dev store vs selling for real
+
+| Store | Domain | Use |
+|-------|--------|-----|
+| Dev | smartclick-vliwpke0.myshopify.com | Build & test app + QR codes |
+| Production | jrvm00-gs.myshopify.com | Real sales (needs payments, shipping, legal) |
+
+To sell on production:
+
+1. **Settings → Payments** — enable Shopify Payments or a provider.
+2. **Settings → Shipping** — add rates.
+3. Install **smartclick** on the production store (Partners → Test on store).
+4. Deploy app: `npm run deploy` (after dev works).
+
+## 7. Verify QR flow
+
+1. Open app (press `p` in dev terminal).
+2. **Create QR Code** → pick a product → save.
+3. Scan QR → product or cart opens.
+4. Scan count increments in the app list.
+
+## 8. Push your app to GitHub (recommended)
+
+So cloud agents can edit the real codebase:
+
+```powershell
+cd C:\Users\Mobar\.gemini\antigravity\scratch\mobarshamhub\mobarshamhub
+git init
+git remote add origin https://github.com/amjad2161/smartclick-app.git
+git add .
+git commit -m "SmartClick QR app"
+git push -u origin main
+```
+
+---
+
+Based on [Shopify example QR app](https://github.com/Shopify/example-app--qr-code--remix).
