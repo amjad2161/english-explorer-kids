@@ -2,10 +2,10 @@
 #
 # Usage (PowerShell as Mobar):
 #   Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
-#   iwr -useb https://raw.githubusercontent.com/amjad2161/english-explorer-kids/cursor/smartclick-setup-8c32/shopify-smartclick/scripts/run-from-zero.ps1 -OutFile $env:TEMP\run-from-zero.ps1
-#   & $env:TEMP\run-from-zero.ps1
+#   cd C:\Users\Mobar\english-explorer-kids\shopify-smartclick\scripts
+#   .\run-from-zero.ps1
 #
-# Or after git is installed:
+# Or from scratch:
 #   cd C:\Users\Mobar
 #   git clone https://github.com/amjad2161/english-explorer-kids.git
 #   cd english-explorer-kids
@@ -28,6 +28,28 @@ function Require-Command($name, $installHint) {
   }
 }
 
+# Git writes progress to stderr; PowerShell must not treat that as a terminating error.
+function Invoke-Git {
+  param(
+    [Parameter(Mandatory = $true, ValueFromRemainingArguments = $true)]
+    [string[]]$GitArgs
+  )
+
+  $prev = $ErrorActionPreference
+  $ErrorActionPreference = "Continue"
+  $output = & git @GitArgs 2>&1
+  $code = $LASTEXITCODE
+  $ErrorActionPreference = $prev
+
+  if ($output) {
+    $output | ForEach-Object { Write-Host $_ }
+  }
+
+  if ($code -ne 0) {
+    throw "git $($GitArgs -join ' ') failed (exit $code)"
+  }
+}
+
 Require-Command "git" "Install from https://git-scm.com/download/win"
 Require-Command "node" "Install LTS from https://nodejs.org"
 Require-Command "npm" "Comes with Node.js"
@@ -35,24 +57,36 @@ Require-Command "npm" "Comes with Node.js"
 if (-not (Test-Path $CloneDir)) {
   Write-Host "Cloning english-explorer-kids ..."
   $parent = Split-Path $CloneDir -Parent
-  if (-not (Test-Path $parent)) { New-Item -ItemType Directory -Path $parent -Force | Out-Null }
-  git clone https://github.com/amjad2161/english-explorer-kids.git $CloneDir
+  if (-not (Test-Path $parent)) {
+    New-Item -ItemType Directory -Path $parent -Force | Out-Null
+  }
+  Invoke-Git clone https://github.com/amjad2161/english-explorer-kids.git $CloneDir
 } else {
   Write-Host "Repo exists: $CloneDir"
 }
 
 Push-Location $CloneDir
 try {
-  git fetch origin $Branch 2>$null
-  git checkout $Branch
-  git pull origin $Branch 2>$null
+  try {
+    Invoke-Git fetch origin $Branch
+  } catch {
+    Write-Warning "git fetch skipped: $($_.Exception.Message)"
+  }
+
+  Invoke-Git checkout $Branch
+
+  try {
+    Invoke-Git pull origin $Branch
+  } catch {
+    Write-Warning "git pull skipped: $($_.Exception.Message)"
+  }
 } finally {
   Pop-Location
 }
 
 $autonomous = Join-Path $CloneDir "shopify-smartclick\scripts\setup-autonomous.ps1"
 if (-not (Test-Path $autonomous)) {
-  Write-Error "setup-autonomous.ps1 not found. Check branch $Branch is checked out."
+  Write-Error "setup-autonomous.ps1 not found at $autonomous. Check branch $Branch."
 }
 
 & $autonomous -MobarshamhubRoot $MobarshamhubRoot -Store $Store

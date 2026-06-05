@@ -29,21 +29,29 @@ while ((Get-Date) -lt $deadline) {
   $attempt++
   Write-Host "  Attempt $attempt ..."
 
+  $prev = $ErrorActionPreference
+  $ErrorActionPreference = "Continue"
   try {
     if ($cli -eq "shopify") {
       $out = shopify app execute --store $Store --query $query 2>&1 | Out-String
     } else {
       $out = npx @shopify/cli app execute --store $Store --query $query 2>&1 | Out-String
     }
+  } finally {
+    $ErrorActionPreference = $prev
+  }
 
-    if ($out -match '"name"' -or $out -match '"shop"') {
-      Write-Host "App session ready." -ForegroundColor Green
-      return
-    }
+  if ($out -match '"name"' -or $out -match '"shop"') {
+    Write-Host "App session ready." -ForegroundColor Green
+    return
+  }
 
-    Write-Host "  Not ready yet: $($out.Trim().Substring(0, [Math]::Min(200, $out.Trim().Length)))"
-  } catch {
-    Write-Host "  Retry: $($_.Exception.Message)"
+  $snippet = $out.Trim()
+  if ($snippet.Length -gt 200) { $snippet = $snippet.Substring(0, 200) }
+  if ($snippet) {
+    Write-Host "  Not ready yet: $snippet"
+  } else {
+    Write-Host "  Not ready yet (no output)."
   }
 
   Start-Sleep -Seconds $IntervalSeconds

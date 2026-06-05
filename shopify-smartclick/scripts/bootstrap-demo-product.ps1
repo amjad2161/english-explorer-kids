@@ -34,8 +34,16 @@ Write-Host "Creating demo product on $Store ..."
 Write-Host "(Keep npm run dev running in another terminal.)"
 Write-Host ""
 
-if ($cli -eq "shopify") {
-  shopify app execute --store $Store --query $query
-} else {
-  npx @shopify/cli app execute --store $Store --query $query
+$prev = $ErrorActionPreference
+$ErrorActionPreference = "Continue"
+try {
+  if ($cli -eq "shopify") {
+    shopify app execute --store $Store --query $query
+    if ($LASTEXITCODE -ne 0) { throw "shopify app execute failed (exit $LASTEXITCODE)" }
+  } else {
+    npx @shopify/cli app execute --store $Store --query $query
+    if ($LASTEXITCODE -ne 0) { throw "shopify app execute failed (exit $LASTEXITCODE)" }
+  }
+} finally {
+  $ErrorActionPreference = $prev
 }

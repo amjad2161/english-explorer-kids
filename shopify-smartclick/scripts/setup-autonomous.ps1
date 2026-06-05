@@ -34,10 +34,15 @@ function Get-ShopifyCli {
 function Invoke-ShopifyAppExecute {
   param([string]$Query)
   $cli = Get-ShopifyCli
-  if ($cli -eq "shopify") {
-    shopify app execute --store $Store --query $Query 2>&1 | Out-String
-  } else {
-    npx @shopify/cli app execute --store $Store --query $Query 2>&1 | Out-String
+  $prev = $ErrorActionPreference
+  $ErrorActionPreference = "Continue"
+  try {
+    if ($cli -eq "shopify") {
+      return (shopify app execute --store $Store --query $Query 2>&1 | Out-String)
+    }
+    return (npx @shopify/cli app execute --store $Store --query $Query 2>&1 | Out-String)
+  } finally {
+    $ErrorActionPreference = $prev
   }
 }
 
