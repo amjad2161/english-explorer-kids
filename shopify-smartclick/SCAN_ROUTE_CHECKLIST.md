@@ -2,7 +2,9 @@
 
 After copying `shopify-smartclick/app/models/QRCode.server.js` into your Remix app, verify the **public scan route** — it is not included in this fix pack.
 
-Expected file: `app/routes/qrcodes.$id.scan.jsx` (or equivalent in your router).
+Expected file: `app/routes/qrcodes.$id.scan.jsx`
+
+A hardened copy ships in this fix pack: `shopify-smartclick/app/routes/qrcodes.$id.scan.jsx`
 
 ## 1. Route exists and is public
 
@@ -26,7 +28,7 @@ The QR image embeds `shop` in the scan URL (`getQRCodeImage`). Confirm:
 
 - [ ] `unauthenticated.admin(shop)` fails for shops where the app is not installed.
 - [ ] Redirect host is always `https://${shop}/...` where `shop` is the **myshopify.com** domain from the query string.
-- [ ] Optional hardening: compare `shop` to the shop that owns the metaobject session, or reject non-`*.myshopify.com` values.
+- [ ] Rejects `shop` values that are not `*.myshopify.com` (included in fix-pack route via `assertMyShopifyDomain`).
 
 ## 5. Broken QR data
 

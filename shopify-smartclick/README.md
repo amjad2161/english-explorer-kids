@@ -24,6 +24,12 @@ with the copy in this repo:
 
 `shopify-smartclick/app/models/QRCode.server.js`
 
+Also copy the public scan route (if missing locally):
+
+`shopify-smartclick/app/routes/qrcodes.$id.scan.jsx`
+
+Or run the PowerShell applier (see §9).
+
 Key lines:
 
 - Query uses `updatedAt` (not `createdAt`).
@@ -100,7 +106,25 @@ To sell on production:
 
 See `SCAN_ROUTE_CHECKLIST.md` after copying files into mobarshamhub.
 
-## 8. Push your app to GitHub (recommended)
+## 8. One-command copy (Windows)
+
+From a clone of this repo:
+
+```powershell
+cd path\to\english-explorer-kids\shopify-smartclick
+.\scripts\apply-to-mobarshamhub.ps1
+# or: .\scripts\apply-to-mobarshamhub.ps1 -TargetRoot "D:\your\mobarshamhub"
+```
+
+Then merge scopes/metaobjects from `shopify.app.smartclick.toml.smartclick-pack` into your real TOML (keep `client_id`).
+
+## 9. Shopify AI Toolkit (agent skills)
+
+Curated skills for Cursor/agents live in `shopify-smartclick/ai-toolkit/`. See `ai-toolkit/README.md`.
+
+For full MCP + docs search, install the [Shopify plugin from Cursor Marketplace](https://cursor.com/marketplace/shopify).
+
+## 10. Push your app to GitHub (recommended)
 
 So cloud agents can edit the real codebase:
 
