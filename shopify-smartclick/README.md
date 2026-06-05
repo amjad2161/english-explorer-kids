@@ -35,8 +35,10 @@ Merge into your `shopify.app.smartclick.toml` (keep your real `client_id`):
 
 ```toml
 [access_scopes]
-scopes = "write_metaobject_definitions,write_metaobjects,read_metaobjects,write_products,read_products,write_inventory,read_inventory,read_locations"
+scopes = "write_metaobject_definitions,write_metaobjects,write_products"
 ```
+
+If other app features need inventory or location APIs, add those scopes explicitly.
 
 Copy the `[metaobjects.app.qrcode]` block from `shopify-smartclick/shopify.app.smartclick.toml` if missing.
 
@@ -58,6 +60,8 @@ shopify app execute --store smartclick-vliwpke0.myshopify.com --query @scripts/b
 ```
 
 Copy `scripts/bootstrap-store.graphql` from this folder into your project `scripts/` folder first, or run from a clone of this repo.
+
+Confirm the mutation succeeded: response should include a `product` with variants and an empty `userErrors` array.
 
 Repeat with different product titles, or create more products in **Admin → Products**.
 
@@ -93,6 +97,8 @@ To sell on production:
 2. **Create QR Code** → pick a product → save.
 3. Scan QR → product or cart opens.
 4. Scan count increments in the app list.
+
+See `SCAN_ROUTE_CHECKLIST.md` after copying files into mobarshamhub.
 
 ## 8. Push your app to GitHub (recommended)
 

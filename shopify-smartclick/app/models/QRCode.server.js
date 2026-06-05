@@ -2,6 +2,13 @@ import qrcode from "qrcode";
 import invariant from "tiny-invariant";
 
 const METAOBJECT_TYPE = "$app:qrcode";
+const VALID_DESTINATIONS = new Set(["product", "cart"]);
+
+function assertGraphQLData(data, operation) {
+  if (!data) {
+    throw new Error(`GraphQL ${operation} failed: empty response`);
+  }
+}
 
 export async function getQRCode(handle, graphql, shop) {
   const response = await graphql(
@@ -45,7 +52,10 @@ export async function getQRCode(handle, graphql, shop) {
     },
   );
 
-  const { data } = await response.json();
+  const { data, errors } = await response.json();
+  if (errors?.length) {
+    throw new Error(errors[0].message);
+  }
   const metaobject = data?.metaobjectByHandle;
 
   if (!metaobject) {
@@ -97,7 +107,10 @@ export async function getQRCodes(graphql, shop) {
     },
   );
 
-  const { data } = await response.json();
+  const { data, errors } = await response.json();
+  if (errors?.length) {
+    throw new Error(errors[0].message);
+  }
   const metaobjects = data?.metaobjects?.nodes ?? [];
 
   return Promise.all(metaobjects.map((mo) => transformMetaobject(mo, shop)));
@@ -125,10 +138,21 @@ async function transformMetaobject(metaobject, shop) {
     productAlt: product?.media?.nodes[0]?.preview?.image?.altText,
   };
 
-  qrCode.destinationUrl = getDestinationUrl(qrCode, shop);
+  qrCode.destinationUrl = canBuildDestinationUrl(qrCode)
+    ? getDestinationUrl(qrCode, shop)
+    : null;
+  qrCode.destinationBroken = !qrCode.destinationUrl;
   qrCode.image = await getQRCodeImage(metaobject.handle, shop);
 
   return qrCode;
+}
+
+function canBuildDestinationUrl(qrCode) {
+  if (qrCode.destination === "product") {
+    return Boolean(qrCode.productHandle);
+  }
+
+  return Boolean(qrCode.productVariantLegacyId);
 }
 
 export async function getQRCodeImage(handle, shop) {
@@ -175,7 +199,12 @@ export async function saveQRCode(handle, data, graphql) {
     },
   );
 
-  const { data: responseData } = await response.json();
+  const { data: responseData, errors } = await response.json();
+  if (errors?.length) {
+    throw new Error(errors[0].message);
+  }
+  assertGraphQLData(responseData, "metaobjectUpsert");
+
   const { metaobjectUpsert } = responseData;
 
   if (metaobjectUpsert.userErrors.length) {
@@ -200,7 +229,11 @@ export async function deleteQRCode(id, graphql) {
     },
   );
 
-  const { data } = await response.json();
+  const { data, errors } = await response.json();
+  if (errors?.length) {
+    throw new Error(errors[0].message);
+  }
+  assertGraphQLData(data, "metaobjectDelete");
 
   if (data.metaobjectDelete.userErrors.length) {
     throw new Error(data.metaobjectDelete.userErrors[0].message);
@@ -208,7 +241,7 @@ export async function deleteQRCode(id, graphql) {
 }
 
 export async function incrementQRCodeScans(id, currentScans, graphql) {
-  await graphql(
+  const response = await graphql(
     `
       mutation IncrementScans($id: ID!, $metaobject: MetaobjectUpdateInput!) {
         metaobjectUpdate(id: $id, metaobject: $metaobject) {
@@ -226,6 +259,17 @@ export async function incrementQRCodeScans(id, currentScans, graphql) {
       },
     },
   );
+
+  const { data, errors } = await response.json();
+  if (errors?.length) {
+    throw new Error(errors[0].message);
+  }
+  assertGraphQLData(data, "metaobjectUpdate");
+
+  const { metaobjectUpdate } = data;
+  if (metaobjectUpdate.userErrors.length) {
+    throw new Error(metaobjectUpdate.userErrors[0].message);
+  }
 }
 
 function slugify(text) {
@@ -252,6 +296,16 @@ export function validateQRCode(data) {
 
   if (!data.destination) {
     errors.destination = "Destination is required";
+  } else if (!VALID_DESTINATIONS.has(data.destination)) {
+    errors.destination = "Destination must be product or cart";
+  }
+
+  if (
+    data.destination === "cart" &&
+    data.productId &&
+    !data.productVariantId
+  ) {
+    errors.productVariantId = "Product variant is required for cart destination";
   }
 
   if (Object.keys(errors).length) {
