@@ -30,6 +30,10 @@ $files = @(
   @{
     Source = Join-Path $SourceRoot "scripts\bootstrap-demo-product.ps1"
     Target = Join-Path $TargetRoot "scripts\bootstrap-demo-product.ps1"
+  },
+  @{
+    Source = Join-Path $SourceRoot "scripts\merge-smartclick-toml.ps1"
+    Target = Join-Path $TargetRoot "scripts\merge-smartclick-toml.ps1"
   }
 )
 
@@ -49,8 +53,7 @@ $tomlReference = Join-Path $TargetRoot "shopify.app.smartclick.toml.smartclick-p
 Copy-Item -Path $tomlSource -Destination $tomlReference -Force
 Write-Host "Wrote reference TOML -> $tomlReference"
 Write-Host ""
-Write-Host "Manual step: merge [access_scopes] and [metaobjects.app.qrcode] from the reference file"
-Write-Host "into $tomlTarget while keeping your real client_id and URLs."
+Apply script also copies `merge-smartclick-toml.ps1` — use `setup-autonomous.ps1` for full auto merge.
 Write-Host "Optional UI patch: patches\app._index.destinationBroken.snippet.jsx"
 Write-Host ""
 Write-Host "Next:"

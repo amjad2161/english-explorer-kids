@@ -4,6 +4,18 @@ This folder contains the **official Shopify QR-code fix** and setup files for yo
 
 `C:\Users\Mobar\.gemini\antigravity\scratch\mobarshamhub\mobarshamhub`
 
+## Autonomous setup (Windows, one command)
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+cd C:\Users\Mobar\english-explorer-kids\shopify-smartclick\scripts
+.\run-from-zero.ps1
+```
+
+Does: clone/update fix-pack → apply patches → merge TOML → open dev server → wait for auth → create demo product.
+
+First run only: log in to Partners in the browser window that opens. See [SETUP-WINDOWS.md](./SETUP-WINDOWS.md).
+
 ## 1. Security (do this first)
 
 You pasted Admin API tokens in chat. **Rotate them now:**

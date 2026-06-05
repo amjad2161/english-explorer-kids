@@ -27,7 +27,32 @@ cd shopify-smartclick
 
 ---
 
-## שלב 2 — הרצת setup אוטומטי
+## שלב 2 — הרצה אוטונומית (מומלץ)
+
+**פקודה אחת** — clone, patch, merge TOML, dev server, מוצר demo:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+cd C:\Users\Mobar
+git clone https://github.com/amjad2161/english-explorer-kids.git
+cd english-explorer-kids
+git checkout cursor/smartclick-setup-8c32
+cd shopify-smartclick\scripts
+.\run-from-zero.ps1
+```
+
+או אם ה-repo כבר cloned:
+
+```powershell
+cd C:\Users\Mobar\english-explorer-kids\shopify-smartclick\scripts
+.\setup-autonomous.ps1
+```
+
+**פעם ראשונה בלבד:** בחלון dev שנפתח — התחבר ל-Partners בדפדפן. אחרי זה הכל אוטומטי.
+
+---
+
+## שלב 2 (ידני) — setup חלקי
 
 ```powershell
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
@@ -41,9 +66,13 @@ cd C:\Users\Mobar\english-explorer-kids\shopify-smartclick\scripts
 - מעתיק קבצי תיקון ל-mobarshamhub
 - מריץ `npm ci` / `npm install` בפרויקט
 
+(ללא merge TOML / dev / bootstrap — השתמש ב-`setup-autonomous.ps1` במקום.)
+
 ---
 
-## שלב 3 — מיזוג TOML (ידני, פעם אחת)
+## שלבים ידניים (רק אם לא השתמשת ב-autonomous)
+
+### מיזוג TOML ידני
 
 פתח:
 
