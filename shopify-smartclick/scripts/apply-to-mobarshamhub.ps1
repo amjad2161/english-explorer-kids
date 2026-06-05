@@ -26,6 +26,10 @@ $files = @(
   @{
     Source = Join-Path $SourceRoot "scripts\bootstrap-store.graphql"
     Target = Join-Path $TargetRoot "scripts\bootstrap-store.graphql"
+  },
+  @{
+    Source = Join-Path $SourceRoot "scripts\bootstrap-demo-product.ps1"
+    Target = Join-Path $TargetRoot "scripts\bootstrap-demo-product.ps1"
   }
 )
 
@@ -52,4 +56,4 @@ Write-Host ""
 Write-Host "Next:"
 Write-Host "  cd $TargetRoot"
 Write-Host "  npm run dev"
-Write-Host "  shopify app execute --store smartclick-vliwpke0.myshopify.com --query @scripts/bootstrap-store.graphql"
+Write-Host "  .\scripts\bootstrap-demo-product.ps1 -Store smartclick-vliwpke0.myshopify.com"
