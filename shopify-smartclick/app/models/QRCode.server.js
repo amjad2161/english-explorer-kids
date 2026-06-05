@@ -113,10 +113,12 @@ export async function getQRCodes(graphql, shop) {
   }
   const metaobjects = data?.metaobjects?.nodes ?? [];
 
-  return Promise.all(metaobjects.map((mo) => transformMetaobject(mo, shop)));
+  return Promise.all(
+    metaobjects.map((mo) => transformMetaobject(mo, shop, { includeImage: false })),
+  );
 }
 
-async function transformMetaobject(metaobject, shop) {
+async function transformMetaobject(metaobject, shop, { includeImage = true } = {}) {
   const product = metaobject.product?.reference;
   const variant = metaobject.productVariant?.reference;
   const productId = metaobject.product?.jsonValue;
@@ -142,7 +144,9 @@ async function transformMetaobject(metaobject, shop) {
     ? getDestinationUrl(qrCode, shop)
     : null;
   qrCode.destinationBroken = !qrCode.destinationUrl;
-  qrCode.image = await getQRCodeImage(metaobject.handle, shop);
+  qrCode.image = includeImage
+    ? await getQRCodeImage(metaobject.handle, shop)
+    : null;
 
   return qrCode;
 }

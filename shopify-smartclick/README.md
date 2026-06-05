@@ -104,9 +104,11 @@ To sell on production:
 3. Scan QR → product or cart opens.
 4. Scan count increments in the app list.
 
+If a QR shows **Destination unavailable** in the list (`destinationBroken: true`), re-save it with a valid product and variant. See `patches/app._index.destinationBroken.snippet.jsx`.
+
 See `SCAN_ROUTE_CHECKLIST.md` after copying files into mobarshamhub.
 
-## 8. One-command copy (Windows)
+## 8. One-command copy (Windows / Linux)
 
 From a clone of this repo:
 
@@ -114,6 +116,12 @@ From a clone of this repo:
 cd path\to\english-explorer-kids\shopify-smartclick
 .\scripts\apply-to-mobarshamhub.ps1
 # or: .\scripts\apply-to-mobarshamhub.ps1 -TargetRoot "D:\your\mobarshamhub"
+```
+
+```bash
+cd path/to/english-explorer-kids/shopify-smartclick
+chmod +x scripts/apply-to-mobarshamhub.sh
+./scripts/apply-to-mobarshamhub.sh /path/to/mobarshamhub
 ```
 
 Then merge scopes/metaobjects from `shopify.app.smartclick.toml.smartclick-pack` into your real TOML (keep `client_id`).

@@ -1,6 +1,6 @@
 # Scan route checklist (mobarshamhub)
 
-After copying `shopify-smartclick/app/models/QRCode.server.js` into your Remix app, verify the **public scan route** — it is not included in this fix pack.
+After copying `shopify-smartclick/app/models/QRCode.server.js` into your Remix app, verify the **public scan route**.
 
 Expected file: `app/routes/qrcodes.$id.scan.jsx`
 
