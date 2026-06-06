@@ -17,8 +17,13 @@ param(
   [string]$CloneDir = "C:\Users\Mobar\english-explorer-kids",
   [string]$Branch = "cursor/smartclick-setup-8c32",
   [string]$MobarshamhubRoot = "C:\Users\Mobar\.gemini\antigravity\scratch\mobarshamhub\mobarshamhub",
-  [string]$Store = "smartclick-vliwpke0.myshopify.com"
+  [string]$Store = "smartclick-vliwpke0.myshopify.com",
+  [switch]$Production
 )
+
+if ($Production) {
+  $Store = "mobarsham.myshopify.com"
+}
 
 $ErrorActionPreference = "Stop"
 
@@ -89,4 +94,9 @@ if (-not (Test-Path $autonomous)) {
   Write-Error "setup-autonomous.ps1 not found at $autonomous. Check branch $Branch."
 }
 
-& $autonomous -MobarshamhubRoot $MobarshamhubRoot -Store $Store
+if ($Production) {
+  $production = Join-Path $CloneDir "shopify-smartclick\scripts\setup-production.ps1"
+  & $production -MobarshamhubRoot $MobarshamhubRoot -Store $Store
+} else {
+  & $autonomous -MobarshamhubRoot $MobarshamhubRoot -Store $Store
+}

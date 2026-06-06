@@ -6,15 +6,26 @@ This folder contains the **official Shopify QR-code fix** and setup files for yo
 
 ## Autonomous setup (Windows, one command)
 
+**Dev store (SmartClick QR app):**
+
 ```powershell
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 cd C:\Users\Mobar\english-explorer-kids\shopify-smartclick\scripts
 .\run-from-zero.ps1
 ```
 
-Does: clone/update fix-pack → apply patches → merge TOML → open dev server → wait for auth → create demo product.
+**Production store (OneClick Hub / mobarsham.myshopify.com):**
 
-First run only: log in to Partners in the browser window that opens. See [SETUP-WINDOWS.md](./SETUP-WINDOWS.md).
+```powershell
+.\run-from-zero.ps1 -Production
+# or:
+.\setup-production.ps1
+.\setup-production.ps1 -AuditOnly   # public readiness scan only
+```
+
+Does: clone/update fix-pack → apply patches → merge TOML → open dev server → wait for auth → bootstrap demo product and policies.
+
+First run only: log in to Partners in the browser window that opens. See [SETUP-WINDOWS.md](./SETUP-WINDOWS.md) and [STORE-READINESS.md](./STORE-READINESS.md).
 
 ## 1. Security (do this first)
 
@@ -100,7 +111,7 @@ Production store **OneClick Hub** (`jrvm00-gs.myshopify.com`) is separate — in
 | Store | Domain | Use |
 |-------|--------|-----|
 | Dev | smartclick-vliwpke0.myshopify.com | Build & test app + QR codes |
-| Production | jrvm00-gs.myshopify.com | Real sales (needs payments, shipping, legal) |
+| Production | mobarsham.myshopify.com (OneClick Hub) | Live storefront; verify payments/shipping/policies |
 
 To sell on production:
 
