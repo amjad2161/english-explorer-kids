@@ -534,6 +534,47 @@ const Index = () => {
 
         <ChalkDivider />
 
+        {/* ═══ KIDGENIUS 3D ACADEMY — Featured ═══ */}
+        <AnimatedSection className="max-w-2xl mx-auto mb-8 sm:mb-10" delay={0.1}>
+          <Card3D>
+            <NotebookCard>
+              <motion.button
+                type="button"
+                onClick={() => { playClickSound(); navigateWithEraser("/academy"); }}
+                className="w-full text-start p-4 sm:p-5 rounded-2xl overflow-hidden relative group"
+                style={{
+                  background: "linear-gradient(135deg, hsl(220 60% 18%) 0%, hsl(260 50% 22%) 50%, hsl(35 70% 35%) 100%)",
+                  border: "2px solid hsl(45 90% 55% / 0.35)",
+                  boxShadow: "0 8px 32px hsl(0 0% 0% / 0.25)",
+                }}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+              >
+                <div className="flex items-center gap-4">
+                  <motion.span className="text-4xl sm:text-5xl" animate={{ rotate: [0, 5, -5, 0] }} transition={{ repeat: Infinity, duration: 4 }}>
+                    🌍
+                  </motion.span>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-display font-extrabold text-lg sm:text-xl text-amber-200">
+                      {lang === "he" ? "אקדמיית KidGenius תלת־ממד" : lang === "ar" ? "أكاديمية KidGenius ثلاثية الأبعاد" : "KidGenius 3D Academy"}
+                    </p>
+                    <p className="text-sm text-white/80 mt-1">
+                      {lang === "he"
+                        ? "עולם חי עם 10 איים, 12 משחקים חינוכיים ומסע קולנועי של 60 דקות"
+                        : lang === "ar"
+                          ? "عالم حيّ بـ 10 جزر و12 لعبة تعليمية ورحلة سينمائية لمدة 60 دقيقة"
+                          : "A living world with 10 islands, 12 learning games, and a 60-minute cinematic journey"}
+                    </p>
+                  </div>
+                  <ArrowRight className={`w-6 h-6 text-amber-300 shrink-0 ${dir === "rtl" ? "rotate-180" : ""}`} />
+                </div>
+              </motion.button>
+            </NotebookCard>
+          </Card3D>
+        </AnimatedSection>
+
+        <ChalkDivider />
+
         {/* ═══ GAME CARDS — Chalkboard header ═══ */}
         <AnimatedSection className="mb-8 sm:mb-10" delay={0.12}>
           <ChalkSection className="mb-5 text-center">

@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { LanguageProvider, useLanguage, Language } from "@/lib/i18n";
 import { ThemeProvider } from "@/lib/theme";
-import { useState, useEffect, useCallback, forwardRef } from "react";
+import { useState, useEffect, useCallback, forwardRef, lazy, Suspense } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { EraserTransitionProvider } from "@/components/ChalkEraserTransition";
 import CinematicCanvas from "@/engine/CinematicCanvas";
@@ -51,6 +51,7 @@ import OppositesGame from "./pages/OppositesGame";
 import SentenceGame from "./pages/SentenceGame";
 import VideoPage from "./pages/VideoPage";
 import WordOrderGame from "./pages/WordOrderGame";
+const AcademyPage = lazy(() => import("./academy/pages/AcademyPage"));
 const queryClient = new QueryClient();
 
 const PageWrapper = ({ children }: { children: React.ReactNode }) => (
@@ -108,27 +109,40 @@ const AnimatedRoutes = () => {
       <Route path="/sentences" element={<PageWrapper><SentenceGame /></PageWrapper>} />
       <Route path="/video/:id" element={<PageWrapper><VideoPage /></PageWrapper>} />
       <Route path="/word-order" element={<PageWrapper><WordOrderGame /></PageWrapper>} />
+      <Route
+        path="/academy"
+        element={
+          <Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center text-white">Loading academy…</div>}>
+            <AcademyPage />
+          </Suspense>
+        }
+      />
       <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
     </Routes>
   );
 };
 
-const AppRoutes = () => (
-  <EraserTransitionProvider>
-    <CinematicCanvas />
-    <AppHeader />
-    <AchievementWatcher />
-    <KeyboardShortcuts />
-    <BreakReminder />
-    <OfflineIndicator />
-    <PWAInstallPrompt />
-    <main role="main" aria-label="Main content" className="relative z-10">
-      <OwlPageEntrance />
-      <AnimatedRoutes />
-    </main>
-    <AppFooter />
-  </EraserTransitionProvider>
-);
+const AppRoutes = () => {
+  const location = useLocation();
+  const isAcademy = location.pathname === "/academy";
+
+  return (
+    <EraserTransitionProvider>
+      {!isAcademy && <CinematicCanvas />}
+      {!isAcademy && <AppHeader />}
+      <AchievementWatcher />
+      {!isAcademy && <KeyboardShortcuts />}
+      {!isAcademy && <BreakReminder />}
+      {!isAcademy && <OfflineIndicator />}
+      {!isAcademy && <PWAInstallPrompt />}
+      <main role="main" aria-label="Main content" className={isAcademy ? "relative" : "relative z-10"}>
+        {!isAcademy && <OwlPageEntrance />}
+        <AnimatedRoutes />
+      </main>
+      {!isAcademy && <AppFooter />}
+    </EraserTransitionProvider>
+  );
+};
 
 const AppContent = () => {
   const { setLang } = useLanguage();
