@@ -140,3 +140,8 @@ export function getBeatAtTime(sec: number): SceneBeat {
 export function getInteractionBeat(id: SceneBeat["interaction"]): SceneBeat | undefined {
   return masterScript.find((b) => b.interaction === id);
 }
+
+export function getFirstBeatForWorld(worldId: SceneBeat["world"]): SceneBeat {
+  const beat = masterScript.find((b) => b.world === worldId);
+  return beat ?? masterScript[0];
+}

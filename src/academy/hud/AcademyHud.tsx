@@ -2,7 +2,8 @@ import { useLanguage } from "@/lib/i18n";
 import { academyT } from "../i18n/academyTranslations";
 import { useAcademyStore } from "../store/academyStore";
 import { getBeatAtTime } from "../cinema/masterScript";
-import { worldRegistry } from "../registries/worldRegistry";
+import { worldOrder, worldRegistry } from "../registries/worldRegistry";
+import type { WorldId } from "../types";
 import { MASTER_DURATION_SEC } from "../cinema/masterScript";
 
 function formatTime(sec: number) {
@@ -21,10 +22,19 @@ export default function AcademyHud() {
   const interactionComplete = useAcademyStore((s) => s.interactionComplete);
   const medalEarned = useAcademyStore((s) => s.medalEarned);
   const seek = useAcademyStore((s) => s.seek);
+  const jumpToWorld = useAcademyStore((s) => s.jumpToWorld);
 
+  const activeInteraction = useAcademyStore((s) => s.activeInteraction);
+  const enterInteraction = useAcademyStore((s) => s.enterInteraction);
   const beat = getBeatAtTime(elapsedSec);
   const world = worldRegistry[activeWorld];
   const progress = (elapsedSec / MASTER_DURATION_SEC) * 100;
+  const pendingInteraction =
+    beat.interaction &&
+    !interactionComplete.has(beat.interaction) &&
+    !activeInteraction &&
+    !playing &&
+    mode === "cinematic";
   const sceneTitle = academyT(lang, beat.titleKey, { scene: beat.id, act: beat.act });
   const pauseLabel = academyT(lang, "academy.hud.pause");
   const playLabel = academyT(lang, "academy.hud.play");
@@ -46,6 +56,15 @@ export default function AcademyHud() {
         </div>
 
         <div className="flex flex-col gap-2 items-end">
+          {pendingInteraction && beat.interaction && (
+            <button
+              type="button"
+              onClick={() => enterInteraction(beat.interaction!)}
+              className="rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 font-bold text-sm animate-pulse"
+            >
+              🎮 {academyT(lang, "academy.hud.startActivity")}
+            </button>
+          )}
           <button
             type="button"
             onClick={() => setPlaying(!playing)}
@@ -83,6 +102,28 @@ export default function AcademyHud() {
             {academyT(lang, "academy.hud.act", { n: act })}
           </button>
         ))}
+      </div>
+
+      <div className="mt-2 flex gap-1 pointer-events-auto overflow-x-auto pb-1 max-w-full">
+        {worldOrder.map((worldId: WorldId) => {
+          const w = worldRegistry[worldId];
+          const isActive = activeWorld === worldId;
+          return (
+            <button
+              key={worldId}
+              type="button"
+              onClick={() => jumpToWorld(worldId)}
+              className={`shrink-0 px-2 py-1 rounded-lg text-xs font-medium border ${
+                isActive
+                  ? "bg-white text-gray-900 border-white"
+                  : "bg-black/30 text-white border-white/20 hover:bg-white/20"
+              }`}
+              style={isActive ? { borderColor: w.accentColor } : undefined}
+            >
+              {academyT(lang, w.titleKey)}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

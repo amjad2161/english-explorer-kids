@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Sky, Stars, Cloud } from "@react-three/drei";
+import { Sky, Stars, Cloud, Text } from "@react-three/drei";
 import { RigidBody } from "@react-three/rapier";
 import * as THREE from "three";
 
@@ -49,9 +49,13 @@ export function FloatingIsland({
 export function PortalRing({
   position,
   color = "#f5d76e",
+  onClick,
+  label,
 }: {
   position: [number, number, number];
   color?: string;
+  onClick?: () => void;
+  label?: string;
 }) {
   const ring = useRef<THREE.Mesh>(null);
   const inner = useRef<THREE.Mesh>(null);
@@ -65,9 +69,24 @@ export function PortalRing({
     }
   });
 
+  const handlePointer = onClick
+    ? {
+        onClick: (e: { stopPropagation: () => void }) => {
+          e.stopPropagation();
+          onClick();
+        },
+        onPointerOver: () => {
+          document.body.style.cursor = "pointer";
+        },
+        onPointerOut: () => {
+          document.body.style.cursor = "default";
+        },
+      }
+    : {};
+
   return (
     <group position={position}>
-      <mesh ref={ring} rotation={[Math.PI / 2, 0, 0]}>
+      <mesh ref={ring} rotation={[Math.PI / 2, 0, 0]} {...handlePointer}>
         <torusGeometry args={[2.2, 0.15, 16, 48]} />
         <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.6} />
       </mesh>
@@ -75,7 +94,18 @@ export function PortalRing({
         <torusGeometry args={[1.6, 0.08, 12, 32]} />
         <meshStandardMaterial color="#ffffff" emissive={color} emissiveIntensity={0.9} transparent opacity={0.7} />
       </mesh>
+      {onClick && (
+        <mesh position={[0, 0, 0]} {...handlePointer}>
+          <cylinderGeometry args={[2.4, 2.4, 0.5, 24]} />
+          <meshStandardMaterial transparent opacity={0} />
+        </mesh>
+      )}
       <pointLight intensity={1.2} color={color} distance={12} />
+      {label && (
+        <Text position={[0, 3.2, 0]} fontSize={0.32} color="#ffffff" anchorX="center" anchorY="middle" outlineWidth={0.02} outlineColor="#000000">
+          {label}
+        </Text>
+      )}
     </group>
   );
 }

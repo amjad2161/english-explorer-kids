@@ -1,9 +1,20 @@
+import { useLanguage } from "@/lib/i18n";
+import { academyT } from "../i18n/academyTranslations";
+import { useAcademyStore } from "../store/academyStore";
+import { worldRegistry, worldOrder } from "../registries/worldRegistry";
+import type { WorldId } from "../types";
 import EnvironmentBase, { FloatingIsland, PortalRing } from "./shared/EnvironmentBase";
 import { AcademyBuilding, StylizedTree } from "./shared/WorldDecor";
-import { worldRegistry, worldOrder } from "../registries/worldRegistry";
 
 export default function HubWorld() {
+  const { lang } = useLanguage();
+  const jumpToWorld = useAcademyStore((s) => s.jumpToWorld);
   const hub = worldRegistry.hub;
+
+  const handlePortal = (worldId: WorldId) => {
+    jumpToWorld(worldId);
+  };
+
   return (
     <EnvironmentBase groundColor="#4a7c59" skyTint="#a8d8f0" showStars>
       <FloatingIsland position={[0, 0, 0]} radius={12} color="#5d9e6f" />
@@ -11,6 +22,7 @@ export default function HubWorld() {
         .filter((w) => w !== "hub")
         .map((id) => {
           const w = worldRegistry[id];
+          const label = academyT(lang, w.titleKey);
           return (
             <group key={id}>
               <FloatingIsland
@@ -18,7 +30,12 @@ export default function HubWorld() {
                 radius={5}
                 color={w.accentColor}
               />
-              <PortalRing position={[w.hubPosition[0], w.hubPosition[1] + 3, w.hubPosition[2]]} color={w.accentColor} />
+              <PortalRing
+                position={[w.hubPosition[0], w.hubPosition[1] + 3, w.hubPosition[2]]}
+                color={w.accentColor}
+                label={label}
+                onClick={() => handlePortal(id)}
+              />
             </group>
           );
         })}

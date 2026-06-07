@@ -24,15 +24,28 @@ describe("academyStore", () => {
     expect(state.elapsedSec).toBe(0);
   });
 
-  it("pauses timeline at interaction gate without opening modal", () => {
+  it("auto-opens interaction at gate and pauses timeline", () => {
     useAcademyStore.getState().startSession(true);
     useAcademyStore.setState({ elapsedSec: 129.5, playing: true });
     useAcademyStore.getState().tick(1);
 
     const state = useAcademyStore.getState();
-    expect(state.activeInteraction).toBeNull();
+    expect(state.activeInteraction).toBe("room-sort");
+    expect(state.mode).toBe("interactive");
     expect(state.playing).toBe(false);
     expect(state.elapsedSec).toBe(130);
+  });
+
+  it("jumpToWorld seeks to first beat for that world", () => {
+    useAcademyStore.getState().startSession(true);
+    useAcademyStore.getState().jumpToWorld("citrus");
+
+    const state = useAcademyStore.getState();
+    expect(state.activeWorld).toBe("citrus");
+    expect(state.elapsedSec).toBe(720);
+    expect(state.playing).toBe(false);
+    expect(state.mode).toBe("cinematic");
+    expect(state.activeInteraction).toBeNull();
   });
 
   it("openFinaleLock increments locks up to three", () => {

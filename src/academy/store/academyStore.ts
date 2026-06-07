@@ -6,7 +6,12 @@ import type {
   TimelineMode,
   WorldId,
 } from "../types";
-import { getBeatAtTime, getInteractionBeat, masterScript } from "../cinema/masterScript";
+import {
+  getBeatAtTime,
+  getFirstBeatForWorld,
+  getInteractionBeat,
+  masterScript,
+} from "../cinema/masterScript";
 import {
   clearAcademySession,
   loadAcademySession,
@@ -34,6 +39,7 @@ interface AcademyState {
   setPlaying: (v: boolean) => void;
   tick: (deltaSec: number) => void;
   seek: (sec: number) => void;
+  jumpToWorld: (worldId: WorldId) => void;
   enterInteraction: (id: InteractionId) => void;
   completeInteraction: (id: InteractionId, metric: ProgressMetric) => void;
   setEmpathyWarmth: (v: number) => void;
@@ -121,7 +127,8 @@ export const useAcademyStore = create<AcademyState>((set, get) => ({
         elapsedSec: beat.startSec,
         ...applyBeat(beat.startSec),
         playing: false,
-        activeInteraction: null,
+        mode: "interactive",
+        activeInteraction: beat.interaction,
       });
       persist(get());
       return;
@@ -133,6 +140,21 @@ export const useAcademyStore = create<AcademyState>((set, get) => ({
 
   seek: (sec) => {
     set({ elapsedSec: sec, ...applyBeat(sec), activeInteraction: null });
+    persist(get());
+  },
+
+  jumpToWorld: (worldId) => {
+    const beat = getFirstBeatForWorld(worldId);
+    const sec = beat.startSec;
+    set({
+      elapsedSec: sec,
+      ...applyBeat(sec),
+      activeInteraction: null,
+      mode: "cinematic",
+      playing: false,
+      activeWorld: worldId,
+      visibleCharacters: beat.characters,
+    });
     persist(get());
   },
 

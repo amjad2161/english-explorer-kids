@@ -6,16 +6,20 @@ import { useLanguage } from "@/lib/i18n";
 import { academyT } from "../i18n/academyTranslations";
 import { useAcademyStore } from "../store/academyStore";
 import { getBeatAtTime } from "../cinema/masterScript";
+import { worldRegistry } from "../registries/worldRegistry";
 
 export default function InteractionBeacon() {
   const { lang } = useLanguage();
   const elapsedSec = useAcademyStore((s) => s.elapsedSec);
+  const activeWorld = useAcademyStore((s) => s.activeWorld);
   const activeInteraction = useAcademyStore((s) => s.activeInteraction);
   const interactionComplete = useAcademyStore((s) => s.interactionComplete);
   const enterInteraction = useAcademyStore((s) => s.enterInteraction);
   const ring = useRef<THREE.Mesh>(null);
   const beat = getBeatAtTime(elapsedSec);
   const label = academyT(lang, "academy.hud.tapToPlay");
+  const hub = worldRegistry[activeWorld].hubPosition;
+  const beaconPosition: [number, number, number] = [hub[0], hub[1] + 3.5, hub[2] + 4];
 
   useFrame((state) => {
     if (!ring.current) return;
@@ -28,7 +32,7 @@ export default function InteractionBeacon() {
   if (!beat.interaction || interactionComplete.has(beat.interaction)) return null;
 
   return (
-    <group position={[0, 3.5, 4]}>
+    <group position={beaconPosition}>
       <mesh ref={ring}>
         <torusGeometry args={[1.2, 0.12, 12, 48]} />
         <meshStandardMaterial color="#ffd700" emissive="#f39c12" emissiveIntensity={0.9} />
