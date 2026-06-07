@@ -81,8 +81,9 @@ const SpellingBee = () => {
     setTimerRunning(false);
     const answer = selected.map(s => s.letter).join("");
     const correct = words[currentIndex].english.toUpperCase();
+    const isThisCorrect = answer === correct;
 
-    if (answer === correct) {
+    if (isThisCorrect) {
       setResult("correct");
       setCorrectCount(c => c + 1);
       playCorrectSound();
@@ -92,7 +93,9 @@ const SpellingBee = () => {
       playWrongSound();
       rewards.fireEvent({ type: "wrong" });
     }
-    setTimeout(() => advance(), 1500);
+    // Pass the result explicitly so advance() doesn't rely on a stale
+    // closure that still sees the pre-setState value of `result`.
+    setTimeout(() => advance(isThisCorrect), 1500);
   };
 
   const handleTimeUp = useCallback(() => {
@@ -100,12 +103,16 @@ const SpellingBee = () => {
     setResult("wrong");
     playWrongSound();
     rewards.fireEvent({ type: "wrong" });
-    setTimeout(() => advance(), 1200);
-  }, [result, currentIndex, rewards]);
+    setTimeout(() => advance(false), 1200);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result, currentIndex]);
 
-  const advance = () => {
+  // `thisRoundCorrect` is passed explicitly to avoid a stale-closure where
+  // both `result` and `correctCount` are captured before the setState calls
+  // have been processed.
+  const advance = (thisRoundCorrect: boolean) => {
     if (currentIndex + 1 >= words.length) {
-      const finalCorrect = correctCount + (result === "correct" ? 1 : 0);
+      const finalCorrect = correctCount + (thisRoundCorrect ? 1 : 0);
       if (finalCorrect >= TOTAL_ROUNDS * 0.7) playVictoryFanfare();
       stopBgMusic();
       rewards.completeGame({

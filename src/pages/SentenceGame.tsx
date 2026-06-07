@@ -135,6 +135,8 @@ const SentenceGame = () => {
   const [showConfetti, setShowConfetti] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Ref to track authoritative score, avoiding stale-closure in endGame.
+  const scoreRef = useRef(0);
 
   const current = rounds[currentIdx];
 
@@ -146,6 +148,7 @@ const SentenceGame = () => {
       const picked = shuffled.slice(0, ROUND_COUNTS[diff]);
       setRounds(picked);
       setCurrentIdx(0);
+      scoreRef.current = 0;
       setScore(0);
       setCombo(0);
       setGameOver(false);
@@ -189,28 +192,30 @@ const SentenceGame = () => {
     }
   }, [currentIdx, gameOver]);
 
-  const endGame = useCallback(() => {
+  // `lastRoundWon` passed explicitly to avoid stale-closure on `score`.
+  const endGame = useCallback((lastRoundWon = false) => {
     setGameOver(true);
     if (timerRef.current) clearInterval(timerRef.current);
+    const finalCorrect = scoreRef.current + (lastRoundWon ? 1 : 0);
     rewards.completeGame({
       gameType: "sentences",
-      correct: score,
-      wrong: rounds.length - score,
+      correct: finalCorrect,
+      wrong: rounds.length - finalCorrect,
       totalRounds: rounds.length,
     });
     const stars =
-      score >= rounds.length * 0.9
+      finalCorrect >= rounds.length * 0.9
         ? 3
-        : score >= rounds.length * 0.6
+        : finalCorrect >= rounds.length * 0.6
         ? 2
-        : score > 0
+        : finalCorrect > 0
         ? 1
         : 0;
     if (stars >= 2) {
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 100);
     }
-  }, [score, rounds.length, rewards]);
+  }, [rounds.length, rewards]);
 
   const handleSelect = useCallback(
     (option: string) => {
@@ -223,7 +228,8 @@ const SentenceGame = () => {
       setIsCorrect(correct);
 
       if (correct) {
-        setScore((s) => s + 1);
+        scoreRef.current += 1;
+        setScore(scoreRef.current);
         setCombo((c) => c + 1);
         rewards.fireEvent({ type: "correct" });
       } else {
@@ -231,10 +237,12 @@ const SentenceGame = () => {
         rewards.fireEvent({ type: "wrong" });
       }
 
+      // Pass `correct` explicitly so endGame() reads the right value without
+      // relying on the stale `score` closure.
       setTimeout(() => {
         const nextIdx = currentIdx + 1;
         if (nextIdx >= rounds.length) {
-          endGame();
+          endGame(correct);
         } else {
           setCurrentIdx(nextIdx);
           setSelected(null);

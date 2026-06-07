@@ -115,7 +115,7 @@ const HangmanGame = () => {
         setCorrectCount(c => c + 1);
         playVictoryFanfare();
         rewards.fireEvent({ type: "correct", points: Math.max(5, (MAX_WRONG - wrongCount) * 5) });
-        setTimeout(() => advance(), 1800);
+        setTimeout(() => advance(true), 1800);
       }
     } else {
       const newWrong = wrongCount + 1;
@@ -124,20 +124,23 @@ const HangmanGame = () => {
       if (newWrong >= MAX_WRONG) {
         setResult("lost");
         rewards.fireEvent({ type: "wrong" });
-        setTimeout(() => advance(), 2000);
+        setTimeout(() => advance(false), 2000);
       } else {
         rewards.fireEvent({ type: "wrong" });
       }
     }
   };
 
-  const advance = () => {
+  // `thisRoundWon` is passed explicitly to avoid stale-closure on `result`
+  // and `correctCount` (both are captured before setState calls are processed).
+  const advance = (thisRoundWon: boolean) => {
     if (currentIndex + 1 >= words.length) {
+      const finalCorrect = correctCount + (thisRoundWon ? 1 : 0);
       rewards.completeGame({
         gameType: "hangman",
         stageId,
-        correct: correctCount + (result === "won" ? 1 : 0),
-        wrong: TOTAL_ROUNDS - correctCount - (result === "won" ? 1 : 0),
+        correct: finalCorrect,
+        wrong: TOTAL_ROUNDS - finalCorrect,
         totalRounds: TOTAL_ROUNDS,
       });
     } else {

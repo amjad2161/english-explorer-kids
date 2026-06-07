@@ -42,16 +42,20 @@ const PremiumGameCard = forwardRef<HTMLDivElement, PremiumGameCardProps>(({ emoj
   return (
     <motion.div
       ref={ref}
+      role="button"
+      tabIndex={0}
+      aria-label={title}
       onMouseMove={handleMouse}
       onMouseLeave={handleLeave}
       onClick={onClick}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(); } }}
       style={{
         rotateX,
         rotateY,
         transformStyle: "preserve-3d",
         perspective: 800,
       }}
-      className="cursor-pointer group"
+      className="cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-2xl"
       initial={{ opacity: 0, y: 30, scale: 0.85, rotateZ: index % 2 === 0 ? -3 : 3 }}
       animate={{ opacity: 1, y: 0, scale: 1, rotateZ: 0 }}
       transition={{
