@@ -112,6 +112,7 @@ const AppHeader = () => {
 
   const navItems = [
     { path: "/", label: t("nav.home"), icon: "🏠", mobileOnly: false },
+    { path: "/academy", label: lang === "he" ? "אקדמיה" : lang === "ar" ? "أكاديمية" : "Academy", icon: "🌍", mobileOnly: false },
     { path: "/curriculum", label: lang === "he" ? "מסלול" : lang === "ar" ? "مسار" : "Path", icon: "🗺️", mobileOnly: false },
     { path: "/topics", label: lang === "he" ? "נושאים" : lang === "ar" ? "مواضيع" : "Topics", icon: "🎮", mobileOnly: false },
     { path: "/grammar", label: lang === "he" ? "דקדוק" : lang === "ar" ? "قواعد" : "Grammar", icon: "📐", mobileOnly: false },
