@@ -94,7 +94,8 @@ const WordScramble = () => {
     if (result || !userInput) return;
     setTimerRunning(false);
     const correct = words[currentIndex].english.toUpperCase();
-    if (userInput.toUpperCase() === correct) {
+    const isThisCorrect = userInput.toUpperCase() === correct;
+    if (isThisCorrect) {
       setResult("correct");
       setCorrectCount(c => c + 1);
       playCorrectSound();
@@ -104,7 +105,9 @@ const WordScramble = () => {
       playWrongSound();
       rewards.fireEvent({ type: "wrong" });
     }
-    setTimeout(() => advance(), 1500);
+    // Pass the result explicitly to avoid a stale-closure where `result`
+    // and `correctCount` still hold their pre-setState values.
+    setTimeout(() => advance(isThisCorrect), 1500);
   };
 
   const handleTimeUp = useCallback(() => {
@@ -112,12 +115,13 @@ const WordScramble = () => {
     setResult("wrong");
     playWrongSound();
     rewards.fireEvent({ type: "wrong" });
-    setTimeout(() => advance(), 1200);
-  }, [result, currentIndex, rewards]);
+    setTimeout(() => advance(false), 1200);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result, currentIndex]);
 
-  const advance = () => {
+  const advance = (thisRoundCorrect: boolean) => {
     if (currentIndex + 1 >= words.length) {
-      const finalCorrect = correctCount + (result === "correct" ? 1 : 0);
+      const finalCorrect = correctCount + (thisRoundCorrect ? 1 : 0);
       if (finalCorrect >= TOTAL_ROUNDS * 0.7) playVictoryFanfare();
       stopBgMusic();
       rewards.completeGame({

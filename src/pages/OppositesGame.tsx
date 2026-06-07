@@ -79,6 +79,8 @@ const OppositesGame = () => {
   const [options, setOptions] = useState<string[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  // Ref tracks the authoritative score to avoid stale-closure in endGame.
+  const scoreRef = useRef(0);
   const [score, setScore] = useState(0);
   const [combo, setCombo] = useState(0);
   const [timeLeft, setTimeLeft] = useState(0);
@@ -96,6 +98,7 @@ const OppositesGame = () => {
     const picked = shuffled.slice(0, ROUND_COUNTS[diff]);
     setRounds(picked);
     setCurrentIdx(0);
+    scoreRef.current = 0;
     setScore(0);
     setCombo(0);
     setGameOver(false);
@@ -140,22 +143,24 @@ const OppositesGame = () => {
     }
   }, [currentIdx, gameOver]);
 
-  const endGame = useCallback(() => {
+  // `lastRoundWon` is passed explicitly so we don't depend on the stale
+  // `score` or `isCorrect` closure values inside the setTimeout callback.
+  const endGame = useCallback((lastRoundWon = false) => {
     setGameOver(true);
     if (timerRef.current) clearInterval(timerRef.current);
-    const correct = score + (isCorrect === true ? 1 : 0); // include last answer if correct
+    const finalCorrect = scoreRef.current + (lastRoundWon ? 1 : 0);
     rewards.completeGame({
       gameType: "opposites",
-      correct: score,
-      wrong: rounds.length - score,
+      correct: finalCorrect,
+      wrong: rounds.length - finalCorrect,
       totalRounds: rounds.length,
     });
-    const stars = score >= rounds.length * 0.9 ? 3 : score >= rounds.length * 0.6 ? 2 : score > 0 ? 1 : 0;
+    const stars = finalCorrect >= rounds.length * 0.9 ? 3 : finalCorrect >= rounds.length * 0.6 ? 2 : finalCorrect > 0 ? 1 : 0;
     if (stars >= 2) {
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 100);
     }
-  }, [score, rounds.length, rewards, isCorrect]);
+  }, [rounds.length, rewards]);
 
   const handleSelect = useCallback((option: string) => {
     if (selected !== null || !current) return;
@@ -166,7 +171,8 @@ const OppositesGame = () => {
     setIsCorrect(correct);
 
     if (correct) {
-      setScore((s) => s + 1);
+      scoreRef.current += 1;
+      setScore(scoreRef.current);
       setCombo((c) => c + 1);
       rewards.fireEvent({ type: "correct" });
     } else {
@@ -174,11 +180,12 @@ const OppositesGame = () => {
       rewards.fireEvent({ type: "wrong" });
     }
 
-    // Next round after delay
+    // Pass `correct` explicitly so endGame() sees the right value without
+    // relying on the stale `score` or `isCorrect` closure.
     setTimeout(() => {
       const nextIdx = currentIdx + 1;
       if (nextIdx >= rounds.length) {
-        endGame();
+        endGame(correct);
       } else {
         setCurrentIdx(nextIdx);
         setSelected(null);

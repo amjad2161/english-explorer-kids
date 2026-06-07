@@ -323,8 +323,9 @@ const PatternPuzzle = () => {
   const handleSelect = useCallback((option: string) => {
     if (result || !puzzle) return;
     setSelected(option);
+    const isThisCorrect = option === puzzle.answer;
 
-    if (option === puzzle.answer) {
+    if (isThisCorrect) {
       setResult("correct");
       setCorrectCount(c => c + 1);
       playCorrectSound();
@@ -335,12 +336,14 @@ const PatternPuzzle = () => {
       rewards.fireEvent({ type: "wrong" });
     }
 
-    setTimeout(() => advance(), 1500);
+    // Pass the result explicitly to avoid stale-closure on `result` and
+    // `correctCount` (both captured before setState calls are processed).
+    setTimeout(() => advance(isThisCorrect), 1500);
   }, [result, puzzle, showHint, rewards]);
 
-  const advance = () => {
+  const advance = (thisRoundCorrect: boolean) => {
     if (currentIndex + 1 >= puzzles.length) {
-      const finalCorrect = correctCount + (result === "correct" ? 1 : 0);
+      const finalCorrect = correctCount + (thisRoundCorrect ? 1 : 0);
       if (finalCorrect >= TOTAL_ROUNDS * 0.7) playVictoryFanfare();
       stopBgMusic();
       rewards.completeGame({
