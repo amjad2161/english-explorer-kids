@@ -133,7 +133,7 @@ const AppRoutes = () => {
       <AchievementWatcher />
       {!isAcademy && <KeyboardShortcuts />}
       {!isAcademy && <BreakReminder />}
-      {!isAcademy && <OfflineIndicator />}
+      <OfflineIndicator />
       {!isAcademy && <PWAInstallPrompt />}
       <main role="main" aria-label="Main content" className={isAcademy ? "relative" : "relative z-10"}>
         {!isAcademy && <OwlPageEntrance />}

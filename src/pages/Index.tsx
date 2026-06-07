@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useEraserTransition } from "@/components/ChalkEraserTransition";
 import { useEffect, useState, useMemo, useCallback, forwardRef } from "react";
 import { useLanguage } from "@/lib/i18n";
+import { academyT } from "@/academy/i18n/academyTranslations";
 import { getCurrentLevel, getTotalEarnedStars, levels, getLevelProgress } from "@/lib/levels";
 import { getUnlockedAchievements } from "@/lib/achievements";
 import { getXP, getLevel, getDailyChallenge } from "@/lib/xp";
@@ -556,14 +557,10 @@ const Index = () => {
                   </motion.span>
                   <div className="flex-1 min-w-0">
                     <p className="font-display font-extrabold text-lg sm:text-xl text-amber-200">
-                      {lang === "he" ? "אקדמיית KidGenius תלת־ממד" : lang === "ar" ? "أكاديمية KidGenius ثلاثية الأبعاد" : "KidGenius 3D Academy"}
+                      {academyT(lang, "academy.title")}
                     </p>
                     <p className="text-sm text-white/80 mt-1">
-                      {lang === "he"
-                        ? "עולם חי עם 10 איים, 12 משחקים חינוכיים ומסע קולנועי של 60 דקות"
-                        : lang === "ar"
-                          ? "عالم حيّ بـ 10 جزر و12 لعبة تعليمية ورحلة سينمائية لمدة 60 دقيقة"
-                          : "A living world with 10 islands, 12 learning games, and a 60-minute cinematic journey"}
+                      {academyT(lang, "academy.promo.description")}
                     </p>
                   </div>
                   <ArrowRight className={`w-6 h-6 text-amber-300 shrink-0 ${dir === "rtl" ? "rotate-180" : ""}`} />

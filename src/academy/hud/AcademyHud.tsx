@@ -68,7 +68,7 @@ export default function AcademyHud() {
         </div>
         <div className="flex justify-between mt-1 text-xs text-white/80">
           <span>{mode === "interactive" ? `🎮 ${interactiveLabel}` : `🎬 ${cinematicLabel}`}</span>
-          <span>{interactionComplete.size}/12 interactions</span>
+          <span>{academyT(lang, "academy.hud.interactionsCount", { done: interactionComplete.size })}</span>
         </div>
       </div>
 
@@ -80,7 +80,7 @@ export default function AcademyHud() {
             onClick={() => seek(act === 1 ? 0 : act === 2 ? 720 : act === 3 ? 1560 : act === 4 ? 2520 : 3180)}
             className={`px-2 py-1 rounded-lg text-xs font-medium ${beat.act === act ? "bg-amber-500 text-white" : "bg-white/20 text-white"}`}
           >
-            Act {act}
+            {academyT(lang, "academy.hud.act", { n: act })}
           </button>
         ))}
       </div>

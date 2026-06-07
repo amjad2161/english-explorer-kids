@@ -1,11 +1,21 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useLanguage } from "@/lib/i18n";
+import { academyT } from "../i18n/academyTranslations";
 import InteractionShell from "./shared/InteractionShell";
+import { buildGameResult, type GameProps } from "./shared/gameTypes";
 
-export default function CitrusFractionsGame({ onComplete }: { onComplete: () => void }) {
+export default function CitrusFractionsGame({ onComplete }: GameProps) {
+  const { lang } = useLanguage();
+  const startedAt = useRef(Date.now());
   const [slices, setSlices] = useState(0);
+
   return (
-    <InteractionShell onComplete={onComplete} canComplete={slices >= 4}>
-      <p className="text-center text-sm">Add slices to make a whole orange (4 slices)</p>
+    <InteractionShell
+      onComplete={onComplete}
+      canComplete={slices >= 4}
+      getResult={() => buildGameResult(startedAt.current, slices / 4, slices * 25, { slices })}
+    >
+      <p className="text-center text-sm">{academyT(lang, "academy.game.citrus.instruction")}</p>
       <div className="flex justify-center gap-1">
         {Array.from({ length: 4 }, (_, i) => (
           <button

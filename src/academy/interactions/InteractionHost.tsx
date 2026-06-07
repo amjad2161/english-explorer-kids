@@ -1,7 +1,11 @@
+import { useRef } from "react";
 import { useLanguage } from "@/lib/i18n";
 import { academyT } from "../i18n/academyTranslations";
+import { getInteractionMeta } from "../registries/interactionRegistry";
+import { recordProgress } from "../progress/progressAdapter";
 import { useAcademyStore } from "../store/academyStore";
 import type { InteractionId } from "../types";
+import type { GameProps, GameResult } from "./shared/gameTypes";
 import RoomSortGame from "./RoomSortGame";
 import KitchenSafetyGame from "./KitchenSafetyGame";
 import StreetCrossingGame from "./StreetCrossingGame";
@@ -15,7 +19,7 @@ import EmpathyChoiceGame from "./EmpathyChoiceGame";
 import WordConstellationGame from "./WordConstellationGame";
 import FinalLocksGame from "./FinalLocksGame";
 
-const GAMES: Record<InteractionId, React.FC<{ onComplete: () => void }>> = {
+const GAMES: Record<InteractionId, React.FC<GameProps>> = {
   "room-sort": RoomSortGame,
   "kitchen-safety": KitchenSafetyGame,
   "street-crossing": StreetCrossingGame,
@@ -33,22 +37,24 @@ const GAMES: Record<InteractionId, React.FC<{ onComplete: () => void }>> = {
 export default function InteractionHost() {
   const { lang } = useLanguage();
   const activeInteraction = useAcademyStore((s) => s.activeInteraction);
-  const mode = useAcademyStore((s) => s.mode);
   const completeInteraction = useAcademyStore((s) => s.completeInteraction);
+  const startedAt = useRef(Date.now());
 
-  if (mode !== "interactive" || !activeInteraction) return null;
+  if (!activeInteraction) return null;
 
   const Game = GAMES[activeInteraction];
   const title = academyT(lang, `academy.interaction.${activeInteraction}`);
 
-  const handleComplete = () => {
-    completeInteraction(activeInteraction, {
-      accuracy: 0.85 + Math.random() * 0.15,
-      score: 80 + Math.floor(Math.random() * 20),
-      timeSpentSec: 30,
-      progress: 1,
-      difficulty: "growing",
+  const handleComplete = (result: GameResult) => {
+    const meta = getInteractionMeta(activeInteraction);
+    const metric = recordProgress(meta.gameId, meta.skills[0], {
+      accuracy: result.accuracy,
+      score: result.score,
+      timeSpentSec: result.timeSpentSec ?? Math.max(1, Math.round((Date.now() - startedAt.current) / 1000)),
+      progress: result.progress ?? 1,
+      metadata: result.metadata,
     });
+    completeInteraction(activeInteraction, metric);
   };
 
   return (
